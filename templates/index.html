@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block main %}
+      <div class="hero-unit" style="height:300px">
+        <img src="{{ STATIC_URL }}/images/CindyKayleeGreg.jpg"/>
+        <h1>Custom Photoshopping</h1>
+        <p>Find someone to polish your memories.</p>
+        <p>
+          <a class="btn primary large" href="/upload/">Upload a Picture &raquo;</a>
+          <a class="btn large" href="#">Learn More &raquo;</a></p>
+      </div>
+
+      <div class="details">
+        <div class="row">
+          <div class="span-one-third">
+            <img class="icon" src="{{ STATIC_URL }}/images/upload.png">
+            <h2>1. Upload</h2>
+            <p>Then describe how you want the final image to look. We'll make it easy to mark up and desribe specific areas of your photo.</p>
+          </div>
+          <div class="span-one-third">
+            <img class="icon" src="{{ STATIC_URL }}/images/credit_card.png">
+            <h2>2. Set a price</h2>
+            <p>You choose how much. We'll hold onto the money, but you get 100% back if you aren't satisfied with your results.</p>
+          </div>
+          <div class="span-one-third">
+            <img class="icon" src="{{ STATIC_URL }}/images/approve.png">
+            <h2>3. Approve</h2>
+             <p>We'll let you know when someone has finished. If it isn't quite what you wanted, you can ask for modifications or find a new photoshopper.</p>
+         </div>
+        </div>
+      </div>
+{% endblock %}
+

@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/isotope.css" />
+  {# <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css"> #}
+  {# <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/base/jquery-ui.css" id="theme"> #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class="row">
+  <div class="span13">
+
+    <div id="fileupload">
+      {% comment %}
+      {% endcomment %}
+      <div id="isocontainer" class="fileupload-content files">
+        <!-- <table class="files"></table> -->
+        <!-- <div class="fileupload-progressbar"></div> -->
+        <div class="instructions">
+          <h2>Drag pictures here</h2>
+          <h4>Or click "Add Pictures" on the right</h4>
+        </div>
+        {% comment %}
+        Pictures go in here! They look like this:
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/1.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        
+        {# A good example of an error #}
+        <div class="pic_container upload_error" data-category="10000">
+          <img class="preview" src="/static/images/2.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="error" colspan="2">Error: File is too big</div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/3.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/5.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/6.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/1.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/2.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/3.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/5.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/6.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/1.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/2.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/3.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/5.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/6.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/1.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/2.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/3.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/5.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/6.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/1.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/2.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/3.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/4.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/5.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        <div class="pic_container" data-category="10000">
+          <img class="preview" src="/static/images/6.jpg"></img>
+          <div class="pic_info">
+            <span>DSC_1431</span><span>4.44MB</span>
+          </div>
+          <div class="progress"><div></div></div>
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+        {% endcomment %}
+      </div>
+    </div>
+  </div>
+  <div class="span3 fileupload-buttonbar">
+    <div style="position:fixed;">
+
+      <form action="{% url upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+        <div class="btn primary large fileupload-addbutton">
+          Add Pics
+          <input type="file" name="files[]" multiple >
+        </div>
+        <br/>
+        <a id="group" class="btn primary large" href="#">Group</a><br/>
+        <a id="relayout" class="btn small" href="#" style="display: none">Layout</a><br/>
+        <a id="toggle_hide_info" class="btn small" href="#" style="display: none">Toggle Info</a><br/>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {# Isotope stuff: #}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    {# <script src="{{ STATIC_URL }}js/jquery.1.6.4.min.js"></script> #}
+    {# <script src="{{ STATIC_URL }}js/jquery.isotope.min.js"></script> #}
+    <script src="{{ STATIC_URL}}js/jquery.isotope.js"></script>
+    <script src="{{ STATIC_URL }}js/isotope-app.js"></script>
+
+    {# Upload stuff: #}
+    <script id="template-upload" type="text/x-jquery-tmpl">
+        {% include 'template-upload.x-jquery-tmpl' %}
+    </script>
+    <script id="template-download" type="text/x-jquery-tmpl">
+        {% include 'template-download.x-jquery-tmpl' %}
+    </script>
+    {#<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>#}
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.iframe-transport.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.fileupload.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.fileupload-ui.js"></script>
+    <script src="{{ STATIC_URL }}js/upload-application.js"></script>
+{% comment %}
+{% endcomment %}
+{% endblock %}
+

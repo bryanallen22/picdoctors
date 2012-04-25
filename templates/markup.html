@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Mark up your picture</title>
+  <style type="text/css">
+ 
+    #photo-container {
+      position: relative ;
+      }
+ 
+    #photo-container img {
+      display: block ;
+      }
+ 
+    a.tag {
+      border: 1px solid #FFFFFF ;
+      height: 1px ;
+      position: absolute ;
+      width: 1px ;
+      z-index: 100 ;
+      }
+ 
+    a.selected-tag {
+      border-color: #FFFFFF ;
+      z-index: 200 ;
+      }
+ 
+    div.hide-tags a.tag {
+      display: none ;
+      }
+ 
+    div.tag-message {
+      background-color: #212121 ;
+      border: 1px solid #000000 ;
+      color: #F0F0F0 ;
+      display: none ;
+      font-family: verdana ;
+      font-size: 12px ;
+      padding: 5px 10px 5px 10px ;
+      position: absolute ;
+      white-space: nowrap ;
+      z-index: 200 ;
+      }
+ 
+  </style>
+  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'></script>
+  <script type="text/javascript" src="/static/js/markup.js"></script>
+</head>
+<body>
+ 
+  <h1>
+    Flickr-Style Photo Tagging With jQuery
+  </h1>
+ 
+  <div id="photo-container" class="hide-tags">
+    <!-- <img src="./sexy.jpg" width="520" height="347" /> -->
+    <img src='/static/images/slide_4.jpg' height=400 width=600 />
+  </div>
+ 
+</body>
+</html>
+

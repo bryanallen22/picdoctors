@@ -1,0 +1,47 @@
+{% comment %}
+    THIS IS THE ORIGINAL -- USEFUL EXAMPLE
+    <tr class="template-upload{% templatetag openvariable %}if error{% templatetag closevariable %} ui-state-error{% templatetag openvariable %}/if{% templatetag closevariable %}">
+        <td class="preview"></td>
+        <td class="name">${name}</td>
+        <td class="size">${sizef}</td>
+        {% templatetag openvariable %}if error{% templatetag closevariable %}
+            <td class="error" colspan="2">Error:
+                {% templatetag openvariable %}if error === 'maxFileSize'{% templatetag closevariable %}File is too big
+                {% templatetag openvariable %}else error === 'minFileSize'{% templatetag closevariable %}File is too small
+                {% templatetag openvariable %}else error === 'acceptFileTypes'{% templatetag closevariable %}Filetype not allowed
+                {% templatetag openvariable %}else error === 'maxNumberOfFiles'{% templatetag closevariable %}Max number of files exceeded
+                {% templatetag openvariable %}else{% templatetag closevariable %}${error}
+                {% templatetag openvariable %}/if{% templatetag closevariable %}
+            </td>
+        {% templatetag openvariable %}else{% templatetag closevariable %}
+            <td class="progress"><div></div></td>
+            <td class="start"><button>Start</button></td>
+        {% templatetag openvariable %}/if{% templatetag closevariable %}
+        <td class="cancel"><button>Cancel</button></td>
+    </tr>
+{% endcomment %}
+
+
+<div class="pic_container{% templatetag openvariable %}if error{% templatetag closevariable %} upload_error{% templatetag openvariable %}/if{% templatetag closevariable %}" data-category="10000">
+  <div class="contents">
+    <div class="preview"></div>
+    <div class="pic_info">
+      <span>${name}</span><span>${sizef}</span>
+    </div>
+      {% templatetag openvariable %}if error{% templatetag closevariable %}
+        <div class="error" colspan="2">Error:
+          {% templatetag openvariable %}if error === 'maxFileSize'{% templatetag closevariable %}File is too big
+          {% templatetag openvariable %}else error === 'minFileSize'{% templatetag closevariable %}File is too small
+          {% templatetag openvariable %}else error === 'acceptFileTypes'{% templatetag closevariable %}Filetype not allowed
+          {% templatetag openvariable %}else error === 'maxNumberOfFiles'{% templatetag closevariable %}Max number of files exceeded
+          {% templatetag openvariable %}else{% templatetag closevariable %}${error}
+          {% templatetag openvariable %}/if{% templatetag closevariable %}
+        </div>
+      {% templatetag openvariable %}else{% templatetag closevariable %}
+        <div class="progress"><div></div></div>
+        {#<td class="start"><button>Start</button></td>#}
+      {% templatetag openvariable %}/if{% templatetag closevariable %}
+      <img class="del_pic" src="/static/images/redx.png"/>
+  </div>
+</div>
+

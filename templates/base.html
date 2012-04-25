@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}Custom Photoshopping - PicDoctors{% endblock %}</title>
+    <meta name="description" content="Custom Photoshopping">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="{{ STATIC_URL }}/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 40px;
+      }
+    </style>
+    {% block styles %}
+      {# Each page can add it's own style sheet here if needed. #}
+    {% endblock %}
+
+    {% block topscripts %}
+    {% endblock %}
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="{{ STATIC_URL }}/images/favicon.ico">
+    <link rel="apple-touch-icon" href="{{ STATIC_URL }}/images/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ STATIC_URL }}/images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ STATIC_URL }}/images/apple-touch-icon-114x114.png">
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="container">
+        <div class="logo">
+          <a href="/"><img src="{{ STATIC_URL }}/images/stethoscope32x32.png"/><h2>PicDoctors</h2></a>
+        </div>
+        <ul class="pills">
+          <li><a href="#about">How It Works</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#doctors">Doctors</a></li>
+          <li><a href="#login">Log In</a></li>
+        </ul>
+      </div>
+    </div>
+    <br/>
+
+    <div class="container">
+      {% block main %}
+      {% endblock %}
+      <footer>
+        <p>&copy; PicDoctors 2011</p>
+      </footer>
+    </div>
+
+    {% block scripts %}
+    {% endblock %}
+
+  </body>
+</html>
+
