@@ -1,6 +1,6 @@
 // Give numbers to groups
-var nextGroup   = 1;
-var ungroupedId = 10000; // Make sure that this matches the original group in html
+var nextGroupId = 1;
+var ungroupedId = 100000; // Make sure that this matches the original group in html
 
 // Border Groups module
 var BorderGroups = (function ($) {
@@ -31,11 +31,12 @@ var BorderGroups = (function ($) {
       if( groupId < ungroupedId )
       {
         var border = $("<div id='border" + groupId.toString() + "' class='group_border' >");
-        border.appendTo($isocontainer);
         border.width(  borders[groupId]['width'] );
         border.height( borders[groupId]['height'] );
         border.css({ left: (borders[groupId]['x']+padding),
-        top:  (borders[groupId]['y']+padding) });
+                      top: (borders[groupId]['y']+padding) });
+        border.attr("data-category", groupId.toString());
+        border.appendTo($isocontainer);
       }
     }
   }
@@ -99,8 +100,6 @@ $.extend( $.Isotope.prototype, {
           atomH = $this.outerHeight(true),
           category = $.data( this, 'isotope-sort-data' )[ sortBy ],
           x, y;
-      
-      //console.log("atomW=" + atomW + ", atomH=" + atomH);
       
       if ( category !== props.currentCategory ) {
         // new category, new row
@@ -166,19 +165,6 @@ var IsoWrapper = (function($) {
   {
     var qty = $isocontainer.find(".pic_container").size();
 
-    //console.log("start_iso: top");
-    //if(qty == 0)
-    //{
-    //  console.log("start_iso: qty=0");
-    //  return;
-    //}
-    //else
-    //{
-    //  // Get rid of info
-    //  $isocontainer.find(".instructions").remove();
-    //}
-
-    //console.log("start_iso: about to start iso");
     // Start isotope
     $isocontainer.isotope({
       // options
@@ -196,8 +182,6 @@ var IsoWrapper = (function($) {
       sortBy : 'category',
       resizesContainer : true
     });
-
-    //console.log("start_iso: finished starting isotope");
   }
 
   return my;
@@ -211,51 +195,41 @@ $(function(){
   var $isocontainer = $('#isocontainer');
   var hide_info = false;
 
-  //console.log("about to start_iso");
-  /* If you prepopulate pictures, this is not a good way
-   * to start Isotope - you should do it in window.ready(),
-   * after the pictures have loaded. Since there are never
-   * any pictures in here on page load, we put it here */
-  //IsoWrapper.start_iso();
-  //console.log("just ran start_iso");
-
-
   /******************
    * Fixed Controls *
    ******************/
-
-  /* Toggle Info button */
-  $('#toggle_hide_info').click( function(evt) {
-    evt.preventDefault();
-    if(hide_info) {
-      $(".pic_info").hide('fast', IsoWrapper.relayout);
-    }
-    else {
-      $(".pic_info").show('fast', IsoWrapper.relayout);
-    }
-    hide_info = !hide_info;
-  });
 
   /* Group button */
   $('#group').click( function(evt) {
     evt.preventDefault();
 
-    var selected_items = $('.selected');
-    selected_items.each( function() {
-      $(this).attr("data-category", nextGroup.toString() );
-    } );
+    if( $(this).text() == "Group" ) {
+      var selected_pics = $('.pic_container.selected');
+      selected_pics.each( function() {
+        $(this).attr("data-category", nextGroupId.toString() );
+      } );
 
-    selected_items.removeClass('selected');
-    $isocontainer.isotope('updateSortData', selected_items);
-    $isocontainer.isotope( { sortBy : 'category' } );
+      selected_pics.removeClass('selected');
+      $isocontainer.isotope('updateSortData', selected_pics);
+      $isocontainer.isotope( { sortBy : 'category' } );
 
-    nextGroup++;
+      nextGroupId++;
+    }
+    else { // "Ungroup"
+      // .first() used, though we only ever expect 1 group to be selected
+      var border = $(".group_border.selected").first();
+      var id = $(border).attr("data-category");
+
+      // Get rid of the border
+      $(border).remove();
+
+      // Ungroup individual elements that have the appropriate id
+      var ungroup_pics = $(".pic_container[data-category=" + id + "]");
+      ungroup_pics.attr("data-category", ungroupedId);
+      $isocontainer.isotope('updateSortData', ungroup_pics);
+      $isocontainer.isotope( { sortBy : 'category' } );
+    }
   });
-
-  /* Relayout button */ 
-  $('#relayout').click( IsoWrapper.relayout );
-
-
 
   /*************************
    * Dynamic/'live' Events *
@@ -266,7 +240,44 @@ $(function(){
   // a picture (browser select, not my select)
   $('.pic_container').live('click', function(evt) {
     if( (evt.which == 1 ) && ( $(this).find('.error').size() == 0 ) ){ // left click
-      $(this).toggleClass('selected');
+      var groupId = $(this).attr("data-category");
+      if( groupId < ungroupedId ) {
+        // unselect all other groups...
+        for(var i=1; i < nextGroupId; i++) {
+          if(i != groupId) {
+            $("#border" + i).removeClass('selected');
+          }
+        }
+        // and all individual selected pictures
+        $('.pic_container').each( function() {
+          $(this).removeClass("selected");
+        });
+
+        // select/unselect this group
+        $("#border" + groupId).toggleClass('selected');
+
+        // if we have just selected a group, we change the 'group'
+        // button to an 'ungroup' button
+        if( $("#border" + groupId).hasClass('selected') ) {
+          $("#group").text("Ungroup");
+        }
+        else {
+          $("#group").text("Group");
+        }
+      }
+      else {
+        // ungrouped picture
+        $(this).toggleClass('selected');
+
+        // unselect all groups
+        for(var i=1; i < nextGroupId; i++) {
+          $("#border" + i).removeClass('selected');
+        }
+
+        // Any time we are dealing with an individual pic,
+        // it's time for grouping
+        $("#group").text("Group");
+      }
     }
   });
 
