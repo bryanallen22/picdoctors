@@ -282,11 +282,15 @@ $(function(){
   });
 
   $('.pic_container').live('mouseenter', function(evt) {
-    $(this).find('.del_pic').show();
+    if($(this).attr("data-category") == ungroupedId) {
+      $(this).find('.del_pic').show();
+    }
   });
 
   $('.pic_container').live('mouseleave', function(evt) {
-    $(this).find('.del_pic').hide();
+    if($(this).attr("data-category") == ungroupedId) {
+      $(this).find('.del_pic').hide();
+    }
   });
 
   $('.del_pic').live('click', function(evt) {
