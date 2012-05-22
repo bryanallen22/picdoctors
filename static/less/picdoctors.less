@@ -1,0 +1,175 @@
+.navbar {
+  .container {
+    position:relative;
+  }
+  .logo {
+    float: left;
+    padding: 4px;
+    margin-left: 8px;
+    cursor: pointer;
+    img {
+      margin-right: 4px;
+    }
+    a:hover {
+      text-decoration: none;
+    }
+  }
+  .pills {
+    position: absolute;
+    right: 0;
+  }
+  h2 {
+    display: inline;
+    vertical-align: top;
+  }
+
+  height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  overflow: visible;
+}
+
+.details {
+  .icon {
+    float: left;
+    margin-right: 20px;
+    height: 40px;
+  }
+}
+
+#isocontainer {
+  position: relative;
+  border-style: dashed;
+  border-color: #999;
+  border-width: 3px;
+  border-radius: 5px;
+  margin: 0px;
+  padding: 10px; /* This needs to match BorderGroups.padding */
+
+  img {
+    /* Don't allow accidental selection */
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+
+  /*
+  .rounded {
+    margin: 0px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid;
+  }
+  */
+
+  .pic_container {
+    padding: 6px;
+    text-align: center;
+    border-radius: 5px;
+    margin: 2px;
+    position: relative;
+    /*border-style: solid;*/
+
+    .preview {
+      display: block;
+      vertical-align : middle;
+    }
+
+    .pic_info span {
+      padding: 5px;
+      display: none;
+    }
+
+    .del_pic {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      display: none;
+    }
+  }
+
+  .selected {
+    background-color: #1D8CDB;
+  }
+
+  .group_border {
+    border-radius: 5px;
+    border-width: 1px;
+    margin: 0px;
+    border-style: solid;
+    border-color: blue;
+    position: absolute;
+  }
+
+  .upload_error {
+    /* What does a pic_container look like when it has an error? */
+    background-color: red;
+    color: white;
+  }
+
+  .instructions {
+    padding-top: 70px;
+    h1, h2, h3, h4 {
+      color: #777777;
+      text-align: center;
+    }
+  }
+  
+  .invisible {
+    visibility: hidden;
+  }
+
+}
+
+.fileupload-addbutton {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  //cursor: pointer;
+  padding: 0;
+
+  input {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    height: 100%;
+    width: auto;
+    cursor: pointer
+    border: solid transparent;
+    border-width: 0 0 100px 200px;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+  }
+}
+
+.fileupload-buttonbar {
+  /*
+  position: relative;
+  clear: both;
+  div.fileinput-button {
+    #addpics, input {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+
+  a {
+    margin: 6px;
+  }
+  */
+}
+
