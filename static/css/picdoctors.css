@@ -121,7 +121,7 @@
   position: relative;
   display: block;
   overflow: hidden;
-  padding: 0;
+  padding: 9px 14px;
 }
 .fileupload-addbutton input {
   opacity: 0;
