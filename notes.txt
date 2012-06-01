@@ -1,6 +1,10 @@
-Stethoscope - http://www.dapino-colada.nl/medical-vista-icons
-http://www.dapino-colada.nl/medical-vista-icons - Costs 20 euros
+Things to pay for / resolve before launching:
+  1) Stethoscope - http://www.dapino-colada.nl/medical-vista-icons
+     http://www.dapino-colada.nl/medical-vista-icons - Costs 20 euros
 
-Images on front page:
-http://thenounproject.com/
+  2) Images on front page:
+     http://thenounproject.com/
+
+  3) Isotope, obviously
+     http://isotope.metafizzy.co/
 
