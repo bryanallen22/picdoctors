@@ -31,9 +31,12 @@
           Add Pics
           <input type="file" name="files[]" multiple >
         </div>
-        <br/>
-        <a id="group" class="btn btn-primary btn-large" href="#">Group</a>
-        <br/>
+        <a id="group" class="btn btn-primary btn-large" href="#" style="display : block; margin-top: 12px;">Group</a>
+        <p style="margin-top: 80px">Total Progress:</p>
+        <div id="totalprogress" class="progress progress-danger" style="height: 8px;">
+          <div class="bar" style="width: 0%"></div>
+        </div>
+        <a id="next" class="btn btn-primary btn-large disabled" href="#" style="display : block; margin-top: 12px;">Next</a>
       </form>
     </div>
   </div>
@@ -43,6 +46,7 @@
 {% block scripts %}
     {# Isotope stuff: #}
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
     {# <script src="{{ STATIC_URL }}js/jquery.1.7.2.min.js"></script> #}
     {# <script src="{{ STATIC_URL }}js/jquery.isotope.min.js"></script> #}
     <script src="{{ STATIC_URL}}js/jquery.isotope.js"></script>

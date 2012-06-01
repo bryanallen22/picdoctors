@@ -198,6 +198,12 @@ $(function(){
   /******************
    * Fixed Controls *
    ******************/
+  $("#group").popover(
+    {
+      placement : "left",
+      title     : "Need to combine images?",
+      content   : "Click individual images to select them, and then click \"Group\""
+    } );
 
   /* Group button */
   $('#group').click( function(evt) {
