@@ -76,6 +76,8 @@ var BorderGroups = (function ($) {
 
 // categoryRows custom layout mode
 $.extend( $.Isotope.prototype, {
+  
+  extraHeight : 260,
 
   _categoryRowsReset : function() {
     this.categoryRows = {
@@ -93,6 +95,12 @@ $.extend( $.Isotope.prototype, {
         props = this.categoryRows;
 
     BorderGroups.start();
+    
+    /* Decrease extra height once we get items -- we just
+       need some space at the beginning */
+    if($elems.size()) {
+      this.extraHeight = 160;
+    }
 
     $elems.each( function() {
       var $this = $(this),
@@ -100,7 +108,7 @@ $.extend( $.Isotope.prototype, {
           atomH = $this.outerHeight(true),
           category = $.data( this, 'isotope-sort-data' )[ sortBy ],
           x, y;
-      
+
       if ( category !== props.currentCategory ) {
         // new category, new row
         props.x = 0;
@@ -133,9 +141,9 @@ $.extend( $.Isotope.prototype, {
   },
 
   _categoryRowsGetContainerSize : function () {
-    /* We add 160 pixels at the bottom, so the person sees some
+    /* We add some pixels at the bottom, so the person sees some
      * empty space into which they can add pictures */
-    return { height : this.categoryRows.height + 160 };
+    return { height : this.categoryRows.height + this.extraHeight };
   },
 
   _categoryRowsResizeChanged : function() {
