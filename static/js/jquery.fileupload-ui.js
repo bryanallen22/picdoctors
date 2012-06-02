@@ -98,10 +98,13 @@
                     // Iframe Transport does not support progress events.
                     // In lack of an indeterminate progress bar, we set
                     // the progress to 100%, showing the full animated bar:
+                    /*
                     data.context.find('.ui-progressbar').progressbar(
                         'value',
                         parseInt(100, 10)
                     );
+                    */
+                    data.context.find(".progress .bar").css("width", "100%");
                 }
             },
             // Callback for successful uploads:
@@ -173,10 +176,17 @@
             // Callback for upload progress events:
             progress: function (e, data) {
                 if (data.context) {
+                    /*
                     data.context.find('.ui-progressbar').progressbar(
                         'value',
                         parseInt(data.loaded / data.total * 100, 10)
                     );
+                    */
+                    var val = parseInt(data.loaded / data.total * 100, 10);
+                    data.context.find(".progress .bar").css("width", (val + "%"));
+                    if(val >= 100) {
+                      //data.context.find(".progress").fadeOut();
+                    }
                 }
             },
             // Callback for global upload progress events:

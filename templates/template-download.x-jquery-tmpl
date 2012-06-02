@@ -74,7 +74,7 @@
           {% templatetag openvariable %}/if{% templatetag closevariable %}
         </div>
       {% templatetag openvariable %}else{% templatetag closevariable %}
-        <div class="progress"><div></div></div>
+        {#<div class="progress"><div></div></div>#}
           {#<td class="start"><button>Start</button></td>#}
       {% templatetag openvariable %}/if{% templatetag closevariable %}
       <img class="del_pic" src="/static/images/redx.png"/>
