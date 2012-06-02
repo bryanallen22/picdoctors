@@ -195,6 +195,8 @@
                 //    'value',
                 //    parseInt(data.loaded / data.total * 100, 10)
                 //);
+
+                /*
                 var val = parseInt(data.loaded / data.total * 100, 10);
                 var bar = $('#totalprogress');
                 if(val >= 100)
@@ -212,6 +214,7 @@
                 bar.find('.bar').css('width', val + '%');
 
                 console.log('progressall: val=' + val);
+                */
             },
             // Callback for uploads start, equivalent to the global ajaxStart event:
             start: function () {
