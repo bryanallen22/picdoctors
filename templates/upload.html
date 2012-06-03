@@ -68,6 +68,8 @@
     <script src="{{ STATIC_URL }}js/jquery.fileupload.js"></script>
     <script src="{{ STATIC_URL }}js/jquery.fileupload-ui.js"></script>
     <script src="{{ STATIC_URL }}js/upload-application.js"></script>
+    {# IE 6/7 don't have JSON.stringify, so add Douglas Crockford's: #}
+    <script src="{{ STATIC_URL }}js/json2.js"></script>
 {% comment %}
 {% endcomment %}
 {% endblock %}
