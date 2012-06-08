@@ -7,18 +7,27 @@ from PIL import Image
 from django.db import models
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.contrib.auth.models import User
 
 import logging
 
 #import pdb
 
+
+###########################################
+# Pic
+###########################################
+
 class Pic(models.Model):
+    group      = models.ForeignKey('Group', blank=True, null=True)
+    batch      = models.ForeignKey('Batch', blank=True, null=True)
+
+    created    = models.DateField(auto_now_add=True)
+    updated    = models.DateField(auto_now=True)
     title      = models.CharField(max_length=60, blank=True, null=True)
-    uuid       = models.CharField(max_length=32, blank=False)
+    uuid       = models.CharField(max_length=32, blank=False, unique=True)
     image      = models.ImageField(upload_to='pics/')
     thumbnail  = models.ImageField(upload_to='thumbs/')
-    created_on = models.DateField(auto_now_add=True)
-    updated_on = models.DateField(auto_now=True)
 
     def __unicode__(self):
         return self.title
@@ -81,3 +90,46 @@ class Pic(models.Model):
 
         return ContentFile(tmp_file.getvalue())
 
+
+###########################################
+# Batch
+###########################################
+class Batch(models.Model):
+    # This can be blank if they haven't logged in / created a user yet:
+    user    = models.OneToOneField(User, blank=True, null=True)
+
+    created = models.DateField(auto_now_add=True)
+    updated = models.DateField(auto_now=True)
+
+
+###########################################
+# Markup
+###########################################
+class Markup(models.Model):
+    pic     = models.ForeignKey('Pic')
+
+    created = models.DateField(auto_now_add=True)
+    # Leave room for various patterns: '#049CDB' such as 'rgb(100, 100, 100)'
+    left    = models.IntegerField(blank=False)
+    top     = models.IntegerField(blank=False)
+    width   = models.IntegerField(blank=False)
+    height  = models.IntegerField(blank=False)
+
+
+###########################################
+# Group
+###########################################
+class Group(models.Model):
+    created = models.DateField(auto_now_add=True)
+
+
+###########################################
+# UserProfile
+###########################################
+class UserProfile(models.Model):
+    # This field is required.
+    user = models.OneToOneField(User)
+
+    # Other fields here
+    accepted_eula = models.BooleanField()
+    favorite_animal = models.CharField(max_length=20, default="Dragons.")

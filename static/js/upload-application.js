@@ -31,7 +31,7 @@ $(function () {
      * ballen disabled - will we ever want this?
      // Load existing files:
      */
-    $.getJSON($('#fileupload form').prop('action'), function (files) {
+    $.getJSON('/upload_handler/', function (files) {
         var fu = $('#fileupload').data('fileupload');
         fu._adjustMaxNumberOfFiles(-files.length);
         fu._renderDownload(files)
