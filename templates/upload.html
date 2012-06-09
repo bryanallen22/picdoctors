@@ -14,12 +14,22 @@
   <div class="span9">
     <div id="fileupload">
       <div id="isocontainer" class="fileupload-content files">
-        <!-- <table class="files"></table> -->
-        <!-- <div class="fileupload-progressbar"></div> -->
-        <div class="instructions">
-          <h2>Drag pictures here</h2>
-          <h4>Or click "Add Pictures" on the right</h4>
-        </div>
+        {% for pic in pics %}
+          <div class="pic_container" data-category="100000">
+            <div class="contents">
+              <div class="preview">
+                <img src="{{pic.get_thumb_url}}">
+              </div>
+              <img class="del_pic" src="/static/images/redx.png"/>
+            </div>
+          </div>
+        {% endfor %}
+        {% if pics|length == 0 %}
+          <div class="instructions">
+            <h2>Drag pictures here</h2>
+            <h4>Or click "Add Pictures" on the right</h4>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>

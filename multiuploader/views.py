@@ -18,7 +18,7 @@ from models import Markup
 from models import Group
 from models import UserProfile
 
-def create_batch(request):
+def get_batch_id(request):
     # If there isn't already a batch assigned, assign it now
     if 'batch_id' not in request.session:
         batch = Batch()
@@ -28,7 +28,7 @@ def create_batch(request):
 
 def get_batch(request):
     # This will create a batch if necessary
-    batch = Batch.objects.get(pk=create_batch(request))
+    batch = Batch.objects.get(pk=get_batch_id(request))
     return batch
 
 def pic_json(pic):
@@ -43,7 +43,9 @@ def pic_json(pic):
 
 @render_to('upload.html')
 def upload_page(request):
-    logging.info('got to %s, batch_id is %d' % (__name__, create_batch(request)))
+    batch_id = get_batch_id(request)
+    logging.info('got to %s, batch_id is %d' % (__name__, batch_id))
+    pics = Pic.objects.filter( batch__exact=batch_id );
     return locals()
 
 @render_to('needcookies.html')
@@ -85,10 +87,12 @@ def upload_handler(request):
         logging.info('got to %s' % __name__)
         # TODO - get rid of this temporary debug code:
         result = []
-        pics = Pic.objects.filter(batch__exact=create_batch(request))
+        # This ajax thing is slow. We preopulate it with the view/template
+        # layers for the actual page
+        #pics = Pic.objects.filter(batch__exact=get_batch_id(request))
 
-        for pic in pics:
-            result.append(pic_json(pic))
+        #for pic in pics:
+        #    result.append(pic_json(pic))
 
         response_data = simplejson.dumps(result)
         #logging.info(response_data)
