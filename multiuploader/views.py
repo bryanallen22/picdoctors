@@ -18,6 +18,8 @@ from models import Markup
 from models import Group
 from models import UserProfile
 
+ungroupedId = 100000; # Make sure that this matches isotope-app.js
+
 def get_batch_id(request):
     # If there isn't already a batch assigned, assign it now
     if 'batch_id' not in request.session:
@@ -37,16 +39,17 @@ def pic_json(pic):
             "url"              : pic.get_url(),
             "thumbnail_url"    : pic.get_thumb_url(),
             # TODO - url lookup here
-            "delete_url"    : '/delete_pic/' + pic.uuid,
+            "delete_url"       : '/delete_pic/' + pic.uuid,
             # TODO - change type to 'DELETE' ?
-            "delete_type"   : "POST",}
+            "delete_type"      : "POST",
+            "uuid"             : pic.uuid }
 
 @render_to('upload.html')
 def upload_page(request):
     batch_id = get_batch_id(request)
     logging.info('got to %s, batch_id is %d' % (__name__, batch_id))
     pics = Pic.objects.filter( batch__exact=batch_id );
-    return locals()
+    return { "pics" : pics, "ungroupedId" :  ungroupedId }
 
 @render_to('needcookies.html')
 def need_cookies(request):
@@ -97,4 +100,12 @@ def upload_handler(request):
         response_data = simplejson.dumps(result)
         #logging.info(response_data)
         return HttpResponse(response_data, mimetype='application/json')
+
+# TODO - make this csrf_protect
+@csrf_exempt
+def group_handler(request):
+    if request.method == 'POST':
+        pass
+    else: # DELETE
+        pass
 

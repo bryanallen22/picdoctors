@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 
 from multiuploader.views import upload_handler
+from multiuploader.views import group_handler
 from multiuploader.views import upload_page
 from multiuploader.views import need_cookies
 
@@ -13,6 +14,8 @@ urlpatterns = patterns('',
     
     # if you change this, you had better modify the 'url' param in upload-application.js to match it
     url(r'^upload_handler/$', upload_handler, name='upload_handler'),
+    # For grouping images
+    url(r'^group_handler/$', group_handler, name='group_handler'),
     url(r'^needcookies/$', need_cookies, name='need_cookies'),
 )
 

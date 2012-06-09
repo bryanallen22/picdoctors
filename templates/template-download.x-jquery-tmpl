@@ -39,7 +39,7 @@
     </tr>
 {% endcomment %}
 
-<div class="pic_container{% templatetag openvariable %}if error{% templatetag closevariable %} upload_error{% templatetag openvariable %}/if{% templatetag closevariable %}" data-category="100000">
+<div class="pic_container{% templatetag openvariable %}if error{% templatetag closevariable %} upload_error{% templatetag openvariable %}/if{% templatetag closevariable %}" data-category="100000" uuid="${uuid}">
   <div class="contents">
     <div class="preview">
       {% templatetag openvariable %}if thumbnail_url{% templatetag closevariable %}

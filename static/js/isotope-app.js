@@ -169,7 +169,7 @@ var IsoWrapper = (function($) {
     $isocontainer.isotope('reLayout');
   }
 
-  my.start_iso = function()
+  my.startIso = function()
   {
     var qty = $isocontainer.find(".pic_container").size();
 
@@ -192,8 +192,68 @@ var IsoWrapper = (function($) {
     });
   }
 
+  my.sendGroupInfo = function(method, groupid, uuids) {
+    console.log("sendGroupInfo: | " + method + " | " + groupid);
+    console.log("  uuids:");
+    console.log(uuids);
+
+    /*
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: data,
+      success: success,
+      dataType: dataType
+    });
+    */
+  }
+
+  /*
+   * Look for groups with fully uploaded pictures
+   */
+  my.checkForCompleteGroup= function(group_id)
+  {
+    //console.log('checkForCompleteGroup: group_id=' + group_id);
+    if(group_id < ungroupedId) {
+      /* Okay, this element is in a group. We'll upload group info
+       * if it's the last pic in it's group to finish */
+      var group_done = true;
+      var uuids = [];
+      var group_pics = $(".pic_container[data-category=" + group_id + "]");
+      group_pics.each( function() {
+        var my_uuid = $(this).attr("uuid");
+        //console.log('uuid: ' + my_uuid);
+        if( my_uuid ) {
+          uuids.push( my_uuid );
+        }
+        else {
+          /* Doesn't have a uuid yet, so it hasn't been uploaded yet. */
+          group_done = false;
+        }
+      });
+      if(group_done) {
+        my.sendGroupInfo("POST", group_id, uuids);
+      }
+    }
+  }
+
+  /*
+   * This is called after the upload has completed, and we have even
+   * downloaded the template again too
+   */
+  my.picDownloaded = function(el)
+  {
+    /* Do we need to upload group information? */
+    var group_id = el.attr("data-category");
+    my.checkForCompleteGroup(group_id);
+
+    //console.log("This just finished download:");
+    //console.log(el);
+  }
+
   return my;
 }(jQuery) );
+
 
 /*
  * Event handlers get tied in here
@@ -215,7 +275,6 @@ $(function(){
 
   /* Group button */
   $('#group').click( function(evt) {
-    evt.preventDefault();
 
     if( $(this).text() == "Group" ) {
       var selected_pics = $('.pic_container.selected');
@@ -226,22 +285,36 @@ $(function(){
       selected_pics.removeClass('selected');
       $isocontainer.isotope('updateSortData', selected_pics);
       $isocontainer.isotope( { sortBy : 'category' } );
+      
+      /* If this group has fully downloaded pics, the server needs
+       * to be informed */
+      IsoWrapper.checkForCompleteGroup(nextGroupId);
 
       nextGroupId++;
     }
     else { // "Ungroup"
       // .first() used, though we only ever expect 1 group to be selected
       var border = $(".group_border.selected").first();
-      var id = $(border).attr("data-category");
+      groupid = $(border).attr("data-category");
+      var uuids = [];
 
       // Get rid of the border
       $(border).remove();
 
       // Ungroup individual elements that have the appropriate id
-      var ungroup_pics = $(".pic_container[data-category=" + id + "]");
+      var ungroup_pics = $(".pic_container[data-category=" + groupid + "]");
       ungroup_pics.attr("data-category", ungroupedId);
+      ungroup_pics.each( function() {
+        uuids.push( $(this).attr("uuid") );
+      });
+
       $isocontainer.isotope('updateSortData', ungroup_pics);
       $isocontainer.isotope( { sortBy : 'category' } );
+
+      /* So, to even get grouped in the first place, we have to
+       * be fully downloaded. This means we should be able to
+       * disband the group immediately */
+      IsoWrapper.sendGroupInfo("DELETE", groupid, uuids);
     }
   });
 
@@ -316,8 +389,26 @@ $(function(){
   });
 });
 
+/*
+ * Set nextGroupId to be 1 larger than the largest existing group.
+ * This is used when the upload page has prepopulated pictures from
+ * a previous use of the page
+ */
+var setNextGroupId = function() {
+  var max = 0;
+  $(".pic_container").each( function () {
+    var myId = $(this).attr("data-category");
+    if( (myId > max) && (myId < ungroupedId) ) {
+      max = $(this).attr("data-category");
+    }
+  });
+  nextGroupId = max + 1;
+  //console.log("nextGroupId set to " + nextGroupId);
+}
+
 // Have to wait for images to load or this doesn't work nicely
 $(window).load(function() {
-  IsoWrapper.start_iso();
+  IsoWrapper.startIso();
+  setNextGroupId();
 });
 

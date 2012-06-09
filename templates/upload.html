@@ -14,21 +14,22 @@
   <div class="span9">
     <div id="fileupload">
       <div id="isocontainer" class="fileupload-content files">
-        {% for pic in pics %}
-          <div class="pic_container" data-category="100000">
-            <div class="contents">
-              <div class="preview">
-                <img src="{{pic.get_thumb_url}}">
-              </div>
-              <img class="del_pic" src="/static/images/redx.png"/>
-            </div>
-          </div>
-        {% endfor %}
         {% if pics|length == 0 %}
           <div class="instructions">
             <h2>Drag pictures here</h2>
             <h4>Or click "Add Pictures" on the right</h4>
           </div>
+        {% else %}
+          {% for pic in pics %}
+            <div class="pic_container" data-category=" {{ ungroupedId }}">
+              <div class="contents">
+                <div class="preview">
+                  <img src="{{pic.get_thumb_url}}">
+                </div>
+                <img class="del_pic" src="/static/images/redx.png"/>
+              </div>
+            </div>
+          {% endfor %}
         {% endif %}
       </div>
     </div>
@@ -41,14 +42,14 @@
           Add Pics
           <input type="file" name="files[]" multiple >
         </div>
-        <a id="group" class="btn btn-primary btn-large" href="#" style="display : block; margin-top: 12px;">Group</a>
+        <div id="group" class="btn btn-primary btn-large" href="#" style="display : block; margin-top: 12px;">Group</div>
         {% comment %}
         <p style="margin-top: 80px">Uploaded: 0kb</p> #}
         <div id="totalprogress" class="progress progress-danger" style="height: 8px;">
           <div class="bar" style="width: 0%"></div>
         </div>
         {% endcomment %}
-        <a id="next" class="btn btn-primary btn-large disabled" href="#" style="display: block; margin-top: 120px;">Next</a>
+        <div id="next" class="btn btn-primary btn-large disabled" href="#" style="display: block; margin-top: 120px;">Next</div>
       </form>
     </div>
   </div>

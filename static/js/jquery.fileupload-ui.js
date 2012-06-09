@@ -65,7 +65,6 @@
                 data.isAdjusted = true;
                 data.isValidated = that._validate(data.files);
                 
-                // Render the upload html and stick it in the isocontainer
                 data.context = that._renderUpload(data.files)
                     .appendTo($(this).find('.files')).each(function () {
                         $(this).fadeIn( function() {
@@ -118,15 +117,23 @@
                             that._adjustMaxNumberOfFiles(1);
                         }
 
+                        /******************************/
                         /* ballen -- isotope gets upset when I swap the entire 
                          * element out, so I just swap out the stuff below the parent element */
-                        var contents = that._renderDownload([file]).find('.contents');
-                        var target = $(this).find('.contents').get();
+                        var $this = $(this);
+                        var dl_templ = that._renderDownload([file]);
+                        var contents = dl_templ.find('.contents');
+                        var target = $this.find('.contents').get();
                         // Don't swap in the element until the replacement image has loaded
                         contents.find( '.preview img' ).load( function() {
                           contents.replaceAll( target );
                         });
-
+                        /* Since we just swapped out the contents, we'll manually add the uuid
+                         * from the download template */
+                        var uuid = dl_templ.attr("uuid");
+                        $this.attr("uuid", uuid);
+                        IsoWrapper.picDownloaded($this);
+                        /******************************/
                     });
                 } else {
                     that._renderDownload(data.result)
@@ -450,11 +457,13 @@
                 that._loadImage(
                     files[index],
                     function (img) {
+                        /******************************/
                         //$(img).hide().appendTo(node).fadeIn(); ORIGINAL
                         // ballen add to isotope here
                         $(img).appendTo(node);
                         var pic_container = $(node).parents('.pic_container');
                         $("#isocontainer").isotope( 'insert', pic_container );
+                        /******************************/
                     },
                     {
                         maxWidth: options.previewMaxWidth,

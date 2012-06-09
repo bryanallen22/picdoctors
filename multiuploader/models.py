@@ -14,9 +14,9 @@ import logging
 #import pdb
 
 
-###########################################
+################################################################################
 # Pic
-###########################################
+################################################################################
 
 class Pic(models.Model):
     group      = models.ForeignKey('Group', blank=True, null=True)
@@ -91,41 +91,55 @@ class Pic(models.Model):
         return ContentFile(tmp_file.getvalue())
 
 
-###########################################
+################################################################################
 # Batch
-###########################################
+################################################################################
 class Batch(models.Model):
     # This can be blank if they haven't logged in / created a user yet:
-    user    = models.OneToOneField(User, blank=True, null=True)
+    user        = models.OneToOneField(User, blank=True, null=True)
 
-    created = models.DateField(auto_now_add=True)
-    updated = models.DateField(auto_now=True)
+    created     = models.DateField(auto_now_add=True)
+    updated     = models.DateField(auto_now=True)
+    description = models.TextField(blank=True)
 
 
-###########################################
+################################################################################
 # Markup
-###########################################
+#
+# Stuff that the user 
+################################################################################
 class Markup(models.Model):
-    pic     = models.ForeignKey('Pic')
+    pic         = models.ForeignKey('Pic')
 
-    created = models.DateField(auto_now_add=True)
-    # Leave room for various patterns: '#049CDB' such as 'rgb(100, 100, 100)'
-    left    = models.IntegerField(blank=False)
-    top     = models.IntegerField(blank=False)
-    width   = models.IntegerField(blank=False)
-    height  = models.IntegerField(blank=False)
+    created     = models.DateField(auto_now_add=True)
+    # Leave     room for various patterns: '#049CDB' such as 'rgb(100, 100, 100)'
+    left        = models.IntegerField(blank=False)
+    top         = models.IntegerField(blank=False)
+    width       = models.IntegerField(blank=False)
+    height      = models.IntegerField(blank=False)
+    description = models.TextField(blank=True)
 
 
-###########################################
+################################################################################
 # Group
-###########################################
+#
+# This represents a single output (photoshopped) image. That means that it can
+# be multiple pics or even a single pic.
+################################################################################
 class Group(models.Model):
-    created = models.DateField(auto_now_add=True)
+    created         = models.DateField(auto_now_add=True)
+
+    # Each batch starts grouping at id=1 (in js), and we keep track of that
+    # number here.
+    client_group_id = models.IntegerField(blank=False)
 
 
-###########################################
+################################################################################
 # UserProfile
-###########################################
+#
+#  Information about the user goes here. This table goes in conjuction with
+#  the User table, which is managed by django
+################################################################################
 class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(User)
