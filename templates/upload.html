@@ -21,7 +21,12 @@
           </div>
         {% else %}
           {% for pic in pics %}
-            <div class="pic_container" data-category=" {{ ungroupedId }}">
+            {# These are hidden and unhidden after isotope has run #}
+            {% if pic.group.client_group_id %}
+              <div class="pic_container" style="display:none;" data-category="{{ pic.group.client_group_id }}" uuid="{{ pic.uuid }}">
+            {% else %}
+              <div class="pic_container" style="display:none;" data-category="{{ ungroupedId }}" uuid="{{ pic.uuid }}">
+            {% endif %}
               <div class="contents">
                 <div class="preview">
                   <img src="{{pic.get_thumb_url}}">

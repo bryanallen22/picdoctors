@@ -47,7 +47,7 @@ def pic_json(pic):
 @render_to('upload.html')
 def upload_page(request):
     batch_id = get_batch_id(request)
-    logging.info('got to %s, batch_id is %d' % (__name__, batch_id))
+    logging.info('batch_id is %d' % batch_id)
     pics = Pic.objects.filter( batch__exact=batch_id );
     return { "pics" : pics, "ungroupedId" :  ungroupedId }
 
@@ -105,7 +105,26 @@ def upload_handler(request):
 @csrf_exempt
 def group_handler(request):
     if request.method == 'POST':
-        pass
+        data = simplejson.loads(request.body)
+
+        # Create a group
+        g = Group()
+        g.client_group_id = data['groupid']
+        g.save()
+
+        # Update the pictures
+        pics = Pic.objects.filter(uuid__in=data['uuids']);
+        ### We could update all of these at once with pics.update(group=g), which
+        ### would be more efficient, but I'm not going to for two reasons:
+        ###   1) Doesn't call save() method or send pre_save or post_save signals.
+        ###      Not a big deal today, but those look useful for later
+        ###   2) I just don't expect grouping a small handful of pictures to
+        ###      end up being a database hog.
+        for pic in pics:
+            pic.group=g
+            pic.save()
+
+        return HttpResponse('{ "success" : true }', mimetype='application/json')
     else: # DELETE
         pass
 

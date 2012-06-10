@@ -25,7 +25,7 @@ class Pic(models.Model):
     created    = models.DateField(auto_now_add=True)
     updated    = models.DateField(auto_now=True)
     title      = models.CharField(max_length=60, blank=True, null=True)
-    uuid       = models.CharField(max_length=32, blank=False, unique=True)
+    uuid       = models.CharField(max_length=32, blank=False, unique=True, db_index=True)
     image      = models.ImageField(upload_to='pics/')
     thumbnail  = models.ImageField(upload_to='thumbs/')
 

@@ -171,8 +171,6 @@ var IsoWrapper = (function($) {
 
   my.startIso = function()
   {
-    var qty = $isocontainer.find(".pic_container").size();
-
     // Start isotope
     $isocontainer.isotope({
       // options
@@ -190,22 +188,35 @@ var IsoWrapper = (function($) {
       sortBy : 'category',
       resizesContainer : true
     });
+
+    // The images are preloaded (server side), but they are left hidden
+    // so they don't jump around after the JS has loaded. Now that we've
+    // started isotope, let's unhide them
+    $isocontainer.find(".pic_container").show();
   }
 
   my.sendGroupInfo = function(method, groupid, uuids) {
-    console.log("sendGroupInfo: | " + method + " | " + groupid);
-    console.log("  uuids:");
-    console.log(uuids);
 
-    /*
+    json = JSON.stringify(
+        {
+          "method"  : method,
+          "groupid" : groupid,
+          "uuids"   : uuids,
+        }
+    );
+
+    console.log(json);
+
     $.ajax({
       type: 'POST',
-      url: url,
-      data: data,
-      success: success,
-      dataType: dataType
+      url: '/group_handler/',
+      data: json,
+      success : function(data, textStatus) {
+        //console.log("I got data back from /group_handler/ -- have a look:");
+        //console.log(data);
+        //console.log(textStatus);
+      }
     });
-    */
   }
 
   /*
