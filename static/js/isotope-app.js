@@ -195,20 +195,19 @@ var IsoWrapper = (function($) {
     $isocontainer.find(".pic_container").show();
   }
 
-  my.sendGroupInfo = function(method, groupid, uuids) {
+  my.sendGroupInfo = function(method, group_id, uuids) {
 
     json = JSON.stringify(
         {
-          "method"  : method,
-          "groupid" : groupid,
-          "uuids"   : uuids,
+          "group_id" : group_id,
+          "uuids"    : uuids,
         }
     );
 
-    console.log(json);
+    //console.log(method + ":" + json);
 
     $.ajax({
-      type: 'POST',
+      type: method,
       url: '/group_handler/',
       data: json,
       success : function(data, textStatus) {
@@ -306,14 +305,14 @@ $(function(){
     else { // "Ungroup"
       // .first() used, though we only ever expect 1 group to be selected
       var border = $(".group_border.selected").first();
-      groupid = $(border).attr("data-category");
+      group_id = $(border).attr("data-category");
       var uuids = [];
 
       // Get rid of the border
       $(border).remove();
 
       // Ungroup individual elements that have the appropriate id
-      var ungroup_pics = $(".pic_container[data-category=" + groupid + "]");
+      var ungroup_pics = $(".pic_container[data-category=" + group_id + "]");
       ungroup_pics.attr("data-category", ungroupedId);
       ungroup_pics.each( function() {
         uuids.push( $(this).attr("uuid") );
@@ -325,7 +324,7 @@ $(function(){
       /* So, to even get grouped in the first place, we have to
        * be fully downloaded. This means we should be able to
        * disband the group immediately */
-      IsoWrapper.sendGroupInfo("DELETE", groupid, uuids);
+      IsoWrapper.sendGroupInfo("DELETE", group_id, uuids);
     }
   });
 
@@ -408,9 +407,9 @@ $(function(){
 var setNextGroupId = function() {
   var max = 0;
   $(".pic_container").each( function () {
-    var myId = $(this).attr("data-category");
+    var myId = parseInt($(this).attr("data-category"));
     if( (myId > max) && (myId < ungroupedId) ) {
-      max = $(this).attr("data-category");
+      max = myId;
     }
   });
   nextGroupId = max + 1;

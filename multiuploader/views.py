@@ -15,10 +15,8 @@ from django.core.files.uploadedfile import UploadedFile
 from models import Pic
 from models import Batch
 from models import Markup
-from models import Group
 from models import UserProfile
-
-ungroupedId = 100000; # Make sure that this matches isotope-app.js
+from models import ungroupedId
 
 def get_batch_id(request):
     # If there isn't already a batch assigned, assign it now
@@ -104,27 +102,24 @@ def upload_handler(request):
 # TODO - make this csrf_protect
 @csrf_exempt
 def group_handler(request):
+    data = simplejson.loads(request.body)
+
     if request.method == 'POST':
-        data = simplejson.loads(request.body)
-
         # Create a group
-        g = Group()
-        g.client_group_id = data['groupid']
-        g.save()
-
-        # Update the pictures
-        pics = Pic.objects.filter(uuid__in=data['uuids']);
-        ### We could update all of these at once with pics.update(group=g), which
-        ### would be more efficient, but I'm not going to for two reasons:
-        ###   1) Doesn't call save() method or send pre_save or post_save signals.
-        ###      Not a big deal today, but those look useful for later
-        ###   2) I just don't expect grouping a small handful of pictures to
-        ###      end up being a database hog.
-        for pic in pics:
-            pic.group=g
-            pic.save()
-
-        return HttpResponse('{ "success" : true }', mimetype='application/json')
+        group_id = data['group_id']
     else: # DELETE
-        pass
+        group_id = ungroupedId
 
+    # Update the pictures
+    pics = Pic.objects.filter(uuid__in=data['uuids']);
+    ### We could update all of these at once with pics.update(), which
+    ### would be more efficient, but I'm not going to for two reasons:
+    ###   1) Doesn't call save() method or send pre_save or post_save signals.
+    ###      Not a big deal today, but those look useful for later
+    ###   2) I just don't expect grouping a small handful of pictures to
+    ###      end up being a database hog.
+    for pic in pics:
+        pic.browser_group_id = group_id
+        pic.save()
+
+    return HttpResponse('{ "success" : true }', mimetype='application/json')

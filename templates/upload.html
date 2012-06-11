@@ -22,8 +22,8 @@
         {% else %}
           {% for pic in pics %}
             {# These are hidden and unhidden after isotope has run #}
-            {% if pic.group.client_group_id %}
-              <div class="pic_container" style="display:none;" data-category="{{ pic.group.client_group_id }}" uuid="{{ pic.uuid }}">
+            {% if pic.browser_group_id %}
+              <div class="pic_container" style="display:none;" data-category="{{ pic.browser_group_id }}" uuid="{{ pic.uuid }}">
             {% else %}
               <div class="pic_container" style="display:none;" data-category="{{ ungroupedId }}" uuid="{{ pic.uuid }}">
             {% endif %}

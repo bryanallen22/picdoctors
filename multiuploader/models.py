@@ -13,21 +13,23 @@ import logging
 
 #import pdb
 
+ungroupedId = 100000; # Make sure that this matches isotope-app.js
 
 ################################################################################
 # Pic
 ################################################################################
 
 class Pic(models.Model):
-    group      = models.ForeignKey('Group', blank=True, null=True)
-    batch      = models.ForeignKey('Batch', blank=True, null=True)
+    batch            = models.ForeignKey('Batch', blank=True, null=True)
 
-    created    = models.DateField(auto_now_add=True)
-    updated    = models.DateField(auto_now=True)
-    title      = models.CharField(max_length=60, blank=True, null=True)
-    uuid       = models.CharField(max_length=32, blank=False, unique=True, db_index=True)
-    image      = models.ImageField(upload_to='pics/')
-    thumbnail  = models.ImageField(upload_to='thumbs/')
+    uuid             = models.CharField(max_length=32, blank=False,
+                                        unique=True, db_index=True)
+    created          = models.DateField(auto_now_add=True)
+    updated          = models.DateField(auto_now=True)
+    title            = models.CharField(max_length=60, blank=True, null=True)
+    image            = models.ImageField(upload_to='pics/')
+    thumbnail        = models.ImageField(upload_to='thumbs/')
+    browser_group_id = models.IntegerField(blank=False, default=ungroupedId)
 
     def __unicode__(self):
         return self.title
@@ -118,20 +120,6 @@ class Markup(models.Model):
     width       = models.IntegerField(blank=False)
     height      = models.IntegerField(blank=False)
     description = models.TextField(blank=True)
-
-
-################################################################################
-# Group
-#
-# This represents a single output (photoshopped) image. That means that it can
-# be multiple pics or even a single pic.
-################################################################################
-class Group(models.Model):
-    created         = models.DateField(auto_now_add=True)
-
-    # Each batch starts grouping at id=1 (in js), and we keep track of that
-    # number here.
-    client_group_id = models.IntegerField(blank=False)
 
 
 ################################################################################
