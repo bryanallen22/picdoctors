@@ -14,7 +14,8 @@
           {% templatetag openvariable %}/if{% templatetag closevariable %}
         </div>
       {% templatetag openvariable %}else{% templatetag closevariable %}
-        <div class="progress" style="height: 6px; position:relative; margin: -18px 6px 0px;">
+        {# These are very carefully tuned margins. Beware the change! #}
+        <div class="progress" style="height: 6px; position:relative; margin: -18px 6px 7px;">
           {# There's some silly webkit bug that requires these inner stylings, or else my rounded corners go away once I #}
           {# add 'position:relative' above #}
           <div class="bar" style="width: 0%; -moz-border-radius: inherit; -webkit-border-radius: inherit; border-radius: inherit;"></div>

@@ -11,8 +11,6 @@ from django.contrib.auth.models import User
 
 import logging
 
-#import pdb
-
 ungroupedId = 100000; # Make sure that this matches isotope-app.js
 
 ################################################################################
@@ -71,7 +69,6 @@ class Pic(models.Model):
     # not totally understood yet. Whee for copy paste google code!
     # (ducks his head in shame)
     def create_thumbnail(self, file, width, height):
-        #pdb.set_trace()
         logging.info('got to %s' % __name__)
         try:
             size = width, height

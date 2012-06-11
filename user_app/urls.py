@@ -1,9 +1,9 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from multiuploader.views import upload_handler
-from multiuploader.views import group_handler
-from multiuploader.views import upload_page
-from multiuploader.views import need_cookies
+from user_app.views import upload_handler
+from user_app.views import group_handler
+from user_app.views import upload_page
+from user_app.views import need_cookies
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin

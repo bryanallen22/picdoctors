@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     url(r'^markup$', markup),
 
     # Let upload stuff handle it's own views:
-    (r'', include('multiuploader.urls')),
+    (r'', include('user_app.urls')),
 
 )
 

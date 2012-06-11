@@ -135,7 +135,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'storages',
     'debug_toolbar',
-    'multiuploader',
+    'user_app',
 )
 
 # A sample logging configuration. The only tangible logging
