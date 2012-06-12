@@ -203,25 +203,17 @@
                 //    parseInt(data.loaded / data.total * 100, 10)
                 //);
 
-                /*
                 var val = parseInt(data.loaded / data.total * 100, 10);
                 var bar = $('#totalprogress');
                 if(val >= 100)
                 {
-                  bar.removeClass('progress-danger');
-                  bar.addClass('progress-success');
                   $('#next').removeClass('disabled');
                 }
-                else if ( bar.hasClass('progress-success') )
+                else
                 {
-                  bar.removeClass('progress-success');
-                  bar.addClass('progress-danger');
                   $('#next').addClass('disabled');
                 }
-                bar.find('.bar').css('width', val + '%');
-
-                console.log('progressall: val=' + val);
-                */
+                //console.log('progressall: val=' + val);
             },
             // Callback for uploads start, equivalent to the global ajaxStart event:
             start: function () {

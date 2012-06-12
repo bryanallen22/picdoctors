@@ -35,7 +35,7 @@ var BorderGroups = (function ($) {
         border.height( borders[groupId]['height'] );
         border.css({ left: (borders[groupId]['x']+padding),
                       top: (borders[groupId]['y']+padding) });
-        border.attr("data-category", groupId.toString());
+        border.attr("group_id", groupId.toString());
         border.appendTo($isocontainer);
       }
     }
@@ -124,7 +124,7 @@ $.extend( $.Isotope.prototype, {
         props.y = props.height;
       }
       
-      BorderGroups.addElement(  $this.attr("data-category"),
+      BorderGroups.addElement(  $this.attr("group_id"),
                                  props.x,
                                  props.y,
                                  atomW,
@@ -182,7 +182,7 @@ var IsoWrapper = (function($) {
       },
       getSortData : {
         category : function( $elem ) {
-          return parseInt($elem.attr('data-category'));
+          return parseInt($elem.attr('group_id'));
         }
       },
       sortBy : 'category',
@@ -192,7 +192,11 @@ var IsoWrapper = (function($) {
     // The images are preloaded (server side), but they are left hidden
     // so they don't jump around after the JS has loaded. Now that we've
     // started isotope, let's unhide them
-    $isocontainer.find(".pic_container").show();
+    var pics = $isocontainer.find(".pic_container")
+    if(pics.length > 0) {
+      $("#next").removeClass('disabled');
+    }
+    pics.show();
   }
 
   my.sendGroupInfo = function(method, group_id, uuids) {
@@ -221,7 +225,7 @@ var IsoWrapper = (function($) {
   /*
    * Look for groups with fully uploaded pictures
    */
-  my.checkForCompleteGroup= function(group_id)
+  my.checkForCompleteGroup = function(group_id)
   {
     //console.log('checkForCompleteGroup: group_id=' + group_id);
     if(group_id < ungroupedId) {
@@ -229,7 +233,7 @@ var IsoWrapper = (function($) {
        * if it's the last pic in it's group to finish */
       var group_done = true;
       var uuids = [];
-      var group_pics = $(".pic_container[data-category=" + group_id + "]");
+      var group_pics = $(".pic_container[group_id=" + group_id + "]");
       group_pics.each( function() {
         var my_uuid = $(this).attr("uuid");
         //console.log('uuid: ' + my_uuid);
@@ -254,7 +258,7 @@ var IsoWrapper = (function($) {
   my.picDownloaded = function(el)
   {
     /* Do we need to upload group information? */
-    var group_id = el.attr("data-category");
+    var group_id = el.attr("group_id");
     my.checkForCompleteGroup(group_id);
 
     //console.log("This just finished download:");
@@ -289,7 +293,7 @@ $(function(){
     if( $(this).text() == "Group" ) {
       var selected_pics = $('.pic_container.selected');
       selected_pics.each( function() {
-        $(this).attr("data-category", nextGroupId.toString() );
+        $(this).attr("group_id", nextGroupId.toString() );
       } );
 
       selected_pics.removeClass('selected');
@@ -305,15 +309,15 @@ $(function(){
     else { // "Ungroup"
       // .first() used, though we only ever expect 1 group to be selected
       var border = $(".group_border.selected").first();
-      group_id = $(border).attr("data-category");
+      group_id = $(border).attr("group_id");
       var uuids = [];
 
       // Get rid of the border
       $(border).remove();
 
       // Ungroup individual elements that have the appropriate id
-      var ungroup_pics = $(".pic_container[data-category=" + group_id + "]");
-      ungroup_pics.attr("data-category", ungroupedId);
+      var ungroup_pics = $(".pic_container[group_id=" + group_id + "]");
+      ungroup_pics.attr("group_id", ungroupedId);
       ungroup_pics.each( function() {
         uuids.push( $(this).attr("uuid") );
       });
@@ -337,7 +341,7 @@ $(function(){
   // a picture (browser select, not my select)
   $('.pic_container').live('click', function(evt) {
     if( (evt.which == 1 ) && ( $(this).find('.error').size() == 0 ) ){ // left click
-      var groupId = $(this).attr("data-category");
+      var groupId = $(this).attr("group_id");
       if( groupId < ungroupedId ) {
         // unselect all other groups...
         for(var i=1; i < nextGroupId; i++) {
@@ -379,13 +383,13 @@ $(function(){
   });
 
   $('.pic_container').live('mouseenter', function(evt) {
-    if($(this).attr("data-category") == ungroupedId) {
+    if($(this).attr("group_id") == ungroupedId) {
       $(this).find('.del_pic').show();
     }
   });
 
   $('.pic_container').live('mouseleave', function(evt) {
-    if($(this).attr("data-category") == ungroupedId) {
+    if($(this).attr("group_id") == ungroupedId) {
       $(this).find('.del_pic').hide();
     }
   });
@@ -407,7 +411,7 @@ $(function(){
 var setNextGroupId = function() {
   var max = 0;
   $(".pic_container").each( function () {
-    var myId = parseInt($(this).attr("data-category"));
+    var myId = parseInt($(this).attr("group_id"));
     if( (myId > max) && (myId < ungroupedId) ) {
       max = myId;
     }
