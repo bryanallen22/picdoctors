@@ -120,4 +120,18 @@ def group_handler(request):
         pic.browser_group_id = group_id
         pic.save()
 
-    return HttpResponse('{ "success" : true }', mimetype='application/json')
+    if pics is not None:
+        return HttpResponse('{ "success" : true }', mimetype='application/json')
+    else:
+        return HttpResponse('{ "success" : false }', mimetype='application/json')
+
+# TODO - make this csrf_protect
+@csrf_exempt
+def delete_handler(request):
+    if request.method == 'DELETE':
+        data = simplejson.loads(request.body)
+        pic  = Pic.objects.filter(uuid__exact=data['uuid']);
+        if pic:
+            pic.delete()
+            return HttpResponse('{ "success" : true }', mimetype='application/json')
+    return HttpResponse('{ "success" : false }', mimetype='application/json')

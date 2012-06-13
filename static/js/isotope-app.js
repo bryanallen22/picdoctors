@@ -201,7 +201,7 @@ var IsoWrapper = (function($) {
 
   my.sendGroupInfo = function(method, group_id, uuids) {
 
-    json = JSON.stringify(
+    var json = JSON.stringify(
         {
           "group_id" : group_id,
           "uuids"    : uuids,
@@ -397,8 +397,29 @@ $(function(){
   $('.del_pic').live('click', function(evt) {
     // TODO -- send some ajax up to do delete on server
     var pic_container = $(this).parent().parent();
+    var uuid = pic_container.attr("uuid");
+
+    // Am I still uploading? If so, time to cancel
+    // TODO -- Tie into _cancelHandler
+
+    if(uuid) {
+      var json = JSON.stringify( { "uuid" : uuid, } );
+
+      $.ajax({
+        type: 'DELETE',
+        url: '/delete_handler/',
+        data: json,
+        success : function(data, textStatus) {
+          //console.log("I got data back from /delete_handler/ -- have a look:");
+          //console.log(data);
+          //console.log(textStatus);
+        }
+      });
+    }
+
+    // Client side removal
     $isocontainer.isotope('remove', pic_container);
-    $(this).parent().remove();
+    pic_container.remove();
     IsoWrapper.relayout();
   });
 });
