@@ -19,10 +19,10 @@ urlpatterns = patterns('',
 
     # Clockstone template pages -- keep 'em the same name to be consistent with the internal links
     url(r'^$', index),
-    url(r'^markup$', markup),
 
-    # Let upload stuff handle it's own views:
-    (r'', include('user_app.urls')),
+    # Let these handle their own views:
+    (r'', include('upload.urls')),
+    (r'', include('markup.urls')),
 
 )
 

@@ -101,34 +101,3 @@ class Batch(models.Model):
     updated     = models.DateField(auto_now=True)
     description = models.TextField(blank=True)
 
-
-################################################################################
-# Markup
-#
-# Stuff that the user 
-################################################################################
-class Markup(models.Model):
-    pic         = models.ForeignKey('Pic')
-
-    created     = models.DateField(auto_now_add=True)
-    # Leave     room for various patterns: '#049CDB' such as 'rgb(100, 100, 100)'
-    left        = models.IntegerField(blank=False)
-    top         = models.IntegerField(blank=False)
-    width       = models.IntegerField(blank=False)
-    height      = models.IntegerField(blank=False)
-    description = models.TextField(blank=True)
-
-
-################################################################################
-# UserProfile
-#
-#  Information about the user goes here. This table goes in conjuction with
-#  the User table, which is managed by django
-################################################################################
-class UserProfile(models.Model):
-    # This field is required.
-    user = models.OneToOneField(User)
-
-    # Other fields here
-    accepted_eula = models.BooleanField()
-    favorite_animal = models.CharField(max_length=20, default="Dragons.")

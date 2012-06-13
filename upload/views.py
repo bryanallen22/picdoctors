@@ -14,8 +14,6 @@ from django.core.files.uploadedfile import UploadedFile
 
 from models import Pic
 from models import Batch
-from models import Markup
-from models import UserProfile
 from models import ungroupedId
 
 def get_batch_id(request):
