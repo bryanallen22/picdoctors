@@ -9,6 +9,8 @@ from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.models import User
 
+from util.models import DeleteMixin
+
 import logging
 
 ungroupedId = 100000; # Make sure that this matches isotope-app.js
@@ -17,7 +19,7 @@ ungroupedId = 100000; # Make sure that this matches isotope-app.js
 # Pic
 ################################################################################
 
-class Pic(models.Model):
+class Pic(DeleteMixin):
     batch            = models.ForeignKey('Batch', blank=True, null=True)
 
     uuid             = models.CharField(max_length=32, blank=False,
@@ -93,7 +95,7 @@ class Pic(models.Model):
 ################################################################################
 # Batch
 ################################################################################
-class Batch(models.Model):
+class Batch(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
     user        = models.OneToOneField(User, blank=True, null=True)
 

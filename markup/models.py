@@ -1,13 +1,14 @@
 from django.db import models
 
+from util.models import DeleteMixin
 from upload.models import Pic
 
 ################################################################################
 # Markup
 #
-# Stuff that the user 
+# Stuff that the user says should change about their picture
 ################################################################################
-class Markup(models.Model):
+class Markup(DeleteMixin):
     pic         = models.ForeignKey(Pic)
 
     created     = models.DateField(auto_now_add=True)
