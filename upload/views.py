@@ -1,7 +1,6 @@
 import logging
 
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.shortcuts import render_to_response, get_object_or_404
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 
@@ -32,7 +31,7 @@ def get_batch(request):
 def pic_json(pic):
     return {"name"             : pic.title, 
             "size"             : pic.get_size(),
-            "url"              : pic.get_url(),
+            "url"              : pic.get_preview_url(),
             "thumbnail_url"    : pic.get_thumb_url(),
             # TODO - url lookup here
             "delete_url"       : '/delete_pic/' + pic.uuid,

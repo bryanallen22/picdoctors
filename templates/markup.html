@@ -1,62 +1,33 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-  <title>Mark up your picture</title>
-  <style type="text/css">
- 
-    #photo-container {
-      position: relative ;
-      }
- 
-    #photo-container img {
-      display: block ;
-      }
- 
-    a.tag {
-      border: 1px solid #FFFFFF ;
-      height: 1px ;
-      position: absolute ;
-      width: 1px ;
-      z-index: 100 ;
-      }
- 
-    a.selected-tag {
-      border-color: #FFFFFF ;
-      z-index: 200 ;
-      }
- 
-    div.hide-tags a.tag {
-      display: none ;
-      }
- 
-    div.tag-message {
-      background-color: #212121 ;
-      border: 1px solid #000000 ;
-      color: #F0F0F0 ;
-      display: none ;
-      font-family: verdana ;
-      font-size: 12px ;
-      padding: 5px 10px 5px 10px ;
-      position: absolute ;
-      white-space: nowrap ;
-      z-index: 200 ;
-      }
- 
-  </style>
-  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
-  <script type="text/javascript" src="/static/js/markup.js"></script>
-</head>
-<body>
- 
-  <h1>
-    Flickr-Style Photo Tagging With jQuery
-  </h1>
- 
-  <div id="photo-container" class="hide-tags">
-    <!-- <img src="./sexy.jpg" width="520" height="347" /> -->
-    <img src='/static/images/slide_4.jpg' height=400 width=600 />
+{% extends 'base.html' %}
+
+{% block styles %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/isotope.css" />
+  {# <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css"> #}
+  {# <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/base/jquery-ui.css" id="theme"> #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class="row">
+  <div class="span9">
+    
   </div>
- 
-</body>
-</html>
+  <div class="span2 fileupload-buttonbar">
+    <div style="position:fixed; width:130px;">
+      <a id="next" href="/markup/" class="btn btn-primary btn-large" href="#" style="display: block; margin-top: 120px;">Next</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {# Isotope stuff: #}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/json2.js"></script>
+{% comment %}
+{% endcomment %}
+{% endblock %}
 

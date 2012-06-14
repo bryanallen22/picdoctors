@@ -27,31 +27,39 @@ class Pic(DeleteMixin):
     created          = models.DateField(auto_now_add=True)
     updated          = models.DateField(auto_now=True)
     title            = models.CharField(max_length=60, blank=True, null=True)
-    image            = models.ImageField(upload_to='pics/')
-    thumbnail        = models.ImageField(upload_to='thumbs/')
     browser_group_id = models.IntegerField(blank=False, default=ungroupedId)
+
+    original         = models.ImageField(upload_to='user_originals/')
+    preview          = models.ImageField(upload_to='user_preview/')
+    thumbnail        = models.ImageField(upload_to='user_thumbs/')
 
     def __unicode__(self):
         return self.title
 
-    def set_file(self, file):
+    def set_file(self, myfile):
         my_uuid = uuid.uuid4().hex # 32 unique hex chars
 
-        file_root, file_ext = os.path.splitext(file.name)
+        file_root, file_ext = os.path.splitext(myfile.name)
         file_name = my_uuid + file_ext.lower() # append '.jpg', etc
-        file.name = file_name
+        myfile.name = file_name
 
         self.uuid      = my_uuid
-        self.title     = file_root # Not the full file name, just the root
-        self.image.save(file_name, file)
-        thumb = self.create_thumbnail(file, 200, 200)
+        self.title     = file_root # Not the full myfile name, just the root
+
+        self.original.save(file_name, myfile)
+        thumb = self.create_thumbnail(myfile, 200, 200)
         self.thumbnail.save(file_name, thumb)
+        preview = self.create_thumbnail(myfile, 800, 800)
+        self.preview.save(file_name, preview)
 
     def get_size(self):
-        return self.image.size
+        return self.original.size
 
-    def get_url(self):
-        return Pic.aws_public_url(self.image.url)
+    def get_original_url(self):
+        return Pic.aws_public_url(self.original.url)
+
+    def get_preview_url(self):
+        return Pic.aws_public_url(self.original.url)
 
     def get_thumb_url(self):
         return Pic.aws_public_url(self.thumbnail.url)
