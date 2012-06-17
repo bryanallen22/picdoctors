@@ -59,7 +59,7 @@ class Pic(DeleteMixin):
         return Pic.aws_public_url(self.original.url)
 
     def get_preview_url(self):
-        return Pic.aws_public_url(self.original.url)
+        return Pic.aws_public_url(self.preview.url)
 
     def get_thumb_url(self):
         return Pic.aws_public_url(self.thumbnail.url)

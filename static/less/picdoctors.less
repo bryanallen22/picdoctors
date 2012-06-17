@@ -1,3 +1,8 @@
+@import "../bootstrap_less/variables.less";
+
+/*****************************
+  All pages
+******************************/
 .navbar {
   .container {
     position:relative;
@@ -40,6 +45,9 @@
   }
 }
 
+/*****************************
+  Upload page
+******************************/
 #isocontainer {
   position: relative;
   border-style: dashed;
@@ -172,5 +180,33 @@
     margin: 6px;
   }
   */
+}
+
+/*****************************
+  Markup page
+******************************/
+
+.markup_outer {
+  margin-bottom: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  .markup_container {
+    position: relative;
+    img {
+
+    }
+
+    .markup {
+      position: absolute;
+      left: -20px;
+      top: 35px;
+      height: 200px;
+      width: 300px;
+      border: 4px solid @pink;
+      border-radius: 6px;
+      //box-shadow: 2px 2px 3px #666;
+      box-shadow: 0 0 9px 1px @grayLighter;
+    }
+  }
 }
 

@@ -58,6 +58,11 @@ echo "====="
 pip install -r ../requirements.txt
 
 
+echo "====="
+echo "Installing npm, less, shint, recess, and uglify-js..."
+echo "====="
+sudo apt-get install npm -y
+sudo npm install -g less jshint recess uglify-js
 
 echo "====="
 echo "done."
