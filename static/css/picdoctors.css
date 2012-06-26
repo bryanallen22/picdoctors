@@ -181,19 +181,11 @@
 }
 .markup_outer .markup_container .markup {
   position: absolute;
-  left: -20px;
+  left: 20px;
   top: 35px;
   height: 200px;
   width: 300px;
   border: 4px solid #c3325f;
   border-radius: 6px;
-  box-shadow: 0 0 9px 1px #eeeeee;
-  /*
-      .inner {
-        height: 198px;
-        width: 298px;
-        border: 1px solid @white;
-      }
-      */
-
+  box-shadow: 0 0 10px 1px #eeeeee;
 }

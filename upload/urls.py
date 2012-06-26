@@ -5,6 +5,7 @@ from upload.views import delete_handler
 from upload.views import group_handler
 from upload.views import upload_page
 from upload.views import need_cookies
+from upload.views import finish_batch
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -18,6 +19,7 @@ urlpatterns = patterns('',
     # For grouping images
     url(r'^delete_handler/$', delete_handler, name='delete_handler'),
     url(r'^group_handler/$',  group_handler,  name='group_handler'),
-    url(r'^needcookies/$',    need_cookies,   name='need_cookies'),
+    url(r'^need_cookies/$',   need_cookies,   name='need_cookies'),
+    url(r'^finish_batch/$',   finish_batch,   name='finish_batch'),
 )
 

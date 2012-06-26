@@ -28,6 +28,7 @@ class Pic(DeleteMixin):
     updated          = models.DateField(auto_now=True)
     title            = models.CharField(max_length=60, blank=True, null=True)
     browser_group_id = models.IntegerField(blank=False, default=ungroupedId)
+    markup_group_id  = models.IntegerField(blank=True, null=True)
 
     original         = models.ImageField(upload_to='user_originals/')
     preview          = models.ImageField(upload_to='user_preview/')
