@@ -135,37 +135,3 @@ def delete_handler(request):
             return HttpResponse('{ "success" : true }', mimetype='application/json')
     return HttpResponse('{ "success" : false }', mimetype='application/json')
 
-# TODO - make this csrf_protect
-@csrf_exempt
-def finish_batch(request):
-    # Sets markup_group_id for each picture in the batch. Note that this
-    # will quite happily override any existing markup_group_id that was
-    # already set.
-    if request.method == 'POST':
-        batch_id = get_batch_id(request)
-        pics = Pic.objects.filter( batch__exact=batch_id );
-
-        # This doesn't feel like the most efficient way to get a sorted,
-        # unique list, but it works
-        browser_ids = sorted(list(set([pic.browser_group_id for pic in pics])))
-
-        next_markup_group_id = 1
-        for id in browser_ids:
-            # Find all pics that match this id
-            matches = pics.filter( browser_group_id__exact=id )
-            if id is not ungroupedId:
-                # All matching pics get next_markup_group_id
-                for pic in matches:
-                    pic.markup_group_id = next_markup_group_id
-                    pic.save()
-                next_markup_group_id += 1
-            else:
-                # All ungrouped pics get their own markup_group_id
-                for pic in matches:
-                    pic.markup_group_id = next_markup_group_id
-                    pic.save()
-                    next_markup_group_id += 1
-
-        return HttpResponse('{ "success" : true }', mimetype='application/json')
-    else:
-        return HttpResponse('{ "success" : false }', mimetype='application/json')

@@ -287,20 +287,6 @@ $(function(){
       content   : "Click individual images to select them, and then click \"Group\""
     } );
 
-  $('#next').click( function(evt) {
-
-    $.ajax({
-      type: 'POST',
-      url: '/finish_batch/',
-      data: "",
-      success : function(data, textStatus) {
-        //console.log("I got data back from /group_handler/ -- have a look:");
-        //console.log(data);
-        //console.log(textStatus);
-      }
-    });
-  });
-
   /* Group button */
   $('#group').click( function(evt) {
 

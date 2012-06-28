@@ -7,6 +7,6 @@ from markup.views import markup_page
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^markup/$', markup_page, name='markup'),
+    url(r'^markup/(?P<group_id>\d+)/$', markup_page, name='markup'),
 )
 
