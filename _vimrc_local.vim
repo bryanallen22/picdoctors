@@ -13,6 +13,4 @@ map <silent> gc* mZ:call setqflist([])<CR>*N:Ack --css --literal --word-regexp <
 map <silent> gl* mZ:call setqflist([])<CR>*N:Ack --less --literal --word-regexp <cword> **/*<CR><CR>'Z:copen<CR>
 
 " Indentation prefs:
-set tabstop=2
-set shiftwidth=2
-set expandtab
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
