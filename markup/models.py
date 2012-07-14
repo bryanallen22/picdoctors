@@ -17,5 +17,7 @@ class Markup(DeleteMixin):
     top         = models.IntegerField(blank=False)
     width       = models.IntegerField(blank=False)
     height      = models.IntegerField(blank=False)
+    color       = models.CharField(max_length=8)
     description = models.TextField(blank=True)
+
 

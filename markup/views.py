@@ -16,7 +16,7 @@ def set_group_ids(request, batch_id):
     # Sets group_id for each picture in the batch. Note that this
     # will quite happily override any existing group_id that was
     # already set.
-    pics = Pic.objects.filter( batch__exact=batch_id );
+    pics = Pic.objects.filter( batch__exact=batch_id )
 
     # This doesn't feel like the most efficient way to get a sorted,
     # unique list, but it works
@@ -26,7 +26,7 @@ def set_group_ids(request, batch_id):
     for id in browser_ids:
         # Find all pics that match this id
         matches = pics.filter( browser_group_id__exact=id )
-        if id is not ungroupedId:
+        if id != ungroupedId:
             # All matching pics get next_group_id
             for pic in matches:
                 pic.group_id = next_group_id
@@ -59,7 +59,7 @@ def markup_page(request, group_id):
 
     pics = Pic.objects.filter( batch__exact=batch_id )
     logging.info('len(pics)=%d' % len(pics))
-    pics = pics.filter( group_id__exact=group_id );
+    pics = pics.filter( group_id__exact=group_id )
 
     if len(pics) == 0:
       # No pictures. How did they get here? Direct typing of the url?
