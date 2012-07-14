@@ -1,5 +1,17 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
+  
+  var markup_colors = [
+      /* blue      */  '#049cdb',
+      /* green     */  '#46a546',
+      /* red       */  '#9d261d',
+      /* yellow    */  '#ffc40d',
+      /* blueDark  */  '#0064cd',
+      /* orange    */  '#f89406',
+      /* pink      */  '#c3325f',
+      /* purple    */  '#7a43b6',
+  ];
+  var color_index = 0;
 
   // Our basic **Markup** model has 'left', 'top', 'width', 'height',
   // 'color', and 'description' attributes.
@@ -189,6 +201,11 @@ $(function(){
       var left = e.pageX - pic_container.offset().left;
       var top = e.pageY - pic_container.offset().top;
 
+      var color = markup_colors[color_index];
+      if( ++color_index >= markup_colors.length ) {
+        color_index = 0;
+      }
+
       /* e.currentTarget would be better, but apparently Redmond doesn't
        * like it. See here: http://www.quirksmode.org/js/events_order.html */
       pic_container.data("markup_list").create(
@@ -197,7 +214,7 @@ $(function(){
             top:     top + 'px',
             height:  '200px',
             width:   '200px',
-            color:   '#46a546',
+            color:   color,
           }
       );
     },
