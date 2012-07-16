@@ -186,31 +186,36 @@
   Markup page
 ******************************/
 
-.pic_outer {
-  margin-bottom: 40px;
-  padding-left: 20px;
-  padding-right: 20px;
+.markup_pic_outer {
+
   /* Do not, under any circumstances, change the padding or margin
-     of this .pic_container or .pic unless you are 200% certain
-     that you aren't messing things up. Careful calculation of
-     offsets for drawing markups at the right location is done, and
-     if you change them, old markups might appear at the wrong spot */
-  .pic_container {
-    position: relative;
-    img {
+     of this .markup_pic or .pic unless you are 200% certain that
+     you aren't messing things up. Careful calculation of offsets
+     for drawing markups at the right location is done, and if you
+     change them, old markups might appear at the wrong spot */
+  display: inline-block;
+  position: relative;
+  cursor: crosshair;
+  .pic {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
 
-    }
-
-    .markup {
+  .markup {
+    position: absolute;
+    //left: 20px;
+    //top: 35px;
+    //height: 200px;
+    //width: 300px;
+    //border: 4px solid @pink;
+    border-radius: 6px;
+    //box-shadow: 2px 2px 3px #666;
+    box-shadow: 0 0 10px 1px @grayLighter;
+    .markup-redx {
       position: absolute;
-      //left: 20px;
-      //top: 35px;
-      //height: 200px;
-      //width: 300px;
-      //border: 4px solid @pink;
-      border-radius: 6px;
-      //box-shadow: 2px 2px 3px #666;
-      box-shadow: 0 0 10px 1px @grayLighter;
     }
   }
 }

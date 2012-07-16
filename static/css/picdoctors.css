@@ -171,16 +171,29 @@
 /*****************************
   Markup page
 ******************************/
-.pic_outer {
-  margin-bottom: 40px;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-.pic_outer .pic_container {
+.markup_pic_outer {
+  /* Do not, under any circumstances, change the padding or margin
+     of this .markup_pic or .pic unless you are 200% certain that
+     you aren't messing things up. Careful calculation of offsets
+     for drawing markups at the right location is done, and if you
+     change them, old markups might appear at the wrong spot */
+
+  display: inline-block;
   position: relative;
+  cursor: crosshair;
 }
-.pic_outer .pic_container .markup {
+.markup_pic_outer .pic {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.markup_pic_outer .markup {
   position: absolute;
   border-radius: 6px;
   box-shadow: 0 0 10px 1px #eeeeee;
+}
+.markup_pic_outer .markup .markup-redx {
+  position: absolute;
 }

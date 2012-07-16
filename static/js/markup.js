@@ -12,6 +12,7 @@ $(function(){
       /* purple    */  '#7a43b6',
   ];
   var color_index = 0;
+  var minimum_width = 30;
 
   // Our basic **Markup** model has 'left', 'top', 'width', 'height',
   // 'color', and 'description' attributes.
@@ -30,8 +31,8 @@ $(function(){
     },
     
     initialize : function() {
-      console.log("I'm making me a Markup model!");
-      console.log(this);
+      //console.log("I'm making me a Markup model!");
+      //console.log(this);
     },
 
     clear: function() {
@@ -39,7 +40,10 @@ $(function(){
     },
 
     // TODO: get rid of this so the model is actually saved
-    sync: function () { return false; },
+    sync: function () {
+      console.log("sync:", this.attributes);
+      return false;
+    },
 
   });
 
@@ -56,7 +60,7 @@ $(function(){
     //url: '/markups/',
     
     initialize: function() {
-      this.container = null; // Will be set to our .pic_container element
+      this.container = null; // Will be set to our .markup_pic_outer element
       this.bind('add', this.addOne, this);
     },
 
@@ -79,11 +83,14 @@ $(function(){
     className: "markup",
 
     // Cache the template function for a single item.
-    template: _.template( $('#markup-template-styleattr').html().trim() ),
+    template:      _.template( $('#markup-template-styleattr').html().trim() ),
+
+    redX_template: _.template( $('#markup-template-redx').html().trim() ),
 
     // The DOM events specific to an item.
     events: {
       //"click .toggle"   : "toggleDone",
+      "click .markup-redx" : "deleteMarkup",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -91,18 +98,39 @@ $(function(){
     // and a **MarkupView** in this app, we set a direct reference on 
     // the model for convenience.
     initialize: function() {
-      console.log("And, in the morning, I'm making MarkupView(s)!");
-      console.log(this);
+      //console.log("And, in the morning, I'm making MarkupView(s)!");
+      //console.log(this);
       this.model.bind('change', this.render, this);
       this.model.bind('destroy', this.remove, this);
     },
 
     // Re-render the titles of the todo item.
     render: function() {
-      this.$el.attr('style', this.template(this.model.toJSON()));
+      //this.$el.attr('style', this.template(this.model.toJSON()));
+      this.$el.attr('style', this.template(
+            {
+              left:   this.model.get('left')   + 'px',
+              top:    this.model.get('top')    + 'px',
+              width:  this.model.get('width')  + 'px',
+              height: this.model.get('height') + 'px',
+              color:  this.model.get('color'),
+            }
+      ));
+      
+      if( this.model.get('width') > minimum_width ) {
+        // Doesn't display well on really small widths
+        this.$el.html( this.redX_template( {} ) );
+        this.$el.find('.markup-redx')
+          .css('left', this.model.get('width')-20 );
+      }
       //this.input = this.$('.edit');
       return this;
     },
+
+    deleteMarkup: function() {
+      console.log("deleteMarkup called");
+      this.model.destroy();
+    }
 
   });
 
@@ -120,7 +148,10 @@ $(function(){
     // Delegated events for creating new items, and clearing completed ones.
     events: {
       //"keypress #new-todo":  "createOnEnter",
-      "click .pic_container" : "createMarkup",
+      "mousedown  .markup_pic_outer" : "createMarkup",
+      "mousemove  .markup_pic_outer" : "resizeMarkup",
+      "mouseup    .markup_pic_outer" : "finishMarkup",
+      //"mouseleave .markup_pic_outer" : "finishMarkup",
     },
 
     // At initialization we bind to the relevant events on the `Todos`
@@ -128,9 +159,9 @@ $(function(){
     // loading any preexisting todos that might be saved in *localStorage*.
     initialize: function() {
 
-      console.log("AppView init");
+      //console.log("AppView init");
 
-      $(".pic_container").each( function(index) {
+      $(".markup_pic_outer").each( function(index) {
         // Create a MarkupList on each element
         var markup_list = new MarkupList;
         markup_list.container = $(this);
@@ -193,31 +224,112 @@ $(function(){
     //},
     
     createMarkup: function(e) {
-      console.log("AppView.createMarkup called! div making time at <"
-                  + e.offsetX + ", " + event.offsetY + ">");
-      console.log("e:::");
-      console.log(e);
-      var pic_container = $(e.target).parentsUntil(".pic_outer").last();
-      var left = e.pageX - pic_container.offset().left;
-      var top = e.pageY - pic_container.offset().top;
+      if(e.which == 1) { // left click
+        var initial_size = 10;
+        this.pic_container = $(e.target).parentsUntil("#markup_app").last();
+        var left = e.pageX - this.pic_container.offset().left - initial_size;
+        var top = e.pageY - this.pic_container.offset().top - initial_size;
 
-      var color = markup_colors[color_index];
-      if( ++color_index >= markup_colors.length ) {
-        color_index = 0;
+        var color = markup_colors[color_index];
+        if( ++color_index >= markup_colors.length ) {
+          color_index = 0;
+        }
+
+        /* e.currentTarget would be better, but apparently Redmond doesn't
+         * like it. See here: http://www.quirksmode.org/js/events_order.html */
+        this.cur_markup = this.pic_container.data("markup_list").create(
+            {
+              /* The -6 magic here is:
+               *       4px  (border width on one side
+               *     + 2px  (half the border width on the other side
+               *     = 6px
+               *  This leaves us square in the middle of the lower right
+               *  corner of our initial div size */
+              left:    (left-6),
+              top:     (top -6),
+              height:  initial_size,
+              width:   initial_size,
+              color:   color,
+            }
+        );
+        this.cur_markup_startX = (left-6);
+        this.cur_markup_startY = (top-6);
+      }
+    },
+
+    resizeMarkup: function(e) {
+      // Only care if we're in the middle of a move and they the left mouse is pressed
+      if( this.cur_markup && e.which == 1) {
+        var img = this.pic_container.find("img");
+        var img_offset = img.offset();
+
+
+        console.log( "limits: X:[", img_offset.left, "..",
+                                  img_offset.left + img.width(), "]   Y:[",
+                                  img_offset.top, "..",
+                                  img_offset.top  + img.height(), "]" );
+
+
+        /* Sometimes I get events that aren't in the picture. It's really
+         * annoying. Double check that here. */
+        if( (e.pageX >= img_offset.left) &&
+            (e.pageX <= img_offset.left + img.width() - 6 ) &&
+            (e.pageY >= img_offset.top) && 
+            (e.pageY <= img_offset.top  + img.height() - 6 ) ) {
+
+          /* Okay, time to actually resize stuff */
+          var x1 = e.pageX - this.pic_container.offset().left;
+          var y1 = e.pageY - this.pic_container.offset().top;
+          var x2 = this.cur_markup_startX;
+          var y2 = this.cur_markup_startY;
+
+          /* We've got <x1, y1> and <x2, y2>. Depending on which way they are
+           * dragging,(top left to bottom right, top right to bottom left, 
+           * whatever) one of the two will be the new 'left'/'top' coordinate,
+           * and the other will be used to get the width and height */
+          var left, top, width, height;
+          if( x1 < x2 ) {
+            left = x1;
+            width = x2 - x1;
+          } else {
+            left = x2;
+            width = x1 - x2;
+          }
+
+          if( y1 < y2 ) {
+            top = y1;
+            height = y2 - y1;
+          } else {
+            top = y2;
+            height = y1 - y2;
+          }
+
+          this.cur_markup.set( { left: left, top: top, width: width, height: height } );
+        }
+      }
+    },
+
+    finishMarkup: function(e) {
+      var x = e.pageX - this.pic_container.offset().left;
+      var y = e.pageY - this.pic_container.offset().top;
+
+      // TODO: If width < minimum_width, just get rid of this tiny thing.
+      if( (Math.abs(x - this.cur_markup_startX) < 30) ||
+          (Math.abs(y - this.cur_markup_startY) < 30) ) {
+          console.log("Too small - destroy it now!");
+          this.cur_markup.destroy();
+          // Let's redo that color -- decrement back
+          if( --color_index < 0 ) {
+            color_index = markup_colors.length;
+          }
       }
 
-      /* e.currentTarget would be better, but apparently Redmond doesn't
-       * like it. See here: http://www.quirksmode.org/js/events_order.html */
-      pic_container.data("markup_list").create(
-          {
-            left:    left + 'px',
-            top:     top + 'px',
-            height:  '200px',
-            width:   '200px',
-            color:   color,
-          }
-      );
+      this.cur_markup = null;
+      this.cur_markup_startX = null;
+      this.cur_markup_startY = null;
+      this.pic_container = null;
     },
+
   });
 
   // Finally, we kick things off by creating the **App**.

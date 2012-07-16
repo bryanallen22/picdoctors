@@ -11,17 +11,17 @@
 <div class='row'>
   <div id="markup_app" class='span9'>
     {% for pic in pics %}
-      <div class='pic_outer'>
-         {# Do not, under any circumstances, change the padding or margin  #}
-         {# of this .pic_container or .pic unless you are 200% certain     #}
-         {# that you aren't messing things up. Careful calculation of      #}
-         {# offsets for drawing markups at the right location is done, and #}
-         {# if you change them, old markups might appear at the wrong spot #}
-        <div class='pic_container'>
-          <img class='pic' src='{{ pic.get_preview_url }}'>
-          {#<div class='markup'></div>#}
-        </div>
-      </div>
+      <span class='markup_pic_outer'>
+        {# Do not, under any circumstances, change the padding or margin of  #}
+        {# this .markup_pic_container or .pic unless you are 200% certain    #}
+        {# that you aren't messing things up. Careful calculation of offsets #}
+        {# for drawing markups at the right location is done, and if you     #}
+        {# change them, old markups might appear at the wrong spot #}
+        <img class='pic' src='{{ pic.get_preview_url }}'>
+      </span>
+      <br/>
+      <br/>
+      <br/>
     {% endfor %}
   </div>
   <div class='span2'>
@@ -42,11 +42,15 @@
     <script src="{{ STATIC_URL }}js/markup.js"></script>
 
     {# Templates #}
-    {# This template is just the *style* attribute for the markup div #}
+    {# This template is just the *style* attribute for the markup div      #}
+    {# Note: if you change the border width here from 4px, you'll probably #}
+    {# want to fix the math in the *createMarkup* method in markup.js      #}
     <script type="text/template" id="markup-template-styleattr">
         left: <%= left %>; top: <%= top %>; height: <%= height %>; width: <%= width %>; border: 4px solid <%= color %>;
     </script>
-{% comment %}
-{% endcomment %}
+    {# Used to put the red X on a markup element #}
+    <script type="text/template" id="markup-template-redx">
+        <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
+    </script>
 {% endblock %}
 
