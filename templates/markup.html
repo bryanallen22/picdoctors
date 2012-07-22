@@ -11,14 +11,22 @@
 <div class='row'>
   <div id="markup_app" class='span9'>
     {% for pic in pics %}
-      <span class='markup_pic_outer'>
-        {# Do not, under any circumstances, change the padding or margin of  #}
-        {# this .markup_pic_container or .pic unless you are 200% certain    #}
-        {# that you aren't messing things up. Careful calculation of offsets #}
-        {# for drawing markups at the right location is done, and if you     #}
-        {# change them, old markups might appear at the wrong spot #}
-        <img class='pic' src='{{ pic.get_preview_url }}'>
-      </span>
+      <div class='markup_outer'>
+        <span class='markup_pic_container'>
+          {# Do not, under any circumstances, change the padding or margin of  #}
+          {# this .markup_pic_container or .pic unless you are 200% certain    #}
+          {# that you aren't messing things up. Careful calculation of offsets #}
+          {# for drawing markups at the right location is done, and if you     #}
+          {# change them, old markups might appear at the wrong spot #}
+          <img class='pic' src='{{ pic.get_preview_url }}'>
+        </span>
+        <div class='markup_desc_container'>
+          <div class="markup_desc">
+            <p class="desc_title">General Instructions:</p>
+            <textarea class="desc" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
       <br/>
       <br/>
       <br/>
@@ -52,5 +60,10 @@
     <script type="text/template" id="markup-template-redx">
         <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
     </script>
+    <script type="text/template" id="markup-template-desc">
+        <p class="desc_title"><%= color_name %></p>
+        <textarea class="desc" rows='2'><%= desc %></textarea>
+    </script>
+    
 {% endblock %}
 

@@ -2,14 +2,15 @@
 $(function(){
   
   var markup_colors = [
-      /* blue      */  '#049cdb',
-      /* green     */  '#46a546',
-      /* red       */  '#9d261d',
-      /* yellow    */  '#ffc40d',
-      /* blueDark  */  '#0064cd',
-      /* orange    */  '#f89406',
-      /* pink      */  '#c3325f',
-      /* purple    */  '#7a43b6',
+    /* I don't like this, but I suck at javascript. Better way? */
+    { 'name' : 'Blue',      'value' : '#049cdb' },
+    { 'name' : 'Green',     'value' : '#46a546' },
+    { 'name' : 'Red',       'value' : '#9d261d' },
+    { 'name' : 'Yellow',    'value' : '#ffc40d' },
+    { 'name' : 'Dark blue', 'value' : '#0064cd' },
+    { 'name' : 'Orange',    'value' : '#f89406' },
+    { 'name' : 'Pink',      'value' : '#c3325f' },
+    { 'name' : 'Purple',    'value' : '#7a43b6' },
   ];
   var color_index = 0;
   var minimum_width = 30;
@@ -26,6 +27,7 @@ $(function(){
         width:        0,
         height:       0,
         color:        '#ffffff',
+        color_name:   '',
         description:  '',
       };
     },
@@ -60,21 +62,20 @@ $(function(){
     //url: '/markups/',
     
     initialize: function() {
-      this.container = null; // Will be set to our .markup_pic_outer element
+      this.container = null; // Will be set to our .markup_pic_container element
       this.bind('add', this.addOne, this);
     },
 
     addOne: function(markup) {
-      var view = new MarkupView({model: markup});
-      this.container.append(view.render().el);
+      var view = new MarkupView( { model: markup } );
+      var desc   = new MarkupDesc( { model: markup } );
+      this.container.append( view.render().el );
+      this.container.parentsUntil("#markup_app").last().find('.markup_desc_container').append( desc.render().el );
     }
 
   });
 
-  // Todo Item View
-  // --------------
-
-  // The DOM element for a todo item...
+  // The DOM element for a markup item...
   var MarkupView = Backbone.View.extend({
 
     //... is a div tag.
@@ -116,7 +117,7 @@ $(function(){
               color:  this.model.get('color'),
             }
       ));
-      
+
       if( this.model.get('width') > minimum_width ) {
         // Doesn't display well on really small widths
         this.$el.html( this.redX_template( {} ) );
@@ -134,6 +135,49 @@ $(function(){
 
   });
 
+  // The DOM element for a markup item...
+  var MarkupDesc = Backbone.View.extend({
+
+    //... is a div tag.
+    tagName:  "div",
+
+    className: "markup_desc",
+
+    template:      _.template( $('#markup-template-desc').html() ),
+
+    // The DOM events specific to an item.
+    events: {
+      //"click .toggle"   : "toggleDone",
+      //"focusin .markup_desc" : "focusIn",
+    },
+
+    // The MarkupView listens for changes to its model, re-rendering.
+    // Since there's a one-to-one correspondence between a **Markup** 
+    // and a **MarkupView** in this app, we set a direct reference on 
+    // the model for convenience.
+    initialize: function() {
+      console.log("MarkupDesc initializationz!");
+      //console.log(this);
+      this.model.bind('change', this.render, this);
+      this.model.bind('destroy', this.remove, this);
+      
+    },
+
+    // Re-render the titles of the todo item.
+    render: function() {
+      //this.$el.attr('style', this.template(this.model.toJSON()));
+      this.$el.html( this.template(
+          {
+            color_name  : this.model.get('color_name') + ' area instructions:',
+            desc        : this.model.get('description'),
+          }
+      ));
+
+      return this;
+    },
+
+  });
+
   // The Application
   // ---------------
 
@@ -148,10 +192,10 @@ $(function(){
     // Delegated events for creating new items, and clearing completed ones.
     events: {
       //"keypress #new-todo":  "createOnEnter",
-      "mousedown  .markup_pic_outer" : "createMarkup",
-      "mousemove  .markup_pic_outer" : "resizeMarkup",
-      "mouseup    .markup_pic_outer" : "finishMarkup",
-      //"mouseleave .markup_pic_outer" : "finishMarkup",
+      "mousedown  .markup_pic_container" : "createMarkup",
+      "mousemove  .markup_pic_container" : "resizeMarkup",
+      "mouseup    .markup_pic_container" : "finishMarkup",
+      //"mouseleave .markup_pic_container" : "finishMarkup",
     },
 
     // At initialization we bind to the relevant events on the `Todos`
@@ -161,13 +205,12 @@ $(function(){
 
       //console.log("AppView init");
 
-      $(".markup_pic_outer").each( function(index) {
+      $(".markup_pic_container").each( function(index) {
         // Create a MarkupList on each element
         var markup_list = new MarkupList;
         markup_list.container = $(this);
         $(this).data("markup_list", markup_list);
 
-        //markup_list.bind('add', this.add
       });
 
       //this.input = this.$("#new-todo");
@@ -226,11 +269,10 @@ $(function(){
     createMarkup: function(e) {
       if(e.which == 1) { // left click
         var initial_size = 10;
-        this.pic_container = $(e.target).parentsUntil("#markup_app").last();
+        this.pic_container = $(e.target).parentsUntil(".markup_outer").last();
         var left = e.pageX - this.pic_container.offset().left - initial_size;
         var top = e.pageY - this.pic_container.offset().top - initial_size;
 
-        var color = markup_colors[color_index];
         if( ++color_index >= markup_colors.length ) {
           color_index = 0;
         }
@@ -245,11 +287,12 @@ $(function(){
                *     = 6px
                *  This leaves us square in the middle of the lower right
                *  corner of our initial div size */
-              left:    (left-6),
-              top:     (top -6),
-              height:  initial_size,
-              width:   initial_size,
-              color:   color,
+              left:        (left-6),
+              top:         (top -6),
+              height:      initial_size,
+              width:       initial_size,
+              color:       markup_colors[color_index]['value'],
+              color_name:  markup_colors[color_index]['name'],
             }
         );
         this.cur_markup_startX = (left-6);
@@ -265,47 +308,55 @@ $(function(){
 
 
         console.log( "limits: X:[", img_offset.left, "..",
-                                  img_offset.left + img.width(), "]   Y:[",
-                                  img_offset.top, "..",
-                                  img_offset.top  + img.height(), "]" );
+                     img_offset.left + img.width(), "]   Y:[",
+                     img_offset.top, "..",
+                     img_offset.top  + img.height(), "]" );
 
-
-        /* Sometimes I get events that aren't in the picture. It's really
-         * annoying. Double check that here. */
-        if( (e.pageX >= img_offset.left) &&
-            (e.pageX <= img_offset.left + img.width() - 6 ) &&
-            (e.pageY >= img_offset.top) && 
-            (e.pageY <= img_offset.top  + img.height() - 6 ) ) {
-
-          /* Okay, time to actually resize stuff */
-          var x1 = e.pageX - this.pic_container.offset().left;
-          var y1 = e.pageY - this.pic_container.offset().top;
-          var x2 = this.cur_markup_startX;
-          var y2 = this.cur_markup_startY;
-
-          /* We've got <x1, y1> and <x2, y2>. Depending on which way they are
-           * dragging,(top left to bottom right, top right to bottom left, 
-           * whatever) one of the two will be the new 'left'/'top' coordinate,
-           * and the other will be used to get the width and height */
-          var left, top, width, height;
-          if( x1 < x2 ) {
-            left = x1;
-            width = x2 - x1;
-          } else {
-            left = x2;
-            width = x1 - x2;
-          }
-
-          if( y1 < y2 ) {
-            top = y1;
-            height = y2 - y1;
-          } else {
-            top = y2;
-            height = y1 - y2;
-          }
-
-          this.cur_markup.set( { left: left, top: top, width: width, height: height } );
+        /* Sometimes I get events that are outside of the div. Me no likey. Fix
+         * that here.
+         *
+         * I'm modifying the e.pageXY attributes directly. How evil am I? */
+        if( e.pageX < img_offset.left ) {
+          e.pageX = img_offset.left;
         }
+        if( e.pageX > img_offset.left + img.width() - 6 ) {
+          e.pageX = img_offset.left + img.width() - 6;
+        }
+        if( e.pageY < img_offset.top ) {
+          e.pageY = img_offset.top;
+        }
+        if( e.pageY > img_offset.top + img.height() - 6 ) {
+          e.pageY = img_offset.top + img.height() - 6;
+        }
+
+        /* Okay, time to actually resize stuff */
+        var x1 = e.pageX - this.pic_container.offset().left;
+        var y1 = e.pageY - this.pic_container.offset().top;
+        var x2 = this.cur_markup_startX;
+        var y2 = this.cur_markup_startY;
+
+        /* We've got <x1, y1> and <x2, y2>. Depending on which way they are
+         * dragging,(top left to bottom right, top right to bottom left, 
+         * whatever) one of the two will be the new 'left'/'top' coordinate,
+         * and the other will be used to get the width and height */
+        var left, top, width, height;
+        if( x1 < x2 ) {
+          left = x1;
+          width = x2 - x1;
+        } else {
+          left = x2;
+          width = x1 - x2;
+        }
+
+        if( y1 < y2 ) {
+          top = y1;
+          height = y2 - y1;
+        } else {
+          top = y2;
+          height = y1 - y2;
+        }
+
+        this.cur_markup.set( { left: left, top: top, width: width, height: height } );
       }
     },
 

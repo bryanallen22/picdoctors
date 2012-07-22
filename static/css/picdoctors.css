@@ -171,29 +171,53 @@
 /*****************************
   Markup page
 ******************************/
-.markup_pic_outer {
-  /* Do not, under any circumstances, change the padding or margin
-     of this .markup_pic or .pic unless you are 200% certain that
-     you aren't messing things up. Careful calculation of offsets
-     for drawing markups at the right location is done, and if you
-     change them, old markups might appear at the wrong spot */
-
-  display: inline-block;
-  position: relative;
-  cursor: crosshair;
-}
-.markup_pic_outer .pic {
+.markup_outer {
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
 }
-.markup_pic_outer .markup {
+.markup_outer .markup_pic_container {
+  /* Do not, under any circumstances, change the padding or margin
+       of this .markup_pic_container or .pic unless you are 200% certain
+       you aren't messing things up. Careful calculation of offsets
+       for drawing markups at the right location is done, and if you
+       change them, old markups might appear at the wrong spot */
+
+  display: inline-block;
+  position: relative;
+  cursor: crosshair;
+}
+.markup_outer .markup_pic_container img {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.markup_outer .markup_pic_container .markup {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
   position: absolute;
   border-radius: 6px;
   box-shadow: 0 0 10px 1px #eeeeee;
 }
-.markup_pic_outer .markup .markup-redx {
+.markup_outer .markup_pic_container .markup .markup-redx {
   position: absolute;
+}
+.markup_outer .markup_desc_container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.markup_outer .markup_desc_container .markup_desc .desc {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 700px;
+  max-width: 700px;
+  display: block;
+  margin-left: 40px;
 }
