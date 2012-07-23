@@ -13,7 +13,11 @@ from util.models import DeleteMixin
 
 import logging
 
-ungroupedId = 100000; # Make sure that this matches isotope-app.js
+ungroupedId = 100000  # Make sure that this matches isotope-app.js
+thumb_width    = 200 
+thumb_height   = 200 
+preview_width  = 800 
+preview_height = 800
 
 ################################################################################
 # Pic
@@ -30,9 +34,15 @@ class Pic(DeleteMixin):
     browser_group_id = models.IntegerField(blank=False, default=ungroupedId)
     group_id         = models.IntegerField(blank=True, null=True)
 
-    original         = models.ImageField(upload_to='user_originals/')
-    preview          = models.ImageField(upload_to='user_preview/')
-    thumbnail        = models.ImageField(upload_to='user_thumbs/')
+    original         = models.ImageField(upload_to = 'user_originals/')
+    original_width   = models.SmallIntegerField(blank=True, null=True)
+    original_height  = models.SmallIntegerField(blank=True, null=True)
+    preview          = models.ImageField(upload_to = 'user_preview/')
+    preview_width    = models.SmallIntegerField()
+    preview_height   = models.SmallIntegerField()
+    thumbnail        = models.ImageField(upload_to = 'user_thumbs/')
+    thumb_width      = models.SmallIntegerField()
+    thumb_height     = models.SmallIntegerField()
 
     def __unicode__(self):
         return self.title
@@ -47,11 +57,26 @@ class Pic(DeleteMixin):
         self.uuid      = my_uuid
         self.title     = file_root # Not the full myfile name, just the root
 
+        # Save dimensions over. You realllly to have to fetch the images
+        # just to get the width and height later. Gotta do that now.
+        self.preview_width, self.preview_height = preview_width, preview_height
+        self.thumb_width, self.thumb_height = thumb_width, thumb_height
+
+        # Save original picture, its width and height
         self.original.save(file_name, myfile)
-        thumb = self.create_thumbnail(myfile, 200, 200)
-        self.thumbnail.save(file_name, thumb)
-        preview = self.create_thumbnail(myfile, 800, 800)
+        self.original_width = self.original.width
+        self.original_height = self.original.height
+
+        # Save preview picture, its width and height
+        preview = self.create_thumbnail(myfile, self.preview_width,
+                                        self.preview_height)
         self.preview.save(file_name, preview)
+
+        # Save thumb picture, its width and height
+        thumb = self.create_thumbnail(preview, self.thumb_width,
+                                      self.thumb_height)
+        self.thumbnail.save(file_name, thumb)
+
 
     def get_size(self):
         return self.original.size

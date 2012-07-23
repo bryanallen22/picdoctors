@@ -30,7 +30,7 @@ def get_batch(request):
 
 def pic_json(pic):
     return {"name"             : pic.title, 
-            "size"             : pic.get_size(),
+            "size"             : 0, # pic.get_size(), // This is sloooow!
             "url"              : pic.get_preview_url(),
             "thumbnail_url"    : pic.get_thumb_url(),
             # TODO - url lookup here
