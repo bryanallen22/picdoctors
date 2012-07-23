@@ -18,7 +18,8 @@
           {# that you aren't messing things up. Careful calculation of offsets #}
           {# for drawing markups at the right location is done, and if you     #}
           {# change them, old markups might appear at the wrong spot #}
-          <img class='pic' src='{{ pic.get_preview_url }}'>
+          <div class='pic' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview.width }}px; height:{{ pic.preview.height }}px" >
+          </div>
         </span>
         <div class='markup_desc_container'>
           <div class="markup_desc">

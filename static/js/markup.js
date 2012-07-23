@@ -303,7 +303,7 @@ $(function(){
     resizeMarkup: function(e) {
       // Only care if we're in the middle of a move and they the left mouse is pressed
       if( this.cur_markup && e.which == 1) {
-        var img = this.pic_container.find("img");
+        var img = this.pic_container.find(".pic");
         var img_offset = img.offset();
 
 
