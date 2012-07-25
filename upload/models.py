@@ -35,14 +35,17 @@ class Pic(DeleteMixin):
     group_id         = models.IntegerField(blank=True, null=True)
 
     original         = models.ImageField(upload_to = 'user_originals/')
+    preview          = models.ImageField(upload_to = 'user_preview/')
+    thumbnail        = models.ImageField(upload_to = 'user_thumbs/')
+
+    # Getting these later requires fetching the picture.
+    # That's oh so very bad. Don't do that.
     original_width   = models.SmallIntegerField(blank=True, null=True)
     original_height  = models.SmallIntegerField(blank=True, null=True)
-    preview          = models.ImageField(upload_to = 'user_preview/')
-    preview_width    = models.SmallIntegerField()
-    preview_height   = models.SmallIntegerField()
-    thumbnail        = models.ImageField(upload_to = 'user_thumbs/')
-    thumb_width      = models.SmallIntegerField()
-    thumb_height     = models.SmallIntegerField()
+    preview_width    = models.SmallIntegerField(blank=True, null=True)
+    preview_height   = models.SmallIntegerField(blank=True, null=True)
+    thumb_width      = models.SmallIntegerField(blank=True, null=True)
+    thumb_height     = models.SmallIntegerField(blank=True, null=True)
 
     def __unicode__(self):
         return self.title
@@ -57,26 +60,26 @@ class Pic(DeleteMixin):
         self.uuid      = my_uuid
         self.title     = file_root # Not the full myfile name, just the root
 
-        # Save dimensions over. You realllly to have to fetch the images
-        # just to get the width and height later. Gotta do that now.
-        self.preview_width, self.preview_height = preview_width, preview_height
-        self.thumb_width, self.thumb_height = thumb_width, thumb_height
-
         # Save original picture, its width and height
         self.original.save(file_name, myfile)
+        # TODO -- this fetches the image all over again. Me no likey.
+        # Find some other way?
         self.original_width = self.original.width
         self.original_height = self.original.height
 
         # Save preview picture, its width and height
-        preview = self.create_thumbnail(myfile, self.preview_width,
-                                        self.preview_height)
+        preview, self.preview_width, self.preview_height = \
+                self.create_thumbnail(myfile, preview_width, preview_height)
         self.preview.save(file_name, preview)
+        #self.preview_width  = self.preview.width
+        #self.preview_height = self.preview.height
 
         # Save thumb picture, its width and height
-        thumb = self.create_thumbnail(preview, self.thumb_width,
-                                      self.thumb_height)
+        thumb, self.thumb_width, self.thumb_height = \
+                self.create_thumbnail(preview, thumb_width, thumb_height)
         self.thumbnail.save(file_name, thumb)
-
+        #self.thumb_width  = self.thumbnail.width
+        #self.thumb_height = self.thumbnail.height
 
     def get_size(self):
         return self.original.size
@@ -123,7 +126,8 @@ class Pic(DeleteMixin):
             # Take pointer back to the beginning of the file
             file.seek(0)
 
-        return ContentFile(tmp_file.getvalue())
+        # Tuple returned: (image, width, height)
+        return (ContentFile(tmp_file.getvalue()),)  + im.size
 
 
 ################################################################################
