@@ -3,17 +3,33 @@ $(function(){
   
   var markup_colors = [
     /* I don't like this, but I suck at javascript. Better way? */
-    { 'name' : 'Blue',      'value' : '#049cdb' },
-    { 'name' : 'Green',     'value' : '#46a546' },
-    { 'name' : 'Red',       'value' : '#9d261d' },
-    { 'name' : 'Yellow',    'value' : '#ffc40d' },
-    { 'name' : 'Dark blue', 'value' : '#0064cd' },
-    { 'name' : 'Orange',    'value' : '#f89406' },
-    { 'name' : 'Pink',      'value' : '#c3325f' },
-    { 'name' : 'Purple',    'value' : '#7a43b6' },
+    { 'name' : 'Blue',             'value' : '#049cdb', 'border-style' : 'solid' },
+    { 'name' : 'Green',            'value' : '#46a546', 'border-style' : 'solid' },
+    { 'name' : 'Red',              'value' : '#9d261d', 'border-style' : 'solid' },
+    { 'name' : 'Yellow',           'value' : '#ffc40d', 'border-style' : 'solid' },
+    { 'name' : 'Dark blue',        'value' : '#0064cd', 'border-style' : 'solid' },
+    { 'name' : 'Orange',           'value' : '#f89406', 'border-style' : 'solid' },
+    { 'name' : 'Pink',             'value' : '#c3325f', 'border-style' : 'solid' },
+    { 'name' : 'Purple',           'value' : '#7a43b6', 'border-style' : 'solid' },
+    { 'name' : 'Dotted blue',      'value' : '#049cdb', 'border-style' : 'dotted' },
+    { 'name' : 'Dotted green',     'value' : '#46a546', 'border-style' : 'dotted' },
+    { 'name' : 'Dotted red',       'value' : '#9d261d', 'border-style' : 'dotted' },
+    { 'name' : 'Dotted yellow',    'value' : '#ffc40d', 'border-style' : 'dotted' },
+    { 'name' : 'Dotted dark blue', 'value' : '#0064cd', 'border-style' : 'dotted' },
+    { 'name' : 'Dotted orange',    'value' : '#f89406', 'border-style' : 'dotted' },
+    { 'name' : 'Dotted pink',      'value' : '#c3325f', 'border-style' : 'dotted' },
+    { 'name' : 'Dotted purple',    'value' : '#7a43b6', 'border-style' : 'dotted' },
+    { 'name' : 'Dashed blue',      'value' : '#049cdb', 'border-style' : 'dashed' },
+    { 'name' : 'Dashed green',     'value' : '#46a546', 'border-style' : 'dashed' },
+    { 'name' : 'Dashed red',       'value' : '#9d261d', 'border-style' : 'dashed' },
+    { 'name' : 'Dashed yellow',    'value' : '#ffc40d', 'border-style' : 'dashed' },
+    { 'name' : 'Dashed dark blue', 'value' : '#0064cd', 'border-style' : 'dashed' },
+    { 'name' : 'Dashed orange',    'value' : '#f89406', 'border-style' : 'dashed' },
+    { 'name' : 'Dashed pink',      'value' : '#c3325f', 'border-style' : 'dashed' },
+    { 'name' : 'Dashed purple',    'value' : '#7a43b6', 'border-style' : 'dashed' },
   ];
   var color_index = 0;
-  var minimum_width = 30;
+  var minimum_width = 15;
 
   // Our basic **Markup** model has 'left', 'top', 'width', 'height',
   // 'color', and 'description' attributes.
@@ -29,6 +45,7 @@ $(function(){
         color:        '#ffffff',
         color_name:   '',
         description:  '',
+        border_style: '',
       };
     },
     
@@ -110,20 +127,19 @@ $(function(){
       //this.$el.attr('style', this.template(this.model.toJSON()));
       this.$el.attr('style', this.template(
             {
-              left:   this.model.get('left')   + 'px',
-              top:    this.model.get('top')    + 'px',
-              width:  this.model.get('width')  + 'px',
-              height: this.model.get('height') + 'px',
-              color:  this.model.get('color'),
+              left:          this.model.get('left')   + 'px',
+              top:           this.model.get('top')    + 'px',
+              width:         this.model.get('width')  + 'px',
+              height:        this.model.get('height') + 'px',
+              color:         this.model.get('color'),
+              border_style:  this.model.get('border_style'),
             }
       ));
 
-      if( this.model.get('width') > minimum_width ) {
-        // Doesn't display well on really small widths
-        this.$el.html( this.redX_template( {} ) );
-        this.$el.find('.markup-redx')
-          .css('left', this.model.get('width')-20 );
-      }
+      // Doesn't display well on really small widths
+      this.$el.html( this.redX_template( {} ) );
+      this.$el.find('.markup-redx')
+        .css('left', this.model.get('width')-20 );
       //this.input = this.$('.edit');
       return this;
     },
@@ -168,8 +184,10 @@ $(function(){
       //this.$el.attr('style', this.template(this.model.toJSON()));
       this.$el.html( this.template(
           {
-            color_name  : this.model.get('color_name') + ' area instructions:',
-            desc        : this.model.get('description'),
+            color         : this.model.get('color'),
+            color_name    : this.model.get('color_name') + ' area instructions:',
+            border_style  : this.model.get('border_style'),
+            desc          : this.model.get('description'),
           }
       ));
 
@@ -273,10 +291,6 @@ $(function(){
         var left = e.pageX - this.pic_container.offset().left - initial_size;
         var top = e.pageY - this.pic_container.offset().top - initial_size;
 
-        if( ++color_index >= markup_colors.length ) {
-          color_index = 0;
-        }
-
         /* e.currentTarget would be better, but apparently Redmond doesn't
          * like it. See here: http://www.quirksmode.org/js/events_order.html */
         this.cur_markup = this.pic_container.data("markup_list").create(
@@ -287,14 +301,20 @@ $(function(){
                *     = 6px
                *  This leaves us square in the middle of the lower right
                *  corner of our initial div size */
-              left:        (left-6),
-              top:         (top -6),
-              height:      initial_size,
-              width:       initial_size,
-              color:       markup_colors[color_index]['value'],
-              color_name:  markup_colors[color_index]['name'],
+              left:          (left-6),
+              top:           (top -6),
+              height:        initial_size,
+              width:         initial_size,
+              color:         markup_colors[color_index]['value'],
+              color_name:    markup_colors[color_index]['name'],
+              border_style:  markup_colors[color_index]['border-style'],
             }
         );
+
+        if( ++color_index >= markup_colors.length ) {
+          color_index = 0;
+        }
+
         this.cur_markup_startX = (left-6);
         this.cur_markup_startY = (top-6);
       }
@@ -365,8 +385,8 @@ $(function(){
       var y = e.pageY - this.pic_container.offset().top;
 
       // TODO: If width < minimum_width, just get rid of this tiny thing.
-      if( (Math.abs(x - this.cur_markup_startX) < 30) ||
-          (Math.abs(y - this.cur_markup_startY) < 30) ) {
+      if( (Math.abs(x - this.cur_markup_startX) < minimum_width) ||
+          (Math.abs(y - this.cur_markup_startY) < minimum_width) ) {
           console.log("Too small - destroy it now!");
           this.cur_markup.destroy();
           // Let's redo that color -- decrement back

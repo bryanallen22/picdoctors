@@ -55,15 +55,19 @@
     {# Note: if you change the border width here from 4px, you'll probably #}
     {# want to fix the math in the *createMarkup* method in markup.js      #}
     <script type="text/template" id="markup-template-styleattr">
-        left: <%= left %>; top: <%= top %>; height: <%= height %>; width: <%= width %>; border: 4px solid <%= color %>;
+      left: <%= left %>; top: <%= top %>; height: <%= height %>; width: <%= width %>; border: 4px <%= color %>; border-style: <%= border_style %>;
     </script>
     {# Used to put the red X on a markup element #}
     <script type="text/template" id="markup-template-redx">
-        <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
+      <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
     </script>
+
+    {# MarkupDesc view #}
     <script type="text/template" id="markup-template-desc">
-        <p class="desc_title"><%= color_name %></p>
-        <textarea class="desc" rows='2'><%= desc %></textarea>
+      <p class="desc_title" style="border: 4px <%= color %>; border-style: <%= border_style %>;">
+        <%= color_name %>
+      </p>
+      <textarea class="desc" rows='2'><%= desc %></textarea>
     </script>
     
 {% endblock %}

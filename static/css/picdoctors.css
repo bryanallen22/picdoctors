@@ -213,6 +213,13 @@
   margin-top: 20px;
   margin-bottom: 20px;
 }
+.markup_outer .markup_desc_container .markup_desc .desc_title {
+  border-radius: 6px;
+  box-shadow: 0 0 10px 1px #eeeeee;
+  display: inline;
+  padding-left: 4px;
+  padding-right: 4px;
+}
 .markup_outer .markup_desc_container .markup_desc .desc {
   margin-top: 10px;
   margin-bottom: 10px;
