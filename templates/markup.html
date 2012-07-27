@@ -12,14 +12,12 @@
   <div id="markup_app" class='span9'>
     {% for pic in pics %}
       <div class='markup_outer'>
-        <span class='markup_pic_container'>
+        <span class='markup_pic_container' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px">
           {# Do not, under any circumstances, change the padding or margin of  #}
           {# this .markup_pic_container or .pic unless you are 200% certain    #}
           {# that you aren't messing things up. Careful calculation of offsets #}
           {# for drawing markups at the right location is done, and if you     #}
-          {# change them, old markups might appear at the wrong spot #}
-          <div class='pic' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px" >
-          </div>
+          {# change them, old markups might appear at the wrong spot           #}
         </span>
         <div class='markup_desc_container'>
           <div class="markup_desc">

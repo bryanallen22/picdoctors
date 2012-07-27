@@ -108,7 +108,7 @@ $(function(){
     // The DOM events specific to an item.
     events: {
       //"click .toggle"   : "toggleDone",
-      "click .markup-redx" : "deleteMarkup",
+      //"click .markup-redx" : "deleteMarkup",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -138,14 +138,15 @@ $(function(){
 
       // Doesn't display well on really small widths
       this.$el.html( this.redX_template( {} ) );
-      this.$el.find('.markup-redx')
+      var x = this.$el.find('.markup-redx')
         .css('left', this.model.get('width')-20 );
-      //this.input = this.$('.edit');
+      x.bind('click', this.deleteMarkup);
       return this;
     },
 
     deleteMarkup: function() {
       console.log("deleteMarkup called");
+      debugger
       this.model.destroy();
     }
 
@@ -172,7 +173,7 @@ $(function(){
     // and a **MarkupView** in this app, we set a direct reference on 
     // the model for convenience.
     initialize: function() {
-      console.log("MarkupDesc initializationz!");
+      //console.log("MarkupDesc initializationz!");
       //console.log(this);
       this.model.bind('change', this.render, this);
       this.model.bind('destroy', this.remove, this);
@@ -287,7 +288,8 @@ $(function(){
     createMarkup: function(e) {
       if(e.which == 1) { // left click
         var initial_size = 10;
-        this.pic_container = $(e.target).parentsUntil(".markup_outer").last();
+        this.pic_container = $(e.target).parentsUntil("#markup_app").last()
+          .find(".markup_pic_container");
         var left = e.pageX - this.pic_container.offset().left - initial_size;
         var top = e.pageY - this.pic_container.offset().top - initial_size;
 
@@ -323,14 +325,16 @@ $(function(){
     resizeMarkup: function(e) {
       // Only care if we're in the middle of a move and they the left mouse is pressed
       if( this.cur_markup && e.which == 1) {
-        var img = this.pic_container.find(".pic");
+        var img = this.pic_container;
         var img_offset = img.offset();
 
 
+        /*
         console.log( "limits: X:[", img_offset.left, "..",
                      img_offset.left + img.width(), "]   Y:[",
                      img_offset.top, "..",
                      img_offset.top  + img.height(), "]" );
+         */
 
         /* Sometimes I get events that are outside of the div. Me no likey. Fix
          * that here.
