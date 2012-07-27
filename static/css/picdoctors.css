@@ -194,13 +194,6 @@
   -o-user-select: none;
   user-select: none;
 }
-.markup_outer .markup_pic_container .pic {
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-}
 .markup_outer .markup_pic_container .markup {
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -213,6 +206,7 @@
 }
 .markup_outer .markup_pic_container .markup .markup-redx {
   position: absolute;
+  cursor: default;
 }
 .markup_outer .markup_desc_container {
   margin-top: 20px;

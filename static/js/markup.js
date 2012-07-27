@@ -107,8 +107,11 @@ $(function(){
 
     // The DOM events specific to an item.
     events: {
-      //"click .toggle"   : "toggleDone",
-      //"click .markup-redx" : "deleteMarkup",
+      // This event needs to be mousedown instead of click, because otherwise
+      // when we depress the mouse, we'll find ourselves in the middle of 
+      // creating a new markup rather than deleting this one. (mousedown 
+      // is caught by the markup_pic_container)
+      "mousedown .markup-redx" : "deleteMarkup",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -138,15 +141,11 @@ $(function(){
 
       // Doesn't display well on really small widths
       this.$el.html( this.redX_template( {} ) );
-      var x = this.$el.find('.markup-redx')
-        .css('left', this.model.get('width')-20 );
-      x.bind('click', this.deleteMarkup);
+      this.$el.find('.markup-redx').css('left', this.model.get('width')-20 );
       return this;
     },
 
     deleteMarkup: function() {
-      console.log("deleteMarkup called");
-      debugger
       this.model.destroy();
     }
 
@@ -288,6 +287,9 @@ $(function(){
     createMarkup: function(e) {
       if(e.which == 1) { // left click
         var initial_size = 10;
+        /* This seems like a lot of work, but e.target seems a little bit
+         * unpredictable, so I'm dancing around to ensure that I always end
+         * up at my desired .markup_pic_container element */
         this.pic_container = $(e.target).parentsUntil("#markup_app").last()
           .find(".markup_pic_container");
         var left = e.pageX - this.pic_container.offset().left - initial_size;
