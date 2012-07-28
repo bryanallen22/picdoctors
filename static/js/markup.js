@@ -3,33 +3,33 @@ $(function(){
   
   var markup_colors = [
     /* I don't like this, but I suck at javascript. Better way? */
-    { 'name' : 'Blue',             'value' : '#049cdb', 'border-style' : 'solid' },
-    { 'name' : 'Green',            'value' : '#46a546', 'border-style' : 'solid' },
-    { 'name' : 'Red',              'value' : '#9d261d', 'border-style' : 'solid' },
-    { 'name' : 'Yellow',           'value' : '#ffc40d', 'border-style' : 'solid' },
-    { 'name' : 'Dark blue',        'value' : '#0064cd', 'border-style' : 'solid' },
-    { 'name' : 'Orange',           'value' : '#f89406', 'border-style' : 'solid' },
-    { 'name' : 'Pink',             'value' : '#c3325f', 'border-style' : 'solid' },
-    { 'name' : 'Purple',           'value' : '#7a43b6', 'border-style' : 'solid' },
-    { 'name' : 'Dotted blue',      'value' : '#049cdb', 'border-style' : 'dotted' },
-    { 'name' : 'Dotted green',     'value' : '#46a546', 'border-style' : 'dotted' },
-    { 'name' : 'Dotted red',       'value' : '#9d261d', 'border-style' : 'dotted' },
-    { 'name' : 'Dotted yellow',    'value' : '#ffc40d', 'border-style' : 'dotted' },
-    { 'name' : 'Dotted dark blue', 'value' : '#0064cd', 'border-style' : 'dotted' },
-    { 'name' : 'Dotted orange',    'value' : '#f89406', 'border-style' : 'dotted' },
-    { 'name' : 'Dotted pink',      'value' : '#c3325f', 'border-style' : 'dotted' },
-    { 'name' : 'Dotted purple',    'value' : '#7a43b6', 'border-style' : 'dotted' },
-    { 'name' : 'Dashed blue',      'value' : '#049cdb', 'border-style' : 'dashed' },
-    { 'name' : 'Dashed green',     'value' : '#46a546', 'border-style' : 'dashed' },
-    { 'name' : 'Dashed red',       'value' : '#9d261d', 'border-style' : 'dashed' },
-    { 'name' : 'Dashed yellow',    'value' : '#ffc40d', 'border-style' : 'dashed' },
-    { 'name' : 'Dashed dark blue', 'value' : '#0064cd', 'border-style' : 'dashed' },
-    { 'name' : 'Dashed orange',    'value' : '#f89406', 'border-style' : 'dashed' },
-    { 'name' : 'Dashed pink',      'value' : '#c3325f', 'border-style' : 'dashed' },
-    { 'name' : 'Dashed purple',    'value' : '#7a43b6', 'border-style' : 'dashed' },
+    {'name':'Blue',             'value':'#049cdb', 'border-style':'solid'},
+    {'name':'Green',            'value':'#46a546', 'border-style':'solid'},
+    {'name':'Red',              'value':'#9d261d', 'border-style':'solid'},
+    {'name':'Yellow',           'value':'#ffc40d', 'border-style':'solid'},
+    {'name':'Dark blue',        'value':'#0064cd', 'border-style':'solid'},
+    {'name':'Orange',           'value':'#f89406', 'border-style':'solid'},
+    {'name':'Pink',             'value':'#c3325f', 'border-style':'solid'},
+    {'name':'Purple',           'value':'#7a43b6', 'border-style':'solid'},
+    {'name':'Dotted blue',      'value':'#049cdb', 'border-style':'dotted'},
+    {'name':'Dotted green',     'value':'#46a546', 'border-style':'dotted'},
+    {'name':'Dotted red',       'value':'#9d261d', 'border-style':'dotted'},
+    {'name':'Dotted yellow',    'value':'#ffc40d', 'border-style':'dotted'},
+    {'name':'Dotted dark blue', 'value':'#0064cd', 'border-style':'dotted'},
+    {'name':'Dotted orange',    'value':'#f89406', 'border-style':'dotted'},
+    {'name':'Dotted pink',      'value':'#c3325f', 'border-style':'dotted'},
+    {'name':'Dotted purple',    'value':'#7a43b6', 'border-style':'dotted'},
+    {'name':'Dashed blue',      'value':'#049cdb', 'border-style':'dashed'},
+    {'name':'Dashed green',     'value':'#46a546', 'border-style':'dashed'},
+    {'name':'Dashed red',       'value':'#9d261d', 'border-style':'dashed'},
+    {'name':'Dashed yellow',    'value':'#ffc40d', 'border-style':'dashed'},
+    {'name':'Dashed dark blue', 'value':'#0064cd', 'border-style':'dashed'},
+    {'name':'Dashed orange',    'value':'#f89406', 'border-style':'dashed'},
+    {'name':'Dashed pink',      'value':'#c3325f', 'border-style':'dashed'},
+    {'name':'Dashed purple',    'value':'#7a43b6', 'border-style':'dashed'},
   ];
   var color_index = 0;
-  var minimum_width = 15;
+  var minimum_width = 25;
 
   // Our basic **Markup** model has 'left', 'top', 'width', 'height',
   // 'color', and 'description' attributes.
@@ -46,6 +46,9 @@ $(function(){
         color_name:   '',
         description:  '',
         border_style: '',
+
+        // Server shouldn't care about this one:
+        hidden:       false,
       };
     },
     
@@ -85,9 +88,26 @@ $(function(){
 
     addOne: function(markup) {
       var view = new MarkupView( { model: markup } );
-      var desc   = new MarkupDesc( { model: markup } );
+      var desc = new MarkupDesc( { model: markup } );
       this.container.append( view.render().el );
-      this.container.parentsUntil("#markup_app").last().find('.markup_desc_container').append( desc.render().el );
+      this.container.closest('.markup_outer')
+        .find('.markup_desc_container').append( desc.render().el );
+    },
+
+    showJustOne: function( showed ) {
+      this.each( function( el ) { 
+        if( el != showed.model ) {
+          el.set( { hidden : true } );
+        }
+      });
+    },
+
+    showAll: function() {
+      this.each( function( el ) { 
+        if( el.get('hidden') ) {
+          el.set( { hidden : false } );
+        }
+      });
     }
 
   });
@@ -142,11 +162,17 @@ $(function(){
       // Doesn't display well on really small widths
       this.$el.html( this.redX_template( {} ) );
       this.$el.find('.markup-redx').css('left', this.model.get('width')-20 );
+
+      if( this.model.get('hidden') ) {
+        this.$el.hide();
+      }
       return this;
     },
 
     deleteMarkup: function() {
-      this.model.destroy();
+      this.$el.fadeOut( function () {
+        this.model.destroy();
+      } );
     }
 
   });
@@ -164,7 +190,8 @@ $(function(){
     // The DOM events specific to an item.
     events: {
       //"click .toggle"   : "toggleDone",
-      //"focusin .markup_desc" : "focusIn",
+      "focusin  .desc" : "focusIn",
+      "focusout .desc" : "focusOut",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -192,6 +219,18 @@ $(function(){
       ));
 
       return this;
+    },
+
+    focusIn : function() {
+      console.log("focusIn");
+      this.$el.closest('.markup_outer').data('markup_list')
+        .showJustOne( this );
+    },
+
+    focusOut : function() {
+      console.log("focusOut");
+      this.$el.closest('.markup_outer').data('markup_list')
+        .showAll();
     },
 
   });
@@ -223,81 +262,35 @@ $(function(){
 
       //console.log("AppView init");
 
-      $(".markup_pic_container").each( function(index) {
+      $(".markup_outer").each( function() {
         // Create a MarkupList on each element
         var markup_list = new MarkupList;
-        markup_list.container = $(this);
+        markup_list.container = $(this).find(".markup_pic_container");
         $(this).data("markup_list", markup_list);
 
       });
 
-      //this.input = this.$("#new-todo");
-      //this.allCheckbox = this.$("#toggle-all")[0];
-
-      //Todos.bind('add', this.addOne, this);
-      //Todos.bind('reset', this.addAll, this);
-      //Todos.bind('all', this.render, this);
-
-      //this.footer = this.$('footer');
-      //this.main = $('#main');
-
-      //Todos.fetch();
     },
 
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
     render: function() {
-      //var done = Todos.done().length;
-      //var remaining = Todos.remaining().length;
-
-      //if (Todos.length) {
-      //  this.main.show();
-      //  this.footer.show();
-      //  //this.footer.html(this.statsTemplate({done: done, remaining: remaining}));
-      //} else {
-      //  this.main.hide();
-      //  this.footer.hide();
-      //}
-
-      //this.allCheckbox.checked = !remaining;
     },
 
-    // Add a single todo item to the list by creating a view for it, and
-    // appending its element to the `<ul>`.
-    //addOne: function(todo) {
-    //  var view = new TodoView({model: todo});
-    //  this.$("#todo-list").append(view.render().el);
-    //},
-
-    // Add all items in the **Todos** collection at once.
-    //addAll: function() {
-    //  Todos.each(this.addOne);
-    //},
-
-    // If you hit return in the main input field, create new **Todo** model,
-    // persisting it to *localStorage*.
-    //createOnEnter: function(e) {
-    //  if (e.keyCode != 13) return;
-    //  if (!this.input.val()) return;
-
-    //  Todos.create({title: this.input.val()});
-    //  this.input.val('');
-    //},
-    
     createMarkup: function(e) {
       if(e.which == 1) { // left click
         var initial_size = 10;
         /* This seems like a lot of work, but e.target seems a little bit
          * unpredictable, so I'm dancing around to ensure that I always end
          * up at my desired .markup_pic_container element */
-        this.pic_container = $(e.target).parentsUntil("#markup_app").last()
+        this.pic_container = $(e.target).closest('.markup_outer')
           .find(".markup_pic_container");
         var left = e.pageX - this.pic_container.offset().left - initial_size;
         var top = e.pageY - this.pic_container.offset().top - initial_size;
 
         /* e.currentTarget would be better, but apparently Redmond doesn't
          * like it. See here: http://www.quirksmode.org/js/events_order.html */
-        this.cur_markup = this.pic_container.data("markup_list").create(
+        this.cur_markup = this.pic_container.parent().data("markup_list").create(
             {
               /* The -6 magic here is:
                *       4px  (border width on one side

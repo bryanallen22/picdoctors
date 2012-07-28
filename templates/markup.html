@@ -10,6 +10,12 @@
 {% block main %}
 <div class='row'>
   <div id="markup_app" class='span9'>
+    {% if pics|length > 1 %}
+    <h2 style="text-align: center;">
+      These {{ pics|length }} pictures will be combined into a single final picture
+    </h2>
+    <p style="text-align: center;">If that's not what you wanted, you can go back and regroup</p>
+    {% endif %}
     {% for pic in pics %}
       <div class='markup_outer'>
         <span class='markup_pic_container' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px">
