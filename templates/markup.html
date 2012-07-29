@@ -9,13 +9,15 @@
 
 {% block main %}
 <div class='row'>
-  <div id="markup_app" class='span9'>
+  <div id="markup_app" class='span10'>
     {% if pics|length > 1 %}
     <h2 style="text-align: center; color: #777;">
       These {{ pics|length }} pictures will be combined into a single final picture
     </h2>
-    <h4 style="text-align: center; color: #999; margin-bottom: 40px;">If that's not what you wanted, you can go
-      <a href="{% url upload.views.upload_page %}">back</a> and regroup
+    <h4 style="text-align: center; color: #999; margin-bottom: 40px;">
+      If that's not what you wanted, you can go
+      <a href="{% url upload.views.upload_page %}">back</a>
+      and regroup
     </h4>
     {% endif %}
     {% for pic in pics %}
@@ -27,7 +29,7 @@
           {# for drawing markups at the right location is done, and if you     #}
           {# change them, old markups might appear at the wrong spot           #}
         </span>
-        <div class='markup_desc_container'>
+        <div class='markup_desc_container' style="width:{{ pic.preview_width }}px;">
           <div class="markup_desc">
             <p class="desc_title">General Instructions:</p>
             <textarea class="desc" rows="2"></textarea>

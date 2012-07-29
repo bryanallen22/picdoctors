@@ -164,7 +164,8 @@ $(function(){
       this.$el.find('.markup-redx').css('left', this.model.get('width')-20 );
 
       if( this.model.get('hidden') ) {
-        this.$el.hide();
+        this.$el.css('opacity', 0.3);
+        this.$el.css('z-index', 100);
       }
       return this;
     },

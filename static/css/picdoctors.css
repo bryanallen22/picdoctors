@@ -185,7 +185,7 @@
        for drawing markups at the right location is done, and if you
        change them, old markups might appear at the wrong spot */
 
-  display: inline-block;
+  display: block;
   position: relative;
   cursor: crosshair;
   -webkit-user-select: none;
@@ -193,6 +193,8 @@
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
+  margin-left: auto;
+  margin-right: auto;
 }
 .markup_outer .markup_pic_container .markup {
   -webkit-user-select: none;
@@ -211,6 +213,8 @@
 .markup_outer .markup_desc_container {
   margin-top: 5px;
   margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .markup_outer .markup_desc_container .markup_desc .desc_title {
   border-radius: 6px;
