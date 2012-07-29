@@ -11,10 +11,12 @@
 <div class='row'>
   <div id="markup_app" class='span9'>
     {% if pics|length > 1 %}
-    <h2 style="text-align: center;">
+    <h2 style="text-align: center; color: #777;">
       These {{ pics|length }} pictures will be combined into a single final picture
     </h2>
-    <p style="text-align: center;">If that's not what you wanted, you can go back and regroup</p>
+    <h4 style="text-align: center; color: #999; margin-bottom: 40px;">If that's not what you wanted, you can go
+      <a href="{% url upload.views.upload_page %}">back</a> and regroup
+    </h4>
     {% endif %}
     {% for pic in pics %}
       <div class='markup_outer'>
