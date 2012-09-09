@@ -147,6 +147,7 @@ $(function(){
 
     // Re-render the titles of the todo item.
     render: function() {
+      console.log('render: ' + this.model.get('color'));
       //this.$el.attr('style', this.template(this.model.toJSON()));
       this.$el.attr('style', this.template(
             {
@@ -230,6 +231,10 @@ $(function(){
 
     focusOut : function() {
       console.log("focusOut");
+      //Save the description to the model on focus out, the textarea is the
+      //4th element in the list of children, this could be handled better
+      //if we set ids to the textarea
+      this.model.set('description', this.$el.context.childNodes[3].value);
       this.$el.closest('.markup_outer').data('markup_list')
         .showAll();
     },
@@ -276,6 +281,7 @@ $(function(){
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
     render: function() {
+        console.log('render app view');
     },
 
     createMarkup: function(e) {
@@ -305,7 +311,7 @@ $(function(){
               width:         initial_size,
               color:         markup_colors[color_index]['value'],
               color_name:    markup_colors[color_index]['name'],
-              border_style:  markup_colors[color_index]['border-style'],
+              border_style:  markup_colors[color_index]['border-style']
             }
         );
 
