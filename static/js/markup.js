@@ -197,7 +197,7 @@ $(function(){
       "focusin   .desc" : "focusIn",
       "focusout  .desc" : "focusOut",
       "mousedown .desc" : "mouseDown",
-      "keyup   .desc"   : "keyUp",
+      "keyup     .desc" : "keyUp",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
