@@ -258,7 +258,14 @@ $(function(){
       var el_id =  this.model.get('desc_el_id');
       console.log('mouseDown for ' + el_id );
       var el = $('#' + el_id);
-      setTimeout(function(){focusFix(el_id)},10); 
+      if(el[0] == document.activeElement)
+      {
+        console.log('already has focus!');
+      }
+      else
+      {
+        setTimeout(function(){focusFix(el_id)},10); 
+      }
     },
 
   });
