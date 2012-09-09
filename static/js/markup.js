@@ -29,6 +29,7 @@ $(function(){
     {'name':'Dashed purple',    'value':'#7a43b6', 'border-style':'dashed'},
   ];
   var color_index = 0;
+  var total_index = 0;
   var minimum_width = 25;
 
   // Our basic **Markup** model has 'left', 'top', 'width', 'height',
@@ -49,6 +50,7 @@ $(function(){
 
         // Server shouldn't care about this one:
         hidden:       false,
+        desc_el_id:   '',
       };
     },
     
@@ -147,7 +149,7 @@ $(function(){
 
     // Re-render the titles of the todo item.
     render: function() {
-      console.log('render: ' + this.model.get('color'));
+      console.log('render: ' + this.model.get('desc_el_id'));
       //this.$el.attr('style', this.template(this.model.toJSON()));
       this.$el.attr('style', this.template(
             {
@@ -192,8 +194,10 @@ $(function(){
     // The DOM events specific to an item.
     events: {
       //"click .toggle"   : "toggleDone",
-      "focusin  .desc" : "focusIn",
-      "focusout .desc" : "focusOut",
+      "focusin   .desc" : "focusIn",
+      "focusout  .desc" : "focusOut",
+      "mousedown .desc" : "mouseDown",
+      "keyup   .desc"   : "keyUp",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -217,6 +221,7 @@ $(function(){
             color_name    : this.model.get('color_name') + ' area instructions:',
             border_style  : this.model.get('border_style'),
             desc          : this.model.get('description'),
+            desc_el_id    : this.model.get('desc_el_id'),
           }
       ));
 
@@ -230,16 +235,43 @@ $(function(){
     },
 
     focusOut : function() {
+      //Save the description to the model on focus out
+      //I felt guilty and added an element id 
+      console.log('save description');
+      var el_id = this.model.get('desc_el_id');
+      this.model.set('description', $('#' + el_id).val());
+      
       console.log("focusOut");
-      //Save the description to the model on focus out, the textarea is the
-      //4th element in the list of children, this could be handled better
-      //if we set ids to the textarea
-      this.model.set('description', this.$el.context.childNodes[3].value);
       this.$el.closest('.markup_outer').data('markup_list')
         .showAll();
     },
 
+    keyUp : function()
+    {
+      console.log("keyUp");
+      //if you attempt to save description here it causes a render
+      //and focus loss, jack ass
+    },
+
+    mouseDown: function()
+    {
+      var el_id =  this.model.get('desc_el_id');
+      console.log('mouseDown for ' + el_id );
+      var el = $('#' + el_id);
+      setTimeout(function(){focusFix(el_id)},10); 
+    },
+
   });
+
+  function focusFix(el_id)
+  {
+    console.log('fake focus');
+    var el = $('#' + el_id);
+    var dom_el = el[0];
+    el.focus();       
+    dom_el.value = dom_el.value;
+    
+  }
 
   // The Application
   // ---------------
@@ -311,7 +343,8 @@ $(function(){
               width:         initial_size,
               color:         markup_colors[color_index]['value'],
               color_name:    markup_colors[color_index]['name'],
-              border_style:  markup_colors[color_index]['border-style']
+              border_style:  markup_colors[color_index]['border-style'],
+              desc_el_id:    'desc_el_id_' + total_index++,
             }
         );
 
