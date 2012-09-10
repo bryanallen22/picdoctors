@@ -38,14 +38,19 @@ $(function(){
     // Default attributes for the todo item.
     defaults: function() {
       return {
+        // These match directly to server side logic
+      /*id:           0, -- set by server later in sync */
         left:         0,
         top:          0,
         width:        0,
         height:       0,
         color:        '#ffffff',
         color_name:   '',
-        description:  '',
         border_style: '',
+        description:  '',
+
+        // Server will save corresponding foreign key:
+        pic_uuid:     0,
 
         // Server shouldn't care about this one:
         hidden:       false,
@@ -61,12 +66,6 @@ $(function(){
       this.destroy();
     },
 
-    // TODO: get rid of this so the model is actually saved
-    sync: function () {
-      console.log("sync:", this.attributes);
-      return false;
-    },
-
   });
 
   // Markup Collection
@@ -79,7 +78,7 @@ $(function(){
     model: Markup,
 
     // Url base
-    //url: '/markups/',
+    url: '/markups_handler/',
     
     initialize: function() {
       this.container = null; // Will be set to our .markup_pic_container element
@@ -97,16 +96,18 @@ $(function(){
     showJustOne: function( showed ) {
       this.each( function( el ) { 
         if( el != showed.model ) {
-          el.set( { hidden : true } );
+          el.set( { 'hidden' : true } );
+        }
+        else {
+          el.set( { 'hidden' : false } );
         }
       });
     },
 
     showAll: function() {
-      this.each( function( el ) { 
-        if( el.get('hidden') ) {
-          el.set( { hidden : false } );
-        }
+      console.log('showAll called!');
+      this.forEach( function( el ) { 
+        el.set( { 'hidden' : false } );
       });
     }
 
@@ -148,6 +149,7 @@ $(function(){
     // Re-render the titles of the todo item.
     render: function() {
       //this.$el.attr('style', this.template(this.model.toJSON()));
+      //console.log('MarkupView renderrrrr');
       this.$el.attr('style', this.template(
             {
               left:          this.model.get('left')   + 'px',
@@ -191,8 +193,8 @@ $(function(){
     // The DOM events specific to an item.
     events: {
       //"click .toggle"   : "toggleDone",
-      "focusin  .desc" : "focusIn",
-      "focusout .desc" : "focusOut",
+      "focus .desc" : "focusIn",
+      "blur  .desc" : "focusOut",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -224,14 +226,14 @@ $(function(){
 
     focusIn : function() {
       console.log("focusIn");
-      this.$el.closest('.markup_outer').data('markup_list')
-        .showJustOne( this );
+      //this.$el.closest('.markup_outer').data('markup_list').showJustOne( this );
     },
 
     focusOut : function() {
       console.log("focusOut");
-      this.$el.closest('.markup_outer').data('markup_list')
-        .showAll();
+      //console.log(this.$el.find('.desc').val());
+      this.model.save( { 'description' : this.$el.find('.desc').val() } );
+      //this.$el.closest('.markup_outer').data('markup_list').showAll();
     },
 
   });
@@ -306,6 +308,7 @@ $(function(){
               color:         markup_colors[color_index]['value'],
               color_name:    markup_colors[color_index]['name'],
               border_style:  markup_colors[color_index]['border-style'],
+              pic_uuid:      this.pic_container.attr('uuid'),
             }
         );
 

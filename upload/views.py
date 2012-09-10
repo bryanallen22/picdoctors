@@ -129,7 +129,7 @@ def group_handler(request):
 def delete_handler(request):
     if request.method == 'DELETE':
         data = simplejson.loads(request.body)
-        pic  = Pic.objects.filter(uuid__exact=data['uuid']);
+        pic  = Pic.objects.get(uuid__exact=data['uuid']);
         if pic:
             pic.delete()
             return HttpResponse('{ "success" : true }', mimetype='application/json')

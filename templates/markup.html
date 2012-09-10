@@ -22,7 +22,9 @@
     {% endif %}
     {% for pic in pics %}
       <div class='markup_outer'>
-        <span class='markup_pic_container' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px">
+        <span class='markup_pic_container'
+              style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;"
+              uuid="{{ pic.uuid }}" >
           {# Do not, under any circumstances, change the padding or margin of  #}
           {# this .markup_pic_container or .pic unless you are 200% certain    #}
           {# that you aren't messing things up. Careful calculation of offsets #}
@@ -32,7 +34,7 @@
         <div class='markup_desc_container' style="width:{{ pic.preview_width }}px;">
           <div class="markup_desc">
             <p class="desc_title">General Instructions:</p>
-            <textarea class="desc" rows="2"></textarea>
+            <textarea class="desc"></textarea>
           </div>
         </div>
       </div>
@@ -51,7 +53,7 @@
 
 {% block scripts %}
     {# Isotope stuff: #}
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
     <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
     <script src="{{ STATIC_URL }}js/json2.js"></script>
     <script src="{{ STATIC_URL }}js/underscore.js"></script>
