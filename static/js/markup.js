@@ -212,8 +212,8 @@ $(function(){
       $(".markup").css("z-index", 100);
 
       var markup_el = $("#" + this.model.get("markup_el_id"));
-      markup_el.css("opacity",1);
-      markup_el.css("z-index",1);
+      markup_el.css("opacity", 1);
+      markup_el.css("z-index", 1);
     },
 
     focusOut : function() {
@@ -226,7 +226,7 @@ $(function(){
         console.log("save description " + desc);
         this.model.save( { 'description' : desc } );
       }
-      $(".markup").css("opacity",1);
+      $(".markup").css("opacity", 1);
       $(".markup").css("z-index", 1);
     },
 
