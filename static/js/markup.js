@@ -211,7 +211,7 @@ $(function(){
       $(".markup").css("opacity", 0.3);
       $(".markup").css("z-index", 100);
 
-      var markup_el = $("#" + this.model.get("markup_el_id"));;
+      var markup_el = $("#" + this.model.get("markup_el_id"));
       markup_el.css("opacity",1);
       markup_el.css("z-index",1);
     },
