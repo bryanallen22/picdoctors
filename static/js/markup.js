@@ -210,9 +210,10 @@ $(function(){
       console.log("focusIn " + this.model.get('color_name'));
       $(".markup").css("opacity", 0.3);
       $(".markup").css("z-index", 100);
-      this.$el.find(".markup").css("opacity", 1);
-      this.$el.find(".markup").css("z-index", 1);
-      $("#" + this.model.get("markup_el_id")).css("opacity",1);
+
+      var markup_el = $("#" + this.model.get("markup_el_id"));;
+      markup_el.css("opacity",1);
+      markup_el.css("z-index",1);
     },
 
     focusOut : function() {
