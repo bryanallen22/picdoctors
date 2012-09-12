@@ -229,7 +229,6 @@ $(function(){
       //"click .toggle"   : "toggleDone",
       "focusin   .desc" : "focusIn",
       "focusout  .desc" : "focusOut",
-      "keyup     .desc" : "keyUp",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -262,7 +261,7 @@ $(function(){
     focusIn : function() {
       console.log("focusIn " + this.model.get('color_name'));
 
-      this.$el.closest('#markup_app').data('this').fadeAllMarkups();
+      App.fadeAllMarkups();
       this.$el.closest('.markup_outer').data('markup_list')
         .showJustOne( this );
     },
@@ -279,17 +278,7 @@ $(function(){
       }
 
       // Show all the elements again
-      this.$el.closest('#markup_app').data('this').showAllMarkups();
-      
-  //    this.$el.closest('.markup_outer').data('markup_list')
-  //      .showAll();
-    },
-
-    keyUp : function()
-    {
-      console.log("keyUp");
-      //if you attempt to save description here it causes a render
-      //and focus loss, jack ass
+      App.showAllMarkups();
     },
 
     hide : function() {
@@ -335,7 +324,6 @@ $(function(){
 
         markup_list.reset( jQuery.parseJSON( $(this).find('.preloaded_markups').html() ) );
       });
-      this.$el.data('this', this);
 
     },
 
