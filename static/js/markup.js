@@ -113,6 +113,23 @@ $(function(){
       });
     },
 
+    showJustOne: function( showed ) {
+      this.each( function( el ) { 
+        if( el != showed.model ) {
+          el.trigger('fade');
+        }
+        else {
+          el.trigger('show');
+        }
+      });
+    },
+
+    showAll: function() {
+      this.each( function( el ) { 
+        el.trigger('show');
+      });
+    },
+
   });
 
   // The DOM element for a markup item...
@@ -144,8 +161,11 @@ $(function(){
     initialize: function() {
       //console.log("And, in the morning, I'm making MarkupView(s)!");
       //console.log(this);
-      this.model.bind('change', this.render, this);
+      this.model.bind('change',  this.render, this);
       this.model.bind('destroy', this.remove, this);
+      this.model.bind('fade',    this.fade,   this);
+      this.model.bind('hide',    this.hide,   this);
+      this.model.bind('show',    this.show,   this);
     },
 
     // Re-render the titles of the todo item.
@@ -176,8 +196,21 @@ $(function(){
       console.log("going to destroy()...");
       this.model.destroy( {wait:true} );
       console.log("destroyed!");
-    }
+    },
 
+    fade: function() {
+      this.$el.css('z-index', 1);
+      this.$el.css('opacity', 0.3);
+    },
+
+    hide: function() {
+      this.$el.css('opacity', 0);
+    },
+
+    show: function() {
+      this.$el.css('z-index', 100);
+      this.$el.css('opacity', 1);
+    }
   });
 
   // The DOM element for a markup item...
@@ -205,9 +238,9 @@ $(function(){
     initialize: function() {
       //console.log("MarkupDesc initializationz!");
       //console.log(this);
-      this.model.bind('change', this.render, this);
+      this.model.bind('change',  this.render, this);
       this.model.bind('destroy', this.remove, this);
-      
+      this.model.bind('hide',    this.hide,   this);
     },
 
     // Re-render the titles of the todo item.
@@ -227,12 +260,9 @@ $(function(){
 
     focusIn : function() {
       console.log("focusIn " + this.model.get('color_name'));
-      $(".markup").css("opacity", 0.3);
-      $(".markup").css("z-index", 1);
 
-      var markup_el = $("#" + this.model.get("markup_el_id"));
-      markup_el.css("opacity", 1);
-      markup_el.css("z-index", 100);
+      this.$el.closest('.markup_outer').data('markup_list')
+        .showJustOne( this );
     },
 
     focusOut : function() {
@@ -245,8 +275,10 @@ $(function(){
         console.log("save description " + desc);
         this.model.save( { 'description' : desc } );
       }
-      $(".markup").css("opacity", 1);
-      $(".markup").css("z-index", 1);
+
+      // Show all the elements again
+      this.$el.closest('.markup_outer').data('markup_list')
+        .showAll();
     },
 
     keyUp : function()
@@ -256,6 +288,9 @@ $(function(){
       //and focus loss, jack ass
     },
 
+    hide : function() {
+      this.$el.hide();
+    }
 
   });
 
@@ -442,6 +477,9 @@ $(function(){
            *
            * Solution? Don't destroy until our create() is done
            */
+
+          // Let's at least hide it from the user in the mean time
+          this.cur_markup.trigger('hide');
 
           var destroy_func = function(that) {
             if(that.cur_markup.get('id')) {
