@@ -31,6 +31,9 @@
           {# for drawing markups at the right location is done, and if you     #}
           {# change them, old markups might appear at the wrong spot           #}
         </span>
+        <script type="application/json" class="preloaded_markups">
+          {{ pic.get_markups_json|safe }}
+        </script>
         <div class='markup_desc_container' style="width:{{ pic.preview_width }}px;">
           <div class="markup_desc">
             <p class="desc_title">General Instructions:</p>

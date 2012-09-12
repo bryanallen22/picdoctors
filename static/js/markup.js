@@ -28,7 +28,6 @@ $(function(){
     {'name':'Dashed pink',      'value':'#c3325f', 'border-style':'dashed'},
     {'name':'Dashed purple',    'value':'#7a43b6', 'border-style':'dashed'},
   ];
-  var color_index = 0;
   var total_index = 0;
   var minimum_width = 25;
 
@@ -50,7 +49,7 @@ $(function(){
         border_style: '',
         description:  '',
 
-        // Server will save corresponding foreign key:
+        // Will be set when we create the markup:
         pic_uuid:     0,
 
         // Server shouldn't care about this one:
@@ -81,10 +80,13 @@ $(function(){
 
     // Url base
     url: '/markups_handler/',
+
+    usedColors: {},
     
     initialize: function() {
       this.container = null; // Will be set to our .markup_pic_container element
       this.bind('add', this.addOne, this);
+      this.bind('reset', this.addAll, this);
     },
 
     addOne: function(markup) {
@@ -93,6 +95,23 @@ $(function(){
       this.container.append( view.render().el );
       this.container.closest('.markup_outer')
         .find('.markup_desc_container').append( desc.render().el );
+
+      this.usedColors[ view.model.get('color_name') ] = true;
+    },
+
+    addAll: function() {
+      // Start this back over
+      this.usedColors = {};
+
+      // I'd like to call a function from my current context on all the
+      // elements in my collection. Here's a brief list of things that are
+      // more easier:
+      //   -- Eating a bologna sandwich while assaulting Jason Bourne
+      //   -- Remembering how to spell 'bologna'
+      var that = this;
+      this.each( function(el) {
+        that.addOne.call(that, el);
+      });
     },
 
     showJustOne: function( showed ) {
@@ -150,7 +169,7 @@ $(function(){
 
     // Re-render the titles of the todo item.
     render: function() {
-      console.log('render: ' + this.model.get('desc_el_id'));
+      //console.log('render: ' + this.model.get('desc_el_id'));
       //this.$el.attr('style', this.template(this.model.toJSON()));
       //console.log('MarkupView renderrrrr');
       this.$el.attr('style', this.template(
@@ -176,9 +195,17 @@ $(function(){
     },
 
     deleteMarkup: function() {
+      console.log("going to destroy()...");
+      this.model.destroy( {wait:true} );
+      console.log("destroyed!");
+      /*
+      var that = this;
       this.$el.fadeOut( function () {
-        this.model.destroy();
+        console.log("going to destroy()...");
+        that.model.destroy.call(that, {wait:true});
+        console.log("destroyed!");
       } );
+      */
     }
 
   });
@@ -238,7 +265,7 @@ $(function(){
     focusOut : function() {
       console.log("focusOut");
       //console.log(this.$el.find('.desc').val());
-      this.model.save( { 'description' : this.$el.find('.desc').val() } );
+      this.model.save( { 'description' : this.$el.find('.desc').val() }, { wait: true } );
       //this.$el.closest('.markup_outer').data('markup_list').showAll();
     },
 
@@ -306,9 +333,12 @@ $(function(){
       $(".markup_outer").each( function() {
         // Create a MarkupList on each element
         var markup_list = new MarkupList;
+        // Give markup_list a pointer to his container element,
+        // and give the container element a pointer to his markuplist.
         markup_list.container = $(this).find(".markup_pic_container");
         $(this).data("markup_list", markup_list);
 
+        markup_list.reset( jQuery.parseJSON( $(this).find('.preloaded_markups').html() ) );
       });
 
     },
@@ -325,14 +355,32 @@ $(function(){
         /* This seems like a lot of work, but e.target seems a little bit
          * unpredictable, so I'm dancing around to ensure that I always end
          * up at my desired .markup_pic_container element */
+
+        /* e.currentTarget would be better, but apparently Redmond doesn't
+         * like it. See here: http://www.quirksmode.org/js/events_order.html */
         this.pic_container = $(e.target).closest('.markup_outer')
           .find(".markup_pic_container");
         var left = e.pageX - this.pic_container.offset().left - initial_size;
         var top = e.pageY - this.pic_container.offset().top - initial_size;
 
-        /* e.currentTarget would be better, but apparently Redmond doesn't
-         * like it. See here: http://www.quirksmode.org/js/events_order.html */
-        this.cur_markup = this.pic_container.parent().data("markup_list").create(
+        var color_index = 0;
+        var markup_list = this.pic_container.parent().data("markup_list");
+
+        while( color_index < markup_colors.length &&
+               markup_colors[color_index]['name'] in markup_list.usedColors )
+        {
+          color_index++;
+        }
+
+        if( color_index == markup_colors.length ) {
+          console.log('Out of unique colors! Abort!');
+          return;
+        }
+
+
+        markup_list.usedColors[ markup_colors[color_index]['name'] ] = true;
+
+        this.cur_markup = markup_list.create(
             {
               /* The -6 magic here is:
                *       4px  (border width on one side
@@ -351,10 +399,6 @@ $(function(){
               desc_el_id:    'desc_el_id_' + total_index++,
             }
         );
-
-        if( ++color_index >= markup_colors.length ) {
-          color_index = 0;
-        }
 
         this.cur_markup_startX = (left-6);
         this.cur_markup_startY = (top-6);
@@ -430,18 +474,25 @@ $(function(){
       // TODO: If width < minimum_width, just get rid of this tiny thing.
       if( (Math.abs(x - this.cur_markup_startX) < minimum_width) ||
           (Math.abs(y - this.cur_markup_startY) < minimum_width) ) {
+
           console.log("Too small - destroy it now!");
-          this.cur_markup.destroy();
-          // Let's redo that color -- decrement back
-          if( --color_index < 0 ) {
-            color_index = markup_colors.length;
-          }
+          this.cur_markup.destroy( { wait : true } );
+          console.log("Destroyeeeeeed!");
+
+          var markup_list = this.pic_container.parent().data("markup_list");
+          var color_name = this.cur_markup.get('color_name');
+          delete markup_list.usedColors[ color_name ];
+      }
+      else if (this.cur_markup) {
+        // Sync to server and save
+        this.cur_markup.save();
       }
 
       this.cur_markup = null;
       this.cur_markup_startX = null;
       this.cur_markup_startY = null;
       this.pic_container = null;
+
     },
 
   });

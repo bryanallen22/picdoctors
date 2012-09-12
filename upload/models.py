@@ -8,6 +8,7 @@ from django.db import models
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.models import User
+from django.utils import simplejson
 
 from util.models import DeleteMixin
 
@@ -129,6 +130,16 @@ class Pic(DeleteMixin):
         # Tuple returned: (image, width, height)
         return (ContentFile(tmp_file.getvalue()),)  + im.size
 
+    def get_markups_json(self):
+        # These imports can't be at the top, because they cause a circular depedency
+        from markup.models import Markup
+        from markup.views import markup_to_dict
+        if self.uuid is not None:
+            markups = Markup.objects.filter(pic__uuid__exact=self.uuid)
+            result = [ markup_to_dict(m) for m in markups ]
+        else:
+            result = []
+        return simplejson.dumps(result)
 
 ################################################################################
 # Batch
