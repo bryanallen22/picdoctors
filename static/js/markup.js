@@ -126,6 +126,12 @@ $(function(){
       });
     },
 
+    fadeAll: function() {
+      this.each( function( el ) { 
+        el.trigger('fade');
+      });
+    },
+
   });
 
   // The DOM element for a markup item...
@@ -223,7 +229,6 @@ $(function(){
       //"click .toggle"   : "toggleDone",
       "focusin   .desc" : "focusIn",
       "focusout  .desc" : "focusOut",
-      "keyup     .desc" : "keyUp",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -256,6 +261,7 @@ $(function(){
     focusIn : function() {
       console.log("focusIn " + this.model.get('color_name'));
 
+      App.fadeAllMarkups();
       this.$el.closest('.markup_outer').data('markup_list')
         .showJustOne( this );
     },
@@ -268,19 +274,11 @@ $(function(){
       var desc = this.$el.find('.desc').val(); 
       if( desc != this.model.get('description')){
         console.log("save description " + desc);
-        this.model.save( { 'description' : desc } );
+        this.model.save( { 'description' : desc }, { wait : true } );
       }
 
       // Show all the elements again
-      this.$el.closest('.markup_outer').data('markup_list')
-        .showAll();
-    },
-
-    keyUp : function()
-    {
-      console.log("keyUp");
-      //if you attempt to save description here it causes a render
-      //and focus loss, jack ass
+      App.showAllMarkups();
     },
 
     hide : function() {
@@ -328,6 +326,19 @@ $(function(){
       });
 
     },
+
+    fadeAllMarkups: function() {
+      $(".markup_outer").each( function() {
+        $(this).data("markup_list").fadeAll();
+      });
+    },
+    
+    showAllMarkups: function() {
+      $(".markup_outer").each( function() {
+        $(this).data("markup_list").showAll();
+      });
+    },
+
 
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
