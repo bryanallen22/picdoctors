@@ -154,8 +154,10 @@ $(function(){
     },
 
     deleteMarkup: function() {
+      var this_model = this.model;
+
       this.$el.fadeOut( function () {
-        this.model.destroy();
+        this_model.destroy();
       } );
     }
 
