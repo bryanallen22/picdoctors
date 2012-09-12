@@ -427,28 +427,59 @@ $(function(){
       var x = e.pageX - this.pic_container.offset().left;
       var y = e.pageY - this.pic_container.offset().top;
 
-      // TODO: If width < minimum_width, just get rid of this tiny thing.
+      // If the markup is too small, get rid of it
       if( (Math.abs(x - this.cur_markup_startX) < minimum_width) ||
           (Math.abs(y - this.cur_markup_startY) < minimum_width) ) {
 
-          console.log("Too small - destroy it now!");
-          this.cur_markup.destroy( { wait : true } );
-          console.log("Destroyeeeeeed!");
+          /*
+           * Some weird hackery in here. Basically, we want to destroy
+           * this.cur_markup, but we've probably got a create() request to
+           * server already in flight. If we destroy it *before* that create()
+           * finishes, we'll destroy it client side without destroying it
+           * server side. (We won't don't yet know the id to destroy it on
+           * the server.) That means it'll still be created on the server and
+           * it'll show up on page reloads.
+           *
+           * Solution? Don't destroy until our create() is done
+           */
+
+          var destroy_func = function(that) {
+            if(that.cur_markup.get('id')) {
+              /* Has an 'id', so it has been synced to the server, so
+               * we can delete it now. */
+              that.cur_markup.destroy( { wait : true } );
+              console.log('Small markup has been destroyed');
+
+              that.cur_markup = null;
+              that.cur_markup_startX = null;
+              that.cur_markup_startY = null;
+              that.pic_container = null;
+            }
+            else {
+              /* Does not have an 'id', so our create() request hasn't gone through
+               * for this object. We can't safely destroy it until the creation has
+               * gone through. */
+              console.log('Small markup not yet created -- delaying...');
+              setTimeout(destroy_func, 20, that);
+            }
+          }
+
+          setTimeout(destroy_func, 20, this);
+          //this.cur_markup.destroy( { wait : true } );
 
           var markup_list = this.pic_container.parent().data("markup_list");
           var color_name = this.cur_markup.get('color_name');
           delete markup_list.usedColors[ color_name ];
       }
       else if (this.cur_markup) {
-        // Sync to server and save
+        // This guy is big enough! Let's sync() to the server
         this.cur_markup.save();
+
+        this.cur_markup = null;
+        this.cur_markup_startX = null;
+        this.cur_markup_startY = null;
+        this.pic_container = null;
       }
-
-      this.cur_markup = null;
-      this.cur_markup_startX = null;
-      this.cur_markup_startY = null;
-      this.pic_container = null;
-
     },
 
   });
