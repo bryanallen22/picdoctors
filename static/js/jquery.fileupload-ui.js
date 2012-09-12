@@ -80,6 +80,10 @@
 
                 /* Get rid of the instructions telling the user how to drag files in */
                 $('#isocontainer .instructions').hide();
+                $("#next").addClass('disabled');
+                //window.onbeforeunload = function(e) {
+                //      return 'Pictures are still uploading! Are you sure you want to leave?';
+                //};
             },
             // Callback for the start of each file upload request:
             send: function (e, data) {
@@ -133,6 +137,15 @@
                         var uuid = dl_templ.attr("uuid");
                         $this.attr("uuid", uuid);
                         IsoWrapper.picDownloaded($this);
+
+                        /* If all the pictures have uuids, that means that they
+                         * all have been downloaded. If so, let's enable
+                         * that #next button */
+                        if( $('.pic_container').length == 
+                            $('.pic_container[uuid]').length ) {
+                              $("#next").removeClass('disabled');
+                              //window.onbeforeunload = null;
+                        }
                         /******************************/
                     });
                 } else {
@@ -205,15 +218,6 @@
 
                 var val = parseInt(data.loaded / data.total * 100, 10);
                 var bar = $('#totalprogress');
-                if(val >= 100)
-                {
-                  $('#next').removeClass('disabled');
-                }
-                else
-                {
-                  $('#next').addClass('disabled');
-                }
-                //console.log('progressall: val=' + val);
             },
             // Callback for uploads start, equivalent to the global ajaxStart event:
             start: function () {
