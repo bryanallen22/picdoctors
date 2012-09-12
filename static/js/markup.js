@@ -126,6 +126,12 @@ $(function(){
       });
     },
 
+    fadeAll: function() {
+      this.each( function( el ) { 
+        el.trigger('fade');
+      });
+    },
+
   });
 
   // The DOM element for a markup item...
@@ -256,6 +262,7 @@ $(function(){
     focusIn : function() {
       console.log("focusIn " + this.model.get('color_name'));
 
+      this.$el.closest('#markup_app').data('this').fadeAllMarkups();
       this.$el.closest('.markup_outer').data('markup_list')
         .showJustOne( this );
     },
@@ -272,8 +279,10 @@ $(function(){
       }
 
       // Show all the elements again
-      this.$el.closest('.markup_outer').data('markup_list')
-        .showAll();
+      this.$el.closest('#markup_app').data('this').showAllMarkups();
+      
+  //    this.$el.closest('.markup_outer').data('markup_list')
+  //      .showAll();
     },
 
     keyUp : function()
@@ -326,8 +335,22 @@ $(function(){
 
         markup_list.reset( jQuery.parseJSON( $(this).find('.preloaded_markups').html() ) );
       });
+      this.$el.data('this', this);
 
     },
+
+    fadeAllMarkups: function() {
+      $(".markup_outer").each( function() {
+        $(this).data("markup_list").fadeAll();
+      });
+    },
+    
+    showAllMarkups: function() {
+      $(".markup_outer").each( function() {
+        $(this).data("markup_list").showAll();
+      });
+    },
+
 
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
