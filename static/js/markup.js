@@ -28,7 +28,7 @@ $(function(){
     {'name':'Dashed pink',      'value':'#c3325f', 'border-style':'dashed'},
     {'name':'Dashed purple',    'value':'#7a43b6', 'border-style':'dashed'},
   ];
-  var total_index = 0;
+  var unique_index = 0;
   var minimum_width = 25;
 
   // Our basic **Markup** model has 'left', 'top', 'width', 'height',
@@ -53,8 +53,7 @@ $(function(){
         pic_uuid:     0,
 
         // Server shouldn't care about this one:
-        hidden:       false,
-        desc_el_id:   '',
+        markup_el_id:   '',
       };
     },
     
@@ -114,24 +113,6 @@ $(function(){
       });
     },
 
-    showJustOne: function( showed ) {
-      this.each( function( el ) { 
-        if( el != showed.model ) {
-          el.set( { 'hidden' : true } );
-        }
-        else {
-          el.set( { 'hidden' : false } );
-        }
-      });
-    },
-
-    showAll: function() {
-      console.log('showAll called!');
-      this.forEach( function( el ) { 
-        el.set( { 'hidden' : false } );
-      });
-    }
-
   });
 
   // The DOM element for a markup item...
@@ -183,14 +164,11 @@ $(function(){
             }
       ));
 
+      this.$el.attr('id', this.model.get('markup_el_id'));
       // Doesn't display well on really small widths
       this.$el.html( this.redX_template( {} ) );
       this.$el.find('.markup-redx').css('left', this.model.get('width')-20 );
 
-      if( this.model.get('hidden') ) {
-        this.$el.css('opacity', 0.3);
-        this.$el.css('z-index', 100);
-      }
       return this;
     },
 
@@ -198,14 +176,6 @@ $(function(){
       console.log("going to destroy()...");
       this.model.destroy( {wait:true} );
       console.log("destroyed!");
-      /*
-      var that = this;
-      this.$el.fadeOut( function () {
-        console.log("going to destroy()...");
-        that.model.destroy.call(that, {wait:true});
-        console.log("destroyed!");
-      } );
-      */
     }
 
   });
@@ -225,7 +195,6 @@ $(function(){
       //"click .toggle"   : "toggleDone",
       "focusin   .desc" : "focusIn",
       "focusout  .desc" : "focusOut",
-      "mousedown .desc" : "mouseDown",
       "keyup     .desc" : "keyUp",
     },
 
@@ -250,7 +219,6 @@ $(function(){
             color_name    : this.model.get('color_name') + ' area instructions:',
             border_style  : this.model.get('border_style'),
             desc          : this.model.get('description'),
-            desc_el_id    : this.model.get('desc_el_id'),
           }
       ));
 
@@ -258,15 +226,27 @@ $(function(){
     },
 
     focusIn : function() {
-      console.log("focusIn");
-      //this.$el.closest('.markup_outer').data('markup_list').showJustOne( this );
+      console.log("focusIn " + this.model.get('color_name'));
+      $(".markup").css("opacity", 0.3);
+      $(".markup").css("z-index", 1);
+
+      var markup_el = $("#" + this.model.get("markup_el_id"));
+      markup_el.css("opacity", 1);
+      markup_el.css("z-index", 100);
     },
 
     focusOut : function() {
       console.log("focusOut");
       //console.log(this.$el.find('.desc').val());
-      this.model.save( { 'description' : this.$el.find('.desc').val() }, { wait: true } );
-      //this.$el.closest('.markup_outer').data('markup_list').showAll();
+
+      //only save when the description has changed
+      var desc = this.$el.find('.desc').val(); 
+      if( desc != this.model.get('description')){
+        console.log("save description " + desc);
+        this.model.save( { 'description' : desc } );
+      }
+      $(".markup").css("opacity", 1);
+      $(".markup").css("z-index", 1);
     },
 
     keyUp : function()
@@ -276,32 +256,8 @@ $(function(){
       //and focus loss, jack ass
     },
 
-    mouseDown: function()
-    {
-      var el_id =  this.model.get('desc_el_id');
-      console.log('mouseDown for ' + el_id );
-      var el = $('#' + el_id);
-      if(el[0] == document.activeElement)
-      {
-        console.log('already has focus!');
-      }
-      else
-      {
-        setTimeout(function(){focusFix(el_id)},10); 
-      }
-    },
 
   });
-
-  function focusFix(el_id)
-  {
-    console.log('fake focus');
-    var el = $('#' + el_id);
-    var dom_el = el[0];
-    el.focus();       
-    dom_el.value = dom_el.value;
-    
-  }
 
   // The Application
   // ---------------
@@ -396,7 +352,7 @@ $(function(){
               color_name:    markup_colors[color_index]['name'],
               border_style:  markup_colors[color_index]['border-style'],
               pic_uuid:      this.pic_container.attr('uuid'),
-              desc_el_id:    'desc_el_id_' + total_index++,
+              markup_el_id:  'markup_el_id_' + unique_index++, 
             }
         );
 
