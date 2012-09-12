@@ -28,7 +28,6 @@ $(function(){
     {'name':'Dashed pink',      'value':'#c3325f', 'border-style':'dashed'},
     {'name':'Dashed purple',    'value':'#7a43b6', 'border-style':'dashed'},
   ];
-  var unique_index = 0;
   var minimum_width = 25;
 
   // Our basic **Markup** model has 'left', 'top', 'width', 'height',
@@ -51,9 +50,6 @@ $(function(){
 
         // Will be set when we create the markup:
         pic_uuid:     0,
-
-        // Server shouldn't care about this one:
-        markup_el_id:   '',
       };
     },
     
@@ -184,7 +180,6 @@ $(function(){
             }
       ));
 
-      this.$el.attr('id', this.model.get('markup_el_id'));
       // Doesn't display well on really small widths
       this.$el.html( this.redX_template( {} ) );
       this.$el.find('.markup-redx').css('left', this.model.get('width')-20 );
@@ -387,7 +382,6 @@ $(function(){
               color_name:    markup_colors[color_index]['name'],
               border_style:  markup_colors[color_index]['border-style'],
               pic_uuid:      this.pic_container.attr('uuid'),
-              markup_el_id:  'markup_el_id_' + unique_index++, 
             }
         );
 
