@@ -274,7 +274,7 @@ $(function(){
       var desc = this.$el.find('.desc').val(); 
       if( desc != this.model.get('description')){
         console.log("save description " + desc);
-        this.model.save( { 'description' : desc }, { wait , true } );
+        this.model.save( { 'description' : desc }, { wait : true } );
       }
 
       // Show all the elements again
