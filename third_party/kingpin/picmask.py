@@ -37,7 +37,7 @@ def watermark(im, mark, position, size, overlay_text, opacity):
     # composite the watermark with the layer
     return Image.composite(layer, im, layer)
 
-def goCowGo():
+def goMoo():
     im = Image.open('cow.jpg')
     mark = Image.open('overlay.png')
     mask_width = int(im.size[0] * .39)
@@ -50,4 +50,4 @@ def goCowGo():
     opacity = 0.5
     watermark(im, mark, position, size, text, opacity).show()
 
-goCowGo()
+goMoo()
