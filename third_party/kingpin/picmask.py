@@ -46,7 +46,7 @@ def goMoo():
     im_height = im.size[1]
     position = (im_width-mask_width, int(im_height/2))
     size = (mask_width, mask_height)
-    text = ("Doctor: Santa Claus", "PicDoctors.com")
+    text = ("Doctor: Dr Dre", "PicDoctors.com")
     opacity = 0.5
     watermark(im, mark, position, size, text, opacity).show()
 
