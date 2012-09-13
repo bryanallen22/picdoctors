@@ -25,28 +25,29 @@ preview_height = 800
 ################################################################################
 
 class Pic(DeleteMixin):
-    batch            = models.ForeignKey('Batch', blank=True, null=True)
+    batch                = models.ForeignKey('Batch', blank=True, null=True)
 
-    uuid             = models.CharField(max_length=32, blank=False,
-                                        unique=True, db_index=True)
-    created          = models.DateField(auto_now_add=True)
-    updated          = models.DateField(auto_now=True)
-    title            = models.CharField(max_length=60, blank=True, null=True)
-    browser_group_id = models.IntegerField(blank=False, default=ungroupedId)
-    group_id         = models.IntegerField(blank=True, null=True)
+    uuid                 = models.CharField(max_length=32, blank=False,
+                                            unique=True, db_index=True)
+    created              = models.DateField(auto_now_add=True)
+    updated              = models.DateField(auto_now=True)
+    title                = models.CharField(max_length=60, blank=True, null=True)
+    browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
+    group_id             = models.IntegerField(blank=True, null=True)
 
-    original         = models.ImageField(upload_to = 'user_originals/')
-    preview          = models.ImageField(upload_to = 'user_preview/')
-    thumbnail        = models.ImageField(upload_to = 'user_thumbs/')
+    original             = models.ImageField(upload_to = 'user_originals/')
+    preview              = models.ImageField(upload_to = 'user_preview/')
+    thumbnail            = models.ImageField(upload_to = 'user_thumbs/')
+    general_instructions = models.TextField(blank=True)
 
     # Getting these later requires fetching the picture.
     # That's oh so very bad. Don't do that.
-    original_width   = models.SmallIntegerField(blank=True, null=True)
-    original_height  = models.SmallIntegerField(blank=True, null=True)
-    preview_width    = models.SmallIntegerField(blank=True, null=True)
-    preview_height   = models.SmallIntegerField(blank=True, null=True)
-    thumb_width      = models.SmallIntegerField(blank=True, null=True)
-    thumb_height     = models.SmallIntegerField(blank=True, null=True)
+    original_width       = models.SmallIntegerField(blank=True, null=True)
+    original_height      = models.SmallIntegerField(blank=True, null=True)
+    preview_width        = models.SmallIntegerField(blank=True, null=True)
+    preview_height       = models.SmallIntegerField(blank=True, null=True)
+    thumb_width          = models.SmallIntegerField(blank=True, null=True)
+    thumb_height         = models.SmallIntegerField(blank=True, null=True)
 
     def __unicode__(self):
         return self.title

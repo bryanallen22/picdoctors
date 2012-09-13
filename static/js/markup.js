@@ -64,6 +64,31 @@ $(function(){
 
   });
 
+  //Simplistic Pic Model, only what's necessary to update the General Instructions
+  var Pic = Backbone.Model.extend({
+
+    //using the pic_handler url for saving etc
+    url:  '/pic_instruction_handler/',
+    
+    //default attributes, match directly to server side logic
+    defaults: function(){
+      return {
+        pic_uuid:    0,
+        instruction: '',
+      };
+    },
+
+    initialize : function() {
+        console.log("Creating Pic Model");
+    },
+
+    clear: function() {
+      this.destroy();
+    },
+  
+  });  
+  
+
   // Markup Collection
   // ---------------
 
@@ -287,6 +312,36 @@ $(function(){
 
   });
 
+  var GeneralInstructionView = Backbone.View.extend({
+
+    //using the Pic model
+    model: Pic,
+
+
+    initialize: function() {
+        console.log('created a wicked awesome Instruction view: ' + this.model.get('pic_uuid'));
+        
+    },
+
+    events: {
+     "focusout   .desc" : "focusOut",
+
+    },
+
+    render: function(){
+//      console.log("render the wicked awesome");  
+    },
+
+    focusOut: function(){
+      var instruction = this.$el.find('.desc').val();
+      console.log("Got focusOut for description " + instruction);
+      this.model.save('instruction', instruction);
+    }
+    
+
+
+  });
+
   // The Application
   // ---------------
 
@@ -322,6 +377,8 @@ $(function(){
         markup_list.container = $(this).find(".markup_pic_container");
         $(this).data("markup_list", markup_list);
 
+        var pic_model = new Pic( {pic_uuid: markup_list.container.attr('uuid'), instruction: $(this).find(".desc").val()  } );
+        var general_instruction = new GeneralInstructionView( { el : $(this).find(".instruction"), model: pic_model } );
         markup_list.reset( jQuery.parseJSON( $(this).find('.preloaded_markups').html() ) );
       });
 
