@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     'util',
     'upload',
     'markup',
+    'profiles',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+  {# Uhh, there's a space here because without it, the div collapses. Whatever. #}
+  <div class='span2'>&nbsp;</div>
+  <div class='span8'>
+
+    <form>
+      <legend>Legend</legend>
+      <label>Label name</label>
+      <input type="text" placeholder="Type something…">
+      <span class="help-block">Example block-level help text here.</span>
+      <label class="checkbox">
+        <input type="checkbox"> Check me out
+      </label>
+      <button type="submit" class="btn">Submit</button>
+    </form>
+
+  </div>
+  <div class='span2'>&nbsp;</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {# Isotope stuff: #}
+    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/json2.js"></script>
+    <script src="{{ STATIC_URL }}js/underscore.js"></script>
+    <script src="{{ STATIC_URL }}js/backbone.js"></script>
+    <script src="{{ STATIC_URL }}js/markup.js"></script>
+
+    {# Templates #}
+    {# This template is just the *style* attribute for the markup div      #}
+    {# Note: if you change the border width here from 4px, you'll probably #}
+    {# want to fix the math in the *createMarkup* method in markup.js      #}
+    <script type="text/template" id="markup-template-styleattr">
+      left: <%= left %>; top: <%= top %>; height: <%= height %>; width: <%= width %>; border: 4px <%= color %>; border-style: <%= border_style %>;
+    </script>
+    {# Used to put the red X on a markup element #}
+    <script type="text/template" id="markup-template-redx">
+      <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
+    </script>
+
+    {# MarkupDesc view #}
+    <script type="text/template" id="markup-template-desc">
+      <p class="desc_title" style="border: 4px <%= color %>; border-style: <%= border_style %>;">
+        <%= color_name %>
+      </p>
+      <textarea class="desc" rows='2'><%= desc %></textarea>
+    </script>
+    
+{% endblock %}
+

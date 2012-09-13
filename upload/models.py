@@ -7,10 +7,10 @@ from PIL import Image
 from django.db import models
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.contrib.auth.models import User
 from django.utils import simplejson
 
 from util.models import DeleteMixin
+from profiles.models import UserProfile
 
 import logging
 
@@ -146,7 +146,7 @@ class Pic(DeleteMixin):
 ################################################################################
 class Batch(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
-    user        = models.OneToOneField(User, blank=True, null=True)
+    userprofile = models.OneToOneField(UserProfile, blank=True, null=True)
 
     created     = models.DateField(auto_now_add=True)
     updated     = models.DateField(auto_now=True)

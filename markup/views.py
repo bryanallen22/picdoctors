@@ -71,7 +71,7 @@ def markup_page(request, group_id):
       return redirect('upload')
 
     if group_id == batch.num_groups:
-        next_url = '/hoodles/'
+        next_url = reverse('signin')
     else:
         next_url = reverse('markup', args=[group_id+1])
     # Just working on design at the moment, so I'm just going to hard code
