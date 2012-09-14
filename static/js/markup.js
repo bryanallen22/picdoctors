@@ -200,7 +200,12 @@ $(function(){
       //console.log('render: ' + this.model.get('desc_el_id'));
       //this.$el.attr('style', this.template(this.model.toJSON()));
       //console.log('MarkupView renderrrrr');
-      this.$el.attr('style', this.template(
+      //Only render this HTML once
+      //No need to recreate after it's already been built
+      //this may apply to red x as well, but I don't care about it
+      if(this.$el.context.innerHTML=="")
+      {
+        this.$el.attr('style', this.template(
             {
               left:          this.model.get('left')   + 'px',
               top:           this.model.get('top')    + 'px',
@@ -209,7 +214,8 @@ $(function(){
               color:         this.model.get('color'),
               border_style:  this.model.get('border_style'),
             }
-      ));
+        ));
+      }
 
       // Doesn't display well on really small widths
       this.$el.html( this.redX_template( {} ) );
@@ -271,14 +277,19 @@ $(function(){
     // Re-render the titles of the todo item.
     render: function() {
       //this.$el.attr('style', this.template(this.model.toJSON()));
-      this.$el.html( this.template(
+      //only render this html once
+      //no need to recreate after it's been built
+      if(this.$el.context.innerHTML == "")
+      {
+        this.$el.html( this.template(
           {
             color         : this.model.get('color'),
             color_name    : this.model.get('color_name') + ' area instructions:',
             border_style  : this.model.get('border_style'),
             desc          : this.model.get('description'),
           }
-      ));
+        ));
+      }
 
       return this;
     },
