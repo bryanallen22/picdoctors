@@ -180,3 +180,19 @@ def markups_handler(request, markup_id=None):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
+#Implement logic to validate user has relation to batch/pic
+def can_modify_pic(request, pic):
+    return True
+
+# TODO implement usage of csrf token
+# TODO return error when it doesn't save
+@csrf_exempt
+def pic_instruction_handler(request):
+    #pdb.set_trace()
+    data = simplejson.loads(request.body)
+    pic = Pic.objects.get(uuid=data['uuid'])
+    if can_modify_pic(request, pic):
+        pic.general_instructions = data['general_instructions']
+        pic.save()
+    
+    return HttpResponse(simplejson.dumps({}), mimetype='application/json')

@@ -73,8 +73,8 @@ $(function(){
     //default attributes, match directly to server side logic
     defaults: function(){
       return {
-        pic_uuid:    0,
-        instruction: '',
+        uuid:    0,
+        general_instructions: '',
       };
     },
 
@@ -334,8 +334,11 @@ $(function(){
 
     focusOut: function(){
       var instruction = this.$el.find('.desc').val();
-      console.log("Got focusOut for description " + instruction);
-      this.model.save('instruction', instruction);
+      console.log("Got focusOut for general instruction value: " + instruction);
+      if( instruction != this.model.get('general_instructions') ) {
+        this.model.save({ 'general_instructions': instruction } , 
+                        { wait : true });
+      }
     }
     
 
@@ -377,8 +380,13 @@ $(function(){
         markup_list.container = $(this).find(".markup_pic_container");
         $(this).data("markup_list", markup_list);
 
-        var pic_model = new Pic( {pic_uuid: markup_list.container.attr('uuid'), instruction: $(this).find(".desc").val()  } );
-        var general_instruction = new GeneralInstructionView( { el : $(this).find(".instruction"), model: pic_model } );
+        var general_instructions = $(this).find(".desc").val() ;
+        var pic_model = new Pic( {uuid: markup_list.container.attr('uuid'),
+                                  general_instructions: general_instructions } );
+        
+        var instruction = $(this).find(".instruction");
+
+        new GeneralInstructionView( { el : instruction, model: pic_model } );
         markup_list.reset( jQuery.parseJSON( $(this).find('.preloaded_markups').html() ) );
       });
 

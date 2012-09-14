@@ -16,7 +16,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/ballen/dev/picdoctors/sqlite.db', # Or path to database file if using sqlite3.
+        'NAME': '/code/picdoctors/sqlite.db', # Or path to database file if using sqlite3.
     }
 }
 
@@ -121,7 +121,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 
     # bta - not sure why it likes this format when launched from cygwin:
-    '/home/ballen/dev/picdoctors/templates/',
+    '/code/picdoctors/templates/',
 )
 
 INSTALLED_APPS = (

@@ -10,16 +10,18 @@
 {% block main %}
 <div class='row'>
   <div id="markup_app" class='span10'>
-    {% if pics|length > 1 %}
     <h2 style="text-align: center; color: #777;">
+    {% if pics|length > 1 %}
       These {{ pics|length }} pictures will be combined into a single final picture
+    {% else %}
+      This picture will be edited based on the instructions you input below
+    {% endif %}
     </h2>
     <h4 style="text-align: center; color: #999; margin-bottom: 40px;">
       If that's not what you wanted, you can go
       <a href="{% url upload.views.upload_page %}">back</a>
       and regroup
     </h4>
-    {% endif %}
     {% for pic in pics %}
       <div class='markup_outer'>
         <span class='markup_pic_container'
