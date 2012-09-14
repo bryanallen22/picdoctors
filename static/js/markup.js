@@ -200,12 +200,12 @@ $(function(){
       //console.log('render: ' + this.model.get('desc_el_id'));
       //this.$el.attr('style', this.template(this.model.toJSON()));
       //console.log('MarkupView renderrrrr');
-      //Only render this HTML once
-      //No need to recreate after it's already been built
-      //this may apply to red x as well, but I don't care about it
-      if(this.$el.context.innerHTML=="")
-      {
-        this.$el.attr('style', this.template(
+      
+      //okay, admission of guilt, I feel guilty about this...
+      //essentially only redraw the markup if it's size has changed
+      var rebuild = false;
+      var old_template = this.$el.attr('style');
+      var new_template = this.template(
             {
               left:          this.model.get('left')   + 'px',
               top:           this.model.get('top')    + 'px',
@@ -213,8 +213,35 @@ $(function(){
               height:        this.model.get('height') + 'px',
               color:         this.model.get('color'),
               border_style:  this.model.get('border_style'),
-            }
-        ));
+            });
+
+      rebuild = rebuild || old_template==undefined;
+
+
+      if(!rebuild)
+      {
+        //should I feel wrong about this?  probably...
+        //find the last index of height or width, then compare the two style strings
+        //for some reason even though you insert them left, top, width, height
+        //the output string is left, top, height, width
+        var old_idx = Math.max(old_template.indexOf("height"), old_template.indexOf("width"));
+        var new_idx = Math.max(new_template.indexOf("height"), new_template.indexOf("width"));
+        //move our index up to the semi colon
+        var old_compare_spot = old_template.indexOf(";", old_idx + 1);
+        var new_compare_spot = new_template.indexOf(";", new_idx + 1);
+        //get the substring of the style string
+        var old_template_sub = old_template.substring(0, old_compare_spot);
+        var new_template_sub = new_template.substring(0, new_compare_spot);
+        //compare, if different, redraw
+        //this only occurs while resizing the markup
+        //I'd love to just compare the styles, but the styles change on focus, and off focus
+        rebuild = rebuild || old_template_sub!=new_template_sub;
+      }
+
+      if(rebuild)
+      {
+//        console.log("rebuild: \n  old: " + old_template + "\n  new: " + new_template); 
+        this.$el.attr('style', new_template);
       }
 
       // Doesn't display well on really small widths
