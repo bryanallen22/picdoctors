@@ -1,6 +1,7 @@
 // Give numbers to groups
 var nextGroupId = 1;
 var ungroupedId = 100000; // Make sure that this matches the original group in html
+var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
 
 // Border Groups module
 var BorderGroups = (function ($) {
@@ -209,8 +210,10 @@ var IsoWrapper = (function($) {
     );
 
     //console.log(method + ":" + json);
-
     $.ajax({
+      headers: {
+        "X-CSRFToken":CSRF_TOKEN
+      },
       type: method,
       url: '/group_handler/',
       data: json,
@@ -406,6 +409,9 @@ $(function(){
       var json = JSON.stringify( { "uuid" : uuid, } );
 
       $.ajax({
+        headers: {
+          "X-CSRFToken":CSRF_TOKEN
+        },
         type: 'DELETE',
         url: '/delete_handler/',
         data: json,

@@ -69,7 +69,7 @@ $(function(){
 
     //using the pic_handler url for saving etc
     url:  '/pic_instruction_handler/',
-    
+
     //default attributes, match directly to server side logic
     defaults: function(){
       return {
@@ -86,8 +86,16 @@ $(function(){
       this.destroy();
     },
   
-  });  
-  
+  });
+
+  var true_sync_func = Backbone.sync;
+  var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
+  Backbone.sync = function(method, model, options){
+    options.beforeSend = function(xhr){
+      xhr.setRequestHeader('X-CSRFToken', CSRF_TOKEN);
+    };
+    return true_sync_func( method, model, options);
+  };
 
   // Markup Collection
   // ---------------

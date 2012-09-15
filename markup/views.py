@@ -1,7 +1,7 @@
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.views.decorators.csrf import csrf_protect
 from django.utils import simplejson
 from django.http import HttpResponse
 
@@ -16,6 +16,7 @@ from models import Markup
 import pdb
 import logging
 
+@csrf_protect
 def set_group_ids(request, batch_id):
     # Sets group_id for each picture in the batch. Note that this
     # will quite happily override any existing group_id that was
@@ -128,7 +129,7 @@ def markup_to_dict(markup):
 def can_modify_markup(markup, request):
     return True
 
-@csrf_exempt
+@csrf_protect
 def markups_handler(request, markup_id=None):
     # POST /markups_handler/ -- create a new markup
     if request.method == 'POST':
@@ -184,9 +185,8 @@ def markups_handler(request, markup_id=None):
 def can_modify_pic(request, pic):
     return True
 
-# TODO implement usage of csrf token
 # TODO return error when it doesn't save
-@csrf_exempt
+@csrf_protect
 def pic_instruction_handler(request):
     #pdb.set_trace()
     data = simplejson.loads(request.body)
