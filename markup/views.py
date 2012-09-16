@@ -75,9 +75,15 @@ def markup_page(request, group_id):
         next_url = reverse('signin')
     else:
         next_url = reverse('markup', args=[group_id+1])
+
+    if group_id == 1:
+        previous_url = reverse('upload')
+    else:
+        previous_url = reverse('markup', args = [group_id-1])
+
     # Just working on design at the moment, so I'm just going to hard code
     # Viewing just the first pic
-    return { 'pics' : pics, 'next_url' : next_url }
+    return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url }
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes
