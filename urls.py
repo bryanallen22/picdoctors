@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     (r'', include('upload.urls')),
     (r'', include('markup.urls')),
     (r'', include('signin.urls')),
+    (r'', include('job.urls')),
 )
 
 if settings.DEBUG:

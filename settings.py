@@ -139,6 +139,7 @@ INSTALLED_APPS = (
     'upload',
     'markup',
     'signin',
+    'job',
 )
 
 # A sample logging configuration. The only tangible logging

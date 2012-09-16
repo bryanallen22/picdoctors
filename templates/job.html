@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+    <div id='job_app'>
+        I am Job hear me roar
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {# Isotope stuff: #}
+    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/job.js"></script>
+{% endblock %}
+
