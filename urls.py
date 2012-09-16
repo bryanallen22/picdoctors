@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     # Let these handle their own views:
     (r'', include('upload.urls')),
     (r'', include('markup.urls')),
-    (r'', include('profiles.urls')),
+    (r'', include('signin.urls')),
 )
 
 if settings.DEBUG:

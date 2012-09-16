@@ -1,6 +1,5 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.http import HttpResponse
 
 from annoying.decorators import render_to
@@ -13,5 +12,19 @@ import logging
 
 @render_to('signin.html')
 def signin(request):
-    return { }
+    ret = {
+        'bad_email_or_password' : False,
+        'passwords_didnt_match' : False,
+    }
+
+    if request.method == 'GET':
+        pass
+
+    elif request.method == 'POST':
+        if request.POST['password'] == request.POST['confirmPassword']:
+            pass
+        else:
+            ret['passwords_didnt_match'] = True
+
+    return ret
 

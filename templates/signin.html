@@ -13,16 +13,46 @@
   <div class='span2'>&nbsp;</div>
   <div class='span8'>
 
-    <form>
-      <legend>Legend</legend>
-      <label>Label name</label>
-      <input type="text" placeholder="Type something…">
-      <span class="help-block">Example block-level help text here.</span>
-      <label class="checkbox">
-        <input type="checkbox"> Check me out
-      </label>
-      <button type="submit" class="btn">Submit</button>
-    </form>
+    <div class="container">
+      <div class="row">
+        <div class="span4 offset1 well">
+
+          <legend>Please Sign In</legend>
+          <div class="alert alert-error" 
+            {% if not bad_email_or_password %}
+              style="display:none;"
+            {% endif %} >
+            <a class="close" data-dismiss="alert" href="#">×</a>Incorrect email or password!
+          </div>
+          <div class="alert alert-error" 
+            {% if not passwords_didnt_match %}
+              style="display:none;"
+            {% endif %} >
+            <a class="close" data-dismiss="alert" href="#">×</a>Passwords did not match!
+          </div>
+          <form method="POST" action="" accept-charset="UTF-8">
+            {% csrf_token %}
+            <label class="radio">
+              <input type="radio" name="createAcctRadio" id="create" value="create" checked>
+              Create a new account
+            </label>
+            <label class="radio">
+              <input type="radio" name="createAcctRadio" id="have" value="have">
+              I already have an account
+            </label>
+            <input type="text" id="email" class="span4" name="email" placeholder="Email Address">
+            <input type="password" id="password" class="span4" name="password" placeholder="Password">
+            <input type="password" id="confirmPassword" class="span4" name="confirmPassword"
+            placeholder="Confirm Password">
+            <label class="checkbox">
+              <input type="checkbox" name="remember" value="1">Remember Me
+            </label>
+            <button type="submit" name="submit" class="btn btn-info btn-block">Sign in</button>
+          </form>    
+
+        </div>
+      </div>
+    </div>
 
   </div>
   <div class='span2'>&nbsp;</div>
@@ -33,30 +63,6 @@
     {# Isotope stuff: #}
     <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
     <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
-    <script src="{{ STATIC_URL }}js/json2.js"></script>
-    <script src="{{ STATIC_URL }}js/underscore.js"></script>
-    <script src="{{ STATIC_URL }}js/backbone.js"></script>
-    <script src="{{ STATIC_URL }}js/markup.js"></script>
-
-    {# Templates #}
-    {# This template is just the *style* attribute for the markup div      #}
-    {# Note: if you change the border width here from 4px, you'll probably #}
-    {# want to fix the math in the *createMarkup* method in markup.js      #}
-    <script type="text/template" id="markup-template-styleattr">
-      left: <%= left %>; top: <%= top %>; height: <%= height %>; width: <%= width %>; border: 4px <%= color %>; border-style: <%= border_style %>;
-    </script>
-    {# Used to put the red X on a markup element #}
-    <script type="text/template" id="markup-template-redx">
-      <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
-    </script>
-
-    {# MarkupDesc view #}
-    <script type="text/template" id="markup-template-desc">
-      <p class="desc_title" style="border: 4px <%= color %>; border-style: <%= border_style %>;">
-        <%= color_name %>
-      </p>
-      <textarea class="desc" rows='2'><%= desc %></textarea>
-    </script>
-    
+    <script src="{{ STATIC_URL }}js/signin.js"></script>
 {% endblock %}
 

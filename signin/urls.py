@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from profiles.views import signin
+from signin.views import signin
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin

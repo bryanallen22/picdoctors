@@ -10,7 +10,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import simplejson
 
 from util.models import DeleteMixin
-from profiles.models import UserProfile
+from signin.models import UserProfile
 
 import logging
 
