@@ -23,10 +23,10 @@ urlpatterns = patterns('',
     url(r'^$', index),
 
     # Let these handle their own views:
-    (r'', include('upload.urls')),
-    (r'', include('markup.urls')),
-    (r'', include('signin.urls')),
-    (r'', include('job.urls')),
+    (r'', include('skaa.urls')),
+    (r'', include('doctor.urls')),
+    (r'', include('common.urls')),
+    (r'', include('messaging.urls')),
 )
 
 if settings.DEBUG:
