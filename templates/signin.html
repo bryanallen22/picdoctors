@@ -33,16 +33,16 @@
           <form method="POST" action="" accept-charset="UTF-8">
             {% csrf_token %}
             <label class="radio">
-              <input type="radio" name="createAcctRadio" id="create" value="create" checked>
+              <input type="radio" name="create_acct_radio" id="create" value="create" checked>
               Create a new account
             </label>
             <label class="radio">
-              <input type="radio" name="createAcctRadio" id="have" value="have">
+              <input type="radio" name="create_acct_radio" id="have" value="have">
               I already have an account
             </label>
             <input type="text" id="email" class="span4" name="email" placeholder="Email Address">
             <input type="password" id="password" class="span4" name="password" placeholder="Password">
-            <input type="password" id="confirmPassword" class="span4" name="confirmPassword"
+            <input type="password" id="confirm_password" class="span4" name="confirm_password"
             placeholder="Confirm Password">
             <label class="checkbox">
               <input type="checkbox" name="remember" value="1">Remember Me

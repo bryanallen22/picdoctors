@@ -21,7 +21,7 @@ def signin(request):
         pass
 
     elif request.method == 'POST':
-        if request.POST['password'] == request.POST['confirmPassword']:
+        if request.POST['password'] == request.POST['confirm_password']:
             pass
         else:
             ret['passwords_didnt_match'] = True

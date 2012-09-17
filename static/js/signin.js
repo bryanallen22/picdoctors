@@ -1,15 +1,15 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
 
-  $('input:radio[name=createAcctRadio]').click( function() {
+  $('input:radio[name=create_acct_radio]').click( function() {
     var checked = $(this).val();
     if( checked == "create" ) {
       // Creating an account
-      $("#confirmPassword").show();
+      $("#confirm_password").show();
     }
     else if( checked == "have" ) {
       // They already have an account
-      $("#confirmPassword").hide();
+      $("#confirm_password").hide();
     }
   });
 
