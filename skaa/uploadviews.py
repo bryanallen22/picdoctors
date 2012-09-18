@@ -97,7 +97,7 @@ def upload_handler(request):
         return HttpResponse(response_data, mimetype='application/json')
 
 @csrf_protect
-def group_handler(request):
+def group_pic_handler(request):
     data = simplejson.loads(request.body)
 
     if request.method == 'POST':
@@ -124,7 +124,7 @@ def group_handler(request):
         return HttpResponse('{ "success" : false }', mimetype='application/json')
 
 @csrf_protect
-def delete_handler(request):
+def delete_pic_handler(request):
     if request.method == 'DELETE':
         data = simplejson.loads(request.body)
         pic  = Pic.objects.get(uuid__exact=data['uuid']);

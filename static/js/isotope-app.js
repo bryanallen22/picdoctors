@@ -215,10 +215,10 @@ var IsoWrapper = (function($) {
         "X-CSRFToken":CSRF_TOKEN
       },
       type: method,
-      url: '/group_handler/',
+      url: '/group_pic_handler/',
       data: json,
       success : function(data, textStatus) {
-        //console.log("I got data back from /group_handler/ -- have a look:");
+        //console.log("I got data back from /group_pic_handler/ -- have a look:");
         //console.log(data);
         //console.log(textStatus);
       }
@@ -413,10 +413,10 @@ $(function(){
           "X-CSRFToken":CSRF_TOKEN
         },
         type: 'DELETE',
-        url: '/delete_handler/',
+        url: '/delete_pic_handler/',
         data: json,
         success : function(data, textStatus) {
-          //console.log("I got data back from /delete_handler/ -- have a look:");
+          //console.log("I got data back from /delete_pic_handler/ -- have a look:");
           //console.log(data);
           //console.log(textStatus);
         }
