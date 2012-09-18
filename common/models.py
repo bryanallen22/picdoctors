@@ -90,20 +90,18 @@ class UserProfile(DeleteMixin):
     # Other fields here
     accepted_eula = models.BooleanField()
 
-
 from urlparse import urlparse
 import os
 import uuid
 from StringIO import StringIO
 from PIL import Image
 
-from django.db import models
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import simplejson
 
-
 import logging
+
 
 ungroupedId = 100000  # Make sure that this matches isotope-app.js
 thumb_width    = 200 
@@ -124,6 +122,9 @@ class Pic(DeleteMixin):
     updated              = models.DateField(auto_now=True)
     title                = models.CharField(max_length=60, blank=True, null=True)
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
+    #for now group_id and Group.sequence are synonymous and using 
+    #batch and group_id you can find a unique Group, I want to change it to
+    #sequence number when I figure a way around the circular dependency
     group_id             = models.IntegerField(blank=True, null=True)
 
     original             = models.ImageField(upload_to = 'user_originals/')
@@ -233,6 +234,10 @@ class Pic(DeleteMixin):
             result = []
         return simplejson.dumps(result)
 
+
+
+
+
 ################################################################################
 # Batch
 ################################################################################
@@ -245,6 +250,14 @@ class Batch(DeleteMixin):
     description = models.TextField(blank=True)
     num_groups  = models.IntegerField(blank=True, null=True)
 
+################################################################################
+# Group
+# We actually want to be able to delete and recreate these
+################################################################################
+class Group(models.Model):
+    sequence        = models.IntegerField()
+    batch           = models.ForeignKey('Batch')
+    doctors_pic     = models.ForeignKey('Pic', related_name='doctors_pic', blank=True, null=True)
 
 # Create your models here.
 class Job(DeleteMixin):

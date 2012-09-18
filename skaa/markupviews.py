@@ -10,6 +10,7 @@ from annoying.decorators import render_to
 from skaa.uploadviews import get_batch_id
 from common.models import Pic
 from common.models import Batch
+from common.models import Group
 from common.models import ungroupedId
 from models import Markup
 
@@ -22,17 +23,21 @@ def set_group_ids(request, batch_id):
     # will quite happily override any existing group_id that was
     # already set.
     pics = Pic.objects.filter( batch__exact=batch_id )
+    logging.info('setting group_ids')
 
     # This doesn't feel like the most efficient way to get a sorted,
     # unique list, but it works
     browser_ids = sorted(list(set([pic.browser_group_id for pic in pics])))
-
+    batch_instance = Batch.objects.get(pk=batch_id)
     next_group_id = 1
+    Group.objects.filter(batch=batch_id).delete()
     for id in browser_ids:
         # Find all pics that match this id
         matches = pics.filter( browser_group_id__exact=id )
         if id != ungroupedId:
             # All matching pics get next_group_id
+            g = Group(batch=batch_instance, sequence=next_group_id) 
+            g.save()
             for pic in matches:
                 pic.group_id = next_group_id
                 pic.save()
@@ -40,6 +45,8 @@ def set_group_ids(request, batch_id):
         else:
             # All ungrouped pics get their own group_id
             for pic in matches:
+                g = Group(batch=batch_instance, sequence=next_group_id) 
+                g.save()
                 pic.group_id = next_group_id
                 pic.save()
                 next_group_id += 1
@@ -57,7 +64,9 @@ def markup_page(request, group_id):
     # On our first page, we set the group ids.
     # Note: If they hit this view multiple times, we'll keep resetting these.
     # Could that cause problems some day?
-    if group_id == 1:
+    group_count = len(Group.objects.filter(batch=batch_id))
+    logging.info('group count = %d' % group_count)
+    if group_count == 0:
         set_group_ids(request, batch_id)
 
     logging.info('group_id=%d, batch_id=%d' % (group_id, batch_id))

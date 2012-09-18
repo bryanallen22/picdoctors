@@ -13,7 +13,9 @@ from django.core.files.uploadedfile import UploadedFile
 
 from common.models import Pic
 from common.models import Batch
+from common.models import Group
 from common.models import ungroupedId
+import pdb
 
 def get_batch_id(request):
     # If there isn't already a batch assigned, assign it now
@@ -105,6 +107,11 @@ def group_pic_handler(request):
         group_id = data['group_id']
     else: # DELETE
         group_id = ungroupedId
+
+    #Delete old groupings, remake when they hit markup
+    batch_id = get_batch_id(request) 
+    logging.info('deleting %d' % batch_id)
+    Group.objects.filter(batch=batch_id).delete()
 
     # Update the pictures
     pics = Pic.objects.filter(uuid__in=data['uuids']);
