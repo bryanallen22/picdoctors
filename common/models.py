@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.core.exceptions import FieldError
+from django.contrib.auth.models import User
+
 
 ################################################################################
 # Some of this comes from:
@@ -74,11 +76,6 @@ class GlobalMixin(BaseMixin):
     class Meta:
         abstract = True
 
-
-from django.db import models
-from django.contrib.auth.models import User
-
-from util.models import DeleteMixin
 
 ################################################################################
 # UserProfile
