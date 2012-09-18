@@ -1,7 +1,7 @@
 from django.db import models
 
-from util.models import DeleteMixin
-from upload.models import Pic
+from common.models import DeleteMixin
+from common.models import Pic
 
 ################################################################################
 # Markup

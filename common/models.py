@@ -227,8 +227,8 @@ class Pic(DeleteMixin):
 
     def get_markups_json(self):
         # These imports can't be at the top, because they cause a circular depedency
-        from markup.models import Markup
-        from markup.views import markup_to_dict
+        from skaa.models import Markup
+        from skaa.markupviews import markup_to_dict
         if self.uuid is not None:
             markups = Markup.objects.filter(pic__uuid__exact=self.uuid)
             result = [ markup_to_dict(m) for m in markups ]

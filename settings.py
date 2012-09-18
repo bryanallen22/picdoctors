@@ -135,11 +135,10 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'storages',
     'debug_toolbar',
-    'util',
-    'upload',
-    'markup',
-    'signin',
-    'job',
+    'common',
+    'skaa',
+    'doctor',
+    'messaging',
 )
 
 # A sample logging configuration. The only tangible logging
