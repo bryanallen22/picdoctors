@@ -9,7 +9,7 @@ from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handl
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^markup/(?P<group_id>\d+)/$',         markup_page,     name='markup'),
+    url(r'^markup/(?P<sequence>\d+)/$',         markup_page,     name='markup'),
     url(r'^markups_handler/$',                  markups_handler, name='markups_handler'),
     url(r'^markups_handler/(?P<markup_id>\d+)$', markups_handler, name='markups_handler'),
     url(r'^pic_instruction_handler/$', pic_instruction_handler,   name='pic_instruction_handler'),

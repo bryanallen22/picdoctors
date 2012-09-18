@@ -60,6 +60,9 @@ def upload_handler(request):
     if request.method == 'POST':
         if request.FILES == None:
             return HttpResponseBadRequest('Must have files attached!')
+        
+        #remove database groupings (this will force them to be regrouped in database)
+        delete_groupings(request)
 
         # Save this off into the database
         logging.info('got to %s' % __name__)
@@ -109,9 +112,7 @@ def group_pic_handler(request):
         group_id = ungroupedId
 
     #Delete old groupings, remake when they hit markup
-    batch_id = get_batch_id(request) 
-    logging.info('deleting %d' % batch_id)
-    Group.objects.filter(batch=batch_id).delete()
+    delete_groupings(request)
 
     # Update the pictures
     pics = Pic.objects.filter(uuid__in=data['uuids']);
@@ -136,7 +137,13 @@ def delete_pic_handler(request):
         data = simplejson.loads(request.body)
         pic  = Pic.objects.get(uuid__exact=data['uuid']);
         if pic:
+            delete_groupings(request)
             pic.delete()
             return HttpResponse('{ "success" : true }', mimetype='application/json')
     return HttpResponse('{ "success" : false }', mimetype='application/json')
+
+def delete_groupings(request):
+    batch_id = get_batch_id(request) 
+    logging.info('deleting %d' % batch_id)
+    Group.objects.filter(batch=batch_id).delete()
 

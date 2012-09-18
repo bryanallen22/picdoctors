@@ -122,11 +122,7 @@ class Pic(DeleteMixin):
     updated              = models.DateField(auto_now=True)
     title                = models.CharField(max_length=60, blank=True, null=True)
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
-    #for now group_id and Group.sequence are synonymous and using 
-    #batch and group_id you can find a unique Group, I want to change it to
-    #sequence number when I figure a way around the circular dependency
-    group_id             = models.IntegerField(blank=True, null=True)
-
+    group     = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
     original             = models.ImageField(upload_to = 'user_originals/')
     preview              = models.ImageField(upload_to = 'user_preview/')
     thumbnail            = models.ImageField(upload_to = 'user_thumbs/')

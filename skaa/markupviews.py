@@ -18,77 +18,85 @@ import pdb
 import logging
 
 @csrf_protect
-def set_group_ids(request, batch_id):
-    # Sets group_id for each picture in the batch. Note that this
-    # will quite happily override any existing group_id that was
+def set_sequences(request, batch_id):
+    # Sets sequence for each picture in the batch. Note that this
+    # will quite happily override any existing sequence that was
     # already set.
     pics = Pic.objects.filter( batch__exact=batch_id )
-    logging.info('setting group_ids')
+    logging.info('setting sequences for batch_id %d' % batch_id)
 
     # This doesn't feel like the most efficient way to get a sorted,
     # unique list, but it works
     browser_ids = sorted(list(set([pic.browser_group_id for pic in pics])))
+    logging.info(browser_ids)
     batch_instance = Batch.objects.get(pk=batch_id)
-    next_group_id = 1
-    Group.objects.filter(batch=batch_id).delete()
+    next_sequence = 1
     for id in browser_ids:
         # Find all pics that match this id
         matches = pics.filter( browser_group_id__exact=id )
         if id != ungroupedId:
-            # All matching pics get next_group_id
-            g = Group(batch=batch_instance, sequence=next_group_id) 
+            # All matching pics get next_sequence
+            logging.info('creating new group')
+            g = Group(batch=batch_instance, sequence=next_sequence) 
             g.save()
             for pic in matches:
-                pic.group_id = next_group_id
+#                pic.group_id = next_sequence
+                pic.group = g
                 pic.save()
-            next_group_id += 1
+            next_sequence += 1
         else:
-            # All ungrouped pics get their own group_id
+            # All ungrouped pics get their own sequence
             for pic in matches:
-                g = Group(batch=batch_instance, sequence=next_group_id) 
+                logging.info('creating new group')
+                g = Group(batch=batch_instance, sequence=next_sequence) 
                 g.save()
-                pic.group_id = next_group_id
+ #               pic.group_id = next_sequence
+                pic.group = g
                 pic.save()
-                next_group_id += 1
+                next_sequence += 1
 
     batch = Batch.objects.get( pk=batch_id )
-    batch.num_groups = (next_group_id - 1)
+    next_sequence -= 1
+    logging.info('Saving number of groups %d' % next_sequence)
+    batch.num_groups = next_sequence
     batch.save()
 
 @render_to('markup.html')
-def markup_page(request, group_id):
-    group_id = int(group_id)
+def markup_page(request, sequence):
+    sequence = int(sequence)
     batch_id = get_batch_id(request)
-    batch = Batch.objects.get( pk=batch_id )
-
-    # On our first page, we set the group ids.
-    # Note: If they hit this view multiple times, we'll keep resetting these.
-    # Could that cause problems some day?
-    group_count = len(Group.objects.filter(batch=batch_id))
-    logging.info('group count = %d' % group_count)
-    if group_count == 0:
-        set_group_ids(request, batch_id)
-
-    logging.info('group_id=%d, batch_id=%d' % (group_id, batch_id))
 
     pics = Pic.objects.filter( batch__exact=batch_id )
-    logging.info('len(pics)=%d' % len(pics))
-    pics = pics.filter( group_id__exact=group_id )
-
+    
     if len(pics) == 0:
       # No pictures. How did they get here? Direct typing of the url?
       # Let's send them back to the upload page
       return redirect('upload')
+    
+    #Reset the group Ids on 3 conditions, retgrouping, deleting of pics
+    #or adding of new pics
+    group_count = len(Group.objects.filter(batch=batch_id))
+    logging.info('group count = %d' % group_count)
+    if group_count == 0:
+        set_sequences(request, batch_id)
 
-    if group_id == batch.num_groups:
+    batch = Batch.objects.get( pk=batch_id )
+
+    logging.info('sequence=%d, batch_id=%d, batch_num=%d' % (sequence, batch_id, batch.num_groups))
+
+    logging.info('len(pics)=%d' % len(pics))
+    group = Group.objects.get(sequence=sequence,batch=batch_id)
+    pics = pics.filter( group__exact=group)
+
+    if sequence == batch.num_groups:
         next_url = reverse('signin')
     else:
-        next_url = reverse('markup', args=[group_id+1])
+        next_url = reverse('markup', args=[sequence+1])
 
-    if group_id == 1:
+    if sequence == 1:
         previous_url = reverse('upload')
     else:
-        previous_url = reverse('markup', args = [group_id-1])
+        previous_url = reverse('markup', args = [sequence-1])
 
     # Just working on design at the moment, so I'm just going to hard code
     # Viewing just the first pic
