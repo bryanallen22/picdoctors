@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.db import IntegrityError
 
 from annoying.decorators import render_to
 
@@ -38,6 +39,7 @@ def signin(request):
     ret = {
         'bad_email_or_password' : False,
         'passwords_didnt_match' : False,
+        'email_already_exists'  : False,
     }
 
     if request.method == 'GET':
@@ -57,8 +59,20 @@ def signin(request):
         else:
             if request.POST['password'] == request.POST['confirm_password']:
                 # Actually create the user
-                if create_user(request.POST['email'], request.POST['password']):
+
+                try:
+                    user = User.objects.create_user(request.POST['email'], request.POST['email'],
+                                                    request.POST['password'])
+                    user.save()
                     return redirect('http://zombo.com')
+                except IntegrityError:
+                    # Email already has been registered
+                    # Does this password match? Can we just log them in?
+                    if auth(request.POST['email'], request.POST['password']):
+                        return redirect('http://zombo.com')
+                    else:
+                        ret['email_already_exists'] = True
+
                 else:
                     ret['bad_email_or_password'] = True
             else:

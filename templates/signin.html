@@ -30,6 +30,13 @@
             {% endif %} >
             <a class="close" data-dismiss="alert" href="#">×</a>Passwords did not match!
           </div>
+          <div class="alert alert-error" 
+            {% if not email_already_exists %}
+              style="display:none;"
+            {% endif %} >
+            <a class="close" data-dismiss="alert" href="#">×</a>That email has already been
+            registered with a different password.
+          </div>
           <form method="POST" action="" accept-charset="UTF-8">
             {% csrf_token %}
             <label class="radio">
