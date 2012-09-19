@@ -76,12 +76,10 @@ def signin(request):
         if not ret:
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
-                pdb.set_trace()
                 one_month = datetime.timedelta(days=30)
                 request.session.set_expiry( one_month )
             else:
                 # Session only good until browser closes
-                pdb.set_trace()
                 request.session.set_expiry(0)
 
             return redirect('http://zombo.com')

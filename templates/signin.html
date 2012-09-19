@@ -18,25 +18,22 @@
         <div class="span4 offset1 well">
 
           <legend>Please Sign In</legend>
-          <div class="alert alert-error" 
-            {% if not bad_email_or_password %}
-              style="display:none;"
-            {% endif %} >
-            <a class="close" data-dismiss="alert" href="#">×</a>Incorrect email or password!
-          </div>
-          <div class="alert alert-error" 
-            {% if not passwords_didnt_match %}
-              style="display:none;"
-            {% endif %} >
-            <a class="close" data-dismiss="alert" href="#">×</a>Passwords did not match!
-          </div>
-          <div class="alert alert-error" 
-            {% if not email_already_exists %}
-              style="display:none;"
-            {% endif %} >
-            <a class="close" data-dismiss="alert" href="#">×</a>That email has already been
-            registered with a different password.
-          </div>
+          {% if bad_email_or_password %}
+            <div class="alert alert-error">
+              <a class="close" data-dismiss="alert" href="#">×</a>Incorrect email or password!
+            </div>
+          {% endif %}
+          {% if passwords_didnt_match %}
+            <div class="alert alert-error">
+              <a class="close" data-dismiss="alert" href="#">×</a>Passwords did not match!
+            </div>
+          {% endif %}
+          {% if email_already_exists %}
+            <div class="alert alert-error">
+              <a class="close" data-dismiss="alert" href="#">×</a>That email has already been
+              registered with a different password.
+            </div>
+          {% endif %}
           <form method="POST" action="" accept-charset="UTF-8">
             {% csrf_token %}
             <label class="radio">
