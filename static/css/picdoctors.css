@@ -220,7 +220,7 @@
   border-radius: 6px;
   box-shadow: 0 0 10px 1px #eeeeee;
   display: inline;
-  white-space:nowrap;
+  white-space: nowrap;
   padding-left: 4px;
   padding-right: 4px;
 }
@@ -228,7 +228,19 @@
   margin-top: 5px;
   margin-bottom: 10px;
   width: 700px;
+  height: 80px;
   max-width: 700px;
   display: block;
   margin-left: 40px;
+}
+/*****************************
+  Job page
+******************************/
+.job_app .job_row {
+  width: 100%;
+  margin-top: 10px;
+  margin-left: -10px;
+  padding: 10px 10px 0;
+  border-top: 1px solid #DDD;
+  height: 26px;
 }

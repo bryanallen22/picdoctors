@@ -280,7 +280,7 @@ class Job(DeleteMixin):
     )
 
     #Never blank, no batch = no job. related_name since Batch already has a FK
-    user_batch              = models.ForeignKey(Batch, 
+    skaa_batch              = models.ForeignKey(Batch, 
                                                 related_name='job_user_batch', 
                                                 db_index=True)
     #This can be blank, doctor uploads batch later, related_name (see above)
@@ -289,12 +289,14 @@ class Job(DeleteMixin):
                                                 db_index=True, 
                                                 blank=True, 
                                                 null=True)
+    skaa                   = models.ForeignKey(UserProfile, related_name='job_owner')
+    doctor                  = models.ForeignKey(UserProfile, related_name='job_doctor',
+                                                blank=True, null=True)
     #from something in the billions to 1 penny
     price                   = models.DecimalField(blank=False, 
                                                   max_digits=13, 
                                                   decimal_places=2)
-# TODO implement Doctor class on top of django users class
-#    doctor                  = models.ForeignKey(Doctor, blank=True, null=True)
+
     price_too_low_count     = models.IntegerField(blank=False, 
                                                   default=0)
     #max_length refers to the shorthand versions above

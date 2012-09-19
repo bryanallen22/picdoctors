@@ -58,7 +58,7 @@ $(function(){
   // ---------------
 
   // Our overall **AppView** is the top-level piece of UI.
-  var AppView = Backbone.View.extend({
+  var JobView = Backbone.View.extend({
 
     el: $("#job_app"),
 
