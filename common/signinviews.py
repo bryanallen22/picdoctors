@@ -58,9 +58,13 @@ def create_user(email, password, confirm_password, usertype):
 
     if User.objects.filter(email=email).count() > 0:
         # Username exists... Can we log in?
-        if auth(email, password):
+        user, tmp = auth(email, password)
+        if not user:
             # Error with those credentials
             return ( None, { 'email_already_exists' : True } )
+        else:
+            # We signed them in just fine
+            return ( user, { } )
     else:
         user = User.objects.create_user(username=email, email=email, password=password)
 
@@ -101,7 +105,7 @@ def signin(request, usertype='user'):
                                      request.POST['confirm_password'], usertype )
             ret.update(tmp)
 
-        if not ret and user:
+        if user:
             # Successful login. Take care of "remember me" button
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
