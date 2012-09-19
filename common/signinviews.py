@@ -14,6 +14,12 @@ import pdb
 import logging
 import datetime
 
+def create_skaa(user):
+    logging.info('Reached create_skaa')
+
+def create_doctor(user):
+    logging.info('Reached create_doctor')
+
 def auth(email, password):
     """
     Authenticate the user.
@@ -24,56 +30,79 @@ def auth(email, password):
     """
     user = authenticate(username=email, password=password)
     if user is not None and user.is_active:
-        return { }
-    return { 'bad_email_or_password' : True }
+        return ( user, { } )
+    return ( None, { 'bad_email_or_password' : True } )
 
-def create_user(email, password, confirm_password):
+def create_user(email, password, confirm_password, usertype):
     """
     Create the user.
+
+    usertype should be:
+        'user' -- create a skaa
+        'doc'  -- create a doctor
     
     If the email is taken and the password matches that 
     email, just be nice and log them in.
 
     Possible return values:
-        { } -- Everything good
-        { 'email_already_exists'  : True } -- Email address taken, and the password didn't match
-        { 'passwords_didnt_match' : True } -- Self explanatory
+      ( user, { } )
+          Everything good
+      ( None, { 'email_already_exists'  : True } )
+          Email address taken, and password didn't match
+      ( None, { 'passwords_didnt_match' : True } )
+          Self explanatory
     """
 
     if password != confirm_password:
-        return { 'passwords_didnt_match' : True }
+        return ( None, { 'passwords_didnt_match' : True } )
 
     if User.objects.filter(email=email).count() > 0:
         # Username exists... Can we log in?
         if auth(email, password):
             # Error with those credentials
-            return { 'email_already_exists' : True }
+            return ( None, { 'email_already_exists' : True } )
     else:
         user = User.objects.create_user(username=email, email=email, password=password)
-        # TODO - create profile
-        return { }
+
+        if usertype == 'doc':
+            create_doctor(user)
+        elif usertype == 'user':
+            create_skaa(user)
+        else:
+            raise ValueError('Bad usertype: %s' % usertype)
+
+        return ( user, { } )
         
 @render_to('signin.html')
-def signin(request):
+def signin(request, usertype='user'):
+    """
+    Shared view for both user login and doctor login
+    
+    usertype should be 'user' or 'doc'
+    """
+
     # Set defaults here. Overridden below if necessary
-    ret = { }
+    ret = { 'usertype' : usertype }
 
     if request.method == 'GET':
         # Nothing to do here now...
-        ret = { }
+        pass
 
     elif request.method == 'POST':
 
         # Sign into existing account
         if request.POST['create_acct_radio'] == 'have':
-            ret = auth( request.POST['email'], request.POST['password'] )
+            user, tmp = auth( request.POST['email'], request.POST['password'] )
+            ret.update(tmp)
 
         # Create a new account
         else:
-            ret = create_user( request.POST['email'], request.POST['password'],
-                               request.POST['confirm_password'] )
+            user, tmp = create_user( request.POST['email'], request.POST['password'],
+                                     request.POST['confirm_password'], usertype )
+            ret.update(tmp)
 
-        if not ret:
+        if not ret and user:
+            # Successful login. Take care of "remember me" button
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
                 one_month = datetime.timedelta(days=30)
@@ -83,9 +112,18 @@ def signin(request):
                 request.session.set_expiry(0)
 
             return redirect('http://zombo.com')
+
         else:
-            # Prepopulate the email address for them
+            # Something went wrong. Let's at least prepopulate the email address for them
             ret['email'] = request.POST['email']
 
     return ret
+
+def skaa_signin(request):
+    # Don't use the word 'skaa' here -- it'll be visible in the html : )
+    return signin(request, usertype='user')
+
+def doc_signin(request):
+    return signin(request, usertype='doc')
+
 
