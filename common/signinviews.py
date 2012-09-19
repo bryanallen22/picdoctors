@@ -12,71 +12,82 @@ from common.models import Batch
 
 import pdb
 import logging
+import datetime
 
-def auth(email, passw):
-    """ Authenticate the user. Return True if successful. """
-    user = authenticate(username=email, password=passw)
+def auth(email, password):
+    """
+    Authenticate the user.
+
+    Possible return values:
+        { } -- Everything good
+        { 'bad_email_or_password' : True } -- Self explanatory
+    """
+    user = authenticate(username=email, password=password)
     if user is not None and user.is_active:
-        return True
-    return False
+        return { }
+    return { 'bad_email_or_password' : True }
 
-def create_user(email, password):
-    """ Create the user.
+def create_user(email, password, confirm_password):
+    """
+    Create the user.
     
-        If the email is taken and the password matches that 
-        email, just be nice and log them in. If the email is
-        taken and the password does not match, return False"""
-    try:
-        user = User.objects.create_user(email, email, password)
-        user.save()
-        return True
-    except:
-        return False
+    If the email is taken and the password matches that 
+    email, just be nice and log them in.
 
+    Possible return values:
+        { } -- Everything good
+        { 'email_already_exists'  : True } -- Email address taken, and the password didn't match
+        { 'passwords_didnt_match' : True } -- Self explanatory
+    """
+
+    if password != confirm_password:
+        return { 'passwords_didnt_match' : True }
+
+    if User.objects.filter(email=email).count() > 0:
+        # Username exists... Can we log in?
+        if auth(email, password):
+            # Error with those credentials
+            return { 'email_already_exists' : True }
+    else:
+        user = User.objects.create_user(username=email, email=email, password=password)
+        # TODO - create profile
+        return { }
+        
 @render_to('signin.html')
 def signin(request):
     # Set defaults here. Overridden below if necessary
-    ret = {
-        'bad_email_or_password' : False,
-        'passwords_didnt_match' : False,
-        'email_already_exists'  : False,
-    }
+    ret = { }
 
     if request.method == 'GET':
         # Nothing to do here now...
-        pass
+        ret = { }
 
     elif request.method == 'POST':
 
         # Sign into existing account
         if request.POST['create_acct_radio'] == 'have':
-            if auth(request.POST['email'], request.POST['password']):
-                return redirect('http://zombo.com')
-            else:
-                ret['bad_email_or_password'] = True
+            ret = auth( request.POST['email'], request.POST['password'] )
 
         # Create a new account
         else:
-            if request.POST['password'] == request.POST['confirm_password']:
-                # Actually create the user
+            ret = create_user( request.POST['email'], request.POST['password'],
+                               request.POST['confirm_password'] )
 
-                try:
-                    user = User.objects.create_user(request.POST['email'], request.POST['email'],
-                                                    request.POST['password'])
-                    user.save()
-                    return redirect('http://zombo.com')
-                except IntegrityError:
-                    # Email already has been registered
-                    # Does this password match? Can we just log them in?
-                    if auth(request.POST['email'], request.POST['password']):
-                        return redirect('http://zombo.com')
-                    else:
-                        ret['email_already_exists'] = True
-
-                else:
-                    ret['bad_email_or_password'] = True
+        if not ret:
+            if 'remember' in request.POST.keys():
+                # "Remember Me" is good for 30 days
+                pdb.set_trace()
+                one_month = datetime.timedelta(days=30)
+                request.session.set_expiry( one_month )
             else:
-                ret['passwords_didnt_match'] = True
+                # Session only good until browser closes
+                pdb.set_trace()
+                request.session.set_expiry(0)
+
+            return redirect('http://zombo.com')
+        else:
+            # Prepopulate the email address for them
+            ret['email'] = request.POST['email']
 
     return ret
 

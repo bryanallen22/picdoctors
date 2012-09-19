@@ -47,12 +47,14 @@
               <input type="radio" name="create_acct_radio" id="have" value="have">
               I already have an account
             </label>
-            <input type="text" id="email" class="span4" name="email" placeholder="Email Address">
+            <input type="text" id="email" class="span4" name="email"
+            placeholder="Email Address" value="{{ email }}"
+            >
             <input type="password" id="password" class="span4" name="password" placeholder="Password">
             <input type="password" id="confirm_password" class="span4" name="confirm_password"
             placeholder="Confirm Password">
             <label class="checkbox">
-              <input type="checkbox" name="remember" value="1">Remember Me
+              <input type="checkbox" id="remember" name="remember" value="1" checked>Remember Me
             </label>
             <button type="submit" name="submit" class="btn btn-info btn-block">Sign in</button>
           </form>    
