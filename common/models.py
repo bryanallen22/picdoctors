@@ -297,6 +297,11 @@ class Job(DeleteMixin):
                                                   max_digits=13, 
                                                   decimal_places=2)
 
+    #this price is set when a doctor takes the job.  payout prices 
+    #that appear on the job page, vary based on accepted job count
+    payout_price            = models.DecimalField(blank=False, 
+                                                  max_digits=13, 
+                                                  decimal_places=2)
     price_too_low_count     = models.IntegerField(blank=False, 
                                                   default=0)
     #max_length refers to the shorthand versions above

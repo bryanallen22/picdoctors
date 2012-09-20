@@ -241,10 +241,12 @@
 }
 .job_page .job_row {
   border-top: 1px solid #049cdb;
-  border-bottom: 1px solid #049cdb;
   padding: 1px;
   vertical-align: middle;
   text-align: left;
+}
+.job_page .job_row:hover {
+  background-color: #D1EEEE;
 }
 .job_page .fix_line_height {
   line-height: 28px;
