@@ -8,32 +8,95 @@
 {% endblock %}
 
 {% block main %}
-   <div id='job_app'>
-     <div class="row">
-         <div class="span9">
-        <div class="btn-toolbar">
-         <div class="btn-group">
-           <button class="btn">Kill Self(dumb skaa)</button>
-           <button class="btn">Kill Doctor Who</button>
-           <button class="btn">while(1){fork();killStupidPeople();}</button>
+<div id='job_app' class="row job_page">
+         <div class="row job_header_row lead">
+             <div class="span2">
+                 Job Number
+             </div>
+             <div class="span2">
+                Job Size
+            </div>
+            <div class="span3">
+                Status
+            </div>
+            <div class="span3">
+                Actions
+            </div>
+            <div class="span2">
+                 Contact
+            </div>
          </div>
-         <div class="btn-group">
-           <button class="btn">hello</button>
-           <button class="btn">world</button>
-           <button class="btn">is stupid</button>
-       </div>
-   </div>
-         <div class="row">
-             <div class="span6">Level 2</div>
-             <div class="span3">Level 2</div>
+    {# for job in jobs #}
+         <div class="row job_row fix_line_height">
+             <div class="span2">
+                 <b>030100123</b>
+             </div>
+             <div class="span2">
+                38 Pictures ( 3 Groupings ) 
+            </div>
+            <div class="span3 text-info">
+                <i>Waiting for a Doctor to accept the job</i>
+             </div>
+             <div class="span3">
+                <div class="btn-group">
+                    <button class="btn btn-info">Accept</button>
+                    <button class="btn btn-info">Request Additional Work</button>
+                </div>
+            </div>
+            <div class="span2">
+                <div class="btn-group">
+                    <button class="btn btn-info">Contact Picture Doctor</button>
+                </div>
+            </div>
          </div>
-       </div>
-     </div>
+         <div class="row job_row fix_line_height">
+             <div class="span2">
+                 <b>001030123</b>
+             </div>
+             <div class="span2">
+                2 Pictures  
+            </div>
+             <div class="span3 text-success">
+                <em>Job in progress</em>
+             </div>
+             <div class="span3">
+                <div class="btn-group">
+                    <button class="btn btn-info">Accept</button>
+                    <button class="btn btn-info">Request Additional Work</button>
+                </div>
+            </div>
+            <div class="span2">
+                <div class="btn-group">
+                    <button class="btn btn-info">Contact Picture Doctor</button>
+                </div>
+            </div>
+         </div>
+         <div class="row job_row fix_line_height">
+             <div class="span2">
+                 <b>002033123</b>
+             </div>
+             <div class="span2">
+                999 Pictures  
+            </div>
+             <div class="span3 text-error">
+                <em>You are a cheap SOB</em>
+             </div>
+             <div class="span3">
+                <div class="btn-group">
+                    <button class="btn btn-info">Accept</button>
+                    <button class="btn btn-info">Request Additional Work</button>
+                </div>
+            </div>
+            <div class="span2">
+                <div class="btn-group">
+                    <button class="btn btn-info">Contact Picture Doctor</button>
+                </div>
+            </div>
+         </div>
   </div>
 {% endblock %}
 
 {% block scripts %}
-    {# Isotope stuff: #}
     <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
     <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
     <script src="{{ STATIC_URL }}js/json2.js"></script>

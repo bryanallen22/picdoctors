@@ -89,7 +89,7 @@ def markup_page(request, sequence):
     pics = pics.filter( group__exact=group)
 
     if sequence == batch.num_groups:
-        next_url = reverse('signin')
+        next_url = reverse('skaa_signin')
     else:
         next_url = reverse('markup', args=[sequence+1])
 

@@ -263,16 +263,39 @@
 /*****************************
   Job page
 ******************************/
-.job_app
+.job_page
 {
+  .job_header_row
+  {
+    text-align:left;
+
+  }
   .job_row
   {
-    width: 100%;
-    margin-top: 10px;
-    margin-left: -10px;
-    padding: 10px 10px 0;
-    border-top: 1px solid #DDD;
-    height: 26px;
+    border-top: 1px solid #049cdb;
+    border-bottom: 1px solid #049cdb;
+    padding:1px;
+    vertical-align:middle;//vertical-align sucks
+    text-align:left;
   }
+  .fix_line_height
+  {
+    line-height:28px;
+  }
+    //this is part of twitter bootstrap, but apparently not our version
+  .text-success
+  {
+    color:#468847;
+  }
+  .text-info
+  {
+    color:#3A87AD;
+  }
+  .text-error
+  {
+    color:#B94A48;
+  }
+
+
 }
 
