@@ -641,4 +641,20 @@ $(function(){
   // Finally, we kick things off by creating the **App**.
   var App = new AppView;
 
+  //temporary job creation
+  var FakeJobView = Backbone.View.extend({
+
+    // Our template for the line of statistics at the bottom of the app.
+    //statsTemplate: _.template($('#stats-template').html()),
+
+    el: $("#fake_job_app"),
+
+    // Delegated events for creating new items, and clearing completed ones.
+    events: {
+      //"keypress #new-todo":  "createOnEnter",
+      "click  .markup_pic_container" : "createMarkup",
+      //"mouseleave .markup_pic_container" : "finishMarkup",
+    },
+      )};
+
 });
