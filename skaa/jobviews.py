@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from common.models import Job
 from common.models import Batch
+from common.models import Group
 from common.models import UserProfile
 from skaa.uploadviews import get_batch_id
 from django.contrib.auth.models import User
@@ -52,8 +53,18 @@ def generate_job(request):
                     price = 99.99, 
                     job_status=Job.STATUS_USER_SUBMITTED)
             j.save()       
+
+            lock_groups(b)
     except Exception as e:
         return HttpResponse('{ "success" : true; "whynot" :"' + str(e) + '"}', mimetype='application/json')
 
     return HttpResponse('{ "success" : true }', mimetype='application/json')
+
+
+def lock_groups(batch_to_lock):
+    groups = Group.objects.filter(batch=batch_to_lock)
+    #Performance Opportunity, just update all at once
+    for group in groups:
+        group.is_locked = True
+        group.save()
 

@@ -254,6 +254,7 @@ class Group(models.Model):
     sequence        = models.IntegerField()
     batch           = models.ForeignKey('Batch')
     doctors_pic     = models.ForeignKey('Pic', related_name='doctors_pic', blank=True, null=True)
+    is_locked       = models.BooleanField(default=False)
 
 # Create your models here.
 class Job(DeleteMixin):

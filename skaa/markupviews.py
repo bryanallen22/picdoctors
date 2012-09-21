@@ -98,9 +98,9 @@ def markup_page(request, sequence):
     else:
         previous_url = reverse('markup', args = [sequence-1])
 
-    # Just working on design at the moment, so I'm just going to hard code
-    # Viewing just the first pic
-    return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url }
+    #TODO remove this tester code
+    fake_button_text = 'Cheat and Delete Job' if group.is_locked else 'Cheat and Create Job' 
+    return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 'fake_button_text' : fake_button_text, 'is_locked' : group.is_locked }
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes
