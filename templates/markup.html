@@ -54,8 +54,11 @@
     <div style='position:fixed; width:130px;'>
         <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 120px;'>Previous</a>
         <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Next</a>
-        {% if user.is_authenticated %}
-          <a id='FakeJobGen' href='' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Cheat and Create Job</a>
+        {% if not user.is_authenticated  %}
+    
+        <div id='fake_job_app'>
+            <a id='FakeJobGen' href='' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Cheat and Create Job</a>
+        </div>
         {% endif %}
     </div>
   </div>

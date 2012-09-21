@@ -11,7 +11,7 @@
 <div id='job_app' class="row job_page">
          <div class="row job_header_row lead">
              <div class="span2">
-                 Job Number
+                Job Number
              </div>
              <div class="span2">
                 Job Size
@@ -23,41 +23,19 @@
                 Actions
             </div>
             <div class="span2">
-                 Contact
+                Contact Doctor
             </div>
          </div>
-    {# for job in jobs #}
+    {% for job in job_infos %}
          <div class="row job_row fix_line_height">
              <div class="span2">
-                 <b>030100123</b>
+                 <b>{{job.job_id}}</b>
              </div>
              <div class="span2">
-                38 Pictures ( 3 Groupings ) 
-            </div>
-            <div class="span3 text-info">
-                <i>Waiting for a Doctor to accept the job</i>
-             </div>
-             <div class="span3">
-                <div class="btn-group">
-                    <button class="btn btn-info">Accept</button>
-                    <button class="btn btn-info">Request Additional Work</button>
-                </div>
-            </div>
-            <div class="span2">
-                <div class="btn-group">
-                    <button class="btn btn-info">Contact Picture Doctor</button>
-                </div>
-            </div>
-         </div>
-         <div class="row job_row fix_line_height">
-             <div class="span2">
-                 <b>001030123</b>
-             </div>
-             <div class="span2">
-                2 Pictures  
+                 {{job.batch_info}}
             </div>
              <div class="span3 text-success">
-                <em>Job in progress</em>
+                 <em>{{ job.status }}</em>
              </div>
              <div class="span3">
                <div class="btn-group">
@@ -76,32 +54,16 @@
             </div>
             <div class="span2">
                 <div class="btn-group">
+                    {% if job.doctor_exists %}
                     <button class="btn btn-info">Contact Picture Doctor</button>
+                    {% else %}
+                    Job has yet to be taken
+                    {% endif %}
+
                 </div>
             </div>
-         </div>
-         <div class="row job_row fix_line_height">
-             <div class="span2">
-                 <b>002033123</b>
-             </div>
-             <div class="span2">
-                999 Pictures  
-            </div>
-             <div class="span3 text-error">
-                <em>You are a cheap SOB</em>
-             </div>
-             <div class="span3">
-                <div class="btn-group">
-                    <button class="btn btn-info">Accept</button>
-                    <button class="btn btn-info">Request Additional Work</button>
-                </div>
-            </div>
-            <div class="span2">
-                <div class="btn-group">
-                    <button class="btn btn-info">Contact Picture Doctor</button>
-                </div>
-            </div>
-         </div>
+        </div>
+        {% endfor %}
   </div>
 {% endblock %}
 

@@ -281,16 +281,20 @@ class Job(DeleteMixin):
 
     #Never blank, no batch = no job. related_name since Batch already has a FK
     skaa_batch              = models.ForeignKey(Batch, 
-                                                related_name='job_user_batch', 
+                                                related_name='skaa_batch', 
                                                 db_index=True)
     #This can be blank, doctor uploads batch later, related_name (see above)
     doctor_batch            = models.ForeignKey(Batch, 
-                                                related_name='job_doctor_batch', 
+                                                related_name='doctor_batch', 
                                                 db_index=True, 
                                                 blank=True, 
                                                 null=True)
-    skaa                   = models.ForeignKey(UserProfile, related_name='job_owner')
-    doctor                  = models.ForeignKey(UserProfile, related_name='job_doctor',
+    #TODO make this a required field, UserProfile is still non-existant
+    skaa                    = models.ForeignKey(UserProfile, 
+                                                related_name='job_owner',
+                                                blank=True, null=True)
+    doctor                  = models.ForeignKey(UserProfile, 
+                                                related_name='job_doctor',
                                                 blank=True, null=True)
     #from something in the billions to 1 penny
     price                   = models.DecimalField(blank=False, 
@@ -299,7 +303,7 @@ class Job(DeleteMixin):
 
     #this price is set when a doctor takes the job.  payout prices 
     #that appear on the job page, vary based on accepted job count
-    payout_price            = models.DecimalField(blank=False, 
+    payout_price            = models.DecimalField(blank=True, null=True,
                                                   max_digits=13, 
                                                   decimal_places=2)
     price_too_low_count     = models.IntegerField(blank=False, 

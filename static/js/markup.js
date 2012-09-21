@@ -644,17 +644,35 @@ $(function(){
   //temporary job creation
   var FakeJobView = Backbone.View.extend({
 
-    // Our template for the line of statistics at the bottom of the app.
-    //statsTemplate: _.template($('#stats-template').html()),
-
     el: $("#fake_job_app"),
 
     // Delegated events for creating new items, and clearing completed ones.
-    events: {
-      //"keypress #new-todo":  "createOnEnter",
-      "click  .markup_pic_container" : "createMarkup",
-      //"mouseleave .markup_pic_container" : "finishMarkup",
-    },
-      )};
+        events: {
+            //"keypress #new-todo":  "createOnEnter",
+            "click  a#FakeJobGen" : "createJob",
+            //"mouseleave .markup_pic_container" : "finishMarkup",
+        },
 
+        createJob: function(){
+            try
+  {
+    $.ajax({
+      type: 'POST',
+      url: '/fake_job_creator/',
+      data: '',
+      success : function(data, textStatus) {
+        console.log("TODO: REMOVE ME");
+        console.log(data);
+        console.log(textStatus);
+      }
+    });
+  }
+  catch(Err)
+  {
+      console.log("error: " + Err);
+  }
+        return false;
+        },
+      });
+ var fjv = new FakeJobView();
 });
