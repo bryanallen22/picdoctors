@@ -61,7 +61,7 @@ def set_sequences(request, batch_id):
     batch.num_groups = next_sequence
     batch.save()
 
-@render_to('markup.html')
+@render_to()
 def markup_page(request, sequence):
     sequence = int(sequence)
     batch_id = get_batch_id(request)
@@ -98,9 +98,8 @@ def markup_page(request, sequence):
     else:
         previous_url = reverse('markup', args = [sequence-1])
 
-    #TODO remove this tester code
-    fake_button_text = 'Cheat and Delete Job' if group.is_locked else 'Cheat and Create Job' 
-    return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 'fake_button_text' : fake_button_text, 'is_locked' : group.is_locked }
+    template_name = 'markup-ro.html'if group.is_locked else 'markup.html'
+    return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 'TEMPLATE': template_name }
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes

@@ -322,6 +322,7 @@ $(function(){
             color_name    : this.model.get('color_name') + ' area instructions:',
             border_style  : this.model.get('border_style'),
             desc          : this.model.get('description'),
+            readonly:      '',
           }
         ));
       }

@@ -10,16 +10,19 @@
 {% block main %}
 <div id='job_app' class="row job_page">
          <div class="row job_header_row lead">
-             <div class="span2">
-                Job Number
-             </div>
+             <div class="span1">
+                Job #
+            </div>
+            <div class="span1">
+                Pictures
+            </div>
              <div class="span2">
                 Job Size
             </div>
             <div class="span3">
                 Status
             </div>
-            <div class="span3">
+            <div class="span2">
                 Actions
             </div>
             <div class="span2">
@@ -28,16 +31,28 @@
          </div>
     {% for job in job_infos %}
          <div class="row job_row fix_line_height">
-             <div class="span2">
+             <div class="span1">
                  <b>{{job.job_id}}</b>
              </div>
+             <div class="span1">
+                 <div id="myCarousel" class="carousel slide">
+                   <!-- Carousel items -->
+                   <div class="carousel-inner">
+                     {% for pt in job.pic_thumbs %}
+                     <div class="item"> 
+                       <img src="{{ pt }}" alt="">
+                     </div>
+                     {% endfor %}
+                </div>
+            </div>
+           </div>
              <div class="span2">
                  {{job.batch_info}}
             </div>
              <div class="span3 text-success">
                  <em>{{ job.status }}</em>
              </div>
-             <div class="span3">
+             <div class="span2">
                <div class="btn-group">
                   <button class="btn btn-primary">Action</button>
                   <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -73,6 +88,13 @@
     <script src="{{ STATIC_URL }}js/json2.js"></script>
     <script src="{{ STATIC_URL }}js/underscore.js"></script>
     <script src="{{ STATIC_URL }}js/backbone.js"></script>
-    <script src="{{ STATIC_URL }}js/job.js"></script>
+    <script src="{{ STATIC_URL }}js/jobs.js"></script>
+    <script>
+        $(function() {
+            
+            $('.carousel').carousel('next');
+            $('.carousel').carousel();
+         });
+                </script>
 {% endblock %}
 

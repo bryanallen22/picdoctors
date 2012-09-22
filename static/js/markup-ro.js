@@ -150,15 +150,12 @@ $(function(){
     // Cache the template function for a single item.
     template:      _.template( $('#markup-template-styleattr').html().trim() ),
 
-    redX_template: _.template( $('#markup-template-redx').html().trim() ),
-
     // The DOM events specific to an item.
     events: {
       // This event needs to be mousedown instead of click, because otherwise
       // when we depress the mouse, we'll find ourselves in the middle of 
       // creating a new markup rather than deleting this one. (mousedown 
       // is caught by the markup_pic_container)
-      "mousedown .markup-redx" : "deleteMarkup",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -169,7 +166,6 @@ $(function(){
       //console.log("And, in the morning, I'm making MarkupView(s)!");
       //console.log(this);
       this.model.bind('change',  this.render, this);
-      this.model.bind('destroy', this.remove, this);
       this.model.bind('fade',    this.fade,   this);
       this.model.bind('hide',    this.hide,   this);
       this.model.bind('show',    this.show,   this);
@@ -225,16 +221,7 @@ $(function(){
       }
 
       // Doesn't display well on really small widths
-      this.$el.html( this.redX_template( {} ) );
-      this.$el.find('.markup-redx').css('left', this.model.get('width')-20 );
-
       return this;
-    },
-
-    deleteMarkup: function() {
-      console.log("going to not destroy, suckers()...");
-    //  this.model.destroy( {wait:true} );
-      console.log("destroyed!");
     },
 
     fade: function() {
@@ -293,6 +280,7 @@ $(function(){
             color_name    : this.model.get('color_name') + ' area instructions:',
             border_style  : this.model.get('border_style'),
             desc          : this.model.get('description'),
+            readonly      : 'readonly',
           }
         ));
       }
@@ -351,10 +339,6 @@ $(function(){
     focusOut: function(){
       var instruction = this.$el.find('.desc').val();
       console.log("Got focusOut for general instruction value: " + instruction);
-      //if( instruction != this.model.get('general_instructions') ) {
-      //  this.model.save({ 'general_instructions': instruction } , 
-      //                  { wait : true });
-      //}
     }
     
 

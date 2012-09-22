@@ -14,14 +14,9 @@
     {% if pics|length > 1 %}
       These {{ pics|length }} pictures will be combined into a single final picture
     {% else %}
-      This picture will be edited based on the instructions you input below
+      This picture will be edited based on your instructions below
     {% endif %}
     </h2>
-    <h4 style="text-align: center; color: #999; margin-bottom: 40px;">
-      If that's not what you wanted, you can go
-      <a href="{% url skaa.uploadviews.upload_page %}">back</a>
-      and regroup
-    </h4>
     {% for pic in pics %}
       <div class='markup_outer'>
         <span class='markup_pic_container'
@@ -40,7 +35,8 @@
           <div class="markup_desc">
               <p class="desc_title">General Instructions:</p>
               <div class="instruction">
-                  <textarea class="desc">{{ pic.general_instructions }}</textarea>
+                  <textarea class="desc" readonly>{{ pic.general_instructions }}</textarea>
+                  
               </div>
           </div>
         </div>
@@ -57,7 +53,7 @@
         {% if not user.is_authenticated  %}
     
         <div id='fake_job_app'>
-            <a id='FakeJobGen' href='' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Steal and Create Job</a>
+            <a id='FakeJobGen' href='' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Delete ill gotten Job</a>
         </div>
         {% endif %}
     </div>
@@ -72,7 +68,7 @@
     <script src="{{ STATIC_URL }}js/json2.js"></script>
     <script src="{{ STATIC_URL }}js/underscore.js"></script>
     <script src="{{ STATIC_URL }}js/backbone.js"></script>
-    <script src="{{ STATIC_URL }}js/markup.js"></script>
+    <script src="{{ STATIC_URL }}js/markup-ro.js"></script>
     {# Templates #}
     {# This template is just the *style* attribute for the markup div      #}
     {# Note: if you change the border width here from 4px, you'll probably #}
@@ -80,17 +76,12 @@
     <script type="text/template" id="markup-template-styleattr">
       left: <%= left %>; top: <%= top %>; height: <%= height %>; width: <%= width %>; border: 4px <%= color %>; border-style: <%= border_style %>;
     </script>
-    {# Used to put the red X on a markup element #}
-    <script type="text/template" id="markup-template-redx">
-      <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
-    </script>
-
     {# MarkupDesc view #}
     <script type="text/template" id="markup-template-desc">
       <p class="desc_title" style="border: 4px <%= color %>; border-style: <%= border_style %>;">
         <%= color_name %>
       </p>
-      <textarea class="desc" rows='2' <%= readonly %> ><%= desc %></textarea>
+      <textarea class="desc" rows='2' readonly ><%= desc %></textarea>
     </script>
     
 {% endblock %}

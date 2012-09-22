@@ -6,6 +6,7 @@ from common.models import Job
 from common.models import Batch
 from common.models import Group
 from common.models import UserProfile
+from common.models import Pic
 from skaa.uploadviews import get_batch_id
 from django.contrib.auth.models import User
 import pdb
@@ -16,8 +17,9 @@ class JobInfo:
         self.batch_info = 'Unknown'
         self.status = 'Unknown'
         self.doctor_exists = False
+        self.pic_thumbs = []
 
-@render_to('job.html')
+@render_to('jobs.html')
 def index(request):
     #TODO jobs = Job.objects.filter(skaa = whoever's logged in)
     #TODO implement paging
@@ -26,7 +28,7 @@ def index(request):
     job_infos = []
     for job in jobs:
         job_inf = JobInfo()
-        job_inf.job_id = "{0:09d}".format(job.id)
+        job_inf.job_id = "{0:06d}".format(job.id)
         job_inf.status = job.get_job_status_display()
         job_inf.doctor_exists = job.doctor is not None
         batch = job.skaa_batch
@@ -34,10 +36,23 @@ def index(request):
             count = batch.num_groups
             plural = ' ' if count == 1 else 's'
             job_inf.batch_info = str(batch.num_groups) + ' output picture' + plural
+            job_inf.pic_thumbs = fill_pic_thumbs(batch)
+
         job_infos.append(job_inf)
 
 
     return { 'job_infos' :job_infos}
+
+#get all the pic thumbnails associated with a batch (we might drop this down to top 3 or something)
+def fill_pic_thumbs(filter_batch):
+    ret = []
+    pics = Pic.objects.filter(batch=filter_batch)
+    for pic in pics:
+        ret.append(pic.get_thumb_url())
+
+    return ret
+        
+
 
 #TODO this method won't be a webmethod, it will only be called after a successful payment, but that's not implemented yet...
 @csrf_exempt
@@ -67,4 +82,5 @@ def lock_groups(batch_to_lock):
     for group in groups:
         group.is_locked = True
         group.save()
+
 
