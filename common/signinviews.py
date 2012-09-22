@@ -7,7 +7,7 @@ from django.db import IntegrityError
 
 from annoying.decorators import render_to
 
-from skaa.uploadviews import get_batch_id
+from skaa.uploadviews import get_batch_id, set_batch_id
 from common.models import Batch, UserProfile
 
 import pdb
@@ -67,7 +67,8 @@ def create_user(email, password, confirm_password, usertype):
             return ( user, { } )
     else:
         user = User.objects.create_user(username=email, email=email, password=password)
-
+        #Now authenticate the user (it puts the backend into the User object)
+        user, tmp = auth(email, password)
         if usertype == 'doc':
             create_doctor(user)
         elif usertype == 'user':
@@ -106,8 +107,14 @@ def signin(request, usertype='user'):
             ret.update(tmp)
 
         if user:
+            #TODO session variables are blasted away upon logging in, decide how to handle this
+            batch_id = get_batch_id(request)
             # Successful login. Take care of "remember me" button
             login(request, user)
+
+            #TODO shove the batch_id back in
+            set_batch_id(request, batch_id)
+
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
                 one_month = datetime.timedelta(days=30)
