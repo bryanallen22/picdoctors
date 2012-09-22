@@ -2,13 +2,8 @@ from django.conf.urls.defaults import patterns, include, url
 
 from skaa.markupviews import markup_page, markup_page_batch, markups_handler, pic_instruction_handler
 from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handler, upload_page, need_cookies
-<<<<<<< HEAD
 from skaa.jobsviews import job_page, generate_job, kill_job
-=======
-from skaa.jobsviews import index, generate_job
 from skaa.setpriceviews import set_price
-
->>>>>>> First commit with Stripe integration
 # Uncomment the next two lines to enable the admin:
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
