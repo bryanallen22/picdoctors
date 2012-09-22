@@ -57,6 +57,11 @@ echo "Installing packages from requirements.txt"
 echo "====="
 pip install -r ../requirements.txt
 
+echo "====="
+echo "Installing stripe"
+echo "====="
+pip install --index-url https://code.stripe.com --upgrade stripe
+
 
 echo "====="
 echo "Installing npm, less, shint, recess, and uglify-js..."
