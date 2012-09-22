@@ -22,7 +22,12 @@ def get_batch_id(request):
     if 'batch_id' not in request.session:
         batch = Batch()
         batch.save()
-        request.session['batch_id'] = batch.id
+        set_batch_id(request, batch.id)
+
+    return request.session['batch_id']
+
+def set_batch_id(request, batch_id):
+    request.session['batch_id'] = batch_id
     return request.session['batch_id']
 
 def get_batch(request):
