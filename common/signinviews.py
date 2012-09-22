@@ -67,7 +67,8 @@ def create_user(email, password, confirm_password, usertype):
             return ( user, { } )
     else:
         user = User.objects.create_user(username=email, email=email, password=password)
-
+        #Now authenticate the user (it puts the backend into the User object)
+        user, tmp = auth(email, password)
         if usertype == 'doc':
             create_doctor(user)
         elif usertype == 'user':
