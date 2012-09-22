@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from annoying.decorators import render_to
 
 from skaa.uploadviews import get_batch_id
-from common.models import Batch
+from common.models import Batch, UserProfile
 
 import pdb
 import logging
