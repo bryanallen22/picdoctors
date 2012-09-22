@@ -48,7 +48,11 @@
               <li><a href="#faq">FAQ</a></li>
               <li><a href="#contact">Contact</a></li>
               <li><a href="#doctors">Doctors</a></li>
+              {% if not user.is_authenticated %}
               <li><a href="#login">Log In</a></li>
+              {% else %}
+              <li><a href="#logout">Log Out</a></li>
+              {% endif %}
             </ul>
           </div>
         </div>
