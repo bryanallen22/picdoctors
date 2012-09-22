@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 
 from annoying.decorators import render_to
@@ -107,6 +107,7 @@ def signin(request, usertype='user'):
 
         if user:
             # Successful login. Take care of "remember me" button
+            login(request, user)
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
                 one_month = datetime.timedelta(days=30)
