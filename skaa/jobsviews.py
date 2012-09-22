@@ -17,10 +17,11 @@ class JobInfo:
         self.batch_info = 'Unknown'
         self.status = 'Unknown'
         self.doctor_exists = False
+        self.batch = -1
         self.pic_thumbs = []
 
 @render_to('jobs.html')
-def index(request):
+def job_page(request):
     #TODO jobs = Job.objects.filter(skaa = whoever's logged in)
     #TODO implement paging
     jobs = Job.objects.all()
@@ -33,6 +34,7 @@ def index(request):
         job_inf.doctor_exists = job.doctor is not None
         batch = job.skaa_batch
         if batch is not None:
+            job_inf.batch = batch.id
             count = batch.num_groups
             plural = ' ' if count == 1 else 's'
             job_inf.batch_info = str(batch.num_groups) + ' output picture' + plural
@@ -48,8 +50,8 @@ def fill_pic_thumbs(filter_batch):
     ret = []
     pics = Pic.objects.filter(batch=filter_batch)
     for pic in pics:
-        ret.append(pic.get_thumb_url())
-
+        tup = (pic.get_thumb_url(), pic.group.sequence)
+        ret.append(tup)
     return ret
         
 
@@ -64,23 +66,39 @@ def generate_job(request):
         b = get_object_or_None(Batch, id=batch_id)
         j = get_object_or_None(Job, skaa_batch=b)
         if j is None:
-            j = Job(skaa_batch=b, 
+            j = Job(skaa=request.user.get_profile(),
+                    skaa_batch=b, 
                     price = 99.99, 
                     job_status=Job.STATUS_USER_SUBMITTED)
             j.save()       
-
-            lock_groups(b)
+        else:
+            j.deleted = 0
+            j.save()
+        set_groups_locks(b, True)
     except Exception as e:
         return HttpResponse('{ "success" : true; "whynot" :"' + str(e) + '"}', mimetype='application/json')
 
     return HttpResponse('{ "success" : true }', mimetype='application/json')
 
 
-def lock_groups(batch_to_lock):
+#TODO Delete this method, it's only for testing
+@csrf_exempt
+def kill_job(request):
+    batch_id = get_batch_id(request)
+    b = get_object_or_None(Batch, id=batch_id)
+    j = get_object_or_None(Job, skaa_batch=b)
+    if j is not None:
+        j.delete()
+
+    set_groups_locks(b, False)
+    return HttpResponse('{ "success" : true }', mimetype='application/json')
+
+
+def set_groups_locks(batch_to_lock, state):
     groups = Group.objects.filter(batch=batch_to_lock)
     #Performance Opportunity, just update all at once
     for group in groups:
-        group.is_locked = True
+        group.is_locked = state
         group.save()
 
 

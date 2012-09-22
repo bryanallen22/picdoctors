@@ -430,12 +430,13 @@ $(function(){
   {
     $.ajax({
       type: 'POST',
-      url: '/fake_job_creator/',
+      url: '/kill_job/',
       data: '',
       success : function(data, textStatus) {
         console.log("TODO: REMOVE ME");
         console.log(data);
         console.log(textStatus);
+        location.reload(true);
       }
     });
   }

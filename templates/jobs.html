@@ -32,15 +32,17 @@
     {% for job in job_infos %}
          <div class="row job_row fix_line_height">
              <div class="span1">
-                 <b>{{job.job_id}}</b>
+               <b><a href="/markup/{{ job.batch }}/1/">{{job.job_id}}</a></b>
              </div>
              <div class="span1">
                  <div id="myCarousel" class="carousel slide">
                    <!-- Carousel items -->
                    <div class="carousel-inner">
-                     {% for pt in job.pic_thumbs %}
+                     {% for pic in job.pic_thumbs %}
                      <div class="item"> 
-                       <img src="{{ pt }}" alt="">
+                       <a href="/markup/{{ job.batch }}/{{ pic.1 }}/">
+                         <img src="{{ pic.0 }}" alt="">
+                       </a>
                      </div>
                      {% endfor %}
                 </div>

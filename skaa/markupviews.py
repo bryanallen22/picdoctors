@@ -61,17 +61,23 @@ def set_sequences(request, batch_id):
     batch.num_groups = next_sequence
     batch.save()
 
+#markup page when we don't specify a batch_id (get it from request)
 @render_to()
 def markup_page(request, sequence):
-    sequence = int(sequence)
     batch_id = get_batch_id(request)
+    return markup_page_batch(request, batch_id, sequence)
 
+#markup page when we specify a batch_id
+@render_to()
+def markup_page_batch(request, batch_id, sequence):
+    sequence = int(sequence)
+    batch_id = int(batch_id)
     pics = Pic.objects.filter( batch__exact=batch_id )
     
     if len(pics) == 0:
       # No pictures. How did they get here? Direct typing of the url?
       # Let's send them back to the upload page
-      return redirect('upload')
+        return redirect('upload')
     
     #Reset the group Ids on 3 conditions, retgrouping, deleting of pics
     #or adding of new pics

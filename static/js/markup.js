@@ -665,6 +665,7 @@ $(function(){
         console.log("TODO: REMOVE ME");
         console.log(data);
         console.log(textStatus);
+        location.reload(true);
       }
     });
   }
