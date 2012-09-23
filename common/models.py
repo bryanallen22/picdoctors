@@ -247,7 +247,8 @@ class Pic(DeleteMixin):
 ################################################################################
 class Batch(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
-    userprofile = models.ForeignKey(UserProfile, blank=True, null=True)
+    userprofile = models.ForeignKey(UserProfile, blank=True, 
+                                    null=True, db_index=True)
     created     = models.DateField(auto_now_add=True)
     updated     = models.DateField(auto_now=True)
     description = models.TextField(blank=True)
@@ -266,26 +267,28 @@ class Group(models.Model):
 # Create your models here.
 class Job(DeleteMixin):
     #Job status constants
-    STATUS_USER_SUBMITTED = 'user_sub' #submitted to doctors
-    STATUS_TOO_LOW   = 'too_low' #not worth doctors time
-    STATUS_DOCTOR_ACCEPTED  = 'doctor_acc' #doctor accepted
-    STATUS_DOCTOR_REQUESTS_ADDITIONAL_INFORMATION = 'doc_need_info'
-    STATUS_DOCTOR_SUBMITTED = 'docter_sub' #submitted to user for approval
-    STATUS_USER_ACCEPTED    = 'user_acc'   #user accepts the finished product
-    STATUS_USER_REQUESTS_ADDITIONAL_WORK = 'user_add' #scope creep
-    STATUS_USER_REJECTS     = 'user_rej'   #user rejects product and wants a refund...
+    USER_SUBMITTED = 'user_sub' #submitted to doctors
+    TOO_LOW   = 'too_low' #not worth doctors time
+    DOCTOR_ACCEPTED  = 'doctor_acc' #doctor accepted
+    DOCTOR_REQUESTS_ADDITIONAL_INFORMATION = 'doc_need_info'
+    DOCTOR_SUBMITTED = 'docter_sub' #submitted to user for approval
+    USER_ACCEPTED    = 'user_acc'   #user accepts the finished product
+    USER_REQUESTS_ADDITIONAL_WORK = 'user_add' #scope creep
+    USER_REJECTS     = 'user_rej'   #user rejects product and wants a refund...
 
     #Job status Choices for the job_status field below
     JOB_STATUS_CHOICES = (
-        (STATUS_USER_SUBMITTED, 'User Submitted'),
-        (STATUS_TOO_LOW, 'Price Too Low'),
-        (STATUS_DOCTOR_ACCEPTED, 'Doctor Accepted Job'),
-        (STATUS_DOCTOR_REQUESTS_ADDITIONAL_INFORMATION, 'Doctor Has Requested Additional Info'),
-        (STATUS_DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
-        (STATUS_USER_ACCEPTED, 'User Accepted Work'),
-        (STATUS_USER_REQUESTS_ADDITIONAL_WORK, 'User Has Requested Additional Work'),
-        (STATUS_USER_REJECTS, 'User Has Rejected Work'),
+        (USER_SUBMITTED, 'User Submitted'),
+        (TOO_LOW, 'Price Too Low'),
+        (DOCTOR_ACCEPTED, 'Doctor Accepted Job'),
+        (DOCTOR_REQUESTS_ADDITIONAL_INFORMATION, 'Doctor Has Requested Additional Info'),
+        (DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
+        (USER_ACCEPTED, 'User Accepted Work'),
+        (USER_REQUESTS_ADDITIONAL_WORK, 'User Has Requested Additional Work'),
+        (USER_REJECTS, 'User Has Rejected Work'),
     )
+    created         = models.DateField(auto_now_add=True)
+    updated         = models.DateField(auto_now=True)
 
     #Never blank, no batch = no job. related_name since Batch already has a FK
     skaa_batch              = models.ForeignKey(Batch, 
@@ -319,4 +322,4 @@ class Job(DeleteMixin):
     #max_length refers to the shorthand versions above
     job_status              = models.CharField(max_length=15, 
                                                choices=JOB_STATUS_CHOICES, 
-                                               default=STATUS_USER_SUBMITTED)
+                                               default=USER_SUBMITTED)

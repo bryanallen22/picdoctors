@@ -92,19 +92,29 @@ def markup_page_batch(request, batch_id, sequence):
 
     logging.info('len(pics)=%d' % len(pics))
     group = Group.objects.get(sequence=sequence,batch=batch_id)
+    
+    read_only = group.is_locked
+
     pics = pics.filter( group__exact=group)
 
     if sequence == batch.num_groups:
-        next_url = reverse('skaa_signin')
+        if read_only:
+            next_url = reverse('job_page')
+        else:
+            next_url = reverse('skaa_signin')
     else:
-        next_url = reverse('markup', args=[sequence+1])
+        next_url = reverse('markup_batch', args=[batch_id, sequence+1])
 
     if sequence == 1:
-        previous_url = reverse('upload')
+        if read_only:
+            previous_url= reverse('job_page')
+        else:
+            previous_url = reverse('upload')
     else:
-        previous_url = reverse('markup', args = [sequence-1])
+        previous_url = reverse('markup_batch', args = [batch_id, sequence-1])
 
-    template_name = 'markup-ro.html'if group.is_locked else 'markup.html'
+    template_name = 'markup-ro.html'if read_only else 'markup.html'
+
     return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 'TEMPLATE': template_name }
 
 def get_markup_whitelist():

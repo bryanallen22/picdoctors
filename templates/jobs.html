@@ -11,9 +11,9 @@
 <div id='job_app' class="row job_page">
          <div class="row job_header_row lead">
              <div class="span1">
-                Job #
+                Job 
             </div>
-            <div class="span1">
+            <div class="span2">
                 Pictures
             </div>
              <div class="span2">
@@ -23,10 +23,10 @@
                 Status
             </div>
             <div class="span2">
-                Actions
+               &nbsp; 
             </div>
             <div class="span2">
-                Contact Doctor
+                Actions
             </div>
          </div>
     {% for job in job_infos %}
@@ -34,7 +34,7 @@
              <div class="span1">
                <b><a href="/markup/{{ job.batch }}/1/">{{job.job_id}}</a></b>
              </div>
-             <div class="span1">
+             <div class="span2">
                  <div id="myCarousel" class="carousel slide">
                    <!-- Carousel items -->
                    <div class="carousel-inner pic_carousel">
@@ -54,21 +54,6 @@
              <div class="span3 text-success">
                  <em>{{ job.status }}</em>
              </div>
-             <div class="span2">
-               <div class="btn-group">
-                  <button class="btn btn-primary">Action</button>
-                  <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                      <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                  </ul>
-                </div>
-            </div>
             <div class="span2">
                 <div class="btn-group">
                     {% if job.doctor_exists %}
@@ -78,6 +63,26 @@
                     {% endif %}
 
                 </div>
+            </div>
+             <div class="span2">
+               {% if job.dynamic_actions|length > 0 %}
+               <div class="btn-group">
+                 
+                 {% for action in job.dynamic_actions|slice:":1" %}
+                 <button class="btn btn-primary" postback_url= "{{ action.url }}" >{{ action.text }}</button>
+                 {% endfor %}
+                 {% if job.dynamic_actions|length > 1 %}
+                  <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                      <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    {% for action in job.dynamic_actions|slice:"1:" %}
+                    <li><a href="#" postback_url="{{action.url}}">{{ action.text }}</a></li>
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
+                </div>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
