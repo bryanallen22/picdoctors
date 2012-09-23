@@ -272,6 +272,12 @@
     padding:1px;
     vertical-align:middle;//vertical-align sucks
     text-align:left;
+    //force row height big enough to contain the pic carousel and max pic size
+    height:80px;
+    // force the pic carousel to a max pic size so we don't have weird drawing issues
+    .pic_carousel{
+      height:60px;
+    }
   }
   .job_row:hover {
     background-color:#D1EEEE;

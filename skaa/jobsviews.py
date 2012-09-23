@@ -7,7 +7,7 @@ from common.models import Batch
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
-from skaa.uploadviews import get_batch_id
+from skaa.uploadviews import get_batch_id, set_batch_id
 from django.contrib.auth.models import User
 import pdb
 
@@ -29,7 +29,7 @@ def job_page(request):
     job_infos = []
     for job in jobs:
         job_inf = JobInfo()
-        job_inf.job_id = "{0:06d}".format(job.id)
+        job_inf.job_id = "{0:07d}".format(job.id)
         job_inf.status = job.get_job_status_display()
         job_inf.doctor_exists = job.doctor is not None
         batch = job.skaa_batch
@@ -75,6 +75,9 @@ def generate_job(request):
             j.deleted = 0
             j.save()
         set_groups_locks(b, True)
+
+        #Remove the batch from the user's session, they are no longer working on it
+        set_batch_id(request, None)
     except Exception as e:
         return HttpResponse('{ "success" : true; "whynot" :"' + str(e) + '"}', mimetype='application/json')
 

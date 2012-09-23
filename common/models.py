@@ -247,8 +247,7 @@ class Pic(DeleteMixin):
 ################################################################################
 class Batch(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
-    userprofile = models.OneToOneField(UserProfile, blank=True, null=True)
-
+    userprofile = models.ForeignKey(UserProfile, blank=True, null=True)
     created     = models.DateField(auto_now_add=True)
     updated     = models.DateField(auto_now=True)
     description = models.TextField(blank=True)

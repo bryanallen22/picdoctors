@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 
 from annoying.decorators import render_to
+from annoying.functions import get_object_or_None
 
 from skaa.uploadviews import get_batch_id, set_batch_id
 from common.models import Batch, UserProfile
@@ -111,9 +112,8 @@ def signin(request, usertype='user'):
             batch_id = get_batch_id(request)
             # Successful login. Take care of "remember me" button
             login(request, user)
-
-            #TODO shove the batch_id back in
-            set_batch_id(request, batch_id)
+            
+            associate_and_fill_batch(request, batch_id, user)
 
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
@@ -139,6 +139,16 @@ def signin(request, usertype='user'):
             ret['email'] = request.POST['email']
 
     return ret
+
+def associate_and_fill_batch(request, batch_id, user):
+    #TODO shove the batch_id back in
+    #skip for now, but we might as well save it, no point in slamming db on this
+    #set_batch_id(request, batch_id)
+    batch = get_object_or_None(Batch, id=batch_id)
+    
+    if batch is not None:
+        batch.userprofile = user.get_profile()
+        batch.save()
 
 def skaa_signin(request):
     # Don't use the word 'skaa' here -- it'll be visible in the html : )

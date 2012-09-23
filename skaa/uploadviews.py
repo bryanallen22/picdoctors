@@ -9,26 +9,59 @@ from django.utils import simplejson
 
 from django.template import RequestContext
 from annoying.decorators import render_to
+from annoying.functions import get_object_or_None
+
 from django.core.files.uploadedfile import UploadedFile
 
 from common.models import Pic
 from common.models import Batch
 from common.models import Group
+from common.models import Job
 from common.models import ungroupedId
 import pdb
 
 def get_batch_id(request):
     # If there isn't already a batch assigned, assign it now
+    batch = None
     if 'batch_id' not in request.session:
-        batch = Batch()
+        if request.user.is_authenticated():
+            batch = find_existing_batch(request.user.get_profile())
+        
+        if batch == None:
+            batch = Batch()
+
+        if request.user.is_authenticated():
+            batch.userprofile = request.user.get_profile()
         batch.save()
         set_batch_id(request, batch.id)
 
     return request.session['batch_id']
 
+def find_existing_batch(user_profile):
+    #No profile means no batch
+    if user_profile is None:
+        return None
+    batch = None
+
+    #No latest batch associated with user means no batch
+    try:
+        batch = Batch.objects.filter(userprofile=user_profile).latest('created')
+    except Exception as e:
+        return None
+
+    #No associated job means they never finished, return it!
+    associated_job = get_object_or_None(Job, skaa_batch=batch)
+    if associated_job is None:
+        return batch
+    else:
+        return None
+
 def set_batch_id(request, batch_id):
-    request.session['batch_id'] = batch_id
-    return request.session['batch_id']
+    if batch_id is None and 'batch_id' in request.session:
+        del request.session['batch_id']
+    
+    if batch_id is not None:
+        request.session['batch_id'] = batch_id
 
 def get_batch(request):
     # This will create a batch if necessary
