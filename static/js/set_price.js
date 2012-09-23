@@ -3,7 +3,6 @@ $(function(){
 
   function stripeResponseHandler(status, response) {
       if (response.error) {
-          ...
           // show the errors on the form
           $(".payment-errors").text(response.error.message);
           $(".submit-button").removeAttr("disabled");
@@ -37,3 +36,4 @@ $(function(){
   });
 
 });
+

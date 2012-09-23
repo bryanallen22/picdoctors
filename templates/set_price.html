@@ -17,8 +17,20 @@
       <div class="row">
         <div class="span6 well">
 
+          <legend>
+              Please set a price for this job
+          </legend>
+
+          You owe at least <strong>${{ min_price }}</strong>, foo. That's 2 dolla per picture
+          minimum.<br/><br/>
+
           <form action="" method="POST" id="payment-form">
             {% csrf_token %}
+            <div class="form-row">
+              <label>How much will you offer?</label>
+              <input type="text" size="20" autocomplete="off"
+                     class="span1" value="" name="price" />
+            </div>
             <div class="form-row">
               <label>Card Number</label>
               <input type="text" size="20" autocomplete="off"
@@ -58,6 +70,6 @@
       // this identifies your website in the createToken call below
       Stripe.setPublishableKey('pk_V8f3VqqFTmJZf8jJ3THswX9sPi6ik');
     </script>
-    <script> src="js/set_price.js"></script>
+    <script src="{{STATIC_URL}}js/set_price.js"></script>
 {% endblock %}
 
