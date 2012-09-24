@@ -28,9 +28,10 @@
                 {% csrf_token %}
                 <div>
                   <label>How much will you offer?</label>
-                  <input type="text" size="20" autocomplete="off"
+                  <input id="price" type="text" size="20" autocomplete="off"
                          class="span1" value="" name="price" />
-                  <span class="label label-important">You must offer at least {{ min_price }} ({{ min_price_per_pic }} per picture)</span>
+                  <span id="min-price-msg" class="label label-important" style="display:none;">You
+                    must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)</span>
                 </div>
                 <div>
                   <label>Card Number</label>
@@ -120,6 +121,9 @@
     <script type="text/javascript">
       // this identifies your website in the createToken call below
       Stripe.setPublishableKey('pk_V8f3VqqFTmJZf8jJ3THswX9sPi6ik');
+    </script>
+    <script type="text/javascript">
+      minimum_price = {{ min_price }};
     </script>
     <script src="{{STATIC_URL}}js/set_price.js"></script>
 {% endblock %}

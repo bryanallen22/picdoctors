@@ -44,7 +44,7 @@ def set_price(request):
         # We want whole cents. Convert string to float, multiply by 100,
         # and then convert to int (which floors any remaining fractional digits)
         price = int(float(request.POST['price'])*100)
-        # TODO -- make sure above value works, is a valid string, etc
+        # TODO -- make sure above value works, is a valid string, and isn't below the minimum price
 
         # create the charge on Stripe's servers - this will charge the user's card
         charge = stripe.Charge.create(
@@ -54,8 +54,8 @@ def set_price(request):
             description="payinguser@example.com"
         )
 
-    str_min_price = "$" + "{0:.2f}".format(min_price)
-    str_min_price_per_pic = "$" + "{0:.2f}".format(min_price_per_pic)
+    str_min_price = "{0:.2f}".format(min_price)
+    str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
     return { 
         'min_price' :          str_min_price,
         'min_price_per_pic' :  str_min_price_per_pic,

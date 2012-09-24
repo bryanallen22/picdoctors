@@ -18,6 +18,16 @@ $(function(){
       }
   }
 
+  $("#price").focusout( function() {
+    /* minimum_price is set directly in the html page above this script */
+    if( parseFloat($("#price").val()) < minimum_price ) {
+      $("#min-price-msg").show();
+    }
+    else {
+      $("#min-price-msg").hide();
+    }
+  } );
+
   $(document).ready(function() {
     $("#payment-form").submit(function(event) {
       // disable the submit button to prevent repeated clicks
