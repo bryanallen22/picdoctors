@@ -20,7 +20,7 @@ import pdb
 import logging
 
 # Require at least $2.00 for each output picture
-min_price_per_picgroup = 2.0
+min_price_per_pic = 2.0
 
 # test key! use real key in production
 stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
@@ -34,7 +34,7 @@ def set_price(request):
         # Hm, how did they get here? Strange. Send them to upload.
         return redirect('upload')
 
-    min_price = min_price_per_picgroup * batch.num_groups
+    min_price = min_price_per_pic * batch.num_groups
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
@@ -54,6 +54,11 @@ def set_price(request):
             description="payinguser@example.com"
         )
 
-    return { 'min_price' : min_price }
+    str_min_price = "$" + "{0:.2f}".format(min_price)
+    str_min_price_per_pic = "$" + "{0:.2f}".format(min_price_per_pic)
+    return { 
+        'min_price' :          str_min_price,
+        'min_price_per_pic' :  str_min_price_per_pic,
+    }
 
 
