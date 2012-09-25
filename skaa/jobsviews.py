@@ -9,6 +9,7 @@ from common.models import UserProfile
 from common.models import Pic
 from skaa.uploadviews import get_batch_id, set_batch_id
 from django.contrib.auth.models import User
+from decimal import *
 import pdb
 
 class JobInfo:
@@ -21,6 +22,9 @@ class JobInfo:
         self.pic_thumbs = []
         self.dynamic_actions = []
 
+        #doctor specific
+        self.doctor_payout = ''
+
 class DynamicAction:
     def __init__(self, text = '', url = ''):
         self.text = text
@@ -30,22 +34,45 @@ class DynamicAction:
 #TODO @permissions required to be here...
 @render_to('jobs.html')
 def job_page(request):
-    #TODO jobs = Job.objects.filter(skaa = whoever's logged in)
     #TODO implement paging
     if request.user.is_authenticated():
         jobs = Job.objects.filter(skaa=request.user.get_profile())
     else:
-        #TODO they shouldn't be here based on permissions
+        #TODO they shouldn't ever get here based on future permissions
         jobs = []
 
+    job_infos = fill_job_infos(jobs, request)
+
+
+    return { 'job_infos' :job_infos }
+
+
+#Populate job info based on job objects from database.
+#job infos are a mixture of Pic, Job, & Batch
+def fill_job_infos(jobs, request):
     job_infos = []
+
+    if jobs is None:
+        return job_infos
+
     for job in jobs:
         job_inf = JobInfo()
-        job_inf.job_id = "{0:07d}".format(job.id)
+        job_inf.job_id = job.id
         job_inf.status = job.get_job_status_display()
         job_inf.doctor_exists = job.doctor is not None
         batch = job.skaa_batch
         job_inf.dynamic_actions = generate_actions(job)
+
+        if job_inf.doctor_exists:
+            #pull price from what we promised them
+            job_inf.doctor_payout = job.payout_price
+        else:
+            #TODO Find out if current logged in user is doctor, if so, figure out how 
+            #valuable they are, and generate a percent for them
+            #if request.user.get_profile().is_cool_doctor or stupid
+            job_inf.doctor_payout = job.price * Decimal(.5)
+
+        #TODO I'm doing some view logic below, you need to change that
         if batch is not None:
             job_inf.batch = batch.id
             count = batch.num_groups
@@ -55,8 +82,9 @@ def job_page(request):
 
         job_infos.append(job_inf)
 
+    return job_infos
 
-    return { 'job_infos' :job_infos}
+
 
 #get and fill up possible actions based on the status of this job
 def generate_actions(job):
@@ -68,7 +96,9 @@ def generate_actions(job):
 
     #TODO remove pie, this is for fun and testing
     i_like_pie = DynamicAction('I like Pie', 'i_like_pie')
+    u_like_pie = DynamicAction('Do You like Pie', '/u_like_pie')
     ret.append(i_like_pie)
+    ret.append(u_like_pie)
     
     if job.job_status == Job.USER_SUBMITTED:
         #No actions available

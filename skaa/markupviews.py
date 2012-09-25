@@ -113,7 +113,7 @@ def markup_page_batch(request, batch_id, sequence):
     else:
         previous_url = reverse('markup_batch', args = [batch_id, sequence-1])
 
-    template_name = 'markup-ro.html'if read_only else 'markup.html'
+    template_name = 'markup_ro.html'if read_only else 'markup.html'
 
     return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 'TEMPLATE': template_name }
 

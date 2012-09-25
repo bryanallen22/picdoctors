@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from skaa.markupviews import markup_page, markups_handler, pic_instruction_handler
+from doctor.jobsviews import doc_job_page, new_job_page
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -11,5 +11,7 @@ urlpatterns = patterns('',
 #    url(r'^markups_handler/$',                  markups_handler, name='markups_handler'),
 #    url(r'^markups_handler/(?P<markup_id>\d+)$', markups_handler, name='markups_handler'),
 #    url(r'^pic_instruction_handler/$', pic_instruction_handler,   name='pic_instruction_handler'),
+    url(r'^doc_jobs/$',                 doc_job_page,              name='doc_job_page'),
+    url(r'^new_jobs/$',                 new_job_page,              name='new_job_page'),
 )
 

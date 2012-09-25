@@ -1,31 +1,5 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
-  var Job = Backbone.Model.extend({
-
-    // Default attributes for the todo item.
-    defaults: function() {
-      return {
-        // These match directly to server side logic
-        id:                     0, 
-        user_batch:             0,
-        doctor_batch:           0,
-        price:                  0,
-        // I'm not sure if I want to include this in the client side logic...
-        price_too_low_count:    0,
-        // TODO
-        // doctor:              0,
-        job_status:             '',
-      };
-    },
-    
-    initialize : function() {
-    },
-
-    clear: function() {
-      this.destroy();
-    },
-
-  });
 
   var true_sync_func = Backbone.sync;
   var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
@@ -36,28 +10,60 @@ $(function(){
     return true_sync_func( method, model, options);
   };
 
-  // Job Collection
-  // ---------------
+  var JobRow = Backbone.View.extend({
 
-  // A collection of Markup elements
-  var JobList = Backbone.Collection.extend({
+    el: '',
 
-    // Reference to this collection's model.
-    model: Job,
 
-    // Url base
-    url: '/job_handler/',
-
-    initialize: function() {
-//      this.container = null; 
+    initialize: function(){
+      this.job_id=this.$el.attr('job_id');
     },
 
-  });
+    events: {
+      "click .dynamic_action_button" : "executeDynamicAction",
+    },
 
-  // The Application
-  // ---------------
+    executeDynamicAction: function(event){
+      var postback_url = $(event.target).attr('postback_url');
+      console.log('execute dynamic action: ' + postback_url);
 
-  // Our overall **AppView** is the top-level piece of UI.
+      var json_data = JSON.stringify(
+        {
+          "job_id" : this.job_id,
+        }
+      );
+      
+      $.ajax({
+        headers: {
+          "X-CSRFToken":CSRF_TOKEN
+        },
+        type: 'POST',
+        url:  postback_url ,
+        data: json_data,
+        success : function(data, textStatus) {
+          console.log(data);
+          console.log(textStatus);
+      //    location.href = "/jobs";
+          dynamicReaction(data);
+        },
+        failure : function(jqXHR, textStatus, errorThrown) {
+          console.log(jqXHR);
+          console.log(textStatus);
+          console.log(errorThrown);
+        }
+
+      });
+
+    },
+
+  })
+
+  function dynamicReaction(data) {
+    console.log(data);
+
+  }
+
+
   var JobView = Backbone.View.extend({
 
     el: $("#job_app"),
@@ -65,26 +71,9 @@ $(function(){
 
     initialize: function() {
 
-    /*  //console.log("AppView init");
-
-      $(".markup_outer").each( function() {
-        // Create a MarkupList on each element
-        var markup_list = new MarkupList;
-        // Give markup_list a pointer to his container element,
-        // and give the container element a pointer to his markuplist.
-        markup_list.container = $(this).find(".markup_pic_container");
-        $(this).data("markup_list", markup_list);
-
-        var general_instructions = $(this).find(".desc").val() ;
-        var pic_model = new Pic( {uuid: markup_list.container.attr('uuid'),
-                                  general_instructions: general_instructions } );
-        
-        var instruction = $(this).find(".instruction");
-
-        new GeneralInstructionView( { el : instruction, model: pic_model } );
-        markup_list.reset( jQuery.parseJSON( $(this).find('.preloaded_markups').html() ) );
+      $(".job_row").each( function() {
+        new JobRow({el:$(this)});
       });
-*/
     },
 
     render: function() {
@@ -93,7 +82,6 @@ $(function(){
 
   });
 
-  // Finally, we kick things off by creating the **App**.
   var Jobs = new JobView;
 
 });
