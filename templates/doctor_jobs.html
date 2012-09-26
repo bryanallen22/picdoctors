@@ -20,7 +20,7 @@
                 Job Size
             </div>
             <div class="span3">
-                Status
+                Job Worth
             </div>
             <div class="span2">
                &nbsp; 
@@ -49,20 +49,13 @@
             </div>
            </div>
              <div class="span2">
-                 {{job.batch_info}}
+               {{job.output_pic_count }} output picture{{ job.output_pic_count|pluralize }}
             </div>
              <div class="span3 text-success">
-                 <em>{{ job.status }}</em>
+               <em>${{ job.doctor_payout }} </em>
              </div>
-            <div class="span2">
-                <div class="btn-group">
-                    {% if job.doctor_exists %}
-                    <button class="btn btn-info">Contact Picture Doctor</button>
-                    {% else %}
-                    Job has yet to be taken
-                    {% endif %}
-
-                </div>
+             <div class="span2">
+               &nbsp;
             </div>
              <div class="span2">
                {% if job.dynamic_actions|length > 0 %}

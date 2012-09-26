@@ -10,7 +10,7 @@ from common.models import Pic
 from django.contrib.auth.models import User
 import pdb
 
-from skaa.jobsviews import fill_job_infos, JobInfo
+from skaa.jobsviews import get_job_infos, get_pagination_info, JobInfo
 
 class DynamicAction:
     def __init__(self, text = '', url = ''):
@@ -31,7 +31,12 @@ def doc_job_page(request):
         #TODO they shouldn't ever get here based on future permissions
         jobs = []
 
-    job_infos = fill_job_infos(jobs, request)
+    page_info = get_pagination_info(jobs, 1)    
+    pager = page_info['pager']
+    cur_page = page_info['cur_page']
+
+
+    job_infos = get_job_infos(cur_page, request)
 
     return { 'job_infos' :job_infos }
 
@@ -42,12 +47,15 @@ def new_job_page(request):
     #TODO implement paging
     jobs = None
     if request.user.is_authenticated():
-        new_jobs = Job.objects.filter(doctor__isnull=True)
-        jobs = new_jobs 
+        jobs = Job.objects.filter(doctor__isnull=True)
     else:
         #TODO they shouldn't ever get here based on future permissions
         jobs = []
 
-    job_infos = fill_job_infos(jobs, request)
+    page_info = get_pagination_info(jobs, 1)    
+    pager = page_info['pager']
+    cur_page = page_info['cur_page']
+
+    job_infos = get_job_infos(cur_page, request)
 
     return { 'job_infos' :job_infos }

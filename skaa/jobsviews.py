@@ -1,12 +1,14 @@
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from common.models import Job
 from common.models import Batch
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
+import math
 from skaa.uploadviews import get_batch_id, set_batch_id
 from django.contrib.auth.models import User
 from decimal import *
@@ -15,7 +17,7 @@ import pdb
 class JobInfo:
     def __init__(self):
         self.job_id = '1'
-        self.batch_info = 'Unknown'
+        self.output_pic_count = ''
         self.status = 'Unknown'
         self.doctor_exists = False
         self.batch = -1
@@ -41,27 +43,40 @@ def job_page(request):
         #TODO they shouldn't ever get here based on future permissions
         jobs = []
 
-    job_infos = fill_job_infos(jobs, request)
+    page_info = get_pagination_info(jobs, 1)    
+    pager = page_info['pager']
+    cur_page = page_info['cur_page']
+
+
+    job_infos = get_job_infos(cur_page, request)
 
 
     return { 'job_infos' :job_infos }
 
+#I should do error checking
+def get_pagination_info(jobs, page):
+    #this should be configurable! they maybe want to see 20 jobs...
+    pager = Paginator(jobs, 5)
+    
+    cur_page = pager.page(page)
+
+    return {'pager': pager, 'cur_page':cur_page }
 
 #Populate job info based on job objects from database.
 #job infos are a mixture of Pic, Job, & Batch
-def fill_job_infos(jobs, request):
+def get_job_infos(cur_page_jobs,  request):
     job_infos = []
 
-    if jobs is None:
+    if cur_page_jobs is None:
         return job_infos
 
-    for job in jobs:
+    for job in cur_page_jobs:
         job_inf = JobInfo()
         job_inf.job_id = job.id
         job_inf.status = job.get_job_status_display()
         job_inf.doctor_exists = job.doctor is not None
         batch = job.skaa_batch
-        job_inf.dynamic_actions = generate_actions(job)
+        job_inf.dynamic_actions = generate_actions(job, request)
 
         if job_inf.doctor_exists:
             #pull price from what we promised them
@@ -70,14 +85,14 @@ def fill_job_infos(jobs, request):
             #TODO Find out if current logged in user is doctor, if so, figure out how 
             #valuable they are, and generate a percent for them
             #if request.user.get_profile().is_cool_doctor or stupid
-            job_inf.doctor_payout = job.price * Decimal(.5)
+            #chop off extra half penny
+            doctors_cut = Decimal(.5)
+            job_inf.doctor_payout = math.floor(100 * job.price * doctors_cut) / 100
 
         #TODO I'm doing some view logic below, you need to change that
         if batch is not None:
             job_inf.batch = batch.id
-            count = batch.num_groups
-            plural = ' ' if count == 1 else 's'
-            job_inf.batch_info = str(batch.num_groups) + ' output picture' + plural
+            job_inf.output_pic_count = batch.num_groups
             job_inf.pic_thumbs = generate_pic_thumbs(batch)
 
         job_infos.append(job_inf)
@@ -87,7 +102,7 @@ def fill_job_infos(jobs, request):
 
 
 #get and fill up possible actions based on the status of this job
-def generate_actions(job):
+def generate_actions(job, request):
     ret = []
 
     waste = 1
@@ -95,14 +110,16 @@ def generate_actions(job):
     contact = DynamicAction('Contact Doctor', 'contact_job_url')
 
     #TODO remove pie, this is for fun and testing
-    i_like_pie = DynamicAction('I like Pie', 'i_like_pie')
-    u_like_pie = DynamicAction('Do You like Pie', '/u_like_pie')
-    ret.append(i_like_pie)
-    ret.append(u_like_pie)
+    #i_like_pie = DynamicAction('I like Pie', 'i_like_pie')
+    #u_like_pie = DynamicAction('Do You like Pie', '/u_like_pie')
+    #ret.append(i_like_pie)
+    #ret.append(u_like_pie)
+    #TODO is doctor?
+    is_doctor = True # request.user.get_profile().is cool doctor  ???
     
-    if job.job_status == Job.USER_SUBMITTED:
-        #No actions available
-        waste += 1
+    if job.job_status == Job.USER_SUBMITTED and is_doctor:
+        ret.append(DynamicAction('Apply for Job', 'apply_for_job'))
+        ret.append(DynamicAction('Job price too Low', 'job_price_too_low'))
     elif job.job_status == Job.TOO_LOW:
         #Do something
         waste += 1
