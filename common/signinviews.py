@@ -9,17 +9,23 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
 from skaa.uploadviews import get_batch_id, set_batch_id
-from common.models import Batch, UserProfile
+from common.models import Batch, UserProfile, DoctorInfo, SkaaInfo
 
 import pdb
 import logging
 import datetime
 
-def create_skaa(user):
-    logging.info('Reached create_skaa')
+def create_skaa(user_profile):
+    set_is_doctor(user_profile, False)
+    SkaaInfo.objects.create(user_profile=user_profile)
 
-def create_doctor(user):
-    logging.info('Reached create_doctor')
+def create_doctor(user_profile):
+    set_is_doctor(user_profile, True)
+    DoctorInfo.objects.create(user_profile=user_profile)
+
+def set_is_doctor(user, val):
+    user.is_doctor = val
+    user.save()
 
 def auth(email, password):
     """
@@ -70,10 +76,11 @@ def create_user(email, password, confirm_password, usertype):
         user = User.objects.create_user(username=email, email=email, password=password)
         #Now authenticate the user (it puts the backend into the User object)
         user, tmp = auth(email, password)
+        user_profile = user.get_profile()
         if usertype == 'doc':
-            create_doctor(user)
+            create_doctor(user_profile)
         elif usertype == 'user':
-            create_skaa(user)
+            create_skaa(user_profile)
         else:
             raise ValueError('Bad usertype: %s' % usertype)
 

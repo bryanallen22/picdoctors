@@ -92,6 +92,17 @@ class UserProfile(DeleteMixin):
     # Other fields here
     accepted_eula = models.BooleanField()
 
+    is_doctor = models.BooleanField()
+
+class SkaaInfo(DeleteMixin):
+    user_profile = models.ForeignKey(UserProfile, 
+                                        related_name='associated_skaa')
+
+class DoctorInfo(DeleteMixin):
+    user_profile = models.ForeignKey(UserProfile, 
+                                          related_name='associated_doctor')
+
+
 def create_user_profile(sender, instance, created, **kwargs):
         if created:
             UserProfile.objects.create(user=instance)
