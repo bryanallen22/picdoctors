@@ -105,7 +105,6 @@ def get_job_infos(cur_page_jobs,  request):
 def generate_actions(job, request):
     ret = []
 
-    waste = 1
     #boring always created actions for populating below
     contact = DynamicAction('Contact Doctor', 'contact_job_url')
 
@@ -115,18 +114,17 @@ def generate_actions(job, request):
     #ret.append(i_like_pie)
     #ret.append(u_like_pie)
     #TODO is doctor?
-    is_doctor = True # request.user.get_profile().is cool doctor  ???
+    is_doctor = request.user.get_profile().is_doctor # request.user.get_profile().is cool doctor  ???
     
     if job.job_status == Job.USER_SUBMITTED and is_doctor:
         ret.append(DynamicAction('Apply for Job', 'apply_for_job'))
         ret.append(DynamicAction('Job price too Low', 'job_price_too_low'))
     elif job.job_status == Job.TOO_LOW:
         #Do something
-        waste += 1
+        pass
     elif job.job_status == Job.DOCTOR_ACCEPTED:
         ret.append(contact)
         #do something
-        waste += 1
     elif job.job_status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
         ret.append(contact)
         #do something
@@ -137,16 +135,16 @@ def generate_actions(job, request):
         ret.append(DynamicAction('Reject', 'reject_job_url'))
     elif job.job_status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
-        waste += 1
+        pass
     elif job.job_status == Job.USER_REQUESTS_ADDITIONAL_WORK:
         #do nothing these are for doctor
-        waste += 1
+        pass
     elif job.job_status == Job.USER_REJECTS:
         #do nothing these are fordoctor
-        waste += 1
+        pass
     else:
         #How did we get here???
-        waste += 1
+        pass
 
     return ret
 

@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 
 from annoying.decorators import render_to
@@ -10,6 +10,8 @@ from annoying.functions import get_object_or_None
 
 from skaa.uploadviews import get_batch_id, set_batch_id
 from common.models import Batch, UserProfile, DoctorInfo, SkaaInfo
+from doctor.jobsviews import doc_job_page
+from views import index
 
 import pdb
 import logging
@@ -102,7 +104,6 @@ def signin(request, usertype='user'):
         pass
 
     elif request.method == 'POST':
-
         # Sign into existing account
         if request.POST['create_acct_radio'] == 'have':
             user, tmp = auth( request.POST['email'], request.POST['password'] )
@@ -139,13 +140,18 @@ def signin(request, usertype='user'):
             if usertype == 'user':
                 return redirect(reverse('set_price'))
             elif usertype == 'doc':
-                return redirect('http://zombo.com')
+                return redirect(reverse(doc_job_page))
 
         else:
             # Something went wrong. Let's at least prepopulate the email address for them
             ret['email'] = request.POST['email']
 
     return ret
+
+#Nothing special here, we don't need to check if they are logged in or not#I'm just lazy and want to sign out, logic of this needs to be looked at
+def signout(request):
+    logout(request)   
+    return redirect('/')
 
 def associate_and_fill_batch(request, batch_id, user):
     #TODO shove the batch_id back in

@@ -47,12 +47,17 @@
               <li><a href="#about">How It Works</a></li>
               <li><a href="#faq">FAQ</a></li>
               <li><a href="#contact">Contact</a></li>
-              <li><a href="#doctors">Doctors</a></li>
               {% if not user.is_authenticated %}
-              <li><a href="#login">Log In</a></li>
+              <li><a href="/doc_signin">Doctors Log In</a></li>
+              <li><a href="/signin">User Log In</a></li>
               {% else %}
+                {% if user.get_profile.is_doctor %}
+              <li><a href="/new_jobs">Available Jobs</a></li>
+              <li><a href="/doc_jobs">My Jobs</a></li>
+                {% else%}
               <li><a href="/jobs">My Jobs</a></li>
-              <li><a href="#logout">Log Out ({{user.username }})</a></li>
+                {% endif %}
+              <li><a href="/signout">Log Out ({{user.username }})</a></li>
               {% endif %}
             </ul>
           </div>
