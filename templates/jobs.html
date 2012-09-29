@@ -32,7 +32,7 @@
     {% for job in job_infos %}
          <div class="row job_row fix_line_height" job_id='{{ job.job_id }}'>
              <div class="span1">
-               <b><a href="/markup/{{ job.batch }}/1/">{{job.job_id|stringformat:"08d" }}</a></b>
+               <b><a href="{{ job.batchurl }}">{{job.job_id|stringformat:"08d" }}</a></b>
              </div>
              <div class="span2">
                  <div id="myCarousel" class="carousel slide">
@@ -40,7 +40,7 @@
                    <div class="carousel-inner pic_carousel">
                      {% for pic in job.pic_thumbs %}
                      <div class="item"> 
-                       <a href="/markup/{{ job.batch }}/{{ pic.1 }}/">
+                       <a href="{{pic.1}}">
                          <img src="{{ pic.0 }}" alt="">
                        </a>
                      </div>
@@ -56,8 +56,8 @@
              </div>
             <div class="span2">
                 <div class="btn-group">
-                    {% if job.doctor_exists %}
-                    <button class="btn btn-info">Contact Picture Doctor</button>
+                  {% if job.doctor_exists %}
+                    &nbsp;
                     {% else %}
                     Job has yet to be taken
                     {% endif %}
@@ -69,7 +69,7 @@
                <div class="btn-group dynamic_action_group">
                  
                  {% for action in job.dynamic_actions|slice:":1" %}
-                 <button class="btn btn-primary dynamic_action_button" postback_url= "{{ action.url }}" >{{ action.text }}</button>
+                 <button class="btn btn-primary dynamic_action_button" postback_url= "{{ action.url }}" redir="{{ action.redir }}" >{{ action.text }}</button>
                  {% endfor %}
                  {% if job.dynamic_actions|length > 1 %}
                   <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -77,7 +77,7 @@
                   </button>
                   <ul class="dropdown-menu">
                     {% for action in job.dynamic_actions|slice:"1:" %}
-                    <li><a href="#" class="dynamic_action_button" postback_url="{{action.url}}">{{ action.text }}</a></li>
+                    <li><a href="#" class="dynamic_action_button" postback_url="{{action.url}}" redir="{{ action.redir }}" >{{ action.text }}</a></li>
                     {% endfor %}
                   </ul>
                   {% endif %}

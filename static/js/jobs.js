@@ -25,7 +25,14 @@ $(function(){
 
     executeDynamicAction: function(event){
       var postback_url = $(event.target).attr('postback_url');
+      var redir_val = $(event.target).attr('redir').toLowerCase();
+
       console.log('execute dynamic action: ' + postback_url);
+
+      if(redir_val == 'true') {
+        location.href = postback_url;
+        return;
+      }
 
       var json_data = JSON.stringify(
         {
@@ -59,8 +66,25 @@ $(function(){
   })
 
   function dynamicReaction(data) {
-    console.log(data);
-
+   var actions = data.actions;
+   for (var i = 0; i < actions.length; i++) {
+     var action = actions[i];
+     switch(action.action)
+     {
+      case 'alert':
+        alert(action.data);
+        break;
+      case 'reload':
+        location.href = location.href;
+        break;
+      case 'redirect':
+        location.href = action.data;
+        break;
+      default:
+        alert('Implementation failure for "' + action.action + '" with the data: "' + action.data + '"');
+        break;
+     }
+   }
   }
 
 

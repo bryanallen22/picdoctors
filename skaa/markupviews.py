@@ -96,10 +96,15 @@ def markup_page_batch(request, batch_id, sequence):
     read_only = group.is_locked
 
     pics = pics.filter( group__exact=group)
+    
+    job_page = 'job_page'
+
+    if request.user.is_authenticated() and request.user.get_profile().is_doctor:
+        job_page = 'doc_job_page'
 
     if sequence == batch.num_groups:
         if read_only:
-            next_url = reverse('job_page')
+            next_url = reverse(job_page)
         else:
             next_url = reverse('skaa_signin')
     else:
@@ -107,7 +112,7 @@ def markup_page_batch(request, batch_id, sequence):
 
     if sequence == 1:
         if read_only:
-            previous_url= reverse('job_page')
+            previous_url= reverse(job_page)
         else:
             previous_url = reverse('upload')
     else:
