@@ -78,6 +78,9 @@ def create_user(email, password, confirm_password, usertype):
         user = User.objects.create_user(username=email, email=email, password=password)
         #Now authenticate the user (it puts the backend into the User object)
         user, tmp = auth(email, password)
+        # The UserProfile for this person has already been automatically created
+        # based on the post_save signal tied to the User class. See create_user_profile
+        # in common/models.py
         user_profile = user.get_profile()
         if usertype == 'doc':
             create_doctor(user_profile)
