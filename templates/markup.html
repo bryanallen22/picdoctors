@@ -51,7 +51,11 @@
     {% endfor %}
   </div>
   <div class='span2'>
-    <div style='position:fixed; width:130px; margin-left: 20px;'>
+    {# This '#anchor' is a hack to make sure that the div has a min width #}
+    <div id="anchor" style="width:180px; height:1px;"></div>
+    {# These buttons are slid down by js. Using 'position:fixed' breaks #}
+    {# on narrow monitors #}
+    <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
         <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 120px;'>Previous</a>
         <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Next</a>
         {% if user.is_authenticated  %}

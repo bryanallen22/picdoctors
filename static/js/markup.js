@@ -701,4 +701,13 @@ $(function(){
   else if (document.attachEvent){ 
     window.document.attachEvent('onkeyup', function(e){go_previous_next(e);},false );
   } 
+
+  var scrollTop = $("#buttons").offset().top;
+  // Lame hack to slide buttons down. 'position:fixed' would be much nicer,
+  // but it hates me on very narrow windows.
+  $(window).scroll(function(event) {
+    var loc = $(this).scrollTop() + scrollTop;
+    $("#buttons").offset( { 'top' : loc } );
+  });
 });
+
