@@ -12,7 +12,9 @@ urlpatterns = patterns('',
 #    url(r'^markups_handler/(?P<markup_id>\d+)$', markups_handler, name='markups_handler'),
 #    url(r'^pic_instruction_handler/$', pic_instruction_handler,   name='pic_instruction_handler'),
     url(r'^doc_jobs/$',                 doc_job_page,              name='doc_job_page'),
+    url(r'^doc_jobs/(?P<page>\d+)$',     doc_job_page,              name='doc_job_page_with_page'),
     url(r'^new_jobs/$',                 new_job_page,              name='new_job_page'),
+    url(r'^new_jobs/(?P<page>\d+)$',                 new_job_page,              name='new_job_page_with_page'),
     url(r'^apply_for_job$',            apply_for_job,              name='apply_for_job'),
 )
 

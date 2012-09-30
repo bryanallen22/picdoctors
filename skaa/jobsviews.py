@@ -39,7 +39,7 @@ class DynamicAction:
 
 #TODO @permissions required to be here...
 @render_to('jobs.html')
-def job_page(request):
+def job_page(request, page=1):
     #TODO implement paging
     if request.user.is_authenticated():
         jobs = Job.objects.filter(skaa=request.user.get_profile())
@@ -47,7 +47,7 @@ def job_page(request):
         #TODO they shouldn't ever get here based on future permissions
         jobs = []
 
-    page_info = get_pagination_info(jobs, 1)    
+    page_info = get_pagination_info(jobs, page)    
     pager = page_info['pager']
     cur_page = page_info['cur_page']
 
@@ -55,7 +55,7 @@ def job_page(request):
     job_infos = get_job_infos(cur_page, generate_skaa_actions, request)
 
 
-    return { 'job_infos' :job_infos }
+    return { 'job_infos' :job_infos , 'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page)}
 
 #I should do error checking
 def get_pagination_info(jobs, page):

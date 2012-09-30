@@ -9,26 +9,32 @@
 
 {% block main %}
 <div id='job_app' class="row job_page">
-         <div class="row job_header_row lead">
-             <div class="span1">
-                Job 
-            </div>
-            <div class="span2">
-                Pictures
-            </div>
-             <div class="span2">
-                Job Size
-            </div>
-            <div class="span3">
-                Status
-            </div>
-            <div class="span2">
-               &nbsp; 
-            </div>
-            <div class="span2">
-                Actions
-            </div>
-         </div>
+  <div id="alert_section" class="row alert_section">
+    <div class="span12 alert_row lead">
+    </div>
+    <div class="span12 redirect_row">
+    </div>
+  </div>
+  <div class="row job_header_row lead">
+    <div class="span1">
+      Job 
+    </div>
+    <div class="span2">
+      Pictures
+    </div>
+    <div class="span2">
+      Job Size
+    </div>
+    <div class="span3">
+      Status
+    </div>
+    <div class="span2">
+      &nbsp; 
+    </div>
+    <div class="span2">
+      Actions
+    </div>
+  </div>
     {% for job in job_infos %}
          <div class="row job_row fix_line_height" job_id='{{ job.job_id }}'>
              <div class="span1">
@@ -86,6 +92,17 @@
             </div>
         </div>
         {% endfor %}
+        <div class="pagination pagination-centered">
+          <ul>
+            {% for i in num_pages %}
+              {% if i == cur_page %}
+              <li class="active"><a href="{% url job_page_with_page i %}">{{i}}</a></li>
+              {% else %}
+              <li ><a href="{% url job_page_with_page i %}">{{i}}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
   </div>
 {% endblock %}
 
@@ -96,12 +113,21 @@
     <script src="{{ STATIC_URL }}js/underscore.js"></script>
     <script src="{{ STATIC_URL }}js/backbone.js"></script>
     <script src="{{ STATIC_URL }}js/jobs.js"></script>
+    <script src="{{ STATIC_URL }}js/animatedcollapse.js"></script>
     <script>
         $(function() {
             
             $('.carousel').carousel('next');
             $('.carousel').carousel();
+            animatedcollapse.addDiv('alert_section', 'hide=1,fade=1,height=70px');
+            animatedcollapse.init();
          });
-                </script>
+    </script>
+    <script type="text/template" id="redirect_template">
+      You will be automatically redirected to <%=view%> in <%=time_left%> second(s).  
+      <a href='#' class='btn-primary btn-mini' onclick='javascript:redirect_now=true;'> Go Now</a>
+      
+      <a href='#' class='btn-primary btn-mini' onclick='javascript:continue_redirect=false;'> Don't Go</a>
+    </script>
 {% endblock %}
 

@@ -249,6 +249,17 @@
 .job_page .job_row .pic_carousel {
   height: 60px;
 }
+.job_page .alert_section {
+  background-color: red;
+  border: black solid 2px;
+  display: none;
+}
+.job_page .alert_section .alert_row {
+  text-align: center;
+}
+.job_page .alert_section .redirect_row {
+  text-align: right;
+}
 .job_page .job_row:hover {
   background-color: #D1EEEE;
 }

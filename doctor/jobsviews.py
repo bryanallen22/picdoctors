@@ -18,7 +18,7 @@ from skaa.jobsviews import get_job_infos, get_pagination_info, JobInfo, DynamicA
 
 #TODO @permissions required to be here...
 @render_to('doctor_jobs.html')
-def doc_job_page(request):
+def doc_job_page(request, page=1):
     #TODO implement paging
     jobs = None
     if request.user.is_authenticated():
@@ -29,19 +29,19 @@ def doc_job_page(request):
         #TODO they shouldn't ever get here based on future permissions
         jobs = []
 
-    page_info = get_pagination_info(jobs, 1)    
+    page_info = get_pagination_info(jobs, page)    
     pager = page_info['pager']
     cur_page = page_info['cur_page']
 
 
     job_infos = get_job_infos(cur_page, generate_doctor_actions, request)
 
-    return { 'job_infos' :job_infos }
+    return { 'job_infos' :job_infos , 'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 'new_jobs_page': False}
 
 
 #TODO @permissions required to be here...
 @render_to('doctor_jobs.html')
-def new_job_page(request):
+def new_job_page(request, page=1):
     #TODO implement paging
     jobs = None
     if request.user.is_authenticated():
@@ -51,13 +51,13 @@ def new_job_page(request):
         jobs = []
 
     #TODO fill in paging instead of 1
-    page_info = get_pagination_info(jobs, 1)    
+    page_info = get_pagination_info(jobs, page)    
     pager = page_info['pager']
     cur_page = page_info['cur_page']
 
     job_infos = get_job_infos(cur_page, generate_doctor_actions, request)
 
-    return { 'job_infos' :job_infos }
+    return { 'job_infos' :job_infos , 'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 'new_jobs_page': True}
 
 #get and fill up possible actions based on the status of this job
 def generate_doctor_actions(job, request):
@@ -111,7 +111,8 @@ def apply_for_job(request):
 
     #TODO create cool actions, alert, reload, redirect, remove_job_row
     result = {"actions": [{"action":"alert","data":"This job is no longer available"},
-                         {"action":"reload","data":""}]}
+                          {"action":"delay_redirect","data":{"href":reverse("new_job_page"),"view":"available jobs"}}
+                         ]}
     if job is None or job.doctor is not None or doc is None:
         #result = ['actions': {'alert':'This job is no longer available', 'reload':''}]
         pass 
@@ -123,8 +124,10 @@ def apply_for_job(request):
                 job.payout_price = calculate_job_payout(job, doc)
                 job.job_status = Job.DOCTOR_ACCEPTED
                 job.save()
-                result = {"actions": [{"action":"alert","data":"Congrats the job is yours!"},
-                                      {"action":"redirect","data":reverse("doc_job_page")}]}
+                result = {"actions": 
+                        [{"action":"alert","data":"Congrats the job is yours!"},
+                    {"action":"delay_redirect","data":{"href":reverse("doc_job_page"),"view": "your jobs"}}
+                    ]}
 
 
     #TODO remove this

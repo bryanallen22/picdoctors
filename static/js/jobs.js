@@ -72,7 +72,8 @@ $(function(){
      switch(action.action)
      {
       case 'alert':
-        alert(action.data);
+        $(".alert_row").text(action.data);
+        animatedcollapse.show('alert_section'); 
         break;
       case 'reload':
         location.href = location.href;
@@ -80,11 +81,45 @@ $(function(){
       case 'redirect':
         location.href = action.data;
         break;
+      case 'delay_redirect':
+        delay_redirect(action.data);
+        break;
       default:
         alert('Implementation failure for "' + action.action + '" with the data: "' + action.data + '"');
         break;
      }
    }
+  }
+
+  function delay_redirect(data){
+        continue_redirect = true;      
+        redirect_time(11, data.href, data.view);
+  }
+  
+  continue_redirect = true;
+  redirect_now = false;
+  function redirect_time(time_left, new_loc, view){
+    if(continue_redirect==false) {
+      $(".redirect_row").html("");
+      return;
+    }
+    if(redirect_now){
+      time_left = 0;
+    }
+    if(time_left<=0){
+      location.href = new_loc;
+    } else {
+      time_left--;
+      template = _.template( $('#redirect_template').html() );
+      //$(".redirect_row").text('You will automatically be redirected to ' + view + ' in ' + time_left + ' second(s)');
+      $(".redirect_row").html( this.template(
+          {
+            view      : view,
+            time_left : time_left,
+          }));
+      setTimeout(function(){redirect_time(time_left, new_loc, view)}, 1000);
+    }
+
   }
 
 
