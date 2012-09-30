@@ -40,7 +40,7 @@ def set_sequences(request, batch_id):
             g = Group(batch=batch_instance, sequence=next_sequence) 
             g.save()
             for pic in matches:
-                #pic.group_id = next_sequence
+#                pic.group_id = next_sequence
                 pic.group = g
                 pic.save()
             next_sequence += 1
@@ -50,7 +50,7 @@ def set_sequences(request, batch_id):
                 logging.info('creating new group')
                 g = Group(batch=batch_instance, sequence=next_sequence) 
                 g.save()
-                #pic.group_id = next_sequence
+ #               pic.group_id = next_sequence
                 pic.group = g
                 pic.save()
                 next_sequence += 1
@@ -65,7 +65,13 @@ def set_sequences(request, batch_id):
 @render_to()
 def markup_page(request, sequence):
     batch_id = get_batch_id(request)
+    return markup_page_batch(request, batch_id, sequence)
+
+#markup page when we specify a batch_id
+@render_to()
+def markup_page_batch(request, batch_id, sequence):
     sequence = int(sequence)
+    batch_id = int(batch_id)
     pics = Pic.objects.filter( batch__exact=batch_id )
     
     if len(pics) == 0:
@@ -102,7 +108,7 @@ def markup_page(request, sequence):
         else:
             next_url = reverse('skaa_signin')
     else:
-        next_url = reverse('markup', args=[sequence+1])
+        next_url = reverse('markup_batch', args=[batch_id, sequence+1])
 
     if sequence == 1:
         if read_only:
@@ -110,7 +116,7 @@ def markup_page(request, sequence):
         else:
             previous_url = reverse('upload')
     else:
-        previous_url = reverse('markup', args=[sequence-1])
+        previous_url = reverse('markup_batch', args = [batch_id, sequence-1])
 
     template_name = 'markup_ro.html'if read_only else 'markup.html'
 
@@ -233,4 +239,3 @@ def pic_instruction_handler(request):
         pic.save()
     
     return HttpResponse(simplejson.dumps({}), mimetype='application/json')
-
