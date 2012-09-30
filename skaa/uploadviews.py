@@ -21,7 +21,9 @@ from common.models import ungroupedId
 import pdb
 
 def get_batch_id(request):
-    # If there isn't already a batch assigned, assign it now
+    """
+    Get the batch id from the session. If there isn't already a batch assigned, assign it now
+    """
     batch = None
     if 'batch_id' not in request.session:
         if request.user.is_authenticated():

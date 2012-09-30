@@ -40,7 +40,7 @@ def set_sequences(request, batch_id):
             g = Group(batch=batch_instance, sequence=next_sequence) 
             g.save()
             for pic in matches:
-#                pic.group_id = next_sequence
+                #pic.group_id = next_sequence
                 pic.group = g
                 pic.save()
             next_sequence += 1
@@ -50,7 +50,7 @@ def set_sequences(request, batch_id):
                 logging.info('creating new group')
                 g = Group(batch=batch_instance, sequence=next_sequence) 
                 g.save()
- #               pic.group_id = next_sequence
+                #pic.group_id = next_sequence
                 pic.group = g
                 pic.save()
                 next_sequence += 1
