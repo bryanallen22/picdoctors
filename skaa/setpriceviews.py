@@ -27,7 +27,7 @@ min_price_per_pic = 2.0
 stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
 
 def set_price_test(request):
-    logging.info('I am in set_price_test! %s %s' % (a1, a2))
+    logging.info('I am in set_price_test!')
     return True
 
 @user_passes_test(test_fcn=set_price_test, redirect_name='upload')
