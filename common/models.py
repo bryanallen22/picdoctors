@@ -153,7 +153,7 @@ class Pic(DeleteMixin):
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
     group     = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
     original             = models.ImageField(upload_to = 'user_originals/')
-    preview              = models.ImageField(upload_to = 'user_preview/')
+    preview              = models.ImageField(upload_to = 'user_previews/')
     thumbnail            = models.ImageField(upload_to = 'user_thumbs/')
     general_instructions = models.TextField(blank=True)
 
@@ -274,6 +274,8 @@ class Batch(DeleteMixin):
     updated     = models.DateField(auto_now=True)
     description = models.TextField(blank=True)
     num_groups  = models.IntegerField(blank=True, null=True)
+    # This only becomes true after they've paid
+    finished    = models.BooleanField(default=False)
 
     def __unicode__(self):
         if self.userprofile is not None:
