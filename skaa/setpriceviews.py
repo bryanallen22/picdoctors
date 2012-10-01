@@ -12,6 +12,7 @@ from common.models import Pic
 from common.models import Batch
 from common.models import Group
 from common.models import ungroupedId
+from common.decorators import user_passes_test
 from models import Markup
 
 import stripe
@@ -25,7 +26,11 @@ min_price_per_pic = 2.0
 # test key! use real key in production
 stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
 
-# TODO - require used to be logged in to even use this
+def set_price_test(request):
+    logging.info('I am in set_price_test!')
+    return True
+
+@user_passes_test(test_fcn=set_price_test, redirect_name='upload')
 @render_to('set_price.html')
 def set_price(request):
     batch = Batch.objects.get( pk=get_batch_id(request) )
