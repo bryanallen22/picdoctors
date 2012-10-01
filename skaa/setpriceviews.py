@@ -7,7 +7,6 @@ from django.http import HttpResponse
 
 from annoying.decorators import render_to
 
-from skaa.uploadviews import get_batch_id
 from common.models import Pic
 from common.models import Batch
 from common.models import Group
@@ -28,18 +27,23 @@ stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
 
 def set_price_test(request):
     logging.info('I am in set_price_test!')
-    return True
+    batches = Batch.objects.filter(finished=False,
+                             userprofile=request.user.get_profile())
+
+    if len(batches) > 0:
+        if len(batches) > 1:
+            # Shouldn't ever have 2+ unfinished batches...
+            raise ReferenceError("%s unfinished batches!" % (len(batches)))
+        else:
+            return True
+    return False
 
 @user_passes_test(test_fcn=set_price_test, redirect_name='upload')
 @render_to('set_price.html')
 def set_price(request):
-    batch = Batch.objects.get( pk=get_batch_id(request) )
+    b = Batch.objects.filter(finished=False, userprofile=request.user.get_profile())[0]
 
-    if not batch or batch.num_groups == 0:
-        # Hm, how did they get here? Strange. Send them to upload.
-        return redirect('upload')
-
-    min_price = min_price_per_pic * batch.num_groups
+    min_price = min_price_per_pic * b.num_groups
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
