@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_protect
 from django.utils import simplejson
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 from annoying.decorators import render_to
 
@@ -26,9 +27,8 @@ min_price_per_pic = 2.0
 stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
 
 def set_price_test(request):
-    logging.info('I am in set_price_test!')
-    batches = Batch.objects.filter(finished=False,
-                             userprofile=request.user.get_profile())
+    batches = Batch.objects.filter(finished=False, userprofile=request.user.get_profile())
+    logging.info('I am in set_price_test with %s batches matching' % batches)
 
     if len(batches) > 0:
         if len(batches) > 1:
@@ -38,12 +38,13 @@ def set_price_test(request):
             return True
     return False
 
+@login_required
 @user_passes_test(test_fcn=set_price_test, redirect_name='upload')
 @render_to('set_price.html')
 def set_price(request):
-    b = Batch.objects.filter(finished=False, userprofile=request.user.get_profile())[0]
-
-    min_price = min_price_per_pic * b.num_groups
+    batch = Batch.objects.filter(finished=False,
+                                 userprofile=request.user.get_profile())[0]
+    min_price = min_price_per_pic * batch.num_groups
     if request.method == 'GET':
         pass
     elif request.method == 'POST':

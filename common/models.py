@@ -293,7 +293,7 @@ class Batch(DeleteMixin):
     created     = models.DateField(auto_now_add=True)
     updated     = models.DateField(auto_now=True)
     description = models.TextField(blank=True)
-    num_groups  = models.IntegerField(blank=True, null=True)
+    num_groups  = models.IntegerField(blank=True, null=True, default=0)
     # This only becomes true after they've paid
     finished    = models.BooleanField(default=False)
 

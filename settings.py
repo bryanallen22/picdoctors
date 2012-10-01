@@ -246,3 +246,7 @@ EMAIL_HOST_USER = 'kingpin2ktest'
 EMAIL_HOST_PASSWORD = 'DJ#2dgDNE3Dg!@'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+# used by @login_required
+LOGIN_URL='/signin/'
+

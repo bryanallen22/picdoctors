@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from common.models import Job 
 from common.models import Batch
 from common.models import Group
@@ -17,6 +18,7 @@ from skaa.jobsviews import get_job_infos, get_pagination_info, JobInfo, DynamicA
 
 
 #TODO @permissions required to be here...
+@login_required
 @render_to('doctor_jobs.html')
 def doc_job_page(request, page=1):
     #TODO implement paging
@@ -40,6 +42,7 @@ def doc_job_page(request, page=1):
 
 
 #TODO @permissions required to be here...
+@login_required
 @render_to('doctor_jobs.html')
 def new_job_page(request, page=1):
     #TODO implement paging

@@ -134,16 +134,7 @@ def signin(request, usertype='user'):
                 # Session only good until browser closes
                 request.session.set_expiry(0)
 
-            # Long term:
-            #   -- People only get here because they tried to visit a page that required them to
-            #      be logged in. Once they log in, they go to that page.
-            # For now:
-            #   -- Send skaa to set_price
-            #   -- Send doctors to zombo.com
-            if usertype == 'user':
-                return redirect(reverse('set_price'))
-            elif usertype == 'doc':
-                return redirect(reverse(doc_job_page))
+            return redirect( request.GET['next'] )
 
         else:
             # Something went wrong. Let's at least prepopulate the email address for them
