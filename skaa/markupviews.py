@@ -65,13 +65,8 @@ def set_sequences(request, batch_id):
     batch.save()
 
 
-<<<<<<< HEAD
 def belongs_on_this_markup_page(request, batch_id, sequence):
     batch_id = int(batch_id)
-=======
-def belongs_on_this_markup_page(request, batch_id):
-    #pdb.set_trace()
->>>>>>> f66990b32b49d38cae7a828d4774fa480eb72fe6
     b = get_object_or_None(Batch, id=batch_id)
 
     #this batch doesn't exist
