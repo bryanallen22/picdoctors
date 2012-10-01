@@ -95,6 +95,15 @@ class UserProfile(DeleteMixin):
     # Everyone is a User/Skaa, even if they don't know or care. Some are also doctors
     is_doctor = models.BooleanField()
 
+    def __unicode__(self):
+        out = ""
+        if self.is_doctor:
+            out = "Doctor: " + self.user.username
+        else:
+            out = "Skaa: " + self.user.username
+        return out
+            
+
 class SkaaInfo(DeleteMixin):
     user_profile = models.ForeignKey(UserProfile, 
                                         related_name='associated_skaa')
@@ -266,6 +275,12 @@ class Batch(DeleteMixin):
     description = models.TextField(blank=True)
     num_groups  = models.IntegerField(blank=True, null=True)
 
+    def __unicode__(self):
+        if self.userprofile is not None:
+            return "Batch # " + str(self.id) + " -- owned by: " + self.userprofile.user.username
+        else:
+            return "Batch # " + str(self.id) + " -- owned by the internet"  
+
 ################################################################################
 # Group
 # We actually want to be able to delete and recreate these
@@ -275,6 +290,12 @@ class Group(models.Model):
     batch           = models.ForeignKey('Batch')
     doctors_pic     = models.ForeignKey('Pic', related_name='doctors_pic', blank=True, null=True)
     is_locked       = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        if self.doctors_pic is not None:
+            return "Group # " + str(self.id) + " -- is_locked: " + str(is_locked) + " -- has doc pic"
+        else:
+            return "Group # " + str(self.id) + " -- is_locked: " + str(is_locked) + " -- No doc pic"
 
 # Create your models here.
 class Job(DeleteMixin):
@@ -299,8 +320,8 @@ class Job(DeleteMixin):
         (USER_REQUESTS_ADDITIONAL_WORK, 'User Has Requested Additional Work'),
         (USER_REJECTS, 'User Has Rejected Work'),
     )
-    created         = models.DateField(auto_now_add=True)
-    updated         = models.DateField(auto_now=True)
+    created                 = models.DateField(auto_now_add=True)
+    updated                 = models.DateField(auto_now=True)
 
     #Never blank, no batch = no job. related_name since Batch already has a FK
     skaa_batch              = models.ForeignKey(Batch, 
@@ -312,10 +333,8 @@ class Job(DeleteMixin):
                                                 db_index=True, 
                                                 blank=True, 
                                                 null=True)
-    #TODO make this a required field, UserProfile is still non-existant
     skaa                    = models.ForeignKey(UserProfile, 
-                                                related_name='job_owner',
-                                                blank=True, null=True)
+                                                related_name='job_owner')
     doctor                  = models.ForeignKey(UserProfile, 
                                                 related_name='job_doctor',
                                                 blank=True, null=True)
@@ -335,3 +354,15 @@ class Job(DeleteMixin):
     job_status              = models.CharField(max_length=15, 
                                                choices=JOB_STATUS_CHOICES, 
                                                default=USER_SUBMITTED)
+    
+    def __unicode__(self):
+        out = "Owner: " + self.skaa.user.username
+        out += " -- Doctor: "
+        if self.doctor is None:
+            out += "None"
+        else:
+            out += self.doctor.user.username
+
+        out += " -- price: " + str(self.price)
+        out += " -- status: " + self.job_status
+        return out

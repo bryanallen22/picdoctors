@@ -138,8 +138,8 @@
   margin: 0;
   height: 100%;
   width: auto;
-  cursor: pointer
-    border: solid transparent;
+  cursor: pointer;
+  border: solid transparent;
   border-width: 0 0 100px 200px;
   border-top-style: solid;
   border-right-style: solid;
@@ -246,8 +246,11 @@
   text-align: left;
   height: 80px;
 }
+.job_page .job_row .carousel_no_bottom_margin {
+  margin-bottom: 0px;
+}
 .job_page .job_row .pic_carousel {
-  height: 60px;
+  height: 78px;
 }
 .job_page .alert_section {
   background-color: red;

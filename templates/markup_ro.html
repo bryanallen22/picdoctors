@@ -14,7 +14,7 @@
     {% if pics|length > 1 %}
       These {{ pics|length }} pictures will be combined into a single final picture
     {% else %}
-      This picture will be edited based on your instructions below
+      Edit the picture based on the instructions below
     {% endif %}
     </h2>
     {% for pic in pics %}
@@ -46,15 +46,22 @@
     {% endfor %}
   </div>
   <div class='span2'>
-    <div style='position:fixed; width:130px;'>
-        <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 120px;'>Previous</a>
-        <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Next</a>
-        {% if user.is_authenticated  %}
+    {# This '#anchor' is a hack to make sure that the div has a min width #}
+    <div id="anchor" style="width:180px; height:1px;"></div>
+    {# These buttons are slid down by js. Using 'position:fixed' breaks #}
+    {# on narrow monitors #}
+    <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
+      <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 120px;'>Previous</a>
+      <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Next</a>
+      {% if user.is_authenticated  %}
     
-        <div id='fake_job_app'>
-            <a id='FakeJobGen' href='' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Delete ill gotten Job</a>
+      <form action="{% url upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+        <div class="btn btn-success btn-large fileupload-addbutton" style='display: block; margin-top: 12px;'>
+          Upload Finished Product
+          <input type="file" name="files[]">
         </div>
-        {% endif %}
+      </form>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -68,6 +75,7 @@
     <script src="{{ STATIC_URL }}js/underscore.js"></script>
     <script src="{{ STATIC_URL }}js/backbone.js"></script>
     <script src="{{ STATIC_URL }}js/markup-ro.js"></script>
+    <script src="{{ STATIC_URL }}js/markup-shared.js"></script>
     {# Templates #}
     {# This template is just the *style* attribute for the markup div      #}
     {# Note: if you change the border width here from 4px, you'll probably #}
