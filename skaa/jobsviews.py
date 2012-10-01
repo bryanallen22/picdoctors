@@ -207,7 +207,6 @@ def create_job(request, batch_id, price):
 #TODO Delete this method, it's only for testing
 @csrf_exempt
 def kill_job(request):
-    pdb.set_trace()
     batch_id = get_batch_id(request)
     b = get_object_or_None(Batch, id=batch_id)
     j = get_object_or_None(Job, skaa_batch=b)

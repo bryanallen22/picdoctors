@@ -93,6 +93,38 @@ def need_cookies(request):
     logging.info('got to %s' % __name__)
     return locals()
 
+@csrf_protect
+def doc_upload_handler(request):
+    logging.info('got to %s' % __name__)
+    if request.method == 'POST':
+        if request.FILES == None:
+            return HttpResponseBadRequest('Must have files attached!')
+        
+        if request.Group == None:
+            return HttpResponseBadRequest('Must have files attached!')
+
+        # Save this off into the database
+        logging.info('got to %s' % __name__)
+        file = request.FILES[u'files[]']
+        if file is not None:
+            logging.info(file.name)
+            pic = Pic(path_owner="doc")
+            pic.set_file(file)
+            pic.batch = get_batch(request)
+            pic.save()
+
+            logging.info('File saving done')
+            
+            result = []
+            result.append(pic_json(pic))
+
+            response_data = simplejson.dumps(result)
+            return HttpResponse(response_data, mimetype='application/json')
+        else:
+            logging.error("file is None. How did we get here?")
+            return HttpResponse('[ ]', mimetype='application/json')
+    return HttpResponse('[ ]', mimetype='application/json')
+
 #Since the browser is posting this it includes the CSRF token
 @csrf_protect
 def upload_handler(request):

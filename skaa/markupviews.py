@@ -14,6 +14,7 @@ from common.models import Batch
 from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
+from common.decorators import passes_test
 from models import Markup
 
 import pdb
@@ -64,8 +65,8 @@ def set_sequences(request, batch_id):
     batch.save()
 
 
-def belongs_on_this_markup_page(request, batch_id):
-    pdb.set_trace()
+def belongs_on_this_markup_page(request, batch_id, sequence):
+    batch_id = int(batch_id)
     b = get_object_or_None(Batch, id=batch_id)
 
     #this batch doesn't exist
@@ -110,13 +111,11 @@ def markup_page(request, sequence):
 
 #markup page when we specify a batch_id
 @render_to()
+@passes_test(belongs_on_this_markup_page, '/')
 def markup_page_batch(request, batch_id, sequence):
     sequence = int(sequence)
     batch_id = int(batch_id)
     pics = Pic.objects.filter( batch__exact=batch_id )
-
-    if not belongs_on_this_markup_page(request, batch_id):
-        return redirect('/')
 
     
     if len(pics) == 0:
@@ -165,7 +164,8 @@ def markup_page_batch(request, batch_id, sequence):
 
     template_name = 'markup_ro.html'if read_only else 'markup.html'
 
-    return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 'TEMPLATE': template_name }
+    return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 
+             'TEMPLATE': template_name , 'group_id': group.id}
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes

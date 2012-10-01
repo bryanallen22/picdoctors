@@ -55,10 +55,11 @@
       <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Next</a>
       {% if user.is_authenticated  %}
     
-      <form action="{% url upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+      <form action="{% url doc_upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <div class="btn btn-success btn-large fileupload-addbutton" style='display: block; margin-top: 12px;'>
           Upload Finished Product
           <input type="file" name="files[]">
+          <input type="hidden" value="{{ group_id }}" name="group_id" />
         </div>
       </form>
       {% endif %}

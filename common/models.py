@@ -142,6 +142,22 @@ preview_height = 800
 # Pic
 ################################################################################
 
+def get_pic_path(pic_type, instance, filename):
+    path = instance.path_owner + "_" + pic_type
+    if instance.watermark:
+        path += "_watermark"
+    path += "/" + filename
+    return path
+
+def pic_originals_path(instance, filename):
+    return get_pic_path("originals", instance, filename)
+
+def pic_previews_path(instance, filename):
+    return get_pic_path("previews", instance, filename)
+
+def pic_thumbnails_path(instance, filename):
+    return get_pic_path("thumbnails", instance, filename)
+
 class Pic(DeleteMixin):
     batch                = models.ForeignKey('Batch', blank=True, null=True)
 
@@ -151,10 +167,14 @@ class Pic(DeleteMixin):
     updated              = models.DateField(auto_now=True)
     title                = models.CharField(max_length=60, blank=True, null=True)
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
-    group     = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
-    original             = models.ImageField(upload_to = 'user_originals/')
-    preview              = models.ImageField(upload_to = 'user_previews/')
-    thumbnail            = models.ImageField(upload_to = 'user_thumbs/')
+    group                = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
+    original             = models.ImageField(upload_to = pic_originals_path)
+    preview              = models.ImageField(upload_to = pic_previews_path)
+    thumbnail            = models.ImageField(upload_to = pic_thumbnails_path)
+    #The next two fields are used for generating the path
+    path_owner           = models.CharField(max_length = 5, blank=False, default="user")
+    watermark            = models.BooleanField(blank=False, default=False)
+    
     general_instructions = models.TextField(blank=True)
 
     # Getting these later requires fetching the picture.
