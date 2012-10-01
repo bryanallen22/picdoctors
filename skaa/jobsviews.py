@@ -178,15 +178,10 @@ def generate_job(request):
         b = get_object_or_None(Batch, id=batch_id)
         j = get_object_or_None(Job, skaa_batch=b)
         if j is None:
-            j = Job(skaa=request.user.get_profile(),
-                    skaa_batch=b, 
-                    price = 99.99, 
-                    job_status=Job.USER_SUBMITTED)
-            j.save()       
+            j = create_job(request, batch_id, 99.99)
         else:
             j.deleted = 0
             j.save()
-        set_groups_locks(b, True)
 
         #Remove the batch from the user's session, they are no longer working on it
         set_batch_id(request, None)
@@ -195,10 +190,24 @@ def generate_job(request):
 
     return HttpResponse('{ "success" : true }', mimetype='application/json')
 
+def create_job(request, batch_id, price):
+    b = get_object_or_None(Batch, id=batch_id)
+    j = None
+    if b is not None:
+        j = Job(skaa=request.user.get_profile(),
+                skaa_batch=b, 
+                price = price, 
+                job_status=Job.USER_SUBMITTED)
+        j.save()       
+        set_groups_locks(b, True)
+    return j
+
+
 
 #TODO Delete this method, it's only for testing
 @csrf_exempt
 def kill_job(request):
+    pdb.set_trace()
     batch_id = get_batch_id(request)
     b = get_object_or_None(Batch, id=batch_id)
     j = get_object_or_None(Job, skaa_batch=b)

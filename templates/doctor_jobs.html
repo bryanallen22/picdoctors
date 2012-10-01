@@ -41,13 +41,13 @@
                <b><a href="{{ job.batchurl }}">{{job.job_id|stringformat:"08d" }}</a></b>
              </div>
              <div class="span2">
-                 <div id="myCarousel" class="carousel slide">
+                 <div id="myCarousel" class="carousel slide carousel_no_bottom_margin">
                    <!-- Carousel items -->
                    <div class="carousel-inner pic_carousel">
                      {% for pic in job.pic_thumbs %}
                      <div class="item"> 
                        <a href="{{ pic.1}}">
-                         <img src="{{ pic.0 }}" alt="">
+                         <img src="{{ pic.0 }}" class="pic_carousel" alt="">
                        </a>
                      </div>
                      {% endfor %}

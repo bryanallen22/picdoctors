@@ -150,7 +150,7 @@
     margin: 0;
     height: 100%;
     width: auto;
-    cursor: pointer
+    cursor: pointer;
     border: solid transparent;
     border-width: 0 0 100px 200px;
     border-top-style: solid;
@@ -274,9 +274,13 @@
     text-align:left;
     //force row height big enough to contain the pic carousel and max pic size
     height:80px;
+    .carousel_no_bottom_margin{
+      margin-bottom:0px;
+    }
     // force the pic carousel to a max pic size so we don't have weird drawing issues
+    
     .pic_carousel{
-      height:60px;
+      height:78px;
     }
   }
   .alert_section
