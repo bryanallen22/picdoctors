@@ -65,7 +65,7 @@ def set_sequences(request, batch_id):
 
 
 def belongs_on_this_markup_page(request, batch_id):
-    pdb.set_trace()
+    #pdb.set_trace()
     b = get_object_or_None(Batch, id=batch_id)
 
     #this batch doesn't exist
