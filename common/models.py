@@ -92,6 +92,7 @@ class UserProfile(DeleteMixin):
     # Other fields here
     accepted_eula = models.BooleanField()
 
+    # Everyone is a User/Skaa, even if they don't know or care. Some are also doctors
     is_doctor = models.BooleanField()
 
 class SkaaInfo(DeleteMixin):
