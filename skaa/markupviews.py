@@ -6,11 +6,13 @@ from django.utils import simplejson
 from django.http import HttpResponse
 
 from annoying.decorators import render_to
+from annoying.functions import get_object_or_None
 
 from skaa.uploadviews import get_batch_id
 from common.models import Pic
 from common.models import Batch
 from common.models import Group
+from common.models import Job
 from common.models import ungroupedId
 from models import Markup
 
@@ -61,6 +63,45 @@ def set_sequences(request, batch_id):
     batch.num_groups = next_sequence
     batch.save()
 
+
+def belongs_on_this_markup_page(request, batch_id):
+    pdb.set_trace()
+    b = get_object_or_None(Batch, id=batch_id)
+
+    #this batch doesn't exist
+    if b is None:
+        return False
+
+    #if the user isn't logged in
+    if not request.user.is_authenticated():
+        #get batch from session
+        req_batch = get_batch_id(request)
+        #does it match the batch they are trying to view?
+        if req_batch == batch_id:
+            return True
+        else:
+            return False
+    
+    #the user is logged in by this point
+    profile = request.user.get_profile()
+
+    #is batch owner
+    if profile == b.userprofile:
+        return True
+
+    j = get_object_or_None(Job, skaa_batch=batch_id)
+
+    #is doctor of job
+    if j.doctor == profile:
+        return True
+
+    #is a doctor and the job doesn't have a doctor (aka they can view it)
+    if j.doctor is None and profile.is_doctor:
+        return True
+
+    #assume false
+    return False
+
 #markup page when we don't specify a batch_id (get it from request)
 @render_to()
 def markup_page(request, sequence):
@@ -73,6 +114,10 @@ def markup_page_batch(request, batch_id, sequence):
     sequence = int(sequence)
     batch_id = int(batch_id)
     pics = Pic.objects.filter( batch__exact=batch_id )
+
+    if not belongs_on_this_markup_page(request, batch_id):
+        return redirect('/')
+
     
     if len(pics) == 0:
       # No pictures. How did they get here? Direct typing of the url?
