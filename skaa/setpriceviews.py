@@ -27,7 +27,7 @@ min_price_per_pic = 2.0
 stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
 
 def set_price_test(request):
-    if Batch.get_unfinished(request.user.get_profile()):
+    if Batch.get_unfinished(request):
         return True
     return False
 
@@ -35,7 +35,7 @@ def set_price_test(request):
 @user_passes_test(test_fcn=set_price_test, redirect_name='upload')
 @render_to('set_price.html')
 def set_price(request):
-    batch = Batch.get_unfinished(request.user.get_profile())
+    batch = Batch.get_unfinished(request)
     min_price = min_price_per_pic * batch.num_groups
     if request.method == 'GET':
         pass

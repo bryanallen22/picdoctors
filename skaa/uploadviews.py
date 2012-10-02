@@ -61,6 +61,9 @@ def find_existing_batch(user_profile):
         return None
 
 def set_batch_id(request, batch_id):
+    """
+    Sets the batch id in the session
+    """
     if batch_id is None and 'batch_id' in request.session:
         del request.session['batch_id']
     
@@ -183,7 +186,8 @@ def upload_handler(request):
             logging.info(file.name)
             pic = Pic()
             pic.set_file(file)
-            pic.batch = get_batch(request)
+            batch = Batch.get_unfinished(request)
+            pic.batch = batch if batch else Batch(request)
             pic.save()
 
             logging.info('File saving done')
