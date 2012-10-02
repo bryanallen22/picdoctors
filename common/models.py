@@ -163,8 +163,8 @@ class Pic(DeleteMixin):
 
     uuid                 = models.CharField(max_length=32, blank=False,
                                             unique=True, db_index=True)
-    created              = models.DateField(auto_now_add=True)
-    updated              = models.DateField(auto_now=True)
+    created              = models.DateTimeField(auto_now_add=True)
+    updated              = models.DateTimeField(auto_now=True)
     title                = models.CharField(max_length=60, blank=True, null=True)
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
     group                = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
@@ -290,8 +290,8 @@ class Batch(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
     userprofile = models.ForeignKey(UserProfile, blank=True, 
                                     null=True, db_index=True)
-    created     = models.DateField(auto_now_add=True)
-    updated     = models.DateField(auto_now=True)
+    created     = models.DateTimeField(auto_now_add=True)
+    updated     = models.DateTimeField(auto_now=True)
     description = models.TextField(blank=True)
     num_groups  = models.IntegerField(blank=True, null=True, default=0)
     # This only becomes true after they've paid
@@ -310,14 +310,32 @@ class Batch(DeleteMixin):
 class Group(models.Model):
     sequence        = models.IntegerField()
     batch           = models.ForeignKey('Batch')
-    doctors_pic     = models.ForeignKey('Pic', related_name='doctors_pic', blank=True, null=True)
     is_locked       = models.BooleanField(default=False)
-    
+ 
+    def add_doctor_pic(self, pic):
+        doc = DocPicGroup(group=self, pic=pic, watermark_pic=pic)
+        doc.save()
+        return doc
+
+    def get_doctor_pics(self):
+        return DocPicGroup.objects.filter(group=self).order_by('updated')
+
     def __unicode__(self):
         if self.doctors_pic is not None:
             return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked) + " -- has doc pic"
         else:
             return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked) + " -- No doc pic"
+
+
+# Doc Pic Group allows us to keep track of all pictures uploaded 
+# by a group for a group of pics from the user
+class DocPicGroup(DeleteMixin):
+    group           = models.ForeignKey(Group, related_name='doc_pic_group')
+    pic             = models.ForeignKey(Pic)
+    watermark_pic   = models.ForeignKey(Pic, related_name='watermark_pic')
+    created         = models.DateTimeField(auto_now_add=True)
+    updated         = models.DateTimeField(auto_now=True)
+
 
 # Create your models here.
 class Job(DeleteMixin):
@@ -342,8 +360,8 @@ class Job(DeleteMixin):
         (USER_REQUESTS_ADDITIONAL_WORK, 'User Has Requested Additional Work'),
         (USER_REJECTS, 'User Has Rejected Work'),
     )
-    created                 = models.DateField(auto_now_add=True)
-    updated                 = models.DateField(auto_now=True)
+    created                 = models.DateTimeField(auto_now_add=True)
+    updated                 = models.DateTimeField(auto_now=True)
 
     #Never blank, no batch = no job. related_name since Batch already has a FK
     skaa_batch              = models.ForeignKey(Batch, 

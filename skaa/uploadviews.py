@@ -3,6 +3,7 @@ import logging
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import redirect
 
 #importing json parser to generate plugin friendly json response
 from django.utils import simplejson
@@ -95,7 +96,6 @@ def need_cookies(request):
     return locals()
 
 def has_doc_upload_access(request):
-    pdb.set_trace()
     #invalid post
     if not request.POST.__contains__('group_id'):
         return False
@@ -141,7 +141,6 @@ def doc_upload_handler(request):
     if request.method == 'POST':
         if request.FILES == None:
             return HttpResponseBadRequest('Must have files attached!')
-        pdb.set_trace()
         #don't worry, we validate the group_id at the decorator
         group_id = int(request.POST['group_id'])
         group = get_object_or_None(Group, id=group_id )
@@ -152,8 +151,9 @@ def doc_upload_handler(request):
             logging.info(file.name)
             pic = Pic(path_owner="doc")
             pic.set_file(file)
-            pic.batch = get_batch(request)
             pic.save()
+            #create a new entry in the DocPicGroup
+            group.add_doctor_pic(pic)
 
             logging.info('File saving done')
             
@@ -161,11 +161,9 @@ def doc_upload_handler(request):
             result.append(pic_json(pic))
 
             response_data = simplejson.dumps(result)
-            return HttpResponse(response_data, mimetype='application/json')
-        else:
-            logging.error("file is None. How did we get here?")
-            return HttpResponse('[ ]', mimetype='application/json')
-    return HttpResponse('[ ]', mimetype='application/json')
+     
+    #redirect to where they came from
+    return redirect(request.META['HTTP_REFERER'])
 
 #Since the browser is posting this it includes the CSRF token
 @csrf_protect

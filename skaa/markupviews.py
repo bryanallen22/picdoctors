@@ -136,6 +136,8 @@ def markup_page_batch(request, batch_id, sequence):
 
     logging.info('len(pics)=%d' % len(pics))
     group = Group.objects.get(sequence=sequence,batch=batch_id)
+
+    doc_pic_groups = group.get_doctor_pics()
     
     read_only = group.is_locked
 
