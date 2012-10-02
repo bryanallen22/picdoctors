@@ -152,7 +152,7 @@ def markup_page_batch(request, batch_id, sequence):
         if read_only:
             next_url = reverse(job_page)
         else:
-            next_url = reverse('skaa_signin')
+            next_url = reverse('set_price')
     else:
         next_url = reverse('markup_batch', args=[batch_id, sequence+1])
 
