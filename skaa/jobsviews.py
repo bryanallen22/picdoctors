@@ -9,7 +9,6 @@ from common.models import Batch
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
-from skaa.uploadviews import get_batch_id, set_batch_id
 from common.calculations import calculate_job_payout
 from django.contrib.auth.models import User
 from decimal import *
@@ -171,35 +170,34 @@ def generate_pic_thumbs(filter_batch):
 #TODO this method won't be a webmethod, it will only be called after a successful payment, but that's not implemented yet...
 @csrf_exempt
 def generate_job(request):
-    batch_id = get_batch_id(request)
     #start building random stuff
     #TODO Get user and real price and store that info as well... 
     try:
-        b = get_object_or_None(Batch, id=batch_id)
+        b = Batch.get_unfinished(request)
         j = get_object_or_None(Job, skaa_batch=b)
         if j is None:
-            j = create_job(request, batch_id, 99.99)
+            j = create_job(request, b, 99.99)
         else:
             j.deleted = 0
             j.save()
 
         #Remove the batch from the user's session, they are no longer working on it
-        set_batch_id(request, None)
+        Batch.clear_session_batch()
+
     except Exception as e:
         return HttpResponse('{ "success" : true; "whynot" :"' + str(e) + '"}', mimetype='application/json')
 
     return HttpResponse('{ "success" : true }', mimetype='application/json')
 
-def create_job(request, batch_id, price):
-    b = get_object_or_None(Batch, id=batch_id)
+def create_job(request, batch, price):
     j = None
-    if b is not None:
+    if batch is not None:
         j = Job(skaa=request.user.get_profile(),
-                skaa_batch=b, 
+                skaa_batch=batch, 
                 price = price, 
                 job_status=Job.USER_SUBMITTED)
         j.save()       
-        set_groups_locks(b, True)
+        set_groups_locks(batch, True)
     return j
 
 
@@ -207,8 +205,7 @@ def create_job(request, batch_id, price):
 #TODO Delete this method, it's only for testing
 @csrf_exempt
 def kill_job(request):
-    batch_id = get_batch_id(request)
-    b = get_object_or_None(Batch, id=batch_id)
+    b = Batch.get_unfinished(request)
     j = get_object_or_None(Job, skaa_batch=b)
     if j is not None:
         j.delete()

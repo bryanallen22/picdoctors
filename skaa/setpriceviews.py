@@ -53,8 +53,13 @@ def set_price(request):
             amount=price, # amount in cents, again
             currency="usd",
             card=token,
-            description="payinguser@example.com"
+            description=batch.userprofile.user.username
         )
+        batch.finished = True
+        batch.save()
+        logging.info("Batch owned by %s has been finished with price at $%s" %
+                     (batch.userprofile.user.username, price))
+        return redirect("http://zombo.com")
 
     str_min_price = "{0:.2f}".format(min_price)
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
