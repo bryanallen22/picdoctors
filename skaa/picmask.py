@@ -36,7 +36,7 @@ def watermark(im, mark, position, overlay_text, font, opacity):
     return Image.composite(layer, im, layer)
 
 def generate_watermarked_image(im, specific_text):
-    font = ImageFont.truetype("HelveticaNeueLight.ttf", 28)
+    font = ImageFont.truetype("skaa/HelveticaNeueLight.ttf", 28)
     im_width = im.size[0]
     im_height = im.size[1]
     mask_width = int(im_width * .37)
@@ -49,8 +49,9 @@ def generate_watermarked_image(im, specific_text):
     text = (specific_text, "PicDoctors.com")
     opacity = 0.5
     watermarked_image = watermark(im, mark, position, text, font, opacity)
-    watermarked_image.show()
+#    watermarked_image.show()
+    return watermarked_image
 
-im = Image.open('cow.jpg')
-generate_watermarked_image(im, 'Job #000000001')
-goMoo(im)
+#im = Image.open('cow.jpg')
+#generate_watermarked_image(im, 'Job #000000001')
+#goMoo(im)

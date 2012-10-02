@@ -312,8 +312,8 @@ class Group(models.Model):
     batch           = models.ForeignKey('Batch')
     is_locked       = models.BooleanField(default=False)
  
-    def add_doctor_pic(self, pic):
-        doc = DocPicGroup(group=self, pic=pic, watermark_pic=pic)
+    def add_doctor_pic(self, pic, watermark_pic):
+        doc = DocPicGroup(group=self, pic=pic, watermark_pic=watermark_pic)
         doc.save()
         return doc
 
