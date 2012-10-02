@@ -419,34 +419,37 @@ $(function(){
     el: $("#fake_job_app"),
 
     // Delegated events for creating new items, and clearing completed ones.
-        events: {
-            //"keypress #new-todo":  "createOnEnter",
-            "click  a#FakeJobGen" : "createJob",
-            //"mouseleave .markup_pic_container" : "finishMarkup",
-        },
+    events: {
+      //"keypress #new-todo":  "createOnEnter",
+      "click  a#FakeJobGen" : "createJob",
+      //"mouseleave .markup_pic_container" : "finishMarkup",
+    },
 
-        createJob: function(){
-            try
-  {
-    $.ajax({
-      type: 'POST',
-      url: '/kill_job/',
-      data: '',
-      success : function(data, textStatus) {
-        console.log("TODO: REMOVE ME");
-        console.log(data);
-        console.log(textStatus);
-        location.reload(true);
+    createJob: function(){
+      try {
+        $.ajax({
+          type: 'POST',
+          url: '/kill_job/',
+          data: '',
+          success : function(data, textStatus) {
+            console.log("TODO: REMOVE ME");
+            console.log(data);
+            console.log(textStatus);
+            location.reload(true);
+          }
+        });
       }
-    });
-  }
-  catch(Err)
-  {
-      console.log("error: " + Err);
-  }
-        return false;
-        },
-      });
+      catch(Err)  {
+        console.log("error: " + Err);
+      }
+      
+      return false;
+       
+    },
+   
+ });
  var fjv = new FakeJobView();
+
+ $('#doc_file').change(function(){ $('form').submit() } );
   
 });

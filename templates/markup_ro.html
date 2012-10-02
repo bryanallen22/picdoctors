@@ -58,9 +58,9 @@
       <form action="{% url doc_upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <div class="btn btn-success btn-large fileupload-addbutton" style='display: block; margin-top: 12px;'>
           Upload Finished Product
-          <input type="file" name="files[]">
-          <input type="hidden" value="{{ group_id }}" name="group_id" />
+          <input id="doc_file" type="file" name="doc_file">
         </div>
+        <input type="hidden" value="{{ group_id }}" name="group_id" />
       </form>
       {% endif %}
     </div>

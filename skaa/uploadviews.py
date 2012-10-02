@@ -18,6 +18,7 @@ from common.models import Batch
 from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
+from common.decorators import passes_test
 import pdb
 
 def get_batch_id(request):
@@ -93,19 +94,60 @@ def need_cookies(request):
     logging.info('got to %s' % __name__)
     return locals()
 
+def has_doc_upload_access(request):
+    pdb.set_trace()
+    #invalid post
+    if not request.POST.__contains__('group_id'):
+        return False
+    
+    group_id = -1
+    #convert group_id to int else, return false
+    try:
+        group_id = int(request.POST['group_id'])
+    except:
+        return False
+    
+    #not logged in
+    if not request.user.is_authenticated():
+        return False
+
+    profile = request.user.get_profile()
+
+    #not a doctor
+    if not profile.is_doctor:
+        return False
+
+    
+    group = get_object_or_None(Group, id=group_id)
+
+    if group is None:
+        return False
+
+    job = get_object_or_None(Job, skaa_batch=group.batch.id)
+
+    if job is None:
+        return False
+
+    if job.doctor == profile:
+        return True
+
+    return False
+    
+
 @csrf_protect
+@passes_test(has_doc_upload_access, '/')
 def doc_upload_handler(request):
     logging.info('got to %s' % __name__)
     if request.method == 'POST':
         if request.FILES == None:
             return HttpResponseBadRequest('Must have files attached!')
-        
-        if request.Group == None:
-            return HttpResponseBadRequest('Must have files attached!')
-
+        pdb.set_trace()
+        #don't worry, we validate the group_id at the decorator
+        group_id = int(request.POST['group_id'])
+        group = get_object_or_None(Group, id=group_id )
         # Save this off into the database
         logging.info('got to %s' % __name__)
-        file = request.FILES[u'files[]']
+        file = request.FILES[u'doc_file']
         if file is not None:
             logging.info(file.name)
             pic = Pic(path_owner="doc")

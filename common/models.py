@@ -315,9 +315,9 @@ class Group(models.Model):
     
     def __unicode__(self):
         if self.doctors_pic is not None:
-            return "Group # " + str(self.id) + " -- is_locked: " + str(is_locked) + " -- has doc pic"
+            return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked) + " -- has doc pic"
         else:
-            return "Group # " + str(self.id) + " -- is_locked: " + str(is_locked) + " -- No doc pic"
+            return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked) + " -- No doc pic"
 
 # Create your models here.
 class Job(DeleteMixin):
