@@ -10,7 +10,7 @@ from common.models import Pic
 ################################################################################
 class Markup(DeleteMixin):
     pic         = models.ForeignKey(Pic)
-    created     = models.DateField(auto_now_add=True)
+    created     = models.DateTimeField(auto_now_add=True)
 
     ######
     # These should match the backbone.js model (see markup.js)

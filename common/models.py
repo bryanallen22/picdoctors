@@ -1,8 +1,11 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.core.exceptions import FieldError
 from django.contrib.auth.models import User
+import pdb
 
 
 ################################################################################
@@ -288,28 +291,85 @@ class Pic(DeleteMixin):
 ################################################################################
 class Batch(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
-    userprofile = models.ForeignKey(UserProfile, blank=True, 
+    userprofile          = models.ForeignKey(UserProfile, blank=True, 
                                     null=True, db_index=True)
-    created     = models.DateTimeField(auto_now_add=True)
-    updated     = models.DateTimeField(auto_now=True)
-    description = models.TextField(blank=True)
-    num_groups  = models.IntegerField(blank=True, null=True, default=0)
+    created              = models.DateTimeField(auto_now_add=True)
+    updated              = models.DateTimeField(auto_now=True)
+    description          = models.TextField(blank=True)
+    num_groups           = models.IntegerField(blank=True, null=True, default=0)
     # This only becomes true after they've paid
-    finished    = models.BooleanField(default=False)
+    finished             = models.BooleanField(default=False)
+    # If sequences_last_set gets behind groups_last_modified, we know that we
+    # need to reorder our sequences
+    groups_last_modified = models.DateTimeField(auto_now_add=True)
+    sequences_last_set   = models.DateTimeField(auto_now_add=True)
+    
+    def kick_groups_modified(self):
+        self.groups_last_modified = datetime.now()
+        self.save()
+
+    def kick_sequences_set(self):
+        self.sequences_last_set = datetime.now()
+        self.save()
 
     @staticmethod
-    def get_unfinished(user_profile):
+    def clear_session_batch(request):
+        if 'batch_id' in request.session:
+            del request.session['batch_id']
+
+    @staticmethod
+    def create_batch(request):
         """
-        Returns the unfinished batch from the current user. If there is more
-        than one, something is wrong, so we raise an error.
+        Create a batch and return it. If the user is logged in, associate this
+        batch with that user. If not, store it in the session.
         """
-        b = Batch.objects.filter(finished=False, userprofile=user_profile)
-        if len(b) >= 2:
-            raise Exception("%s unfinished b at once!" % len(b))
-        elif len(b) == 1:
-            return b[0]
+        batch = Batch()
+
+        # Create a batch associated with a user
+        if request.user.is_authenticated():
+            batch.userprofile = request.user.get_profile()
+            batch.save()
+
+        # Create a batch and store it in the session
         else:
-            return None
+            batch.save()
+            Batch.clear_session_batch(request)
+            # Make sure that this stays below the batch.save() method so we have an id:
+            request.session['batch_id'] = batch.id
+
+        return batch
+
+
+    @staticmethod
+    def get_unfinished(request):
+        """
+        Returns the unfinished batch for either (the logged in user) or (the not
+        logged in user, based on their session). Preference is given to logged
+        in users if both match.
+
+        If there is more than one unfinished batch associated with this user,
+        something is wrong and we raise an exception.
+        """
+
+        ret = None
+
+        # If user is logged in, look for one associated with profile
+        user_profile = request.user.get_profile() if request.user.is_authenticated() else None
+        if user_profile:
+            batches = Batch.objects.filter(finished=False, userprofile=user_profile)
+            if len(batches) >= 2:
+                raise Exception("%s unfinished batches at once!" % len(batches))
+            elif len(batches) == 1:
+                ret = batches[0]
+
+        # If user is not logged in, check the session
+        elif 'batch_id' in request.session:
+            try:
+                ret = Batch.objects.get(finished=False, pk=request.session['batch_id'])
+            except Batch.DoesNotExist:
+                ret = None
+
+        return ret
 
     def __unicode__(self):
         if self.userprofile is not None:

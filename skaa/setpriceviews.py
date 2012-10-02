@@ -27,7 +27,7 @@ min_price_per_pic = 2.0
 stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
 
 def set_price_test(request):
-    if Batch.get_unfinished(request.user.get_profile()):
+    if Batch.get_unfinished(request):
         return True
     return False
 
@@ -35,7 +35,7 @@ def set_price_test(request):
 @user_passes_test(test_fcn=set_price_test, redirect_name='upload')
 @render_to('set_price.html')
 def set_price(request):
-    batch = Batch.get_unfinished(request.user.get_profile())
+    batch = Batch.get_unfinished(request)
     min_price = min_price_per_pic * batch.num_groups
     if request.method == 'GET':
         pass
@@ -53,8 +53,13 @@ def set_price(request):
             amount=price, # amount in cents, again
             currency="usd",
             card=token,
-            description="payinguser@example.com"
+            description=batch.userprofile.user.username
         )
+        batch.finished = True
+        batch.save()
+        logging.info("Batch owned by %s has been finished with price at $%s" %
+                     (batch.userprofile.user.username, price))
+        return redirect("http://zombo.com")
 
     str_min_price = "{0:.2f}".format(min_price)
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)

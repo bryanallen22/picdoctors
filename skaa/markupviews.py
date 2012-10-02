@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from skaa.uploadviews import get_batch_id
 from common.models import Pic
 from common.models import Batch
 from common.models import Group
@@ -76,7 +75,7 @@ def belongs_on_this_markup_page(request, batch_id, sequence):
     #if the user isn't logged in
     if not request.user.is_authenticated():
         #get batch from session
-        req_batch = get_batch_id(request)
+        req_batch = Batch.get_unfinished(request).id
         #does it match the batch they are trying to view?
         if req_batch == batch_id:
             return True
@@ -103,21 +102,27 @@ def belongs_on_this_markup_page(request, batch_id, sequence):
     #assume false
     return False
 
+def markup_page_test(request, sequence):
+    batch = Batch.get_unfinished(request)
+    if batch:
+        return True
+    return False
+
 #markup page when we don't specify a batch_id (get it from request)
 @render_to()
+@passes_test(markup_page_test, 'upload')
 def markup_page(request, sequence):
-    batch_id = get_batch_id(request)
+    batch_id = Batch.get_unfinished(request).id
     return markup_page_batch(request, batch_id, sequence)
 
 #markup page when we specify a batch_id
 @render_to()
-@passes_test(belongs_on_this_markup_page, '/')
+@passes_test(belongs_on_this_markup_page, 'upload')
 def markup_page_batch(request, batch_id, sequence):
     sequence = int(sequence)
     batch_id = int(batch_id)
     pics = Pic.objects.filter( batch__exact=batch_id )
 
-    
     if len(pics) == 0:
       # No pictures. How did they get here? Direct typing of the url?
       # Let's send them back to the upload page
@@ -254,8 +259,9 @@ def markups_handler(request, markup_id=None):
         # markup that they wanted. Do they really own this one?
         # TODO -- verify that this doesn't have some gaping security hole...
         # It probably does... See can_modify_markup() above
-        batch_id = get_batch_id(request)
-        if markup.pic.batch_id == batch_id:
+        batch = Batch.get_unfinished(request)
+        batch_id = batch.id if batch else None
+        if batch_id and markup.pic.batch_id == batch_id:
             apply_markup_whitelist(markup, data)
             markup.save()
         

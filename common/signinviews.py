@@ -8,7 +8,6 @@ from django.db import IntegrityError
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from skaa.uploadviews import get_batch_id, set_batch_id
 from common.models import Batch, UserProfile, DoctorInfo, SkaaInfo
 from doctor.jobsviews import doc_job_page
 from views import index
@@ -107,6 +106,10 @@ def signin(request, usertype='user'):
         pass
 
     elif request.method == 'POST':
+        # Do they have a batch in the session? If so, let's keep a handle on it
+        # so we can associate it with the user's profile.
+        batch = Batch.get_unfinished(request)
+
         # Sign into existing account
         if request.POST['create_acct_radio'] == 'have':
             user, tmp = auth( request.POST['email'], request.POST['password'] )
@@ -119,12 +122,10 @@ def signin(request, usertype='user'):
             ret.update(tmp)
 
         if user:
-            #TODO session variables are blasted away upon logging in, decide how to handle this
-            batch_id = get_batch_id(request)
             # Successful login. Take care of "remember me" button
             login(request, user)
             
-            associate_and_fill_batch(request, batch_id, user)
+            associate_batch(request, batch, user)
 
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
@@ -134,7 +135,11 @@ def signin(request, usertype='user'):
                 # Session only good until browser closes
                 request.session.set_expiry(0)
 
-            return redirect( request.GET['next'] )
+            if request.GET['next']:
+                return redirect( request.GET['next'] )
+            else:
+                # No idea where to send them. Send them to the home page.
+                return redirect( '/' )
 
         else:
             # Something went wrong. Let's at least prepopulate the email address for them
@@ -147,15 +152,13 @@ def signout(request):
     logout(request)   
     return redirect('/')
 
-def associate_and_fill_batch(request, batch_id, user):
-    #TODO shove the batch_id back in
-    #skip for now, but we might as well save it, no point in slamming db on this
-    #set_batch_id(request, batch_id)
-    batch = get_object_or_None(Batch, id=batch_id)
-    
+def associate_batch(request, batch, user):
     if batch is not None:
         batch.userprofile = user.get_profile()
         batch.save()
+
+    # Once it has a user, clear the session back out
+    Batch.clear_session_batch(request)
 
 def skaa_signin(request):
     # Don't use the word 'skaa' here -- it'll be visible in the html : )

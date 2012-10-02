@@ -26,56 +26,6 @@ from StringIO import StringIO
 import pdb
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-def get_batch_id(request):
-    """
-    Get the batch id from the session. If there isn't already a batch assigned, assign it now
-    """
-    batch = None
-    if 'batch_id' not in request.session:
-        if request.user.is_authenticated():
-            batch = find_existing_batch(request.user.get_profile())
-        
-        if batch == None:
-            batch = Batch()
-
-        if request.user.is_authenticated():
-            batch.userprofile = request.user.get_profile()
-        batch.save()
-        set_batch_id(request, batch.id)
-
-    return request.session['batch_id']
-
-def find_existing_batch(user_profile):
-    #No profile means no batch
-    if user_profile is None:
-        return None
-    batch = None
-
-    #No latest batch associated with user means no batch
-    try:
-        batch = Batch.objects.filter(userprofile=user_profile).latest('created')
-    except Exception as e:
-        return None
-
-    #No associated job means they never finished, return it!
-    associated_job = get_object_or_None(Job, skaa_batch=batch)
-    if associated_job is None:
-        return batch
-    else:
-        return None
-
-def set_batch_id(request, batch_id):
-    if batch_id is None and 'batch_id' in request.session:
-        del request.session['batch_id']
-    
-    if batch_id is not None:
-        request.session['batch_id'] = batch_id
-
-def get_batch(request):
-    # This will create a batch if necessary
-    batch = Batch.objects.get(pk=get_batch_id(request))
-    return batch
-
 def pic_json(pic):
     return {"name"             : pic.title, 
             "size"             : 0, # pic.get_size(), // This is sloooow!
@@ -89,9 +39,11 @@ def pic_json(pic):
 
 @render_to('upload.html')
 def upload_page(request):
-    batch_id = get_batch_id(request)
-    logging.info('batch_id is %d' % batch_id)
-    pics = Pic.objects.filter( batch__exact=batch_id );
+    batch = Batch.get_unfinished(request)
+    if not batch:
+        batch = Batch.create_batch(request)
+    logging.info('batch.id is %d' % batch.id)
+    pics = Pic.objects.filter( batch__exact=batch.id );
     return { "pics" : pics, "ungroupedId" :  ungroupedId }
 
 @render_to('need_cookies.html')
@@ -201,7 +153,8 @@ def upload_handler(request):
             logging.info(file.name)
             pic = Pic()
             pic.set_file(file)
-            pic.batch = get_batch(request)
+            batch = Batch.get_unfinished(request)
+            pic.batch = batch if batch else Batch.create_batch(request)
             pic.save()
 
             logging.info('File saving done')
@@ -220,12 +173,6 @@ def upload_handler(request):
         logging.info('got to %s' % __name__)
         # TODO - get rid of this temporary debug code:
         result = []
-        # This ajax thing is slow. We preopulate it with the view/template
-        # layers for the actual page
-        #pics = Pic.objects.filter(batch__exact=get_batch_id(request))
-
-        #for pic in pics:
-        #    result.append(pic_json(pic))
 
         response_data = simplejson.dumps(result)
         #logging.info(response_data)
@@ -273,7 +220,8 @@ def delete_pic_handler(request):
     return HttpResponse('{ "success" : false }', mimetype='application/json')
 
 def delete_groupings(request):
-    batch_id = get_batch_id(request) 
-    logging.info('deleting %d' % batch_id)
-    Group.objects.filter(batch=batch_id).delete()
+    batch = Batch.get_unfinished(request)
+    if batch:
+        logging.info('deleting %d' % batch.id)
+        Group.objects.filter(batch=batch.id).delete()
 
