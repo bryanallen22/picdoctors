@@ -297,6 +297,20 @@ class Batch(DeleteMixin):
     # This only becomes true after they've paid
     finished    = models.BooleanField(default=False)
 
+    @staticmethod
+    def get_unfinished(user_profile):
+        """
+        Returns the unfinished batch from the current user. If there is more
+        than one, something is wrong, so we raise an error.
+        """
+        b = Batch.objects.filter(finished=False, userprofile=user_profile)
+        if len(b) >= 2:
+            raise Exception("%s unfinished b at once!" % len(b))
+        elif len(b) == 1:
+            return b[0]
+        else:
+            return None
+
     def __unicode__(self):
         if self.userprofile is not None:
             return "Batch # " + str(self.id) + " -- owned by: " + self.userprofile.user.username
