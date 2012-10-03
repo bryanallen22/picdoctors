@@ -176,7 +176,8 @@ def generate_job(request):
         b = Batch.get_unfinished(request)
         j = get_object_or_None(Job, skaa_batch=b)
         if j is None:
-            j = create_job(request, b, 99.99)
+            #price is in cents
+            j = create_job(request, b, 9999)
         else:
             j.deleted = 0
             j.save()
@@ -189,8 +190,9 @@ def generate_job(request):
 
     return HttpResponse('{ "success" : true }', mimetype='application/json')
 
-def create_job(request, batch, price):
+def create_job(request, batch, price_in_cents):
     j = None
+    price = price_in_cents/100
     if batch is not None:
         j = Job(skaa=request.user.get_profile(),
                 skaa_batch=batch, 

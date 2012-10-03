@@ -141,7 +141,16 @@ def markup_page_batch(request, batch_id, sequence):
     group = Group.objects.get(sequence=sequence,batch=batch_id)
 
     doc_pic_groups = group.get_doctor_pics()
-    
+    doc_pics = []
+    #although logic dictates that if we have doc_pics then we should have a job,
+    #what does it hurt to check again?
+    j = get_object_or_None(Job, skaa_batch=batch_id)
+    if j is not None:
+        for doc_pic_group in doc_pic_groups:
+            #TODO add logic to figure out if we show watermark pic or other pic
+            doc_pics.append(doc_pic_group.watermark_pic)
+
+
     read_only = group.is_locked
 
     pics = pics.filter( group__exact=group)
@@ -170,7 +179,7 @@ def markup_page_batch(request, batch_id, sequence):
     template_name = 'markup_ro.html'if read_only else 'markup.html'
 
     return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 
-             'TEMPLATE': template_name , 'group_id': group.id}
+            'TEMPLATE': template_name , 'group_id': group.id, 'doc_pics':doc_pics}
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes
