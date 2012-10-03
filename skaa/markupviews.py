@@ -18,50 +18,6 @@ from models import Markup
 import pdb
 import logging
 
-def set_sequences(request, batch_id):
-    # Sets sequence for each picture in the batch. Note that this
-    # will quite happily override any existing sequence that was
-    # already set.
-    pics = Pic.objects.filter( batch__exact=batch_id )
-    logging.info('setting sequences for batch_id %d' % batch_id)
-
-    # This doesn't feel like the most efficient way to get a sorted,
-    # unique list, but it works
-    browser_ids = sorted(list(set([pic.browser_group_id for pic in pics])))
-    logging.info(browser_ids)
-    batch_instance = Batch.objects.get(pk=batch_id)
-    next_sequence = 1
-    for id in browser_ids:
-        # Find all pics that match this id
-        matches = pics.filter( browser_group_id__exact=id )
-        if id != ungroupedId:
-            # All matching pics get next_sequence
-            logging.info('creating new group')
-            g = Group(batch=batch_instance, sequence=next_sequence) 
-            g.save()
-            for pic in matches:
-                #pic.group_id = next_sequence
-                pic.group = g
-                pic.save()
-            next_sequence += 1
-        else:
-            # All ungrouped pics get their own sequence
-            for pic in matches:
-                logging.info('creating new group')
-                g = Group(batch=batch_instance, sequence=next_sequence) 
-                g.save()
-                #pic.group_id = next_sequence
-                pic.group = g
-                pic.save()
-                next_sequence += 1
-
-    batch = Batch.objects.get( pk=batch_id )
-    next_sequence -= 1
-    logging.info('Saving number of groups %d' % next_sequence)
-    batch.num_groups = next_sequence
-    batch.save()
-
-
 def belongs_on_this_markup_page(request, batch_id, sequence):
     batch_id = int(batch_id)
     b = get_object_or_None(Batch, id=batch_id)
@@ -118,33 +74,29 @@ def markup_page(request, sequence):
 @passes_test(belongs_on_this_markup_page, 'upload')
 def markup_page_batch(request, batch_id, sequence):
     sequence = int(sequence)
-    batch_id = int(batch_id)
-    pics = Pic.objects.filter( batch__exact=batch_id )
+    batch = Batch.objects.get( pk=int(batch_id) )
+
+    pics = Pic.objects.filter( batch=batch )
 
     if len(pics) == 0:
       # No pictures. How did they get here? Direct typing of the url?
       # Let's send them back to the upload page
         return redirect('upload')
     
-    #Reset the group Ids on 3 conditions, retgrouping, deleting of pics
-    #or adding of new pics
-    group_count = len(Group.objects.filter(batch=batch_id))
-    logging.info('group count = %d' % group_count)
-    if group_count == 0:
-        set_sequences(request, batch_id)
+    # We need valid sequences in this view. Set them. (This will fall through
+    # if that's not necessary)
+    batch.set_sequences()
 
-    batch = Batch.objects.get( pk=batch_id )
-
-    logging.info('sequence=%d, batch_id=%d, batch_num=%d' % (sequence, batch_id, batch.num_groups))
+    logging.info('sequence=%d, batch.id=%d, batch_num=%d' % (sequence, batch.id, batch.num_groups))
 
     logging.info('len(pics)=%d' % len(pics))
-    group = Group.objects.get(sequence=sequence,batch=batch_id)
+    group = Group.objects.get(sequence=sequence,batch=batch)
 
     doc_pic_groups = group.get_doctor_pics()
     doc_pics = []
     #although logic dictates that if we have doc_pics then we should have a job,
     #what does it hurt to check again?
-    j = get_object_or_None(Job, skaa_batch=batch_id)
+    j = get_object_or_None(Job, skaa_batch=batch)
     if j is not None:
         for doc_pic_group in doc_pic_groups:
             #TODO add logic to figure out if we show watermark pic or other pic
@@ -166,7 +118,7 @@ def markup_page_batch(request, batch_id, sequence):
         else:
             next_url = reverse('set_price')
     else:
-        next_url = reverse('markup_batch', args=[batch_id, sequence+1])
+        next_url = reverse('markup_batch', args=[batch.id, sequence+1])
 
     if sequence == 1:
         if read_only:
@@ -174,7 +126,7 @@ def markup_page_batch(request, batch_id, sequence):
         else:
             previous_url = reverse('upload')
     else:
-        previous_url = reverse('markup_batch', args = [batch_id, sequence-1])
+        previous_url = reverse('markup_batch', args = [batch.id, sequence-1])
 
     template_name = 'markup_ro.html'if read_only else 'markup.html'
 

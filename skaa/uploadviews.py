@@ -25,15 +25,15 @@ from StringIO import StringIO
 import pdb
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
+from django.core.urlresolvers import reverse
+
 def pic_json(pic):
     return {"name"             : pic.title, 
             "size"             : 0, # pic.get_size(), // This is sloooow!
             "url"              : pic.get_preview_url(),
             "thumbnail_url"    : pic.get_thumb_url(),
-            # TODO - url lookup here
-            "delete_url"       : '/delete_pic/' + pic.uuid,
-            # TODO - change type to 'DELETE' ?
-            "delete_type"      : "POST",
+            "delete_url"       : reverse('delete_pic_handler') + pic.uuid,
+            "delete_type"      : "DELETE",
             "uuid"             : pic.uuid }
 
 @render_to('upload.html')
@@ -159,6 +159,9 @@ def upload_handler(request):
             result = []
             result.append(pic_json(pic))
 
+            batch = Batch.get_unfinished(request)
+            batch.kick_groups_modified()
+
             response_data = simplejson.dumps(result)
             #logging.info(response_data)
             return HttpResponse(response_data, mimetype='application/json')
@@ -200,6 +203,8 @@ def group_pic_handler(request):
         pic.save()
 
     if pics is not None:
+        batch = Batch.get_unfinished(request)
+        batch.kick_groups_modified()
         return HttpResponse('{ "success" : true }', mimetype='application/json')
     else:
         return HttpResponse('{ "success" : false }', mimetype='application/json')
@@ -219,4 +224,5 @@ def delete_groupings(request):
     if batch:
         logging.info('deleting %d' % batch.id)
         Group.objects.filter(batch=batch.id).delete()
+        batch.kick_groups_modified()
 

@@ -182,9 +182,6 @@ def generate_job(request):
             j.deleted = 0
             j.save()
 
-        #Remove the batch from the user's session, they are no longer working on it
-        Batch.clear_session_batch()
-
     except Exception as e:
         return HttpResponse('{ "success" : true; "whynot" :"' + str(e) + '"}', mimetype='application/json')
 

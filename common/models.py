@@ -288,6 +288,20 @@ class Pic(DeleteMixin):
 
 ################################################################################
 # Batch
+#
+# A word on groupings:
+#
+#     Groupings are set on the upload page, but setting the full groupings is
+#     kinda database intensive, so we don't want to run set_sequences every time
+#     anything changes. Instead, we only want to do it when necessary. So,
+#
+#       - Any time a user modifies the groupings in some way, you must call
+#         kick_groups_modified(). Examples: new pic uploaded, grouping created,
+#         grouping deleted.
+#       - Anyone who needs up to date info on the groupings for this batch MUST
+#         call set_sequences(). The call will only actually set sequences if
+#         kick_groups_modified() has been called more recently than set_sequences()
+#
 ################################################################################
 class Batch(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
@@ -305,15 +319,75 @@ class Batch(DeleteMixin):
     sequences_last_set   = models.DateTimeField(auto_now_add=True)
     
     def kick_groups_modified(self):
+        """
+        Any time groupings are modified, call this. (Upload a new pic, delete a pic,
+        create or delete a grouping). This allows us to do lazy group setting with
+        set_sequences()
+        """
         self.groups_last_modified = datetime.now()
         self.save()
 
-    def kick_sequences_set(self):
+    def set_sequences(self):
+        """
+        Sets sequence for each picture in the batch.
+
+        This method must be called before you can trust any groupings. To
+        prevent this method from being overly wasteful, it won't actually
+        set any groupings if there hasn't been a call to kick_groups_modified()
+        since this method was last called.
+        
+        Note that this will quite happily override any existing sequence
+        that was already set.
+        """
+
+        if self.groups_last_modified < self.sequences_last_set:
+            logging.info("Batch.set_sequences bailing out early - no groups have been modified")
+            return
+
+        pics = Pic.objects.filter( batch=self )
+        logging.info('setting sequences for batch_id %d' % self.id)
+
+        # This doesn't feel like the most efficient way to get a sorted,
+        # unique list, but it works
+        browser_ids = sorted(list(set([pic.browser_group_id for pic in pics])))
+        logging.info(browser_ids)
+        next_sequence = 1
+        for id in browser_ids:
+            # Find all pics that match this id
+            matches = pics.filter( browser_group_id__exact=id )
+            if id != ungroupedId:
+                # All matching pics get next_sequence
+                logging.info('creating new group')
+                g = Group(batch=self, sequence=next_sequence) 
+                g.save()
+                for pic in matches:
+                    #pic.group_id = next_sequence
+                    pic.group = g
+                    pic.save()
+                next_sequence += 1
+            else:
+                # All ungrouped pics get their own sequence
+                for pic in matches:
+                    logging.info('creating new group')
+                    g = Group(batch=self, sequence=next_sequence) 
+                    g.save()
+                    #pic.group_id = next_sequence
+                    pic.group = g
+                    pic.save()
+                    next_sequence += 1
+
+        next_sequence -= 1
+        logging.info('Saving number of groups %d' % next_sequence)
+
+        self.num_groups = next_sequence
         self.sequences_last_set = datetime.now()
         self.save()
 
     @staticmethod
     def clear_session_batch(request):
+        """
+        Clear the batch_id from the session
+        """
         if 'batch_id' in request.session:
             del request.session['batch_id']
 
@@ -395,10 +469,7 @@ class Group(models.Model):
         return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
 
     def __unicode__(self):
-        if self.doctors_pic is not None:
-            return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked) + " -- has doc pic"
-        else:
-            return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked) + " -- No doc pic"
+        return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked)
 
 
 # Doc Pic Group allows us to keep track of all pictures uploaded 

@@ -36,6 +36,11 @@ def set_price_test(request):
 @render_to('set_price.html')
 def set_price(request):
     batch = Batch.get_unfinished(request)
+
+    # We need valid sequences in this view. Set them. (This will fall through
+    # if that's not necessary)
+    batch.set_sequences()
+
     min_price = min_price_per_pic * batch.num_groups
     if request.method == 'GET':
         pass
