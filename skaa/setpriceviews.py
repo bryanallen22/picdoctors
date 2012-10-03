@@ -1,7 +1,6 @@
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_protect
 from django.utils import simplejson
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required

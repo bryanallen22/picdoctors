@@ -1,6 +1,5 @@
 import logging
 
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
@@ -90,7 +89,6 @@ def has_doc_upload_access(request):
     return False
     
 
-@csrf_protect
 @passes_test(has_doc_upload_access, '/')
 def doc_upload_handler(request):
     logging.info('got to %s' % __name__)
@@ -136,7 +134,6 @@ def doc_upload_handler(request):
     return redirect(request.META['HTTP_REFERER'])
 
 #Since the browser is posting this it includes the CSRF token
-@csrf_protect
 def upload_handler(request):
     logging.info('got to %s' % __name__)
     if request.method == 'POST':
@@ -178,7 +175,6 @@ def upload_handler(request):
         #logging.info(response_data)
         return HttpResponse(response_data, mimetype='application/json')
 
-@csrf_protect
 def group_pic_handler(request):
     data = simplejson.loads(request.body)
 
@@ -208,7 +204,6 @@ def group_pic_handler(request):
     else:
         return HttpResponse('{ "success" : false }', mimetype='application/json')
 
-@csrf_protect
 def delete_pic_handler(request):
     if request.method == 'DELETE':
         data = simplejson.loads(request.body)

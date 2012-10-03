@@ -1,6 +1,5 @@
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
@@ -105,7 +104,7 @@ def generate_doctor_actions(job, request):
         pass
 
     return ret
-@csrf_protect
+
 def apply_for_job(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
