@@ -392,7 +392,7 @@ class Group(models.Model):
         return doc
 
     def get_doctor_pics(self):
-        return DocPicGroup.objects.filter(group=self).order_by('updated')
+        return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
 
     def __unicode__(self):
         if self.doctors_pic is not None:

@@ -13,6 +13,7 @@ from common.models import Batch
 from common.models import Group
 from common.models import ungroupedId
 from common.decorators import user_passes_test
+from skaa.jobsviews import create_job
 from models import Markup
 
 import stripe
@@ -57,9 +58,10 @@ def set_price(request):
         )
         batch.finished = True
         batch.save()
+        create_job(request, batch, price) # price is in cents
         logging.info("Batch owned by %s has been finished with price at $%s" %
                      (batch.userprofile.user.username, price))
-        return redirect("http://zombo.com")
+        return redirect(reverse('job_page'))
 
     str_min_price = "{0:.2f}".format(min_price)
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
