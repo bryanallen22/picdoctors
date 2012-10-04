@@ -13,11 +13,12 @@ def reduceOpacity(im, opacity):
     return im
 
 def addOverlayText(im, overlay_text, font):
+    colour = 'white'
     draw = ImageDraw.Draw(im)
     top = overlay_text[0]
     bottom = overlay_text[1]
-    draw.text((10,10), top, (0,0,0), font=font)
-    draw.text((10,im.size[1]-30), bottom, (0,0,0), font=font)
+    draw.text((10,10), top, colour, font=font)
+    draw.text((10,im.size[1]-30), bottom, colour, font=font)
 
 def watermark(im, mark, position, overlay_text, font, opacity):
     """Adds a watermark to an image."""

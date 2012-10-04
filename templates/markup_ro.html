@@ -19,8 +19,10 @@
     </h2>
     {% for pic in doc_pics %}
     <div class='doc_pics'>
-      <span class='doc_pic_container' style="background: url('{{pic.get_preview_url}}') no-repeat; width:{{pic.preview_width }}px; height:{{pic.preview_height}}px;cursor:default;display:block">
-        </span>
+      Doctor Revision #{{pic.0}}
+      <span class='doc_pic_container' style="background: url('{{pic.1.get_preview_url}}') no-repeat; width:{{pic.1.preview_width }}px; height:{{pic.1.preview_height}}px;cursor:default;display:block">
+      </span>
+
       </div>
     {% endfor %}
     {% for pic in pics %}
@@ -59,7 +61,7 @@
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
       <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 120px;'>Previous</a>
       <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' href='#' style='display: block; margin-top: 12px;'>Next</a>
-      {% if user.is_authenticated  %}
+      {% if user.is_authenticated and user.get_profile.is_doctor  %}
     
       <form action="{% url doc_upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <div class="btn btn-success btn-large fileupload-addbutton" style='display: block; margin-top: 12px;'>

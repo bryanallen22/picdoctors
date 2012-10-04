@@ -29,9 +29,9 @@ def belongs_on_this_markup_page(request, batch_id, sequence):
     #if the user isn't logged in
     if not request.user.is_authenticated():
         #get batch from session
-        req_batch = Batch.get_unfinished(request).id
+        req_batch = Batch.get_unfinished(request)
         #does it match the batch they are trying to view?
-        if req_batch == batch_id:
+        if req_batch and req_batch.id == batch_id:
             return True
         else:
             return False
@@ -94,18 +94,16 @@ def markup_page_batch(request, batch_id, sequence):
 
     doc_pic_groups = group.get_doctor_pics()
     doc_pics = []
-    #although logic dictates that if we have doc_pics then we should have a job,
-    #what does it hurt to check again?
-    j = get_object_or_None(Job, skaa_batch=batch)
-    if j is not None:
-        for doc_pic_group in doc_pic_groups:
-            #TODO add logic to figure out if we show watermark pic or other pic
-            doc_pics.append(doc_pic_group.watermark_pic)
+    revision = len(doc_pic_groups) + 1
+    for doc_pic_group in doc_pic_groups:
+        #TODO add logic to figure out if we show watermark pic or other pic
+        revision -= 1
+        doc_pics.append((revision, doc_pic_group.watermark_pic))
 
 
     read_only = group.is_locked
 
-    pics = pics.filter( group__exact=group)
+    pics = pics.filter(group__exact=group)
     
     job_page = 'job_page'
 
@@ -237,7 +235,12 @@ def markups_handler(request, markup_id=None):
 
 #Implement logic to validate user has relation to batch/pic
 def can_modify_pic(request, pic):
-    return True
+    if pic:
+        if pic.batch:
+            req_batch = Batch.get_unfinished(request)
+            if req_batch and req_batch.id == pic.batch.id:
+                return True
+    return False
 
 # TODO return error when it doesn't save
 def pic_instruction_handler(request):

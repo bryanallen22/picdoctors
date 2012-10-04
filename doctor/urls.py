@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from doctor.jobsviews import doc_job_page, new_job_page, apply_for_job
+from doctor.jobsviews import doc_job_page, new_job_page, apply_for_job, job_price_too_low
 from skaa.uploadviews import doc_upload_handler
 
 # Uncomment the next two lines to enable the admin:
@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^new_jobs/$',                 new_job_page,              name='new_job_page'),
     url(r'^new_jobs/(?P<page>\d+)$',    new_job_page,              name='new_job_page_with_page'),
     url(r'^apply_for_job$',             apply_for_job,             name='apply_for_job'),
+    url(r'^job_price_too_low$',         job_price_too_low,         name='job_price_too_low'),
     url(r'^doc_upload_handler/$',       doc_upload_handler,        name='doc_upload_handler'),
 )
 

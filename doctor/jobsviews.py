@@ -131,7 +131,24 @@ def apply_for_job(request):
                     {"action":"delay_redirect","data":{"href":reverse("doc_job_page"),"view": "your jobs"}}
                     ]}
 
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
 
-    #TODO remove this
+
+#TODO THIS is bad, it would let the same doctor complain over and over... 
+def job_price_too_low(request):
+    data = simplejson.loads(request.body)
+    job = get_object_or_None(Job, id=data['job_id'])
+    result = []
+    doc = request.user.get_profile()
+
+    result = {"actions": [{"action":"alert","data":"Thank you for your input."} ]}
+
+    if job and not job.doctor:
+        job_qs = Job.objects.select_for_update().filter(pk=job.id)
+        for job in job_qs:
+            job.price_too_low_count += 1
+            job.save()
+
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
