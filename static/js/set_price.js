@@ -22,9 +22,17 @@ $(function(){
     /* minimum_price is set directly in the html page above this script */
     if( parseFloat($("#price").val()) < minimum_price ) {
       $("#min-price-msg").show();
+      $('.submit-button').attr("disabled", "disabled");
     }
     else {
       $("#min-price-msg").hide();
+      $('.submit-button').removeAttr("disabled");
+    }
+
+    var priceStr = $("#price").val();
+    var priceDbl = parseFloat(priceStr);
+    if( priceDbl ) {
+      $("#price").val( '$' + (priceDbl).toMoney(2, '.', ',') );
     }
   } );
 
@@ -44,6 +52,37 @@ $(function(){
       return false;
     });
   });
+
+  /* 
+   * This magic method is a copy paste from here:
+   *
+   * http://stackoverflow.com/questions/149055/how-can-i-format-numbers-as-money-in-javascript
+   *
+   * decimal_sep: character used as decimal separtor, it defaults to '.' when omitted
+   * thousands_sep: char used as thousands separator, it defaults to ',' when omitted
+   */
+  Number.prototype.toMoney = function(decimals, decimal_sep, thousands_sep)
+  { 
+    var n = this,
+        // How many decimals to show
+        c = isNaN(decimals) ? 2 : Math.abs(decimals),
+        // decimal separator defaults to '.'
+        d = decimal_sep || '.',
+
+        // pass "" to not use thousands separator
+        t = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+
+        sign = (n < 0) ? '-' : '',
+
+        //extracting the absolute value of the integer part of the number and converting to string
+        i = parseInt(n = Math.abs(n).toFixed(c)) + '', 
+
+        j = ((j = i.length) > 3) ? j % 3 : 0; 
+
+    return sign + (j ? i.substr(0, j) + t : '')
+      + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t)
+      + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : ''); 
+  }
 
 });
 

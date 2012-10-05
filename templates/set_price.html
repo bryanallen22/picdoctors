@@ -15,7 +15,7 @@
 
     <div class="container">
       <div class="row">
-        <div class="span6 well">
+        <div class="span8 well">
 
           <legend>
               Please set a price for this job
@@ -23,25 +23,29 @@
           <div class="row">
 
             {# Left side -- credit card info #}
-            <div class="span3">
+            <div class="span5">
               <form action="" method="POST" id="payment-form">
                 {% csrf_token %}
                 <div>
                   <label>How much will you offer?</label>
                   <input id="price" type="text" size="20" autocomplete="off"
                          class="span1" value="" name="price" />
-                  <span id="min-price-msg" class="label label-important" style="display:none;">You
-                    must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)</span>
+                  <div id="min-price-msg" class="label label-important"
+                      {% if not invalid_price %}
+                        style="display:none;"
+                      {% endif %}
+                  > {# <-- close the div's open tag #}
+                      You must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)
+                  </div>
                 </div>
                 <div>
-                  <label>Card Number</label>
+                  <label>Card Number --- CVC</label>
                   <input type="text" size="20" autocomplete="off"
                          class="card-number span2" value="4242424242424242" />
-                </div>
-                <div>
-                  <label>CVC</label>
                   <input type="text" size="4" autocomplete="off" class="card-cvc span1"
                          value="123" />
+                </div>
+                <div>
                 </div>
                 <div>
                   <label>Expiration (MM/YYYY)</label>
