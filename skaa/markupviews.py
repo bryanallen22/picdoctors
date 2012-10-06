@@ -13,6 +13,7 @@ from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
+from common.functions import get_profile_or_None
 from models import Markup
 
 import pdb
@@ -75,6 +76,7 @@ def markup_page(request, sequence):
 def markup_page_batch(request, batch_id, sequence):
     sequence = int(sequence)
     batch = Batch.objects.get( pk=int(batch_id) )
+    job = batch.get_job_or_None()
 
     pics = Pic.objects.filter( batch=batch )
 
@@ -106,10 +108,20 @@ def markup_page_batch(request, batch_id, sequence):
     pics = pics.filter(group__exact=group)
     
     job_page = 'job_page'
+    is_job_doctor = False
+    profile = get_profile_or_None(request)
 
-    if request.user.is_authenticated() and request.user.get_profile().is_doctor:
+    if profile and profile.is_doctor:
         job_page = 'doc_job_page'
+        if job and job.doctor == profile:
+            is_job_doctor = True
 
+    is_job_user = False
+    # AKA I am the user
+    if (profile and not profile.is_doctor) or not job:
+        is_job_user = True
+
+    #previous next links
     if sequence == batch.num_groups:
         if read_only:
             next_url = reverse(job_page)
@@ -126,10 +138,11 @@ def markup_page_batch(request, batch_id, sequence):
     else:
         previous_url = reverse('markup_batch', args = [batch.id, sequence-1])
 
-    template_name = 'markup_ro.html'if read_only else 'markup.html'
+    template_name = 'markup_ro.html' if read_only else 'markup.html'
 
     return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 
-            'TEMPLATE': template_name , 'group_id': group.id, 'doc_pics':doc_pics}
+            'TEMPLATE': template_name , 'group_id': group.id, 'doc_pics': doc_pics, 
+            'is_job_doctor': is_job_doctor, 'is_job_user': is_job_user}
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes

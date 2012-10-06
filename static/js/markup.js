@@ -642,44 +642,5 @@ $(function(){
   // Finally, we kick things off by creating the **App**.
   var App = new AppView;
 
-  //DELETE THE STUFF BELOW
-  //////////////////////////////////////////////////////////////
-  //temporary job creation
-  var FakeJobView = Backbone.View.extend({
-
-    el: $("#fake_job_app"),
-
-    // Delegated events for creating new items, and clearing completed ones.
-        events: {
-            //"keypress #new-todo":  "createOnEnter",
-            "click  a#FakeJobGen" : "createJob",
-            //"mouseleave .markup_pic_container" : "finishMarkup",
-        },
-
-        createJob: function(){
-          try{
-            $.ajax({
-                    type: 'POST',
-                    url: '/fake_job_creator/',
-                    data: '',
-                    success : function(data, textStatus) {
-                      console.log("TODO: REMOVE ME");
-                      console.log(data);
-                      console.log(textStatus);
-                      location.href = "/jobs";
-                    }
-            });
-          }
-          catch(Err) {
-            console.log("error: " + Err);
-          }
-        return false;
-        },
-  });
-  
-  var fjv = new FakeJobView();
-  /////////////////////////////////////////////////////////////////
-  //DELETE THE STUFF ABOVE
- 
 });
 
