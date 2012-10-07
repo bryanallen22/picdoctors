@@ -165,28 +165,6 @@ def generate_pic_thumbs(filter_batch):
         ret.append(tup)
     return ret
         
-
-
-#TODO this method won't be a webmethod, it will only be called after a successful payment, but that's not implemented yet...
-@csrf_exempt
-def generate_job(request):
-    #start building random stuff
-    #TODO Get user and real price and store that info as well... 
-    try:
-        b = Batch.get_unfinished(request)
-        j = get_object_or_None(Job, skaa_batch=b)
-        if j is None:
-            #price is in cents
-            j = create_job(request, b, 9999)
-        else:
-            j.deleted = 0
-            j.save()
-
-    except Exception as e:
-        return HttpResponse('{ "success" : true; "whynot" :"' + str(e) + '"}', mimetype='application/json')
-
-    return HttpResponse('{ "success" : true }', mimetype='application/json')
-
 def create_job(request, batch, price_in_cents):
     j = None
     price = price_in_cents/100
@@ -198,20 +176,6 @@ def create_job(request, batch, price_in_cents):
         j.save()       
         set_groups_locks(batch, True)
     return j
-
-
-
-#TODO Delete this method, it's only for testing
-@csrf_exempt
-def kill_job(request):
-    b = Batch.get_unfinished(request)
-    j = get_object_or_None(Job, skaa_batch=b)
-    if j is not None:
-        j.delete()
-
-    set_groups_locks(b, False)
-    return HttpResponse('{ "success" : true }', mimetype='application/json')
-
 
 def set_groups_locks(batch_to_lock, state):
     groups = Group.objects.filter(batch=batch_to_lock)

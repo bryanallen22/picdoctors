@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.core.exceptions import FieldError
 from django.contrib.auth.models import User
+from annoying.functions import get_object_or_None
 import pdb
 
 
@@ -202,10 +203,20 @@ class Pic(DeleteMixin):
         self.uuid      = my_uuid
         self.title     = file_root # Not the full myfile name, just the root
 
+        # So when we deliver the original jpeg to the user they don't want 
+        # it delivered in the browser window do they?
+        # I doubt it, I bet they'd like to download the file.  
+        # Unfortunately since we can't modify the headers when s3 is serving
+        # the file, we are forced to set the content type of the file when saving to s3
+        # and then they decide to serve it with the same headers, aka something
+        # the browser doesn't want to handle.  Don't worry, we're just changing the
+        # original which means when you try and navigate to it's url it will download it
+        myfile.content_type = 'application/octet-stream'
         # Save original picture, its width and height
         self.original.save(file_name, myfile)
         # TODO -- this fetches the image all over again. Me no likey.
         # Find some other way?
+        # Why not load the image using Pil and get the width/height from it?
         self.original_width = self.original.width
         self.original_height = self.original.height
 
@@ -318,6 +329,10 @@ class Batch(DeleteMixin):
     groups_last_modified = models.DateTimeField(auto_now_add=True)
     sequences_last_set   = models.DateTimeField(auto_now_add=True)
     
+    def get_job_or_None(self):
+        job = get_object_or_None(Job, skaa_batch=self)
+        return job
+    
     def kick_groups_modified(self):
         """
         Any time groupings are modified, call this. (Upload a new pic, delete a pic,
@@ -413,7 +428,6 @@ class Batch(DeleteMixin):
 
         return batch
 
-
     @staticmethod
     def get_unfinished(request):
         """
@@ -444,6 +458,7 @@ class Batch(DeleteMixin):
                 ret = None
 
         return ret
+
 
     def __unicode__(self):
         if self.userprofile is not None:
@@ -512,12 +527,6 @@ class Job(DeleteMixin):
     skaa_batch              = models.ForeignKey(Batch, 
                                                 related_name='skaa_batch', 
                                                 db_index=True)
-    #This can be blank, doctor uploads batch later, related_name (see above)
-    doctor_batch            = models.ForeignKey(Batch, 
-                                                related_name='doctor_batch', 
-                                                db_index=True, 
-                                                blank=True, 
-                                                null=True)
     skaa                    = models.ForeignKey(UserProfile, 
                                                 related_name='job_owner')
     doctor                  = models.ForeignKey(UserProfile, 

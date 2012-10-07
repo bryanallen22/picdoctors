@@ -250,6 +250,13 @@
   display: block;
   margin-left: 40px;
 }
+.markup_h2_header {
+  text-align: center;
+  background-color: lightBlue;
+  border: black solid 1px;
+  color: black;
+  text-align: center;
+}
 /*****************************
   Job page
 ******************************/

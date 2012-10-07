@@ -10,25 +10,30 @@
 {% block main %}
 <div class='row'>
   <div id="markup_app" class='span10'>
-    <h2 style="text-align: center; color: #777;">
-    {% if pics|length > 1 %}
-      These {{ pics|length }} pictures will be combined into a single final picture
-    {% else %}
-      Edit the picture based on the instructions below
-    {% endif %}
+    {% if doc_pics %}
+    <h2 class='markup_h2_header'>
+      Doctor Images 
     </h2>
-    {% for pic in doc_pics %}
+      {% for pic in doc_pics %}
     <div class='doc_pics'>
       Doctor Revision #{{pic.0}}
       <span class='doc_pic_container' style="background: url('{{pic.1.get_preview_url}}') no-repeat; width:{{pic.1.preview_width }}px; height:{{pic.1.preview_height}}px;cursor:default;display:block">
       </span>
-
+      {% if is_job_user %}
+        <div class='download_links'>
+          <a class='btn btn-primary' href='{{ pic.1.get_original_url }}'>Download Original</a>
+        </div>
+      {% endif %}
       </div>
-    {% endfor %}
+      {% endfor %}
+    {% endif %}
+    <h2 class='markup_h2_header'>
+      User Images
+    </h2>
+    <br/>
     {% for pic in pics %}
       <div class='markup_outer'>
-        <span class='markup_pic_container'
-              style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;cursor:default;"  uuid="{{ pic.uuid }}" >
+        <span class='markup_pic_container' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;cursor:default;"  uuid="{{ pic.uuid }}" >
           {# Do not, under any circumstances, change the padding or margin of  #}
           {# this .markup_pic_container or .pic unless you are 200% certain    #}
           {# that you aren't messing things up. Careful calculation of offsets #}
@@ -38,6 +43,11 @@
         <script type="application/json" class="preloaded_markups">
           {{ pic.get_markups_json|safe }}
         </script>
+        {% if is_job_doctor %}
+        <div class='download_links'>
+          <a class='btn btn-primary' href='{{ pic.get_original_url }}'>Download Original</a>
+        </div>
+        {% endif %}
         <div class='markup_desc_container' style="width:{{ pic.preview_width }}px;">
           <div class="markup_desc">
               <p class="desc_title">General Instructions:</p>
