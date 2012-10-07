@@ -64,14 +64,14 @@ def markup_page_test(request, sequence):
     return False
 
 #markup page when we don't specify a batch_id (get it from request)
-@render_to()
+@render_to('markup.html')
 @passes_test(markup_page_test, 'upload')
 def markup_page(request, sequence):
     batch_id = Batch.get_unfinished(request).id
     return markup_page_batch(request, batch_id, sequence)
 
 #markup page when we specify a batch_id
-@render_to()
+@render_to('markup.html')
 @passes_test(belongs_on_this_markup_page, 'upload')
 def markup_page_batch(request, batch_id, sequence):
     sequence = int(sequence)
@@ -138,11 +138,9 @@ def markup_page_batch(request, batch_id, sequence):
     else:
         previous_url = reverse('markup_batch', args = [batch.id, sequence-1])
 
-    template_name = 'markup_ro.html' if read_only else 'markup.html'
-
     return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 
-            'TEMPLATE': template_name , 'group_id': group.id, 'doc_pics': doc_pics, 
-            'is_job_doctor': is_job_doctor, 'is_job_user': is_job_user}
+            'group_id': group.id, 'doc_pics': doc_pics, 
+            'is_job_doctor': is_job_doctor, 'is_job_user': is_job_user, 'read_only': read_only}
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes
@@ -191,21 +189,41 @@ def markup_to_dict(markup):
     return d
 
 # TODO: Should ALL markup_handler things go through here? Probably...
-def can_modify_markup(markup, request):
-    return True
+def can_modify_markup(request, markup_id=None):
+    pic = None
+    if markup_id:
+        markup = get_object_or_None(Markup, id=markup_id)
+        if markup:
+            pic = markup.pic
+    else:
+        data = simplejson.loads(request.body)
+        pic = Pic.objects.get(uuid__exact=data['pic_uuid'])
+    
+    if not pic:
+        return False
+
+    batch = Batch.get_unfinished(request)
+
+    #all pics are in a batch, all pics are in a grouping
+    if pic.group and pic.batch and pic.batch == batch:
+        return not pic.group.is_locked
+
+    return False
 
 def markups_handler(request, markup_id=None):
     # POST /markups_handler/ -- create a new markup
     if request.method == 'POST':
-        data = simplejson.loads(request.body)
+        if can_modify_markup(request):
+            data = simplejson.loads(request.body)
+        
 
-        markup = Markup()
-        apply_markup_whitelist(markup, data)
-        markup.save()
+            markup = Markup()
+            apply_markup_whitelist(markup, data)
+            markup.save()
 
-        result = { 'id' : markup.id }
-        response_data = simplejson.dumps(result)
-        return HttpResponse(response_data, mimetype='application/json')
+            result = { 'id' : markup.id }
+            response_data = simplejson.dumps(result)
+            return HttpResponse(response_data, mimetype='application/json')
 
     # GET /markups_handler/1234/
     elif request.method == 'GET' and markup_id is not None:
@@ -221,25 +239,22 @@ def markups_handler(request, markup_id=None):
             result = {}
 
     elif request.method == 'PUT':
-        data = simplejson.loads(request.body)
-        markup = Markup.objects.get(id=data['id'])
-        # So, derp wants to update that markup. But we don't want to blindly
-        # assume they really own it, do we? That would let them update any
-        # markup that they wanted. Do they really own this one?
-        # TODO -- verify that this doesn't have some gaping security hole...
-        # It probably does... See can_modify_markup() above
-        batch = Batch.get_unfinished(request)
-        batch_id = batch.id if batch else None
-        if batch_id and markup.pic.batch_id == batch_id:
-            apply_markup_whitelist(markup, data)
-            markup.save()
+        if can_modify_markup(request):
+            data = simplejson.loads(request.body)
+            markup = Markup.objects.get(id=data['id'])
+
+            batch = Batch.get_unfinished(request)
+            batch_id = batch.id if batch else None
+            if batch_id and markup.pic.batch_id == batch_id:
+                apply_markup_whitelist(markup, data)
+                markup.save()
         
         # Return any modified properties... Uh.... I don't forsee
         # overriding any of the things that they set...
         result = {}
     elif request.method == 'DELETE':
         m = Markup.objects.get(id=markup_id)
-        if can_modify_markup( request, m ):
+        if can_modify_markup( request, markup_id):
             m.delete()
         result = {}
 

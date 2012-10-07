@@ -253,7 +253,8 @@ $(function(){
       }
 
       // Doesn't display well on really small widths
-      this.$el.html( this.redX_template( {} ) );
+      if(!readonly)
+        this.$el.html( this.redX_template( {} ) );
       this.$el.find('.markup-redx').css('left', this.model.get('width')-20 );
 
       return this;
@@ -436,6 +437,7 @@ $(function(){
         new GeneralInstructionView( { el : instruction, model: pic_model } );
         markup_list.reset( jQuery.parseJSON( $(this).find('.preloaded_markups').html() ) );
       });
+      
 
     },
 
@@ -641,6 +643,44 @@ $(function(){
 
   // Finally, we kick things off by creating the **App**.
   var App = new AppView;
+  //lets do some read_only stuff (this value is set in the template)
+  if(readonly)
+  {
+    $('.desc').each(function(){$(this).attr('readonly','readonly')});
+    App.undelegateEvents();
+  }
+
+  function go_previous_next(e) { 
+    if(e.originalTarget && e.originalTarget.type=="textarea") 
+      return;
+    if(e.srcElement && e.srcElement.nodeName=="TEXTAREA") 
+      return;
+    var keynum; 
+    keynum = e.keyCode;
+    if(keynum==37){
+      var go_where = $('#previous').attr('href');
+      window.location = go_where;
+    }
+    if(keynum==39){
+      var go_where = $('#next').attr('href');
+      window.location = go_where;
+    } 
+  } 
+  if (document.addEventListener){
+    document.addEventListener('keypress', go_previous_next, false);
+    document.addEventListener('keyup', go_previous_next, false);
+  }  
+  else if (document.attachEvent){ 
+    window.document.attachEvent('onkeyup', function(e){go_previous_next(e);},false );
+  } 
+
+  var scrollTop = $("#buttons").offset().top;
+  // Lame hack to slide buttons down. 'position:fixed' would be much nicer,
+  // but it hates me on very narrow windows.
+  $(window).scroll(function(event) {
+    var loc = $(this).scrollTop() + scrollTop;
+    $("#buttons").offset( { 'top' : loc } );
+  });
 
 });
 
