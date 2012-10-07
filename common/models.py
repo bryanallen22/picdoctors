@@ -510,7 +510,7 @@ class Job(DeleteMixin):
     USER_REJECTS     = 'user_rej'   #user rejects product and wants a refund...
 
     #Job status Choices for the job_status field below
-    JOB_STATUS_CHOICES = (
+    STATUS_CHOICES = (
         (USER_SUBMITTED, 'User Submitted'),
         (TOO_LOW, 'Price Too Low'),
         (DOCTOR_ACCEPTED, 'Doctor Accepted Job'),
@@ -545,8 +545,8 @@ class Job(DeleteMixin):
     price_too_low_count     = models.IntegerField(blank=False, 
                                                   default=0)
     #max_length refers to the shorthand versions above
-    job_status              = models.CharField(max_length=15, 
-                                               choices=JOB_STATUS_CHOICES, 
+    status                  = models.CharField(max_length=15, 
+                                               choices=STATUS_CHOICES, 
                                                default=USER_SUBMITTED)
     
     def __unicode__(self):
@@ -558,5 +558,5 @@ class Job(DeleteMixin):
             out += self.doctor.user.username
 
         out += " -- price: " + str(self.price)
-        out += " -- status: " + self.job_status
+        out += " -- status: " + self.status
         return out

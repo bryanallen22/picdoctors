@@ -11,6 +11,7 @@ from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
 from common.calculations import calculate_job_payout
+from common.functions import get_profile_or_None
 import pdb
 
 from skaa.jobsviews import get_job_infos, get_pagination_info, JobInfo, DynamicAction
@@ -64,39 +65,43 @@ def new_job_page(request, page=1):
 #get and fill up possible actions based on the status of this job
 def generate_doctor_actions(job, request):
     ret = []
-
+    redirect_url = True
     #boring always created actions for populating below
     #TODO redirect to contact page
     contact = DynamicAction('Contact User', '/', True)
-    complete_job_url= reverse('markup_batch', args=[job.skaa_batch.id, 1])
-    complete_job = DynamicAction('Complete Job', complete_job_url, True)
+    work_job_url= reverse('markup_batch', args=[job.skaa_batch.id, 1])
+    work_job = DynamicAction('Work On Job', work_job_url, redirect_url)
+
+    complete_job = DynamicAction('Mark as Completed', '/mark_job_completed/')
     
-    if job.job_status == Job.USER_SUBMITTED:
-        ret.append(DynamicAction('Apply for Job', '/apply_for_job'))
-        ret.append(DynamicAction('Job price too Low', '/job_price_too_low'))
-    elif job.job_status == Job.TOO_LOW:
+    if job.status == Job.USER_SUBMITTED:
+        ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
+        ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
+    elif job.status == Job.TOO_LOW:
         #Doctor won't be informed that a job appears too low
         pass
-    elif job.job_status == Job.DOCTOR_ACCEPTED:
+    elif job.status == Job.DOCTOR_ACCEPTED:
+        ret.append(work_job)
         ret.append(complete_job)
         ret.append(contact)
         #do something
-    elif job.job_status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
+    elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
+        ret.append(work_job)
         ret.append(complete_job)
         ret.append(contact)
         #do something
-    elif job.job_status == Job.DOCTOR_SUBMITTED:
-        ret.append(DynamicAction('Accept', 'accept_job_url'))
+    elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(contact)
-        ret.append(DynamicAction('Reject', 'reject_job_url'))
-    elif job.job_status == Job.USER_ACCEPTED:
+    elif job.status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
         pass
-    elif job.job_status == Job.USER_REQUESTS_ADDITIONAL_WORK:
+    elif job.status == Job.USER_REQUESTS_ADDITIONAL_WORK:
+        ret.append(work_job)
         ret.append(complete_job)
+        ret.append(contact)
         #do nothing these are for doctor
         pass
-    elif job.job_status == Job.USER_REJECTS:
+    elif job.status == Job.USER_REJECTS:
         #do nothing these are fordoctor
         pass
     else:
@@ -105,6 +110,7 @@ def generate_doctor_actions(job, request):
 
     return ret
 
+@login_required
 def apply_for_job(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
@@ -124,7 +130,7 @@ def apply_for_job(request):
             if job.doctor is None:
                 job.doctor = doc
                 job.payout_price = calculate_job_payout(job, doc)
-                job.job_status = Job.DOCTOR_ACCEPTED
+                job.status = Job.DOCTOR_ACCEPTED
                 job.save()
                 result = {"actions": 
                         [{"action":"alert","data":"Congrats the job is yours!"},
@@ -134,21 +140,48 @@ def apply_for_job(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
+def has_rights_to_act(profile, job):
+    if profile and job:
+        if profile == job.doctor:
+            return True
+
+    return False
 
 #TODO THIS is bad, it would let the same doctor complain over and over... 
+@login_required
 def job_price_too_low(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
     result = []
-    doc = request.user.get_profile()
+    doc = get_profile_or_None(request)
 
-    result = {"actions": [{"action":"alert","data":"Thank you for your input."} ]}
-
+    result = {"actions": [{"action":"alert","data":"There was an error processing your request."} ]}
     if job and not job.doctor:
         job_qs = Job.objects.select_for_update().filter(pk=job.id)
         for job in job_qs:
             job.price_too_low_count += 1
             job.save()
+        result = {"actions": [{"action":"alert","data":"Thank you for your input."} ]}
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
+
+
+@login_required
+def mark_job_completed(request):
+    profile = get_profile_or_None(request)
+    data = simplejson.loads(request.body)
+    job = get_object_or_None(Job, id=data['job_id'])
+
+    result = {"actions": [{"action":"alert","data":"There was an error processing your request."} ]}
+    if has_rights_to_act(profile, job):
+        #TODO Check to see if there is an image for every group, email user
+        result = {"actions": [{"action":"alert","data":"Bling, bling, Dear User, your Job is complete!!."} ]}
+        job.status = Job.DOCTOR_SUBMITTED
+        job.save()
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
+
+
+

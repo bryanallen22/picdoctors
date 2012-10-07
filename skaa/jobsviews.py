@@ -76,7 +76,7 @@ def get_job_infos(cur_page_jobs, action_generator, request):
     for job in cur_page_jobs:
         job_inf = JobInfo()
         job_inf.job_id = job.id
-        job_inf.status = job.get_job_status_display()
+        job_inf.status = job.get_status_display()
         job_inf.doctor_exists = job.doctor is not None
         batch = job.skaa_batch
         job_inf.dynamic_actions = action_generator(job, request)
@@ -117,35 +117,35 @@ def generate_skaa_actions(job, request):
     view_job_url= reverse('markup_batch', args=[job.skaa_batch.id, 1])
     view_job = DynamicAction('View Job', view_job_url, True)
     
-    if job.job_status == Job.USER_SUBMITTED and is_doctor:
+    if job.status == Job.USER_SUBMITTED and is_doctor:
         ret.append(DynamicAction('Apply for Job', '/apply_for_job'))
         ret.append(DynamicAction('Job price too Low', '/job_price_too_low'))
         ret.append(view_job)
-    elif job.job_status == Job.TOO_LOW:
+    elif job.status == Job.TOO_LOW:
         #Do something
         pass
-    elif job.job_status == Job.DOCTOR_ACCEPTED:
+    elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(contact)
         ret.append(view_job)
         #do something
-    elif job.job_status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
+    elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
         ret.append(contact)
         ret.append(view_job)
         #do something
-    elif job.job_status == Job.DOCTOR_SUBMITTED:
+    elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(DynamicAction('Accept', 'accept_job_url'))
         #to be honest I'm not sure how this one will work (at least from this page)
         ret.append(contact)
         ret.append(DynamicAction('Reject', 'reject_job_url'))
         ret.append(view_job)
-    elif job.job_status == Job.USER_ACCEPTED:
+    elif job.status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
         ret.append(view_job)
         pass
-    elif job.job_status == Job.USER_REQUESTS_ADDITIONAL_WORK:
+    elif job.status == Job.USER_REQUESTS_ADDITIONAL_WORK:
         #do nothing these are for doctor
         pass
-    elif job.job_status == Job.USER_REJECTS:
+    elif job.status == Job.USER_REJECTS:
         #do nothing these are fordoctor
         pass
     else:
@@ -172,7 +172,7 @@ def create_job(request, batch, price_in_cents):
         j = Job(skaa=request.user.get_profile(),
                 skaa_batch=batch, 
                 price = price, 
-                job_status=Job.USER_SUBMITTED)
+                status=Job.USER_SUBMITTED)
         j.save()       
         set_groups_locks(batch, True)
     return j
