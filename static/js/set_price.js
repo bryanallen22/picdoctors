@@ -4,7 +4,7 @@ $(function(){
   function stripeResponseHandler(status, response) {
       if (response.error) {
           // show the errors on the form
-          $(".payment-errors").text(response.error.message);
+          $("#payment-errors").text(response.error.message).show();
           $(".submit-button").removeAttr("disabled");
       } else {
           var form$ = $("#payment-form");

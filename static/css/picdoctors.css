@@ -295,3 +295,9 @@
 .job_page .text-error {
   color: #B94A48;
 }
+/*****************************
+  Set price page
+******************************/
+#payment-errors {
+  margin-bottom: 9px;
+}
