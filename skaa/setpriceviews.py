@@ -71,7 +71,6 @@ def set_price(request):
         # get the credit card details submitted by the form
         token = request.POST['stripeToken']
 
-        pdb.set_trace()
         # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
         # convert it to cents and validate that it's an acceptable amount
         cents = currency_to_cents( request.POST['price'] );
