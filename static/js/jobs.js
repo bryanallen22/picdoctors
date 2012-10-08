@@ -84,11 +84,22 @@ $(function(){
       case 'delay_redirect':
         delay_redirect(action.data);
         break;
+      case 'remove_job':
+        remove_row_by_job_id(action.data);
+        break;
       default:
         alert('Implementation failure for "' + action.action + '" with the data: "' + action.data + '"');
         break;
      }
    }
+  }
+
+  function remove_row_by_job_id(job_id){
+    $('.job_row').each(function(){
+      if($(this).attr('job_id') == job_id){
+        $(this).remove();
+      }
+    });
   }
 
   function delay_redirect(data){

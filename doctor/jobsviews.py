@@ -21,7 +21,6 @@ from skaa.jobsviews import get_job_infos, get_pagination_info, JobInfo, DynamicA
 @login_required
 @render_to('doctor_jobs.html')
 def doc_job_page(request, page=1):
-    #TODO implement paging
     jobs = None
     if request.user.is_authenticated():
 #        new_jobs = Job.objects.filter(doctor=None)
@@ -95,13 +94,13 @@ def generate_doctor_actions(job, request):
     elif job.status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
         pass
-    elif job.status == Job.USER_REQUESTS_ADDITIONAL_WORK:
+    elif job.status == Job.USER_REQUESTS_MODIFICATION:
         ret.append(work_job)
         ret.append(complete_job)
         ret.append(contact)
         #do nothing these are for doctor
         pass
-    elif job.status == Job.USER_REJECTS:
+    elif job.status == Job.USER_REJECTED:
         #do nothing these are fordoctor
         pass
     else:
@@ -119,6 +118,7 @@ def apply_for_job(request):
 
     #TODO create cool actions, alert, reload, redirect, remove_job_row
     result = {"actions": [{"action":"alert","data":"This job is no longer available"},
+                          {"action":"remove_job","data":data['job_id']},
                           {"action":"delay_redirect","data":{"href":reverse("new_job_page"),"view":"available jobs"}}
                          ]}
     if job is None or job.doctor is not None or doc is None:
@@ -132,9 +132,9 @@ def apply_for_job(request):
                 job.payout_price = calculate_job_payout(job, doc)
                 job.status = Job.DOCTOR_ACCEPTED
                 job.save()
-                result = {"actions": 
-                        [{"action":"alert","data":"Congrats the job is yours!"},
-                    {"action":"delay_redirect","data":{"href":reverse("doc_job_page"),"view": "your jobs"}}
+                result = {"actions": [{"action":"alert","data":"Congrats the job is yours!"},
+                                      {"action":"remove_job","data":data['job_id']},
+                                      {"action":"delay_redirect","data":{"href":reverse("doc_job_page"),"view": "your jobs"}}
                     ]}
 
     response_data = simplejson.dumps(result)

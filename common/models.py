@@ -498,8 +498,8 @@ class Job(DeleteMixin):
     DOCTOR_REQUESTS_ADDITIONAL_INFORMATION = 'doc_need_info'
     DOCTOR_SUBMITTED = 'docter_sub' #submitted to user for approval
     USER_ACCEPTED    = 'user_acc'   #user accepts the finished product
-    USER_REQUESTS_ADDITIONAL_WORK = 'user_add' #scope creep
-    USER_REJECTS     = 'user_rej'   #user rejects product and wants a refund...
+    USER_REQUESTS_MODIFICATION = 'user_add' #scope creep
+    USER_REJECTED     = 'user_rej'   #user rejects product and wants a refund...
 
     #Job status Choices for the job_status field below
     STATUS_CHOICES = (
@@ -509,8 +509,8 @@ class Job(DeleteMixin):
         (DOCTOR_REQUESTS_ADDITIONAL_INFORMATION, 'Doctor Has Requested Additional Info'),
         (DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
         (USER_ACCEPTED, 'User Accepted Work'),
-        (USER_REQUESTS_ADDITIONAL_WORK, 'User Has Requested Additional Work'),
-        (USER_REJECTS, 'User Has Rejected Work'),
+        (USER_REQUESTS_MODIFICATION, 'User Has Requested Some Modification'),
+        (USER_REJECTED, 'User Has Rejected Work'),
     )
     created                 = models.DateTimeField(auto_now_add=True)
     updated                 = models.DateTimeField(auto_now=True)

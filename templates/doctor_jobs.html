@@ -58,7 +58,7 @@
                {{job.output_pic_count }} output picture{{ job.output_pic_count|pluralize }}
             </div>
              <div class="span3 text-success">
-               <em>${{ job.doctor_payout }} </em>
+               <em>${{ job.doctor_payout|floatformat:2 }} </em>
              </div>
              <div class="span2">
                &nbsp;

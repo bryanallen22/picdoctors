@@ -4,13 +4,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+from django.utils import simplejson
 from common.models import Job
 from common.models import Batch
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
+from common.functions import get_profile_or_None
 from common.calculations import calculate_job_payout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from decimal import *
 import math
 import pdb
@@ -113,14 +116,11 @@ def generate_skaa_actions(job, request):
     #ret.append(i_like_pie)
     #ret.append(u_like_pie)
     #TODO is doctor?
-    is_doctor = request.user.get_profile().is_doctor # request.user.get_profile().is cool doctor  ???
     view_job_url= reverse('markup_batch', args=[job.skaa_batch.id, 1])
     view_job = DynamicAction('View Job', view_job_url, True)
     
-    if job.status == Job.USER_SUBMITTED and is_doctor:
-        ret.append(DynamicAction('Apply for Job', '/apply_for_job'))
-        ret.append(DynamicAction('Job price too Low', '/job_price_too_low'))
-        ret.append(view_job)
+    if job.status == Job.USER_SUBMITTED:
+        pass
     elif job.status == Job.TOO_LOW:
         #Do something
         pass
@@ -133,20 +133,17 @@ def generate_skaa_actions(job, request):
         ret.append(view_job)
         #do something
     elif job.status == Job.DOCTOR_SUBMITTED:
-        ret.append(DynamicAction('Accept', 'accept_job_url'))
-        #to be honest I'm not sure how this one will work (at least from this page)
+        ret.append(DynamicAction('Accept', '/accept_doctors_work/'))
         ret.append(contact)
-        ret.append(DynamicAction('Reject', 'reject_job_url'))
+        ret.append(DynamicAction('Reject', '/reject_doctors_work/'))
+        ret.append(DynamicAction('Request Modification', '/request_fix/'))
         ret.append(view_job)
     elif job.status == Job.USER_ACCEPTED:
-        #do nothing these are for doctor
         ret.append(view_job)
         pass
-    elif job.status == Job.USER_REQUESTS_ADDITIONAL_WORK:
-        #do nothing these are for doctor
+    elif job.status == Job.USER_REQUESTS_MODIFICATION:
         pass
-    elif job.status == Job.USER_REJECTS:
-        #do nothing these are fordoctor
+    elif job.status == Job.USER_REJECTED:
         pass
     else:
         #How did we get here???
@@ -183,5 +180,42 @@ def set_groups_locks(batch_to_lock, state):
     for group in groups:
         group.is_locked = state
         group.save()
+
+@login_required
+def accept_doctors_work(request):
+    profile = get_profile_or_None(request)
+    data = simplejson.loads(request.body)
+    job = get_object_or_None(Job, id=data['job_id'])
+
+    result = {"actions": [{"action":"alert","data":"There was an error processing your request."} ]}
+    if job and profile and job.skaa == profile:
+        #TODO Put money into Doctors account 
+        result = {"actions": [{"action":"alert","data":"Bling, bling, Dear Doctor, the Job was accepted!!."},
+                              {"action":"reload","data":""}  ]}
+        job.status = Job.USER_ACCEPTED
+        job.save()
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
+
+
+@login_required
+def reject_doctors_work(request):
+    profile = get_profile_or_None(request)
+    data = simplejson.loads(request.body)
+    job = get_object_or_None(Job, id=data['job_id'])
+
+    result = {"actions": [{"action":"alert","data":"There was an error processing your request."} ]}
+    if job and profile and job.skaa == profile:
+        #TODO Put money into Doctors account 
+        result = {"actions": [{"action":"alert","data":"Bling, bling, Dear Doctor, the Job was rejected!!."},
+                              {"action":"reload","data":""}  ]}
+        job.status = Job.USER_REJECTED
+        job.save()
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
+
+
 
 
