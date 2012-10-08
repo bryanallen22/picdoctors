@@ -1,19 +1,20 @@
 # Create your views here.
-from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.core.urlresolvers import reverse
-from django.utils import simplejson
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import MultipleObjectsReturned
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.utils import simplejson
 
 from annoying.decorators import render_to
 
-from common.models import Pic
+from common.decorators import user_passes_test
 from common.models import Batch
 from common.models import Group
+from common.models import Pic
 from common.models import ungroupedId
-from common.decorators import user_passes_test
-from skaa.jobsviews import create_job
 from models import Markup
+from skaa.jobsviews import create_job
 
 import stripe
 
@@ -25,11 +26,6 @@ min_price_per_pic = 2.0
 
 # test key! use real key in production
 stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
-
-def set_price_test(request):
-    if Batch.get_unfinished(request):
-        return True
-    return False
 
 def currency_to_cents(currency):
     """
@@ -54,11 +50,17 @@ def currency_to_cents(currency):
     return price
 
 @login_required
-@user_passes_test(test_fcn=set_price_test, redirect_name='upload')
 @render_to('set_price.html')
 def set_price(request):
     invalid_price = False
-    batch = Batch.get_unfinished(request)
+
+    try:
+        batch = Batch.get_unfinished(request)
+        if not batch:
+            return redirect('upload')
+    except MultipleObjectsReturned:
+        # Too many open unfinished batches. Resolve them.
+        return redirect( reverse('merge_batches') );
 
     # We need valid sequences in this view. Set them. (This will fall through
     # if that's not necessary)

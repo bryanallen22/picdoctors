@@ -1,13 +1,23 @@
 from datetime import datetime
-
-from django.db import models
-from django.contrib import admin
-from django.db.models.query import QuerySet
-from django.core.exceptions import FieldError
-from django.contrib.auth.models import User
-from annoying.functions import get_object_or_None
+from PIL import Image
+from StringIO import StringIO
+from urlparse import urlparse
+import logging
+import os
 import pdb
+import uuid
 
+from django.contrib.auth.models import User
+from django.contrib import admin
+from django.core.exceptions import FieldError, MultipleObjectsReturned
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db import models
+from django.db.models.query import QuerySet
+from django.db.models.signals import post_save
+from django.utils import simplejson
+
+from annoying.functions import get_object_or_None
 
 ################################################################################
 # Some of this comes from:
@@ -81,8 +91,6 @@ class GlobalMixin(BaseMixin):
         abstract = True
 
 
-from django.db.models.signals import post_save
-
 ################################################################################
 # UserProfile
 #
@@ -123,28 +131,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 post_save.connect(create_user_profile, sender=User)
 
-from urlparse import urlparse
-import os
-import uuid
-from StringIO import StringIO
-from PIL import Image
-
-from django.core.files.base import ContentFile
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.utils import simplejson
-
-import logging
-
-
+################################################################################
+# Pic
+################################################################################
 ungroupedId = 100000  # Make sure that this matches isotope-app.js
 thumb_width    = 200 
 thumb_height   = 200 
 preview_width  = 800 
 preview_height = 800
-
-################################################################################
-# Pic
-################################################################################
 
 def get_pic_path(pic_type, instance, filename):
     path = instance.path_owner + "_" + pic_type
@@ -292,9 +286,6 @@ class Pic(DeleteMixin):
         else:
             result = []
         return simplejson.dumps(result)
-
-
-
 
 
 ################################################################################
@@ -446,7 +437,8 @@ class Batch(DeleteMixin):
         if user_profile:
             batches = Batch.objects.filter(finished=False, userprofile=user_profile)
             if len(batches) >= 2:
-                raise Exception("%s unfinished batches at once!" % len(batches))
+                raise MultipleObjectsReturned("%s unfinished batches at once!" 
+                                              % len(batches))
             elif len(batches) == 1:
                 ret = batches[0]
 

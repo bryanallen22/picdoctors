@@ -4,6 +4,8 @@ from skaa.markupviews import markup_page, markup_page_batch, markups_handler, pi
 from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handler, upload_page, need_cookies
 from skaa.jobsviews import job_page
 from skaa.setpriceviews import set_price
+from skaa.mergebatchesviews import merge_batches
+
 # Uncomment the next two lines to enable the admin:
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -26,5 +28,6 @@ urlpatterns = patterns('',
     url(r'^jobs/$',                                        job_page,                 name='job_page'),
     url(r'^jobs/(?P<page>\d+)$',                           job_page,                 name='job_page_with_page'),
     url(r'^set_price/$',                                   set_price,                name='set_price'),
+    url(r'^merge_batches/$',                               merge_batches,            name='merge_batches'),
 )
 
