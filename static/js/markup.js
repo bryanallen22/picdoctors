@@ -326,6 +326,7 @@ $(function(){
             readonly:      '',
           }
         ));
+        this.$el.find('.desc').each(function(){ joinAutoSize(this); });
       }
 
       return this;

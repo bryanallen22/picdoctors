@@ -552,3 +552,19 @@ class Job(DeleteMixin):
         out += " -- price: " + str(self.price)
         out += " -- status: " + self.status
         return out
+
+
+class CommunicationJob(DeleteMixin):
+    job           = models.ForeignKey(Job)
+    
+class CommunicationGroup(DeleteMixin):
+    group         = models.ForeignKey(Group)
+
+class CommunicationJobMessage(DeleteMixin):
+    communication_job       = models.ForeignKey(CommunicationJob)
+    message                 = models.TextField(blank=True)
+        
+class CommunicationGroupMessage(DeleteMixin):
+    communication_group     = models.ForeignKey(CommunicationGroup)
+    message                 = models.TextField(blank=True)
+        
