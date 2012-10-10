@@ -4,12 +4,15 @@ from django.contrib.auth.decorators import login_required
 from annoying.decorators import render_to
 
 from common.models import Batch
+from common.models import Pic
 from common.functions import get_profile_or_None
+from common.functions import get_time_string
 
 import stripe
 
 import pdb
 import logging
+from datetime import datetime
 
 # This user has two unfinished batches. Normally, that shouldn't
 # be possible, but it can be done. Here's how:
@@ -43,5 +46,17 @@ def merge_batches(request):
             "So %s has managed to get %s unfinished batches at once. Impressive."
             % (user_profile.user.username, len(batches)) );
 
-    return {}
+    if batches[0].created < batches[1].created:
+        older_batch = batches[0]
+    else:
+        older_batch = batches[1]
+
+    older_pics = Pic.objects.filter(batch=older_batch)
+
+    older_date_str = get_time_string(older_batch.created)
+    return {
+               'older_pics'     :  older_pics,
+               'older_date_str' :  older_date_str,
+           }
+
 

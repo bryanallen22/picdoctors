@@ -8,8 +8,17 @@
 {% endblock %}
 
 {% block main %}
-<div class='row'>
-  <h1>Howdy ho</h1>
+<div class='row span9'>
+  <h2>Oops! You've started two separate sets of pictures!</h2>
+  <p class="lead span7">
+    It looks like you already had a previous batch of {{ older_pics|length }}
+    pictures started {{ older_date_str }}. What would you like to do?
+  </p>
+</div>
+
+<div class='row span6 offset2'>
+  <button id='delete' class='btn btn-primary btn-large'>Delete them</button>
+  <button id='merge' class='btn btn-primary btn-large'>Add them to my current pics</button>
 </div>
 {% endblock %}
 
