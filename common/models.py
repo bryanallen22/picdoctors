@@ -287,6 +287,10 @@ class Pic(DeleteMixin):
             result = []
         return simplejson.dumps(result)
 
+    @staticmethod
+    def get_group_pics(group):
+        return Pic.objects.filter(group=group)
+
 
 ################################################################################
 # Batch
@@ -321,7 +325,7 @@ class Batch(DeleteMixin):
     sequences_last_set   = models.DateTimeField(auto_now_add=True)
     
     def get_job_or_None(self):
-        job = get_object_or_None(Job, skaa_batch=self)
+        job = get_object_or_None(Job, batch=self)
         return job
     
     def kick_groups_modified(self):
@@ -475,10 +479,19 @@ class Group(models.Model):
     def get_doctor_pics(self):
         return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
 
+    def get_latest_doctor_pic(self):
+        return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
+
+
+    @staticmethod
+    def get_batch_groups(batch):
+        return Group.objects.filter(batch=batch)
+
+
     def __unicode__(self):
         return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked)
 
-
+    
 # Doc Pic Group allows us to keep track of all pictures uploaded 
 # by a group for a group of pics from the user
 class DocPicGroup(DeleteMixin):
@@ -516,9 +529,8 @@ class Job(DeleteMixin):
     updated                 = models.DateTimeField(auto_now=True)
 
     #Never blank, no batch = no job. related_name since Batch already has a FK
-    skaa_batch              = models.ForeignKey(Batch, 
-                                                related_name='skaa_batch', 
-                                                db_index=True)
+    batch              = models.ForeignKey(Batch, 
+                                           db_index=True)
     skaa                    = models.ForeignKey(UserProfile, 
                                                 related_name='job_owner')
     doctor                  = models.ForeignKey(UserProfile, 
@@ -554,17 +566,28 @@ class Job(DeleteMixin):
         return out
 
 
-class CommunicationJob(DeleteMixin):
-    job           = models.ForeignKey(Job)
-    
-class CommunicationGroup(DeleteMixin):
-    group         = models.ForeignKey(Group)
+class BaseMessage(DeleteMixin):
+    commentor               = models.ForeignKey(UserProfile)
+    #Actual Message
+    message                 = models.TextField(blank=True)
+    #Convenient time info
+    created                 = models.DateTimeField(auto_now_add=True)
+    updated                 = models.DateTimeField(auto_now=True)
+    #Convenient info for making new messages pop out
+    skaa_viewed             = models.BooleanField(default=False)
+    doctor_viewed           = models.BooleanField(default=False)
 
-class CommunicationJobMessage(DeleteMixin):
-    communication_job       = models.ForeignKey(CommunicationJob)
-    message                 = models.TextField(blank=True)
+class JobMessage(BaseMessage):
+    job                     = models.ForeignKey(Job)
+
+    @staticmethod
+    def get_messages(job):
+        return JobMessage.objects.filter(job=job).order_by('created')
         
-class CommunicationGroupMessage(DeleteMixin):
-    communication_group     = models.ForeignKey(CommunicationGroup)
-    message                 = models.TextField(blank=True)
-        
+class GroupMessage(BaseMessage):
+    group                   = models.ForeignKey(Group)
+
+    # IO include the job #, and then filter by job, then group later
+    @staticmethod
+    def get_messages(group):
+        return GroupMessage.objects.filter(group=group).order_by('created')

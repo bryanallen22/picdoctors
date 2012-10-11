@@ -81,7 +81,7 @@ def get_job_infos(cur_page_jobs, action_generator, request):
         job_inf.job_id = job.id
         job_inf.status = job.get_status_display()
         job_inf.doctor_exists = job.doctor is not None
-        batch = job.skaa_batch
+        batch = job.batch
         job_inf.dynamic_actions = action_generator(job, request)
 
         if job_inf.doctor_exists:
@@ -116,7 +116,7 @@ def generate_skaa_actions(job, request):
     #ret.append(i_like_pie)
     #ret.append(u_like_pie)
     #TODO is doctor?
-    view_job_url= reverse('markup_batch', args=[job.skaa_batch.id, 1])
+    view_job_url= reverse('markup_batch', args=[job.batch.id, 1])
     view_job = DynamicAction('View Job', view_job_url, True)
     
     if job.status == Job.USER_SUBMITTED:
@@ -167,7 +167,7 @@ def create_job(request, batch, price_in_cents):
     price = price_in_cents/100
     if batch is not None:
         j = Job(skaa=request.user.get_profile(),
-                skaa_batch=batch, 
+                batch=batch, 
                 price = price, 
                 status=Job.USER_SUBMITTED)
         j.save()       

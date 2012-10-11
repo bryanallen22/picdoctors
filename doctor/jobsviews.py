@@ -68,7 +68,7 @@ def generate_doctor_actions(job, request):
     #boring always created actions for populating below
     #TODO redirect to contact page
     contact = DynamicAction('Contact User', '/', True)
-    work_job_url= reverse('markup_batch', args=[job.skaa_batch.id, 1])
+    work_job_url= reverse('markup_batch', args=[job.batch.id, 1])
     work_job = DynamicAction('Work On Job', work_job_url, redirect_url)
 
     complete_job = DynamicAction('Mark as Completed', '/mark_job_completed/')

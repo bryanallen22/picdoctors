@@ -44,7 +44,7 @@ def belongs_on_this_markup_page(request, batch_id, sequence):
     if profile == b.userprofile:
         return True
 
-    j = get_object_or_None(Job, skaa_batch=batch_id)
+    j = get_object_or_None(Job, batch=batch_id)
 
     #is doctor of job
     if j.doctor == profile:

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+  <h1>Job # 123122312</h1>
+</div>
+<div class='row'>
+  <div class='span3'>
+    user picture carousel
+  </div>
+  <div class='span3'>
+    doctor latest picture
+  </div>
+  <div class='span6'>
+    comments
+  </div>
+</div>
+<div class='row'>
+  <div class='span3'>
+    user picture carousel
+  </div>
+  <div class='span3'>
+    doctor latest picture
+  </div>
+  <div class='span6'>
+    comments
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+{% endblock %}
+
