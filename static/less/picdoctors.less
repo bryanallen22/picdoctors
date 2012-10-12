@@ -300,14 +300,6 @@
     text-align:left;
     //force row height big enough to contain the pic carousel and max pic size
     height:80px;
-    .carousel_no_bottom_margin{
-      margin-bottom:0px;
-    }
-    // force the pic carousel to a max pic size so we don't have weird drawing issues
-    
-    .pic_carousel{
-      height:78px;
-    }
   }
   .alert_section
   {
@@ -338,6 +330,29 @@
     color:#B94A48;
   }
 }
+
+.carousel_no_bottom_margin{
+  margin-bottom:0px;
+}
+// force the pic carousel to a max pic size so we don't have weird drawing issues
+    
+.pic_carousel{
+  height:78px;
+}
+/*****************************
+  Contact page
+******************************/
+.message_input{
+    width:100%;
+    resize:none;
+    overflow:auto;
+}
+
+// force the message row to be at least 80 px
+.message_row{
+    min-height:80px;
+}
+
 
 /*****************************
   Set price page

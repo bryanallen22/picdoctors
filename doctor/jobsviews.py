@@ -5,6 +5,7 @@ from django.utils import simplejson
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from common.models import Job 
 from common.models import Batch
 from common.models import Group
@@ -22,13 +23,13 @@ from skaa.jobsviews import get_job_infos, get_pagination_info, JobInfo, DynamicA
 @render_to('doctor_jobs.html')
 def doc_job_page(request, page=1):
     jobs = None
-    if request.user.is_authenticated():
+    profile = get_profile_or_None(request)
+    if profile and profile.is_doctor:
 #        new_jobs = Job.objects.filter(doctor=None)
-        doc_jobs = Job.objects.filter(doctor=request.user.get_profile())
+        doc_jobs = Job.objects.filter(doctor=profile)
         jobs = doc_jobs
     else:
-        #TODO they shouldn't ever get here based on future permissions
-        jobs = []
+        return redirect('/')
 
     page_info = get_pagination_info(jobs, page)    
     pager = page_info['pager']
@@ -44,15 +45,13 @@ def doc_job_page(request, page=1):
 @login_required
 @render_to('doctor_jobs.html')
 def new_job_page(request, page=1):
-    #TODO implement paging
     jobs = None
-    if request.user.is_authenticated():
+    profile = get_profile_or_None(request)
+    if profile and profile.is_doctor:
         jobs = Job.objects.filter(doctor__isnull=True)
     else:
-        #TODO they shouldn't ever get here based on future permissions
-        jobs = []
+        return redirect('/')
 
-    #TODO fill in paging instead of 1
     page_info = get_pagination_info(jobs, page)    
     pager = page_info['pager']
     cur_page = page_info['cur_page']
@@ -67,7 +66,7 @@ def generate_doctor_actions(job, request):
     redirect_url = True
     #boring always created actions for populating below
     #TODO redirect to contact page
-    contact = DynamicAction('Contact User', '/', True)
+    contact = DynamicAction('Contact User', reverse('contact', args=[job.id]), True)
     work_job_url= reverse('markup_batch', args=[job.batch.id, 1])
     work_job = DynamicAction('Work On Job', work_job_url, redirect_url)
 

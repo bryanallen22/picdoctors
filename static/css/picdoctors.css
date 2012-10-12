@@ -271,12 +271,6 @@
   text-align: left;
   height: 80px;
 }
-.job_page .job_row .carousel_no_bottom_margin {
-  margin-bottom: 0px;
-}
-.job_page .job_row .pic_carousel {
-  height: 78px;
-}
 .job_page .alert_section {
   background-color: red;
   border: black solid 2px;
@@ -302,6 +296,23 @@
 }
 .job_page .text-error {
   color: #B94A48;
+}
+.carousel_no_bottom_margin {
+  margin-bottom: 0px;
+}
+.pic_carousel {
+  height: 78px;
+}
+/*****************************
+  Contact page
+******************************/
+.message_input {
+  width: 100%;
+  resize: none;
+  overflow: auto;
+}
+.message_row {
+  min-height: 80px;
 }
 /*****************************
   Set price page

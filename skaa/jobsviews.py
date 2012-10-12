@@ -108,7 +108,7 @@ def generate_skaa_actions(job, request):
     ret = []
 
     #boring always created actions for populating below
-    contact = DynamicAction('Contact Doctor', 'contact_job_url')
+    contact = DynamicAction('Contact Doctor', reverse('contact', args=[job.id]), True)
 
     #TODO remove pie, this is for fun and testing
     #i_like_pie = DynamicAction('I like Pie', 'i_like_pie')

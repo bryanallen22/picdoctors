@@ -644,6 +644,11 @@ $(function(){
 
   // Finally, we kick things off by creating the **App**.
   var App = new AppView;
+
+  //Auto submit form when they've chosen a file
+  $('#doc_file').change(function(){ $('form').submit() } );
+
+
   //lets do some read_only stuff (this value is set in the template)
   if(readonly)
   {
@@ -651,6 +656,8 @@ $(function(){
     App.undelegateEvents();
   }
 
+  
+  //fun arrow keys to shift from one page to the next
   function go_previous_next(e) { 
     if(e.originalTarget && e.originalTarget.type=="textarea") 
       return;

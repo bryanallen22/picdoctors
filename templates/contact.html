@@ -12,31 +12,61 @@
   <h1>Job # 123122312</h1>
 </div>
 <div class='row'>
-  <div class='span3'>
+  <div class='span2'>
     user picture carousel
   </div>
-  <div class='span3'>
+  <div class='span2'>
     doctor latest picture
   </div>
-  <div class='span6'>
+  <div class='span8'>
     comments
   </div>
 </div>
-<div class='row'>
-  <div class='span3'>
-    user picture carousel
+{% for group in group_messages %}
+
+<div class='row message_row'>
+  <div class='span2'>
+    <div id="myCarousel" class="carousel slide carousel_no_bottom_margin">
+      <!-- Carousel items -->
+      <div class="carousel-inner pic_carousel">
+        {% for pic in group.user_pics %}
+        <div class="item"> 
+          <img src="{{ pic.get_thumb_url }}" class="pic_carousel" alt="">
+        </div>
+        {% endfor %}
+      </div>
+    </div>
   </div>
-  <div class='span3'>
-    doctor latest picture
+  <div class='span2'>
+    {% if group.doc_pic %}
+    <img src="{{ group.doc_pic.get_thumb_url }}" class="" alt="">
+    {% endif %}
+    &nbsp;
   </div>
-  <div class='span6'>
-    comments
+  <div class='span8 contact_arena'>
+    <div class='messages_arena'>
+      {% for message in group.messages %}
+      <div class='row'>
+        {{message.commentor.user.username}} ---- {{message.message}} ---- {{message.date}}
+      </div>
+      {% endfor %}
+    </div>
+    <div class='row'>
+      <textarea class='message_input autosize-textarea' group_id='{{ group.group_id }}' job_id='{{job_id}}' ></textarea>
+    </div>
   </div>
 </div>
+
+{% endfor %}
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
-    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
+<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}js/json2.js"></script>
+<script src="{{ STATIC_URL }}js/underscore.js"></script>
+<script src="{{ STATIC_URL }}js/backbone.js"></script>
+<script src="{{ STATIC_URL }}js/contact.js"></script>
+<script src="{{ STATIC_URL }}js/shared.js"></script>
 {% endblock %}
 

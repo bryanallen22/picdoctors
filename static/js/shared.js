@@ -1,4 +1,5 @@
 
+
   function textAreaResize (text) {
     if(text.srcElement){
       //this is for when resize is called directly
@@ -30,11 +31,15 @@
   }
 
 $(function(){
-
+  // set up autosize-textareas
   var text = $('.autosize-textarea');
   
   text.each(function(){
     joinAutoSize(this);
   });
+
+  //start up any carousels
+  $('.carousel').carousel('next');
+  $('.carousel').carousel();
   
 });

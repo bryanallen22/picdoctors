@@ -34,6 +34,7 @@ from annoying.functions import get_object_or_None
 # Don't show deleted objects
 ################################################################################
 class MixinManager(models.Manager):    
+
     def get_query_set(self):
         try:
             return self.model.MixinQuerySet(self.model).filter(deleted=False)
@@ -47,8 +48,10 @@ class MixinManager(models.Manager):
 # Abstract class. Add things to admin, use MixinManager
 ################################################################################
 class BaseMixin(models.Model):
-    admin = models.Manager()
+    admin   = models.Manager()
     objects = MixinManager()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     class MixinQuerySet(QuerySet):
 
@@ -158,11 +161,8 @@ def pic_thumbnails_path(instance, filename):
 
 class Pic(DeleteMixin):
     batch                = models.ForeignKey('Batch', blank=True, null=True)
-
     uuid                 = models.CharField(max_length=32, blank=False,
                                             unique=True, db_index=True)
-    created              = models.DateTimeField(auto_now_add=True)
-    updated              = models.DateTimeField(auto_now=True)
     title                = models.CharField(max_length=60, blank=True, null=True)
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
     group                = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
@@ -313,8 +313,6 @@ class Batch(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
     userprofile          = models.ForeignKey(UserProfile, blank=True, 
                                              null=True, db_index=True)
-    created              = models.DateTimeField(auto_now_add=True)
-    updated              = models.DateTimeField(auto_now=True)
     description          = models.TextField(blank=True)
     num_groups           = models.IntegerField(blank=True, null=True, default=0)
     # This only becomes true after they've paid
@@ -498,8 +496,11 @@ class DocPicGroup(DeleteMixin):
     group           = models.ForeignKey(Group, related_name='doc_pic_group')
     pic             = models.ForeignKey(Pic)
     watermark_pic   = models.ForeignKey(Pic, related_name='watermark_pic')
-    created         = models.DateTimeField(auto_now_add=True)
-    updated         = models.DateTimeField(auto_now=True)
+
+    #I can see me setting a value that flips this from watermark pic to pic
+    def get_pic(self):
+        #if accepted self.pic blah blah blah
+        return self.watermark_pic
 
 
 # Create your models here.
@@ -525,8 +526,6 @@ class Job(DeleteMixin):
         (USER_REQUESTS_MODIFICATION, 'User Has Requested Some Modification'),
         (USER_REJECTED, 'User Has Rejected Work'),
     )
-    created                 = models.DateTimeField(auto_now_add=True)
-    updated                 = models.DateTimeField(auto_now=True)
 
     #Never blank, no batch = no job. related_name since Batch already has a FK
     batch              = models.ForeignKey(Batch, 
@@ -553,6 +552,11 @@ class Job(DeleteMixin):
                                                choices=STATUS_CHOICES, 
                                                default=USER_SUBMITTED)
     
+    def is_part_of(self, profile):
+        if not profile:
+            return False
+        return self.skaa == profile or self.doctor == profile
+
     def __unicode__(self):
         out = "Owner: " + self.skaa.user.username
         out += " -- Doctor: "
@@ -570,9 +574,6 @@ class BaseMessage(DeleteMixin):
     commentor               = models.ForeignKey(UserProfile)
     #Actual Message
     message                 = models.TextField(blank=True)
-    #Convenient time info
-    created                 = models.DateTimeField(auto_now_add=True)
-    updated                 = models.DateTimeField(auto_now=True)
     #Convenient info for making new messages pop out
     skaa_viewed             = models.BooleanField(default=False)
     doctor_viewed           = models.BooleanField(default=False)

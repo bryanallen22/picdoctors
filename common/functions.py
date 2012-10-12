@@ -7,7 +7,7 @@ def get_profile_or_None(request):
     if request.user.is_authenticated():
         return request.user.get_profile()
     return None
-    
+   
 def get_time_string(prev_date):
     """
     Returns a user friendly string saying how long ago prev_date occurred.
