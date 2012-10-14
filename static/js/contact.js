@@ -20,6 +20,7 @@ $(function(){
         message   : '',
         created   : null,
         commentor : '',
+        unseen    : '',
       };
     },
     
@@ -52,6 +53,7 @@ $(function(){
           message   : this.model.get('message'),
           created   : this.model.get('created'),
           commentor : this.model.get('commentor'),
+          unseen    : this.model.get('unseen'),
         }
       ));
     }
@@ -90,8 +92,9 @@ $(function(){
             job_id    :       job_id,
             group_id  :       group_id,
             message   :       message,
-            created   :       '',
+            created   :       'Less than a minute ago',
             commentor :       username,
+            unseen    :       'unseen'
           }
         );
         src.val('');

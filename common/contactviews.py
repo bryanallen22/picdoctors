@@ -20,6 +20,7 @@ class Message():
         self.commentor = None
         self.message = ''
         self.created = ''
+        self.unseen = ''
 
 
 
@@ -35,7 +36,7 @@ class PicComment():
 
 # still haven't tested it, the essential hope is the shared model
 # will allow me to just send it in here and I can suck info out
-def prep_messages(base_messages):
+def prep_messages(base_messages, profile, job):
     messages = []
     for msg in base_messages:
         message = Message()
@@ -43,6 +44,16 @@ def prep_messages(base_messages):
         message.message = msg.message
         message.created = get_time_string(msg.created)
         messages.append(message.__dict__)
+        if msg.skaa_viewed == False and job.skaa == profile:
+            message.unseen = 'unseen'
+            msg.skaa_viewed = True
+            msg.save()
+
+        if msg.doctor_viewed == False and job.doctor == profile:
+            message.unseen = 'unseen'
+            msg.doctor_viewed = True
+            msg.save()
+
 
     return simplejson.dumps(messages)
 
@@ -64,7 +75,7 @@ def contact(request, job_id):
     #############################
     #############################
 
-    job_messages = prep_messages(JobMessage.get_messages(job))
+    job_messages = prep_messages(JobMessage.get_messages(job), profile, job)
 
     groups = Group.get_batch_groups(job.batch)
     groupings = []
@@ -76,39 +87,11 @@ def contact(request, job_id):
         if len(docPicGroup) > 0:
             docPicGroup = docPicGroup[0]
             picco.doc_pic = docPicGroup.get_pic()
-        picco.messages = prep_messages(GroupMessage.get_messages(group))
+        picco.messages = prep_messages(GroupMessage.get_messages(group), profile, job)
         groupings.append(picco)
 
 
     return {'job_id': job.id, 'job_messages' : job_messages, 'groupings' : groupings}
-
-@login_required
-def post_message(request):
-    data = simplejson.loads(request.body)
-    job_id = int(data['job_id'])
-    group_id = int(data['group_id'])
-    message = data['message']
-
-    message = message.strip()
-    if message == '':
-        return {}
-    if not job_id:
-        return {}
-
-    job = get_object_or_None(Job, id=job_id)
-    profile = get_profile_or_None(request)
-
-    if job and profile and job.is_part_of(profile):
-        group = get_object_or_None(Group, id=group_id)
-        g = GroupMessage()
-        g.commentor = profile
-        g.message = message
-        g.group = group
-        g.save()
-
-    result = {}
-    response_data = simplejson.dumps(result)
-    return HttpResponse(response_data, mimetype='application/json')
 
 def can_add_message(request):
     return True
@@ -136,6 +119,10 @@ def message_handler(request):
 
             msg.message = data['message']
             msg.commentor = profile
+            if job.skaa == profile:
+                msg.skaa_viewed = True
+            elif job.doctor == profile:
+                msg.doctor_viewed = True
             msg.save()
             
 

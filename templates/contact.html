@@ -9,7 +9,7 @@
 
 {% block main %}
 <div class='row'>
-  <h1>Job # 123122312</h1>
+  <h1>Job # {{job_id|stringformat:"08d" }}</h1>
 </div>
 <div class='row'>
   <div class='span12 contact_arena'>
@@ -70,7 +70,10 @@
 <script src="{{ STATIC_URL }}js/contact.js"></script>
 <script src="{{ STATIC_URL }}js/shared.js"></script>
 <script type="text/template" id="message_template">
-  <%= commentor %> says <%= message %>
+  <div class='message_message'><span class='<%= unseen%>'><%= message %></span></div>
+  <div class='message_commentor'><%= commentor %> </div><div class='message_created'><%=created%></div>
+
+  <div style='clear:both'></div>
 </script>
 {% endblock %}
 

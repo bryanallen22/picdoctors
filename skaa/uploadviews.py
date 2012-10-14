@@ -78,7 +78,7 @@ def has_doc_upload_access(request):
     if group is None:
         return False
 
-    job = get_object_or_None(Job, skaa_batch=group.batch.id)
+    job = get_object_or_None(Job, batch=group.batch.id)
 
     if job is None:
         return False
