@@ -17,10 +17,11 @@ import datetime
 
 class Message():
     def __init__(self):
-        self.id = -1
         self.commentor = None
         self.message = ''
-        self.date = ''
+        self.created = ''
+
+
 
 class PicComment():
     def __init__(self):
@@ -29,19 +30,21 @@ class PicComment():
         self.messages = []
         self.group_id = -1
 
+
+
+
 # still haven't tested it, the essential hope is the shared model
 # will allow me to just send it in here and I can suck info out
 def prep_messages(base_messages):
     messages = []
     for msg in base_messages:
         message = Message()
-        message.id = msg.id
-        message.commentor = msg.commentor
+        message.commentor = msg.commentor.user.username
         message.message = msg.message
-        message.date = get_time_string(msg.created)
-        messages.append(message)
+        message.created = get_time_string(msg.created)
+        messages.append(message.__dict__)
 
-    return messages
+    return simplejson.dumps(messages)
 
 @login_required
 @render_to('contact.html')
@@ -64,7 +67,7 @@ def contact(request, job_id):
     job_messages = prep_messages(JobMessage.get_messages(job))
 
     groups = Group.get_batch_groups(job.batch)
-    group_messages = []
+    groupings = []
     for group in groups:
         picco = PicComment()
         picco.user_pics = Pic.get_group_pics(group)
@@ -74,10 +77,10 @@ def contact(request, job_id):
             docPicGroup = docPicGroup[0]
             picco.doc_pic = docPicGroup.get_pic()
         picco.messages = prep_messages(GroupMessage.get_messages(group))
-        group_messages.append(picco)
+        groupings.append(picco)
 
 
-    return {'job_id': job.id, 'job_messages' : job_messages, 'group_messages' : group_messages}
+    return {'job_id': job.id, 'job_messages' : job_messages, 'groupings' : groupings}
 
 @login_required
 def post_message(request):
@@ -107,3 +110,29 @@ def post_message(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
+def can_add_message(request):
+    return True
+
+def message_handler(request):
+    # POST /markups_handler/ -- create a new markup
+    result = {}
+    if request.method == 'POST':
+        if can_add_message(request):
+            data = simplejson.loads(request.body)
+            profile = get_profile_or_None(request)
+            msg = None
+            group_val = data['group_id'].strip()
+            if group_val != '':
+                group = get_object_or_None(Group, id=int(group_val))
+                msg = GroupMessage()
+                msg.group = group
+
+            msg.message = data['message']
+            msg.commentor = profile
+            msg.save()
+            
+
+
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')

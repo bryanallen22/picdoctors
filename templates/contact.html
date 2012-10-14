@@ -22,9 +22,9 @@
     comments
   </div>
 </div>
-{% for group in group_messages %}
+{% for group in groupings %}
 
-<div class='row message_row'>
+<div class='row grouping_row'>
   <div class='span2'>
     <div id="myCarousel" class="carousel slide carousel_no_bottom_margin">
       <!-- Carousel items -->
@@ -44,15 +44,14 @@
     &nbsp;
   </div>
   <div class='span8 contact_arena'>
-    <div class='messages_arena'>
-      {% for message in group.messages %}
-      <div class='row'>
-        {{message.commentor.user.username}} ---- {{message.message}} ---- {{message.date}}
-      </div>
-      {% endfor %}
-    </div>
+    <script type='application/json' class='previous_messages'>
+      {{group.messages|safe}}
+    </script>
     <div class='row'>
-      <textarea class='message_input autosize-textarea' group_id='{{ group.group_id }}' job_id='{{job_id}}' ></textarea>
+      <div class='message_arena'></div>
+      <div class='message_input_arena'>
+        <textarea class='message_input autosize-textarea' username='{{ request.user.username }}' group_id='{{ group.group_id }}' job_id='{{job_id}}' ></textarea>
+      </div>
     </div>
   </div>
 </div>
@@ -68,5 +67,8 @@
 <script src="{{ STATIC_URL }}js/backbone.js"></script>
 <script src="{{ STATIC_URL }}js/contact.js"></script>
 <script src="{{ STATIC_URL }}js/shared.js"></script>
+<script type="text/template" id="message_template">
+  <%= commentor %> says <%= message %>
+</script>
 {% endblock %}
 

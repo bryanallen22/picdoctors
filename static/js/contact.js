@@ -12,11 +12,14 @@ $(function(){
 
   var Message = Backbone.Model.extend({
     // Default attributes for the Message Model
+    // these must match server side for reset to work (or so it appears)
     defaults: function() {
       return {
-        message:      '',
-        created:      null,
-        commentor:    '',
+        group_id  : -1,
+        job_id    : -1,
+        message   : '',
+        created   : null,
+        commentor : '',
       };
     },
     
@@ -29,6 +32,75 @@ $(function(){
 
   });
 
+  var MessageView = Backbone.View.extend({
+    
+    className: 'message_row',
+
+    template:  _.template($('#message_template').html().trim()),
+
+    initialize: function(){
+      this.render();
+    },
+
+    render: function(){
+      // Compile the template using underscore
+      
+      this.$el.html(this.template(
+        {
+          group_id  : this.model.get('group_id'),
+          job_id    : this.model.get('job_id'),
+          message   : this.model.get('message'),
+          created   : this.model.get('created'),
+          commentor : this.model.get('commentor'),
+        }
+      ));
+    }
+
+
+  });
+  
+  var MessageInput = Backbone.View.extend({
+    
+    events: {
+      'keypress    .message_input': 'checkKey',
+    },
+
+    initialize: function(){
+    },
+
+    render: function(){
+      // Compile the template using underscore
+    },
+
+    checkKey: function(ev){
+      if(ev.which == 13){
+        var src = $(ev.srcElement);
+        this.postMessage.call(this, src);
+      }
+    },
+
+    postMessage: function(src){
+        src.attr('disabled', 'disabled');
+        var group_id = src.attr('group_id');
+        var job_id = src.attr('job_id');
+        var username = src.attr('username');
+        var message = src.val();
+        this.cur_message = this.message_list.create(
+          {
+            job_id    :       job_id,
+            group_id  :       group_id,
+            message   :       message,
+            created   :       '',
+            commentor :       username,
+          }
+        );
+        src.val('');
+        src.removeAttr('disabled');
+    },
+
+  });
+
+
   // A collection of Message elements
   var MessageList = Backbone.Collection.extend({
 
@@ -40,68 +112,44 @@ $(function(){
 
     initialize: function() {
       this.container = null; // Will be set to contact_arena element
+      this.bind('add', this.newMessage, this);
+      this.bind('reset', this.setup, this);
+    },
+
+
+    newMessage: function (message){
+      var view = new MessageView( { model: message } );
+      this.container.append(view.el);
+    },
+
+    setup: function(){
+      var that = this;
+      this.each( function(el) {
+        that.newMessage.call(that, el);
+      });
+
     },
 
   });
 
-  $(".contact_arena").each( function(){
-    var ml = new MessageList();
-    ml.container = this;
+  var MessageGrouping = Backbone.View.extend({
+    initialize: function(){
+      console.log('creating message group');
+      this.message_list = new MessageList();
+      this.message_list.container = this.$el.find('.message_arena');
+      var input = this.$el.find('.message_input_arena');
+      this.message_input = new MessageInput({el: input });
+      this.message_input.message_list = this.message_list;
+      var prev = this.$el.find('.previous_messages').html();
+      this.message_list.reset( jQuery.parseJSON( prev ) );
+      
+    },
   });
 
-  
-  $(".message_input").each( function(){
-    el = this;
-    $(this).keypress(postMessage);
-
-  });  
-
-  function postMessage(ev){
-    if(ev.which == 13){
-      var src = $(ev.srcElement);
-      var message = src.val();
-      var group_id = src.attr('group_id');
-      var job_id = src.attr('job_id');
-      var json_data = JSON.stringify(
-        {
-          "job_id" : job_id,
-          "group_id" : group_id, 
-          "message" : message,
-        }
-      );
-      src.attr('disabled', 'disabled');
-      $.ajax({
-        headers: {
-          "X-CSRFToken":CSRF_TOKEN
-        },
-        type: 'POST',
-        url:  '/post_message/',
-        data: json_data,
-        success : function(data, textStatus) {
-          console.log(data);
-          console.log(textStatus);
-          create_message(src, message);
-          src.val('');
-          src.removeAttr('disabled');
-        },
-        failure : function(jqXHR, textStatus, errorThrown) {
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
-          src.removeAttr('disabled');
-        }
-
-      });
-    }
-  }
-
-  function create_message(src, info) {
-    var arena = src.closest('.contact_arena').find('.messages_arena');
-    arena.append(info);
-  }
-
-
-
-
+  $(".contact_arena").each( function(){
+    var mg = new MessageGrouping({el:this});
+    mg.container = this;
+    //message_lists.push(mg);
+  });
 
 });
