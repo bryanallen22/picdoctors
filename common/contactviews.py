@@ -122,10 +122,17 @@ def message_handler(request):
             profile = get_profile_or_None(request)
             msg = None
             group_val = data['group_id'].strip()
+            job_val = data['job_id'].strip()
+
+            job = get_object_or_None(Job, id=int(job_val))
+
             if group_val != '':
                 group = get_object_or_None(Group, id=int(group_val))
                 msg = GroupMessage()
                 msg.group = group
+            else:
+                msg = JobMessage()
+                msg.job = job
 
             msg.message = data['message']
             msg.commentor = profile

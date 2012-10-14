@@ -12,14 +12,16 @@
   <h1>Job # 123122312</h1>
 </div>
 <div class='row'>
-  <div class='span2'>
-    user picture carousel
-  </div>
-  <div class='span2'>
-    doctor latest picture
-  </div>
-  <div class='span8'>
-    comments
+  <div class='span12 contact_arena'>
+    <script type='application/json' class='previous_messages'>
+      {{job_messages|safe}}
+    </script>
+    <div class='row'>
+      <div class='message_arena'></div>
+      <div class='message_input_arena'>
+        <textarea class='message_input autosize-textarea' username='{{ request.user.username }}' group_id='' job_id='{{job_id}}' ></textarea>
+      </div>
+    </div>
   </div>
 </div>
 {% for group in groupings %}
