@@ -65,6 +65,8 @@ $(function(){
     
     events: {
       'keypress    .message_input': 'checkKey',
+      'blur      .message_input': 'onblur',
+      'focus     .message_input': 'onfocus',
     },
 
     initialize: function(){
@@ -77,9 +79,23 @@ $(function(){
     checkKey: function(ev){
       if(ev.which == 13){
         var src = $(ev.srcElement);
-        this.postMessage.call(this, src);
+        if(src.val().trim()!='')
+          this.postMessage.call(this, src);
       }
     },
+
+    onblur: function(el){
+      el = el.srcElement;
+      if(el.value=='') 
+        el.value='Write your message here';
+    },
+
+    onfocus: function(el){
+      el = el.srcElement;
+      if(el.value=='Write your message here') 
+        el.value='';
+    },
+
 
     postMessage: function(src){
         src.attr('disabled', 'disabled');

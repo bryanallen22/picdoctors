@@ -100,8 +100,9 @@ def message_handler(request):
     # POST /markups_handler/ -- create a new markup
     result = {}
     if request.method == 'POST':
-        if can_add_message(request):
-            data = simplejson.loads(request.body)
+        data = simplejson.loads(request.body)
+        message = data['message'].strip()
+        if can_add_message(request) and message != '':
             profile = get_profile_or_None(request)
             msg = None
             group_val = data['group_id'].strip()
@@ -117,7 +118,7 @@ def message_handler(request):
                 msg = JobMessage()
                 msg.job = job
 
-            msg.message = data['message']
+            msg.message = message
             msg.commentor = profile
             if job.skaa == profile:
                 msg.skaa_viewed = True

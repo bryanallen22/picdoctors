@@ -34,11 +34,23 @@ def get_time_string(prev_date):
     # Created in the last hour?
     elif prev_date > hour_ago:
         delta = now - prev_date
-        ret = "%s minutes ago" % ( int(round(delta.seconds / 60.0)) )
+        minutes = int(round(delta.seconds / 60.0)) 
+        if minutes == 0:
+            ret = "Less than a minute ago"
+        elif minutes == 1:
+            ret = "%s minute ago" % ( minutes )
+        else:
+            ret = "%s minutes ago" % ( minutes )
+
     # Created in the last day?
     elif prev_date > yesterday:
         delta = now - prev_date
-        ret = "%s hours ago" % ( int(round(delta.seconds / 3600.0)) )
+        hours = int(round(delta.seconds / 3600.0)) 
+        if hours == 1:
+            ret = "%s hour ago" % ( hours )
+        else:
+            ret = "%s hours ago" % ( hours )
+
     # Created over a day ago
     else:
         ret = "on " + prev_date.strftime("%d %b %Y")
