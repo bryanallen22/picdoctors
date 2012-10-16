@@ -151,9 +151,13 @@ def generate_skaa_actions(job, request):
 
     return ret
 
-#TODO make sure you aren't offended by the idea of doing all of the pics, maybe down to top 3?
-#get all the pic thumbnails associated with a batch (we might drop this down to top 3 or something)
 def generate_pic_thumbs(filter_batch):
+    """
+    Get all the pic thumbnails associated with a batch
+
+    Returns an array of tuples like this:
+        (thumb_url, markup_url)
+    """
     ret = []
     pics = Pic.objects.filter(batch=filter_batch)
     for pic in pics:

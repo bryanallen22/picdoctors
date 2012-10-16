@@ -11,9 +11,31 @@
 <div class='row span9'>
   <h2>Oops! You've started two separate sets of pictures!</h2>
   <p class="lead span7">
-    It looks like you already had a previous batch of {{ older_pics|length }}
+    It looks like you already had a previous batch of {{ oldpic_thumbs|length }}
     pictures started {{ older_date_str }}. What would you like to do?
   </p>
+</div>
+
+<div class='row'>
+  <div id="merge_carousel" class="carousel slide offset3">
+    <!-- Carousel items -->
+    <div class="carousel-inner">
+        {% for pic in oldpic_thumbs %}
+          {% if forloop.first %}
+            <div class="active item merge_carousel_pic"> 
+          {% else %}
+            <div class="item merge_carousel_pic"> 
+          {% endif %}
+              <a href="{{pic.markup_url}}">
+                <img src="{{ pic.pic_url }}" alt="">
+              </a>
+            </div>
+        {% endfor %}
+    </div>
+    <!-- Carousel nav -->
+    <a class="carousel-control left" href="#merge_carousel" data-slide="prev">&lsaquo;</a>
+    <a class="carousel-control right" href="#merge_carousel" data-slide="next">&rsaquo;</a>
+  </div>
 </div>
 
 <div class='row span6 offset2'>
@@ -23,7 +45,12 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
-    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+  <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
+  <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+  <script>
+    $(function() {
+      $('.carousel').carousel( { interval: 2500 } );
+    });
+  </script>
 {% endblock %}
 

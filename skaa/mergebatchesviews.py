@@ -7,12 +7,25 @@ from common.models import Batch
 from common.models import Pic
 from common.functions import get_profile_or_None
 from common.functions import get_time_string
+from django.core.urlresolvers import reverse
 
+from collections import namedtuple
 import stripe
 
 import pdb
 import logging
 from datetime import datetime
+
+CarouselPic = namedtuple('CarouselPic', 'pic_url markup_url')
+
+def generate_carousel_imgs(filter_batch):
+    ret = []
+    pics = Pic.objects.filter(batch=filter_batch)
+    for pic in pics:
+        markup_url= reverse('markup_batch', args=[filter_batch.id, pic.group.sequence])
+        tup = CarouselPic(pic.get_thumb_url(), markup_url)
+        ret.append(tup)
+    return ret
 
 # This user has two unfinished batches. Normally, that shouldn't
 # be possible, but it can be done. Here's how:
@@ -51,12 +64,11 @@ def merge_batches(request):
     else:
         older_batch = batches[1]
 
-    older_pics = Pic.objects.filter(batch=older_batch)
-
+    oldpic_thumbs = generate_carousel_imgs(older_batch)
     older_date_str = get_time_string(older_batch.created)
     return {
-               'older_pics'     :  older_pics,
                'older_date_str' :  older_date_str,
+               'oldpic_thumbs'  :  oldpic_thumbs,
            }
 
 
