@@ -12,7 +12,6 @@ $(function(){
 
   var Message = Backbone.Model.extend({
     // Default attributes for the Message Model
-    // these must match server side for reset to work (or so it appears)
     defaults: function() {
       return {
         group_id  : -1,
@@ -65,8 +64,8 @@ $(function(){
     
     events: {
       'keypress    .message_input': 'checkKey',
-      'blur      .message_input': 'onblur',
-      'focus     .message_input': 'onfocus',
+      'blur        .message_input': 'onblur',
+      'focus       .message_input': 'onfocus',
     },
 
     initialize: function(){
@@ -78,20 +77,20 @@ $(function(){
 
     checkKey: function(ev){
       if(ev.which == 13){
-        var src = $(ev.srcElement);
+        var src = $(ev.target);
         if(src.val().trim()!='')
           this.postMessage.call(this, src);
       }
     },
 
     onblur: function(el){
-      el = el.srcElement;
+      el = el.target;
       if(el.value=='') 
         el.value='Write your message here';
     },
 
     onfocus: function(el){
-      el = el.srcElement;
+      el = el.target;
       if(el.value=='Write your message here') 
         el.value='';
     },
@@ -168,7 +167,6 @@ $(function(){
   $(".contact_arena").each( function(){
     var mg = new MessageGrouping({el:this});
     mg.container = this;
-    //message_lists.push(mg);
   });
 
 });

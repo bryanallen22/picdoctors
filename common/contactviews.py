@@ -97,7 +97,6 @@ def can_add_message(request):
     return True
 
 def message_handler(request):
-    # POST /markups_handler/ -- create a new markup
     result = {}
     if request.method == 'POST':
         data = simplejson.loads(request.body)

@@ -130,7 +130,6 @@ $(function(){
           }));
       setTimeout(function(){redirect_time(time_left, new_loc, view)}, 1000);
     }
-
   }
 
 
