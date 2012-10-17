@@ -38,10 +38,20 @@
   </div>
 </div>
 
-<div class='row span6 offset2'>
-  <button id='delete' class='btn btn-primary btn-large'>Delete them</button>
-  <button id='merge' class='btn btn-primary btn-large'>Add them to my current pics</button>
+<div class='row'>
+  <div class='span6 offset2'>
+    {% comment %}
+    <button id='delete' class='btn btn-primary btn-large'>Delete them</button>
+    <button id='merge' class='btn btn-primary btn-large'>Add them to my current pics</button>
+    {% endcomment %}
+    <form method="POST">
+      {% csrf_token %}
+      <input type="submit" name="delete" class='btn btn-large' value="Delete them" >
+      <input type="submit" name="merge"  class='btn btn-primary btn-large' value="Add them to my current pics">
+    </form>
+  </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}

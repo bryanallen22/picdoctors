@@ -1,6 +1,15 @@
+
+from django.core.exceptions import MultipleObjectsReturned
+from django.core.urlresolvers import reverse
+
+from common.models import Batch
+
 import logging
 from datetime import datetime, timedelta
+import urllib
+import urlparse
 
+import pdb
 
 def get_profile_or_None(request):
     """ Get the request user profile if they are logged in """
@@ -57,3 +66,17 @@ def get_time_string(prev_date):
 
     return ret
 
+def get_unfinished_batch(request):
+    batch = None
+    redirect_url = None
+    try:
+        batch = Batch.get_unfinished(request)
+        if not batch:
+            redirect_url = reverse('upload')
+    except MultipleObjectsReturned:
+        # Too many open unfinished batches. Resolve them.
+
+        redirect_url = '%s?next=%s' % (reverse('merge_batches'),
+                               urllib.quote( request.get_full_path() ));
+
+    return (batch, redirect_url)

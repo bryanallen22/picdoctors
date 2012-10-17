@@ -13,6 +13,7 @@ from annoying.functions import get_object_or_None
 
 from django.core.files.uploadedfile import UploadedFile
 
+from common.functions import get_unfinished_batch
 from common.models import Pic
 from common.models import Batch
 from common.models import Group
@@ -38,9 +39,15 @@ def pic_json(pic):
 
 @render_to('upload.html')
 def upload_page(request):
-    batch = Batch.get_unfinished(request)
+    batch, redirect_url = get_unfinished_batch(request)
     if not batch:
-        batch = Batch.create_batch(request)
+        if redirect_url == reverse('upload'):
+            # Don't redirect them, they are already here!
+            # Just make a batch, already!
+            batch = Batch.create_batch(request)
+        else:
+            return redirect( redirect_url )
+
     logging.info('batch.id is %d' % batch.id)
     pics = Pic.objects.filter( batch__exact=batch.id );
     return { "pics" : pics, "ungroupedId" :  ungroupedId }

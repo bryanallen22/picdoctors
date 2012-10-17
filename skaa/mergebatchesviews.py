@@ -8,6 +8,7 @@ from common.models import Pic
 from common.functions import get_profile_or_None
 from common.functions import get_time_string
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 
 from collections import namedtuple
 import stripe
@@ -22,7 +23,12 @@ def generate_carousel_imgs(filter_batch):
     ret = []
     pics = Pic.objects.filter(batch=filter_batch)
     for pic in pics:
-        markup_url= reverse('markup_batch', args=[filter_batch.id, pic.group.sequence])
+        # So, this is unlikely to happen, but I'm a perfectionist. If they skip the markup
+        # page, pic.group will be None.
+        if pic.group:
+            markup_url = reverse('markup_batch', args=[filter_batch.id, pic.group.sequence])
+        else:
+            markup_url = reverse('markup')
         tup = CarouselPic(pic.get_thumb_url(), markup_url)
         ret.append(tup)
     return ret
@@ -40,9 +46,9 @@ def generate_carousel_imgs(filter_batch):
 @login_required
 @render_to('merge_batches.html')
 def merge_batches(request):
-    
     # Where do we send people who don't belong here?
     lost_person_redirect = '/'
+    bad_post_value = False
 
     user_profile = get_profile_or_None(request)
     if not user_profile:
@@ -61,14 +67,45 @@ def merge_batches(request):
 
     if batches[0].created < batches[1].created:
         older_batch = batches[0]
+        newer_batch = batches[1]
     else:
         older_batch = batches[1]
+        newer_batch = batches[0]
+    
+    if request.method== 'POST':
+        # Actually merge or delete the older batch
+        if 'delete' in request.POST.keys():
+            # Time to delete all the pics in that batch
+            # and the batch itself
+            pics = Pic.objects.filter(batch=older_batch)
+            for pic in pics:
+                pic.delete()
+            older_batch.delete()
+        elif 'merge' in request.POST.keys():
+            pics = Pic.objects.filter(batch=older_batch)
+            for pic in pics:
+                pic.batch = newer_batch
+                pic.save()
+            older_batch.delete()
+            newer_batch.kick_groups_modified()
+        else:
+            # Treat this 'POST' like a 'GET'
+            bad_post_value = True
 
-    oldpic_thumbs = generate_carousel_imgs(older_batch)
-    older_date_str = get_time_string(older_batch.created)
-    return {
-               'older_date_str' :  older_date_str,
-               'oldpic_thumbs'  :  oldpic_thumbs,
-           }
+        if request.GET['next']:
+            return redirect( request.GET['next'] )
+        else:
+            # No idea where to send them. Send them to upload page?
+            logging.error("Merge doesn't know where to redirect! %s %s" %  \
+                          (request.method, request.build_absolute_uri()))
+            return redirect( reverse('upload') )
 
+    elif request.method == 'GET' or bad_post_value:
+
+        oldpic_thumbs = generate_carousel_imgs(older_batch)
+        older_date_str = get_time_string(older_batch.created)
+        return {
+                   'older_date_str' :  older_date_str,
+                   'oldpic_thumbs'  :  oldpic_thumbs,
+               }
 

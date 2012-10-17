@@ -1,6 +1,5 @@
 # Create your views here.
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -9,6 +8,7 @@ from django.utils import simplejson
 from annoying.decorators import render_to
 
 from common.decorators import user_passes_test
+from common.functions import get_unfinished_batch
 from common.models import Batch
 from common.models import Group
 from common.models import Pic
@@ -54,13 +54,9 @@ def currency_to_cents(currency):
 def set_price(request):
     invalid_price = False
 
-    try:
-        batch = Batch.get_unfinished(request)
-        if not batch:
-            return redirect('upload')
-    except MultipleObjectsReturned:
-        # Too many open unfinished batches. Resolve them.
-        return redirect( reverse('merge_batches') );
+    batch, redirect_url = get_unfinished_batch(request)
+    if not batch:
+        return redirect(redirect_url)
 
     # We need valid sequences in this view. Set them. (This will fall through
     # if that's not necessary)

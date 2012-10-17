@@ -67,8 +67,11 @@ def markup_page_test(request, sequence):
 @render_to('markup.html')
 @passes_test(markup_page_test, 'upload')
 def markup_page(request, sequence):
-    batch_id = Batch.get_unfinished(request).id
-    return markup_page_batch(request, batch_id, sequence)
+    batch, redirect_url = get_unfinished_batch(request)
+    if not batch:
+        # Either send them to upload or merge
+        return redirect(redirect_url)
+    return markup_page_batch(request, batch.id, sequence)
 
 #markup page when we specify a batch_id
 @render_to('markup.html')

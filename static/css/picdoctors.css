@@ -352,12 +352,7 @@
 #merge_carousel {
   float: left;
 }
-#merge_carousel .carousel-inner {
-  width: 200px;
-}
 #merge_carousel .carousel-inner .merge_carousel_pic {
-  width: 200px;
-  height: 200px;
   margin-left: auto;
   margin-right: auto;
 }
