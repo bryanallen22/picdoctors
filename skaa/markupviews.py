@@ -14,6 +14,7 @@ from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
 from common.functions import get_profile_or_None
+from common.functions import get_unfinished_batch
 from models import Markup
 
 import pdb
