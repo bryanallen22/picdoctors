@@ -92,7 +92,7 @@ def merge_batches(request):
             # Treat this 'POST' like a 'GET'
             bad_post_value = True
 
-        if request.GET['next']:
+        if 'next' in request.GET:
             return redirect( request.GET['next'] )
         else:
             # No idea where to send them. Send them to upload page?
