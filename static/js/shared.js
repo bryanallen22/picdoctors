@@ -1,9 +1,15 @@
 
 
   function textAreaResize (text) {
-    if(text.srcElement){
-      //this is for when resize is called directly
-      text = text.srcElement;
+    if(text.target){
+      //for some reason chrome sends as event, ff sends the target item
+      text = text.target;
+    }
+
+    var isDisabled = true;
+
+    if($(text).attr('disabled')==undefined){
+      isDisabled = false;
     }
 
     if(text.value == '') {
@@ -12,7 +18,8 @@
     }
 
     text.style.height = 'auto';
-    text.style.height = text.scrollHeight+'px';
+    var adder = isDisabled ? -20 : 0;
+    text.style.height = (text.scrollHeight+adder) +'px';
   }
   /* get already changed text */
   function delayedResize () {

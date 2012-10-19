@@ -10,6 +10,11 @@ from annoying.functions import get_object_or_None
 from common.models import Job, Batch, Group, Pic
 from common.models import JobMessage, GroupMessage
 from common.functions import get_profile_or_None, get_time_string
+from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 
 import pdb
 import logging
@@ -124,9 +129,39 @@ def message_handler(request):
             elif job.doctor == profile:
                 msg.doctor_viewed = True
             msg.save()
-            
 
+            generate_message_email(job, profile, message)
 
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
+
+
+def generate_message_email(job, profile, message):
+    pdb.set_trace()
+    try:
+        from_whom = 'User'
+        to_email = job.doctor.user.email
+
+
+        if job.doctor == profile:
+            from_whom = 'Doctor'
+            other_user_email = job.skaa.user.email
+
+        subject = 'The ' + from_whom + ' commented on your job'
+        #Do I want to send the message to them, or make them go to the page?a
+        args = {'from_whom':from_whom, 'job_id':job.id} 
+        html_content = render_to_string('contact_email.html', args)
+                                        
+        
+        # this strips the html, so people will have the text
+        text_content = strip_tags(html_content) 
+        # create the email, and attach the HTML version as well.
+        msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', [to_email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+#        send_mail(subject, message , 'donotreply@picdoctors.com', [other_user_email], fail_silently=False)
+    except Exception as ex:
+        raise ex
+

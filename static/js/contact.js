@@ -59,6 +59,7 @@ $(function(){
 
 
   });
+  var hard_code_blank = 'Write your message here';
   
   var MessageInput = Backbone.View.extend({
     
@@ -83,15 +84,15 @@ $(function(){
       }
     },
 
-    onblur: function(el){
-      el = el.target;
+    onblur: function(ev){
+      var el = ev.target;
       if(el.value=='') 
-        el.value='Write your message here';
+        el.value=hard_code_blank;
     },
 
-    onfocus: function(el){
-      el = el.target;
-      if(el.value=='Write your message here') 
+    onfocus: function(ev){
+      var el = ev.target;
+      if(el.value==hard_code_blank) 
         el.value='';
     },
 
