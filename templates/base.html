@@ -51,12 +51,12 @@
               <li><a href="/doc_jobs">Doctors Start Here</a></li>
               {% else %}
                 {% if user.get_profile.is_doctor %}
-              <li><a href="/new_jobs">Available Jobs</a></li>
-              <li><a href="/doc_jobs">My Jobs</a></li>
+                  <li><a href="/new_jobs">Available Jobs</a></li>
+                  <li><a href="/doc_jobs">My Jobs</a></li>
                 {% else%}
-              <li><a href="/jobs">My Jobs</a></li>
+                  <li><a href="/jobs">My Jobs</a></li>
                 {% endif %}
-              <li><a href="/signout">Log Out ({{user.username }})</a></li>
+                <li><a href="/signout">Log Out ({{user.username }})</a></li>
               {% endif %}
             </ul>
           </div>

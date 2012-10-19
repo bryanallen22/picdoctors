@@ -135,7 +135,7 @@ def signin(request, usertype='user'):
                 # Session only good until browser closes
                 request.session.set_expiry(0)
 
-            if request.GET['next']:
+            if 'next' in request.GET:
                 return redirect( request.GET['next'] )
             else:
                 # No idea where to send them. Send them to the home page.
