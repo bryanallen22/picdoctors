@@ -8,7 +8,7 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
 from common.models import Job, Batch, Group, Pic
-from common.models import JobMessage, GroupMessage
+from messaging.models import JobMessage, GroupMessage
 from common.functions import get_profile_or_None, get_time_string
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string

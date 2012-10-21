@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils import simplejson
 
 from common.models import Pic
+from common.calculations import calculate_job_payout
 
 # info for a job row
 class JobInfo:
