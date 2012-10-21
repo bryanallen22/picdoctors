@@ -84,7 +84,7 @@ $(function(){
       case 'delay_redirect':
         delay_redirect(action.data);
         break;
-      case 'remove_job':
+      case 'remove_job_row':
         remove_row_by_job_id(action.data);
         break;
       default:
@@ -103,8 +103,13 @@ $(function(){
   }
 
   function delay_redirect(data){
-        continue_redirect = true;      
-        redirect_time(11, data.href, data.view);
+        continue_redirect = true;
+        //Build the button template only once, that way you can click the buttons
+        template = _.template( $('#redirect_buttons_template').html() );
+        $(".redirect_row_buttons").html( this.template( { }));
+
+        //Start the redirect loop
+        redirect_time(10.1, data.href, data.view);
   }
   
   continue_redirect = true;
@@ -112,6 +117,7 @@ $(function(){
   function redirect_time(time_left, new_loc, view){
     if(continue_redirect==false) {
       $(".redirect_row").html("");
+      $(".redirect_row_buttons").html("");
       return;
     }
     if(redirect_now){
@@ -120,15 +126,16 @@ $(function(){
     if(time_left<=0){
       location.href = new_loc;
     } else {
-      time_left--;
+      time_left = time_left - 0.1;
       template = _.template( $('#redirect_template').html() );
       //$(".redirect_row").text('You will automatically be redirected to ' + view + ' in ' + time_left + ' second(s)');
       $(".redirect_row").html( this.template(
           {
             view      : view,
-            time_left : time_left,
+            time_left : Math.round(time_left),
           }));
-      setTimeout(function(){redirect_time(time_left, new_loc, view)}, 1000);
+
+      setTimeout(function(){redirect_time(time_left, new_loc, view)}, 100);
     }
   }
 

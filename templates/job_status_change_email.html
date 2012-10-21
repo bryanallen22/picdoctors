@@ -1,0 +1,10 @@
+{% extends 'base_email.html' %}
+
+{% block main %}
+<h2> 
+  The status of the job #{{ job_id|stringformat:"08d" }} has changed. <br/>
+  Current state: {{ job_status }}<br/>
+  You can view view the page by clicking <a href='zombo.com'>here</a>
+</h2>
+{% endblock %}
+

@@ -646,8 +646,18 @@ $(function(){
   var App = new AppView;
 
   //Auto submit form when they've chosen a file
-  $('#doc_file').change(function(){ $('form').submit() } );
+  $('#doc_file').change(doc_upload);
 
+  function doc_upload() {
+    //call submit first, or screwing with the view breaks the upload
+    $('form').submit();
+    var button = $('#doc_file');
+    var parent = button.parent();
+    parent.addClass('disabled');
+    parent.text('Busy Uploading...');
+    button.css('cursor', 'default');
+    button.attr('disabled', 'disabled');
+  }
 
   //lets do some read_only stuff (this value is set in the template)
   if(readonly)
@@ -655,7 +665,6 @@ $(function(){
     $('.desc').each(function(){$(this).attr('readonly','readonly')});
     App.undelegateEvents();
   }
-
   
   //fun arrow keys to shift from one page to the next
   function go_previous_next(e) { 

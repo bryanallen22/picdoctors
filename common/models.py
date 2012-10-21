@@ -421,6 +421,7 @@ class Batch(DeleteMixin):
 
         return batch
 
+
     @staticmethod
     def get_unfinished(request):
         """
@@ -474,6 +475,9 @@ class Group(models.Model):
         doc.save()
         return doc
 
+    def has_doctor_pic(self):
+        return (DocPicGroup.objects.filter(group=self).count() > 0)
+
     def get_doctor_pics(self):
         return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
 
@@ -485,6 +489,9 @@ class Group(models.Model):
     def get_batch_groups(batch):
         return Group.objects.filter(batch=batch)
 
+    @staticmethod
+    def get_job_groups(job):
+        return Group.get_batch_groups(job.batch)
 
     def __unicode__(self):
         return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked)
@@ -556,6 +563,14 @@ class Job(DeleteMixin):
         if not profile:
             return False
         return self.skaa == profile or self.doctor == profile
+
+    def get_first_unfinished_group(self):
+        groups = Group.get_job_groups(self)
+        for group in groups:
+            if not group.has_doctor_pic():
+                return group
+
+        return None
 
     def __unicode__(self):
         out = "Owner: " + self.skaa.user.username

@@ -10,7 +10,6 @@ from annoying.functions import get_object_or_None
 from common.models import Job, Batch, Group, Pic
 from common.models import JobMessage, GroupMessage
 from common.functions import get_profile_or_None, get_time_string
-from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -138,7 +137,6 @@ def message_handler(request):
 
 
 def generate_message_email(job, profile, message):
-    pdb.set_trace()
     try:
         from_whom = 'User'
         to_email = job.doctor.user.email

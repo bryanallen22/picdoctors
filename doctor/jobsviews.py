@@ -13,9 +13,10 @@ from common.models import UserProfile
 from common.models import Pic
 from common.calculations import calculate_job_payout
 from common.functions import get_profile_or_None
-import pdb
 
-from skaa.jobsviews import get_job_infos, get_pagination_info, JobInfo, DynamicAction
+from common.jobs import get_job_infos, get_pagination_info, JobInfo, DynamicAction
+from common.jobs import Actions, Action, RedirectData
+from common.jobs import send_job_status_change
 
 
 #TODO @permissions required to be here...
@@ -26,8 +27,7 @@ def doc_job_page(request, page=1):
     profile = get_profile_or_None(request)
     if profile and profile.is_doctor:
 #        new_jobs = Job.objects.filter(doctor=None)
-        doc_jobs = Job.objects.filter(doctor=profile)
-        jobs = doc_jobs
+        jobs = Job.objects.filter(doctor=profile).order_by('created').reverse()
     else:
         return redirect('/')
 
@@ -67,12 +67,19 @@ def generate_doctor_actions(job, request):
     #boring always created actions for populating below
     #TODO redirect to contact page
     contact = DynamicAction('Contact User', reverse('contact', args=[job.id]), True)
-    work_job_url= reverse('markup_batch', args=[job.batch.id, 1])
+
+    group = job.get_first_unfinished_group()
+    group_seq = 1 if not group else group.sequence
+    work_job_url= reverse('markup_batch', args=[job.batch.id, group_seq])
     work_job = DynamicAction('Work On Job', work_job_url, redirect_url)
 
     complete_job = DynamicAction('Mark as Completed', '/mark_job_completed/')
     
+    view_job_url= reverse('markup_batch', args=[job.batch.id, 1])
+    view_job = DynamicAction('View Job', view_job_url, True)
+
     if job.status == Job.USER_SUBMITTED:
+        ret.append(view_job)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
     elif job.status == Job.TOO_LOW:
@@ -112,14 +119,17 @@ def generate_doctor_actions(job, request):
 def apply_for_job(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
+    profile = get_profile_or_None(request)
     result = []
     doc = request.user.get_profile()
 
     #TODO create cool actions, alert, reload, redirect, remove_job_row
-    result = {"actions": [{"action":"alert","data":"This job is no longer available"},
-                          {"action":"remove_job","data":data['job_id']},
-                          {"action":"delay_redirect","data":{"href":reverse("new_job_page"),"view":"available jobs"}}
-                         ]}
+    actions = Actions()
+    actions.add('alert', 'This job is no longer available')
+    actions.add('remove_job_row', data['job_id'])
+    r = RedirectData(reverse("new_job_page"), 'available jobs')
+    actions.add('delay_redirect', r)
+    
     if job is None or job.doctor is not None or doc is None:
         #result = ['actions': {'alert':'This job is no longer available', 'reload':''}]
         pass 
@@ -131,13 +141,14 @@ def apply_for_job(request):
                 job.payout_price = calculate_job_payout(job, doc)
                 job.status = Job.DOCTOR_ACCEPTED
                 job.save()
-                result = {"actions": [{"action":"alert","data":"Congrats the job is yours!"},
-                                      {"action":"remove_job","data":data['job_id']},
-                                      {"action":"delay_redirect","data":{"href":reverse("doc_job_page"),"view": "your jobs"}}
-                    ]}
+                send_job_status_change(job, profile)
+                actions = Actions()
+                actions.add('alert', 'Congrats the job is yours!')
+                actions.add('remove_job_row', data['job_id'])
+                r = RedirectData(reverse("doc_job_page"), 'your jobs')
+                actions.add('delay_redirect', r)
 
-    response_data = simplejson.dumps(result)
-    return HttpResponse(response_data, mimetype='application/json')
+    return HttpResponse(actions.to_json(), mimetype='application/json')
 
 def has_rights_to_act(profile, job):
     if profile and job:
@@ -153,17 +164,18 @@ def job_price_too_low(request):
     job = get_object_or_None(Job, id=data['job_id'])
     result = []
     doc = get_profile_or_None(request)
+    actions = Actions()
+    actions.add('alert', 'There was an error processing your request.')
 
-    result = {"actions": [{"action":"alert","data":"There was an error processing your request."} ]}
     if job and not job.doctor:
         job_qs = Job.objects.select_for_update().filter(pk=job.id)
         for job in job_qs:
             job.price_too_low_count += 1
             job.save()
-        result = {"actions": [{"action":"alert","data":"Thank you for your input."} ]}
+        actions.clear()
+        actions.add('alert', 'Thank you for your input.')
 
-    response_data = simplejson.dumps(result)
-    return HttpResponse(response_data, mimetype='application/json')
+    return HttpResponse(actions.to_json(), mimetype='application/json')
 
 
 @login_required
@@ -172,15 +184,36 @@ def mark_job_completed(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
 
-    result = {"actions": [{"action":"alert","data":"There was an error processing your request."} ]}
+    actions = Actions()
+    actions.add('alert', 'There was an error processing your request.')
     if has_rights_to_act(profile, job):
-        #TODO Check to see if there is an image for every group, email user
-        result = {"actions": [{"action":"alert","data":"Bling, bling, Dear User, your Job is complete!!."} ]}
-        job.status = Job.DOCTOR_SUBMITTED
-        job.save()
+        groups = Group.get_job_groups(job)
+        unfinished_count = 0
+        missing_group = None
+        for group in groups:
+            has_pic = group.has_doctor_pic()
+            if not has_pic:
+                unfinished_count += 1
+                # first missing group
+                if not missing_group:
+                    missing_group = group
 
-    response_data = simplejson.dumps(result)
-    return HttpResponse(response_data, mimetype='application/json')
+        actions.clear()
 
+        if unfinished_count==0:
+            #TODO Check to see if there is an image for every group, email user
+            actions.add('alert', 'The job has been marked as complete')
+            job.status = Job.DOCTOR_SUBMITTED
+            job.save()
+            send_job_status_change(job, profile)
+        else:
+            plural = unfinished_count > 1
+            plural_to_be = 'are' if plural else 'is'
+            plural_s = 's' if plural else ''
+            actions.add('alert', str(unfinished_count) + ' group' + plural_s + ' ' + plural_to_be + ' missing a doctored picture.')
+            redir_url = reverse('markup_batch', args=[job.batch.id, missing_group.sequence])
+            r =  RedirectData(redir_url,'the first missing picture')
+            actions.add('delay_redirect', r)
 
+    return HttpResponse(actions.to_json(), mimetype='application/json')
 

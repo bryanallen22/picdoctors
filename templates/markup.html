@@ -28,7 +28,11 @@
     {% endfor %}
     {% endif %}
     <h2 class='markup_h2_header'>
+      {% if read_only %}
       User Images
+      {% else %}
+      Click and drag on your picture{{pics|pluralize}} to make additional notes
+      {% endif %}
     </h2>
     <br/>
     {% for pic in pics %}
@@ -71,7 +75,7 @@
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
       <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Previous</a>
       <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 12px;'>Next</a>
-      {% if user.is_authenticated and user.get_profile.is_doctor  %}
+      {% if is_job_doctor  %}
 
       <form action="{% url doc_upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <div class="btn btn-success btn-large fileupload-addbutton" style='display: block; margin-top: 12px;'>

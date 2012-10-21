@@ -12,7 +12,9 @@
     <div id="alert_section" class="row alert_section">
       <div class="span12 alert_row lead">
       </div>
-      <div class="span12 redirect_row">
+      <div class="span10 redirect_row">
+      </div>
+      <div class="span2 redirect_row_buttons">
       </div>
     </div>
     <div class="row job_header_row lead">
@@ -123,6 +125,8 @@
   </script>
   <script type="text/template" id="redirect_template">
     You will be automatically redirected to <%=view%> in <%=time_left%> second(s).  
+  </script>
+  <script type="text/template" id="redirect_buttons_template">
     <a href='#' class='btn-primary btn-mini' onclick='javascript:redirect_now=true;'> Go Now</a>
 
     <a href='#' class='btn-primary btn-mini' onclick='javascript:continue_redirect=false;'> Don't Go</a>
