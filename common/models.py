@@ -189,6 +189,7 @@ class Pic(DeleteMixin):
 
     def set_file(self, myfile):
         my_uuid = uuid.uuid4().hex # 32 unique hex chars
+        logging.info('set_file %s' % my_uuid)
 
         file_root, file_ext = os.path.splitext(myfile.name)
         file_name = my_uuid + file_ext.lower() # append '.jpg', etc

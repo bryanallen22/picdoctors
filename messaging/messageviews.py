@@ -13,7 +13,7 @@ from common.functions import get_profile_or_None, get_time_string
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-
+from tasks.tasks import sendAsyncEmail
 
 import pdb
 import logging
@@ -27,7 +27,6 @@ class Message():
         self.unseen = ''
 
 
-
 class PicComment():
     def __init__(self):
         self.user_pics = []
@@ -36,11 +35,8 @@ class PicComment():
         self.group_id = -1
 
 
-
-
-# still haven't tested it, the essential hope is the shared model
-# will allow me to just send it in here and I can suck info out
 def prep_messages(base_messages, profile, job):
+    """ get the information from either the job or the group message  """
     messages = []
     for msg in base_messages:
         message = Message()
@@ -149,7 +145,7 @@ def generate_message_email(job, profile, message):
         subject = 'The ' + from_whom + ' commented on your job'
         #Do I want to send the message to them, or make them go to the page?a
         args = {'from_whom':from_whom, 'job_id':job.id} 
-        html_content = render_to_string('contact_email.html', args)
+        html_content = render_to_string('message_email.html', args)
                                         
         
         # this strips the html, so people will have the text
@@ -157,7 +153,7 @@ def generate_message_email(job, profile, message):
         # create the email, and attach the HTML version as well.
         msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', [to_email])
         msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        sendAsyncEmail.apply_async(args=[msg])
 
 #        send_mail(subject, message , 'donotreply@picdoctors.com', [other_user_email], fail_silently=False)
     except Exception as ex:

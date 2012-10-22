@@ -10,6 +10,7 @@ import urllib
 import urlparse
 
 import pdb
+import pytz
 
 def get_profile_or_None(request):
     """ Get the request user profile if they are logged in """
@@ -31,7 +32,10 @@ def get_time_string(prev_date):
         2 hours ago
         on 10 Oct 2012
     """
-    now = datetime.now()
+    # When comparing against db, we need tz aware utc time
+    # I'm not sure what happened, this was working a week ago w/o it.
+    # Did we change something?
+    now = datetime.utcnow().replace(tzinfo=pytz.UTC)
     yesterday = now - timedelta(days=1)
     hour_ago = now - timedelta(hours=1)
 

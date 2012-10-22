@@ -7,6 +7,7 @@ from django.utils import simplejson
 
 from common.models import Pic
 from common.calculations import calculate_job_payout
+from tasks.tasks import sendAsyncEmail
 
 # info for a job row
 class JobInfo:
@@ -140,7 +141,7 @@ def send_job_status_change(job, profile):
         # create the email, and attach the HTML version as well.
         msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', [to_email])
         msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        sendAsyncEmail.apply_async(args=[msg])
 
     except Exception as ex:
         #later I'd like to ignore this, but for now, let's see errors happen

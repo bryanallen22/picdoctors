@@ -70,5 +70,20 @@ sudo apt-get install npm -y
 sudo npm install -g less jshint recess uglify-js
 
 echo "====="
+echo "Installing a crazy Rabbit Message Q"
+echo "====="
+sudo apt-get install rabbitmq-server -y
+echo "stopping the rabbit"
+sudo rabbitmq-server stop
+echo "starting the rabbit"
+sudo rabbitmq-server start
+echo "setting up the rabbits user/pass/vhost"
+sudo rabbitmqctl add_user weliketoeat rabbitsfordinner
+sudo rabbitmqctl add_vhost carrot
+sudo rabbitmqctl set_permissions -p carrot weliketoeat ".*" ".*" ".*"
+
+
+
+echo "====="
 echo "done."
 echo "====="

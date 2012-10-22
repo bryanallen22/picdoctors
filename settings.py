@@ -1,5 +1,6 @@
 # Django settings for picdoctors project.
 import os
+import djcelery
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -133,6 +134,13 @@ TEMPLATE_DIRS = (
     '/code/picdoctors/templates/',
 )
 
+djcelery.setup_loader()
+BROKER_HOST = 'localhost'
+BROKER_PORT = 5672
+BROKER_VHOST = 'carrot'
+BROKER_USER = 'weliketoeat'
+BROKER_PASSWORD = 'rabbitsfordinner'
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -148,6 +156,8 @@ INSTALLED_APPS = (
     'skaa',
     'doctor',
     'messaging',
+    'tasks',
+    'djcelery',
 )
 
 # A sample logging configuration. The only tangible logging

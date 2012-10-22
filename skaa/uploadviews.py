@@ -27,6 +27,7 @@ import pdb
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from django.core.urlresolvers import reverse
+from tasks.tasks import saveWatermark
 
 def pic_json(pic):
     return {"name"             : pic.title, 
@@ -109,33 +110,33 @@ def doc_upload_handler(request):
         logging.info('got to %s' % __name__)
         file = request.FILES[u'doc_file']
         if file is not None:
-            tmp = StringIO(file.read())
-            opened_image = Image.open(tmp)
-            logging.info(file.name)
-            pic = Pic(path_owner="doc")
-            pic.set_file(file)
-            pic.save()
+            pickleable_pic = StringIO(file.read())
+            saveWatermark.apply_async(args=[group_id, pickleable_pic])
+            if False:
+                tmp = StringIO(file.read())
+                opened_image = Image.open(tmp)
+                logging.info(file.name)
+                pic = Pic(path_owner="doc")
+                pic.set_file(file)
+                pic.save()
 
-            wm_file = generate_watermarked_image(opened_image, "some info")
-            wm_stream = StringIO()
-            wm_file.save(wm_stream, format='JPEG')
+                wm_file = generate_watermarked_image(opened_image, "some info")
+                wm_stream = StringIO()
+                wm_file.save(wm_stream, format='JPEG')
 
-            wm_file = InMemoryUploadedFile(wm_stream, None, 'wm.jpg', 'image/jpeg',
-                                          wm_stream.len, None)
+                wm_file = InMemoryUploadedFile(wm_stream, None, 'wm.jpg', 'image/jpeg',
+                                              wm_stream.len, None)
 
-            wm_pic = Pic(path_owner="doc", watermark=True)
-            wm_pic.set_file(wm_file)
-            wm_pic.save()
-
-            #create a new entry in the DocPicGroup
-            group.add_doctor_pic(pic, wm_pic)
+                wm_pic = Pic(path_owner="doc", watermark=True)
+                wm_pic.set_file(wm_file)
+                wm_pic.save()
+    
+                #create a new entry in the DocPicGroup
+                group.add_doctor_pic(pic, wm_pic)
 
             logging.info('File saving done')
             
-            result = []
-            result.append(pic_json(pic))
-
-            response_data = simplejson.dumps(result)
+            # this one won't do anything
      
     #redirect to where they came from
     return redirect(request.META['HTTP_REFERER'])
