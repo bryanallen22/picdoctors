@@ -141,7 +141,9 @@ def send_job_status_change(job, profile):
         # create the email, and attach the HTML version as well.
         msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', [to_email])
         msg.attach_alternative(html_content, "text/html")
-        sendAsyncEmail.apply_async(args=[msg])
+        #TODO if you want to switch to using the workers
+        # sendAsyncEmail.apply_async(args=[msg])
+        sendAsyncEmail(msg)
 
     except Exception as ex:
         #later I'd like to ignore this, but for now, let's see errors happen

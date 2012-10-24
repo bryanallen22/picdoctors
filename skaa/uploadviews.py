@@ -111,32 +111,11 @@ def doc_upload_handler(request):
         file = request.FILES[u'doc_file']
         if file is not None:
             pickleable_pic = StringIO(file.read())
-            saveWatermark.apply_async(args=[group_id, pickleable_pic])
-            if False:
-                tmp = StringIO(file.read())
-                opened_image = Image.open(tmp)
-                logging.info(file.name)
-                pic = Pic(path_owner="doc")
-                pic.set_file(file)
-                pic.save()
-
-                wm_file = generate_watermarked_image(opened_image, "some info")
-                wm_stream = StringIO()
-                wm_file.save(wm_stream, format='JPEG')
-
-                wm_file = InMemoryUploadedFile(wm_stream, None, 'wm.jpg', 'image/jpeg',
-                                              wm_stream.len, None)
-
-                wm_pic = Pic(path_owner="doc", watermark=True)
-                wm_pic.set_file(wm_file)
-                wm_pic.save()
-    
-                #create a new entry in the DocPicGroup
-                group.add_doctor_pic(pic, wm_pic)
+            # if you want to use the workers use the line below
+            # saveWatermark.apply_async(args=[group_id, pickleable_pic])
+            saveWatermark(group_id, pickleable_pic)
 
             logging.info('File saving done')
-            
-            # this one won't do anything
      
     #redirect to where they came from
     return redirect(request.META['HTTP_REFERER'])

@@ -153,7 +153,9 @@ def generate_message_email(job, profile, message):
         # create the email, and attach the HTML version as well.
         msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', [to_email])
         msg.attach_alternative(html_content, "text/html")
-        sendAsyncEmail.apply_async(args=[msg])
+        #TODO if you want to switch to using the workers
+        # sendAsyncEmail.apply_async(args=[msg])
+        sendAsyncEmail(msg)
 
 #        send_mail(subject, message , 'donotreply@picdoctors.com', [other_user_email], fail_silently=False)
     except Exception as ex:
