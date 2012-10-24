@@ -48,7 +48,7 @@
               <li><a href="#contact">Contact</a></li>
               {% if not user.is_authenticated %}
               <li><a href="/signin">User Log In</a></li>
-              <li><a href="/doc_jobs">Doctors Start Here</a></li>
+              <li><a href="/doc_home">Doctors Start Here</a></li>
               {% else %}
                 {% if user.get_profile.is_doctor %}
                   <li><a href="/new_jobs">Available Jobs</a></li>

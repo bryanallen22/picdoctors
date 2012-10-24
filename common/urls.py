@@ -7,8 +7,8 @@ from common.signinviews import skaa_signin, doc_signin, signout
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^signin/$',                           skaa_signin,        name='skaa_signin'),
-    url(r'^doc_signin/$',                       doc_signin,         name='doc_signin'),
-    url(r'^signout/$',                          signout,            name='signout'),
+    url(r'^signin/$',         skaa_signin,        name='skaa_signin'),
+    url(r'^doc_signin/$',     doc_signin,         name='doc_signin'),
+    url(r'^signout/$',        signout,            name='signout'),
 )
 

@@ -10,16 +10,12 @@ import settings
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'picdoctors.views.home', name='home'),
-    # url(r'^picdoctors/', include('picdoctors.foo.urls')),
-
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
 
-    # Clockstone template pages -- keep 'em the same name to be consistent with the internal links
     url(r'^$', index),
 
     # Let these handle their own views:
