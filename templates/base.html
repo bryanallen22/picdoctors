@@ -47,16 +47,16 @@
               <li><a href="#faq">FAQ</a></li>
               <li><a href="#contact">Contact</a></li>
               {% if not user.is_authenticated %}
-              <li><a href="/signin">User Log In</a></li>
-              <li><a href="/doc_home">Doctors Start Here</a></li>
+              <li><a href="/signin/">User Log In</a></li>
+              <li><a href="/doc_home/">Doctors Start Here</a></li>
               {% else %}
                 {% if user.get_profile.is_doctor %}
-                  <li><a href="/new_jobs">Available Jobs</a></li>
-                  <li><a href="/doc_jobs">My Jobs</a></li>
+                  <li><a href="/new_jobs/">Available Jobs</a></li>
+                  <li><a href="/doc_jobs/">My Jobs</a></li>
                 {% else%}
-                  <li><a href="/jobs">My Jobs</a></li>
+                  <li><a href="/jobs/">My Jobs</a></li>
                 {% endif %}
-                <li><a href="/signout">Log Out ({{user.username }})</a></li>
+                <li><a href="/signout/">Log Out ({{user.username }})</a></li>
               {% endif %}
             </ul>
           </div>

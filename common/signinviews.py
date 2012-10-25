@@ -117,8 +117,14 @@ def signin(request, usertype='user'):
 
         # Create a new account
         else:
-            user, tmp = create_user( request.POST['email'], request.POST['password'],
-                                     request.POST['confirm_password'], usertype )
+
+            if 'agree_tos' not in request.POST.keys():
+                user, tmp = ( None, { 'need_tos' : True } )
+            else:
+                user, tmp = create_user( request.POST['email'],
+                                         request.POST['password'],
+                                         request.POST['confirm_password'],
+                                         usertype )
             ret.update(tmp)
 
         if user:

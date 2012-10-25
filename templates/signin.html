@@ -24,18 +24,26 @@
           </legend>
           {% if bad_email_or_password %}
             <div class="alert alert-error">
-              <a class="close" data-dismiss="alert" href="#">×</a>Incorrect email or password!
+              <a class="close" data-dismiss="alert" href="#">×</a>
+              Incorrect email or password!
             </div>
           {% endif %}
           {% if passwords_didnt_match %}
             <div class="alert alert-error">
-              <a class="close" data-dismiss="alert" href="#">×</a>Passwords did not match!
+              <a class="close" data-dismiss="alert" href="#">×</a>
+              Passwords did not match!
             </div>
           {% endif %}
           {% if email_already_exists %}
             <div class="alert alert-error">
-              <a class="close" data-dismiss="alert" href="#">×</a>That email has already been
-              registered with a different password.
+              <a class="close" data-dismiss="alert" href="#">×</a>
+              That email has already been registered with a different password.
+            </div>
+          {% endif %}
+          {% if need_tos %}
+            <div class="alert alert-error">
+              <a class="close" data-dismiss="alert" href="#">×</a>
+              You must agree to the Terms of Service
             </div>
           {% endif %}
           <form method="POST" action="" accept-charset="UTF-8">
@@ -55,8 +63,13 @@
             <input type="password" id="password" class="span4" name="password" placeholder="Password">
             <input type="password" id="confirm_password" class="span4" name="confirm_password"
               placeholder="Confirm Password">
+            <label class="checkbox" id="tos">
+              <input type="checkbox" id="agree_tos" name="agree_tos" value="1" checked>
+              I agree to the Terms of Service
+            </label>
             <label class="checkbox">
-              <input type="checkbox" id="remember" name="remember" value="1" checked>Remember Me
+              <input type="checkbox" id="remember" name="remember" value="1" checked>
+              Remember Me
             </label>
             <button type="submit" name="submit" class="btn btn-info btn-block">Sign in</button>
           </form>    

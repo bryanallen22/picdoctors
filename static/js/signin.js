@@ -6,6 +6,7 @@ $(function(){
    * or something it can be checked. */
   if( $('input:radio[name=create_acct_radio]:checked').val() == 'have' ) {
       $("#confirm_password").hide();
+      $("#tos").hide();
   }
 
   $('input:radio[name=create_acct_radio]').click( function() {
@@ -13,10 +14,12 @@ $(function(){
     if( checked == "create" ) {
       // Creating an account
       $("#confirm_password").show();
+      $("#tos").show();
     }
     else if( checked == "have" ) {
       // They already have an account
       $("#confirm_password").hide();
+      $("#tos").hide();
     }
   });
 
