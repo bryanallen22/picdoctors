@@ -82,7 +82,7 @@ def set_price(request):
             )
             batch.finished = True
             batch.save()
-            create_job(request, batch, cents)
+            create_job(request, batch, charge)
             logging.info("Batch owned by %s has been finished with price at $%s (cents)" %
                          (batch.userprofile.user.username, cents))
             return redirect(reverse('job_page'))

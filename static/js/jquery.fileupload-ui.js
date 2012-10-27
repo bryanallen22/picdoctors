@@ -80,7 +80,7 @@
 
                 /* Get rid of the instructions telling the user how to drag files in */
                 $('#isocontainer .instructions').hide();
-                $("#next").addClass('disabled');
+                disableNext(true);
                 //window.onbeforeunload = function(e) {
                 //      return 'Pictures are still uploading! Are you sure you want to leave?';
                 //};
@@ -143,7 +143,7 @@
                          * that #next button */
                         if( $('.pic_container').length == 
                             $('.pic_container[uuid]').length ) {
-                              $("#next").removeClass('disabled');
+                              disableNext(false);
                               //window.onbeforeunload = null;
                         }
                         /******************************/
@@ -689,3 +689,19 @@
     });
 
 }(jQuery));
+
+function disableNext(disabled){
+  
+  var next_button = $('#next');
+
+  if(disabled){
+    next_button.addClass('disabled');
+    next_button.text('Busy Uploading...');
+    next_button.attr('onclick','return false');
+  } else {
+    next_button.removeClass('disabled');
+    next_button.text('Next');
+    next_button.attr('onclick','return true');
+  }
+
+}

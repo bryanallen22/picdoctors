@@ -1,5 +1,8 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
+
+  // Block creation when we're clicking on little red boxes
+  var creationEnabled = true;
   
   var markup_colors = [
     /* I don't like this, but I suck at javascript. Better way? */
@@ -186,7 +189,12 @@ $(function(){
       // when we depress the mouse, we'll find ourselves in the middle of 
       // creating a new markup rather than deleting this one. (mousedown 
       // is caught by the markup_pic_container)
-      "mousedown .markup-redx" : "deleteMarkup",
+      "mousedown      .markup-redx" : "deleteMarkup",
+      "mouseenter     .markup-redx" : "redBoxIn",
+      "mouseleave     .markup-redx" : "redBoxOut",
+      //these events are on this div element itself
+      "mouseenter                 " : "mouseIn",
+      "mouseleave                 " : "mouseOut",
     },
 
     // The MarkupView listens for changes to its model, re-rendering.
@@ -196,11 +204,11 @@ $(function(){
     initialize: function() {
       //console.log("And, in the morning, I'm making MarkupView(s)!");
       //console.log(this);
-      this.model.bind('change',  this.render, this);
-      this.model.bind('destroy', this.remove, this);
-      this.model.bind('fade',    this.fade,   this);
-      this.model.bind('hide',    this.hide,   this);
-      this.model.bind('show',    this.show,   this);
+      this.model.bind('change',  this.render,       this);
+      this.model.bind('destroy', this.remove,       this);
+      this.model.bind('fade',    this.fade,         this);
+      this.model.bind('hide',    this.hide,         this);
+      this.model.bind('show',    this.show,         this);
     },
 
     // Re-render the titles of the todo item.
@@ -262,8 +270,38 @@ $(function(){
 
     deleteMarkup: function() {
       console.log("going to destroy()...");
-      this.model.destroy( {wait:true} );
+      this.model.destroy( { wait:true } );
+      // slight delay, so the click doesn't make it down to the app.
+      // this works better than undelegating, and delegating
+      setTimeout(function(){ creationEnabled=true; }, 10);
       console.log("destroyed!");
+    },
+
+    redBoxIn: function() {
+      console.log('red in');
+      creationEnabled = false;
+    },
+
+    redBoxOut: function() {
+      console.log('red out');
+      creationEnabled = true;
+    },
+
+
+    mouseIn: function() {
+      if(readonly) {
+        this.$el.attr('rel', 'popover');
+        this.$el.attr('placement', 'right');
+        var title = this.model.get('color_name') + ' area instructions';
+        this.$el.attr('data-original-title', title);
+        this.$el.attr('data-content', this.model.get('description'));
+        this.$el.popover('show');
+      }
+      console.log('mouse in');
+    },
+
+    mouseOut: function() {
+      console.log('mouse out');
     },
 
     fade: function() {
@@ -278,7 +316,8 @@ $(function(){
     show: function() {
       this.$el.css('z-index', 100);
       this.$el.css('opacity', 1);
-    }
+    },
+
   });
 
   // The DOM element for a markup item...
@@ -305,9 +344,10 @@ $(function(){
     initialize: function() {
       //console.log("MarkupDesc initializationz!");
       //console.log(this);
-      this.model.bind('change',  this.render, this);
-      this.model.bind('destroy', this.remove, this);
-      this.model.bind('hide',    this.hide,   this);
+      this.model.bind('change',  this.render,       this);
+      this.model.bind('destroy', this.remove,       this);
+      this.model.bind('hide',    this.hide,         this);
+      this.model.bind('focus',   this.force_focus,  this);
     },
 
     // Re-render the titles of the todo item.
@@ -354,6 +394,12 @@ $(function(){
       // Show all the elements again
       App.showAllMarkups();
     },
+
+    force_focus: function() {
+      var desc = this.$el.find('.desc');
+      desc.focus();
+    },
+
 
     hide : function() {
       this.$el.hide();
@@ -411,7 +457,7 @@ $(function(){
       "mousedown  .markup_pic_container" : "createMarkup",
       "mousemove  .markup_pic_container" : "resizeMarkup",
       "mouseup    .markup_pic_container" : "finishMarkup",
-      //"mouseleave .markup_pic_container" : "finishMarkup",
+      //"mouseleave .markup_pic_container" : "mouseLeft",
     },
 
     // At initialization we bind to the relevant events on the `Todos`
@@ -462,7 +508,16 @@ $(function(){
     },
 
     createMarkup: function(e) {
-      if(e.which == 1) { // left click
+      if(!creationEnabled)
+      {
+        console.log('no creation for you!');
+        return;
+      }
+      else
+      {
+        console.log('you can create!');
+      }
+      if(e.which == 1 && creationEnabled) { // left click
         var initial_size = 10;
         /* This seems like a lot of work, but e.target seems a little bit
          * unpredictable, so I'm dancing around to ensure that I always end
@@ -579,6 +634,9 @@ $(function(){
     },
 
     finishMarkup: function(e) {
+      if (this.pic_container == null)
+        return;
+
       var x = e.pageX - this.pic_container.offset().left;
       var y = e.pageY - this.pic_container.offset().top;
 
@@ -602,11 +660,15 @@ $(function(){
           this.cur_markup.trigger('hide');
 
           var destroy_func = function(that) {
-            if(that.cur_markup.get('id')) {
+            if(that.cur_markup==null)
+              return;
+
+            var markup_id = that.cur_markup.get('id');
+            if(markup_id) {
               /* Has an 'id', so it has been synced to the server, so
                * we can delete it now. */
               that.cur_markup.destroy( { wait : true } );
-              console.log('Small markup has been destroyed');
+              console.log('Small markup ' + that.cur_markup.get('color_name') + ' ' + markup_id + ' has been destroyed');
 
               that.cur_markup = null;
               that.cur_markup_startX = null;
@@ -632,6 +694,9 @@ $(function(){
       else if (this.cur_markup) {
         // This guy is big enough! Let's sync() to the server
         this.cur_markup.save();
+        this.cur_markup.trigger('focus');
+        //if the mouse was hovering over redx when we moved focus
+        creationEnabled = true;
 
         this.cur_markup = null;
         this.cur_markup_startX = null;
@@ -639,6 +704,11 @@ $(function(){
         this.pic_container = null;
       }
     },
+
+    /*mouseLeft: function(e){
+      //console.log('tricky tricky, you left!!! ' + e.which );
+
+    },*/
 
   });
 
@@ -659,7 +729,7 @@ $(function(){
     button.attr('disabled', 'disabled');
   }
 
-  //lets do some read_only stuff (this value is set in the template)
+  //lets do some readonly stuff (this value is set in the template)
   if(readonly)
   {
     $('.desc').each(function(){$(this).attr('readonly','readonly')});
