@@ -9,6 +9,9 @@ from common.models import Pic
 from common.calculations import calculate_job_payout
 from tasks.tasks import sendAsyncEmail
 
+import pdb
+from copy import deepcopy
+
 # info for a job row
 class JobInfo:
     def __init__(self):
@@ -24,6 +27,15 @@ class JobInfo:
         #doctor specific
         self.doctor_payout = ''
 
+# TODO remove the dup stuff, I'm just doing it so I don't break the current functionality
+    def to_dict(self):
+        dup = deepcopy(self)
+        arr = []
+        for da in dup.dynamic_actions:
+            arr.append(da.__dict__)
+        dup.dynamic_actions = arr
+        return dup.__dict__
+
 # used for generating the actions on the job row
 class DynamicAction:
     def __init__(self, text = '', url = '', redir=False):
@@ -35,10 +47,15 @@ class DynamicAction:
 class Actions:
     def __init__(self):
         self.actions = []
+        self.job_info = None
 
     def add(self, action, data):
         a = Action(action, data)
         self.actions.append(a.__dict__)
+
+    def addJobInfo(self, job_info):
+        self.job_info = job_info.to_dict()
+
 
     def append(self, item):
         self.actions.append(item.__dict__)
@@ -71,40 +88,46 @@ def get_pagination_info(jobs, page):
     
     cur_page = pager.page(page)
 
-    return {'pager': pager, 'cur_page':cur_page }
+    return pager, cur_page 
 
 #Populate job info based on job objects from database.
 #job infos are a mixture of Pic, Job, & Batch
-def get_job_infos(cur_page_jobs, action_generator, request):
+def get_job_infos_json(cur_page_jobs, action_generator, request):
     job_infos = []
 
     if cur_page_jobs is None:
         return job_infos
 
+    # assume this exists, if it doesn't, they shouldn't be here, crash, i don't care
+    profile = request.user.get_profile()
     for job in cur_page_jobs:
-        job_inf = JobInfo()
-        job_inf.job_id = job.id
-        job_inf.status = job.get_status_display()
-        job_inf.doctor_exists = job.doctor is not None
-        batch = job.batch
-        job_inf.dynamic_actions = action_generator(job, request)
+        job_inf = fill_job_info(job, action_generator, profile)
 
-        if job_inf.doctor_exists:
-            #pull price from what we promised them
-            job_inf.doctor_payout = job.payout_price
-        else:
-            job_inf.doctor_payout = calculate_job_payout(job, request.user.get_profile())
+        job_infos.append(job_inf.to_dict())
 
-        #TODO I'm doing some view logic below, you need to change that
-        if batch is not None:
-            job_inf.batch = batch.id
-            job_inf.batchurl = reverse('markup_batch', args=[job_inf.batch, 1])
-            job_inf.output_pic_count = batch.num_groups
-            job_inf.pic_thumbs = generate_pic_thumbs(batch)
+    return simplejson.dumps(job_infos)
 
-        job_infos.append(job_inf)
+def fill_job_info(job, action_generator, profile):
+    job_inf = JobInfo()
+    job_inf.job_id = job.id
+    job_inf.status = job.get_status_display()
+    job_inf.doctor_exists = job.doctor is not None
+    batch = job.batch
+    job_inf.dynamic_actions = action_generator(job)
 
-    return job_infos
+    if job_inf.doctor_exists:
+        #pull price from what we promised them
+        job_inf.doctor_payout = job.payout_price_cents
+    else:
+        job_inf.doctor_payout = calculate_job_payout(job, profile)
+
+    if batch is not None:
+        job_inf.batch = batch.id
+        job_inf.batchurl = reverse('markup_batch', args=[job_inf.batch, 1])
+        job_inf.output_pic_count = batch.num_groups
+        job_inf.pic_thumbs = generate_pic_thumbs(batch)
+
+    return job_inf
 
 def generate_pic_thumbs(filter_batch):
     """
@@ -146,6 +169,7 @@ def send_job_status_change(job, profile):
         sendAsyncEmail(msg)
 
     except Exception as ex:
-        #later I'd like to ignore this, but for now, let's see errors happen
-        raise ex
+        # later I'd like to ignore this, but for now, let's see errors happen
+        # raise ex
+        pass
 

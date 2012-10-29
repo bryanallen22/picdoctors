@@ -9,15 +9,16 @@ from common.models import Batch
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
+from common.models import Charge
 from common.functions import get_profile_or_None
 from common.calculations import calculate_job_payout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from decimal import *
 
-from common.jobs import get_job_infos, get_pagination_info, JobInfo, DynamicAction
-from common.jobs import Actions, Action, RedirectData
-from common.jobs import send_job_status_change
+from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
+from common.jobs import Actions, Action, RedirectData, DynamicAction
+from common.jobs import send_job_status_change, fill_job_info
 
 import math
 import pdb
@@ -32,18 +33,16 @@ def job_page(request, page=1):
         #TODO they shouldn't ever get here based on future permissions
         jobs = []
 
-    page_info = get_pagination_info(jobs, page)    
-    pager = page_info['pager']
-    cur_page = page_info['cur_page']
+    pager, cur_page = get_pagination_info(jobs, page)    
 
+    job_infos_json = get_job_infos_json(cur_page, generate_skaa_actions, request)
 
-    job_infos = get_job_infos(cur_page, generate_skaa_actions, request)
-
-
-    return { 'job_infos' :job_infos , 'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page)}
+    return {'job_infos_json':job_infos_json,
+            'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page), 
+            'doc_page':False}
 
 #get and fill up possible actions based on the status of this job
-def generate_skaa_actions(job, request):
+def generate_skaa_actions(job):
     ret = []
 
     #boring always created actions for populating below
@@ -54,7 +53,6 @@ def generate_skaa_actions(job, request):
     #u_like_pie = DynamicAction('Do You like Pie', '/u_like_pie')
     #ret.append(i_like_pie)
     #ret.append(u_like_pie)
-    #TODO is doctor?
     view_job_url= reverse('markup_batch', args=[job.batch.id, 1])
     view_job = DynamicAction('View Job', view_job_url, True)
     
@@ -73,14 +71,20 @@ def generate_skaa_actions(job, request):
         #do something
     elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(DynamicAction('Accept', '/accept_doctors_work/'))
-        ret.append(contact)
-        ret.append(DynamicAction('Reject', '/reject_doctors_work/'))
-        ret.append(DynamicAction('Request Modification', '/request_fix/'))
         ret.append(view_job)
+        ret.append(contact)
+        ret.append(DynamicAction('Request Modification', '/request_modification/'))
+        ret.append(DynamicAction('Request New Doctor', '/request_new_doctor/'))
+        ret.append(DynamicAction('Reject', '/reject_doctors_work/'))
     elif job.status == Job.USER_ACCEPTED:
         ret.append(view_job)
         pass
     elif job.status == Job.USER_REQUESTS_MODIFICATION:
+        ret.append(DynamicAction('Accept', '/accept_doctors_work/'))
+        ret.append(view_job)
+        ret.append(contact)
+        ret.append(DynamicAction('Request New Doctor', '/request_new_doctor/'))
+        ret.append(DynamicAction('Reject', '/reject_doctors_work/'))
         pass
     elif job.status == Job.USER_REJECTED:
         pass
@@ -91,17 +95,26 @@ def generate_skaa_actions(job, request):
     return ret
 
         
-def create_job(request, batch, price_in_cents):
+def create_job(request, batch, charge):
     j = None
-    price = price_in_cents/100
     if batch is not None:
+        charge = generate_db_charge(charge)
         j = Job(skaa=request.user.get_profile(),
                 batch=batch, 
-                price = price, 
+                price_cents=charge.amount_cents, 
+                charge=charge,
                 status=Job.USER_SUBMITTED)
+        
         j.save()       
         set_groups_locks(batch, True)
     return j
+
+def generate_db_charge(stripe_charge):
+    charge = Charge(stripe_id=stripe_charge.id, 
+                amount_cents=stripe_charge.amount, 
+                fee_cents=stripe_charge.fee)
+    charge.save()
+    return charge
 
 def set_groups_locks(batch_to_lock, state):
     groups = Group.objects.filter(batch=batch_to_lock)
@@ -121,10 +134,13 @@ def accept_doctors_work(request):
     if job and profile and job.skaa == profile:
         #TODO Put money into Doctors account 
         actions.clear()
-        actions.add('alert', 'The job was accepted')
-        actions.add('reload', '')
+        actions.add('alert', 'The job was accepted, and yet I didn\'t pay the doctor')
         job.status = Job.USER_ACCEPTED
         job.save()
+
+        job_info = fill_job_info(job, generate_skaa_actions, profile)
+        actions.addJobInfo(job_info)
+
         send_job_status_change(job, profile)
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
@@ -142,12 +158,40 @@ def reject_doctors_work(request):
         #TODO Put money into Doctors account 
         actions.clear()
         actions.add('alert', 'The job was rejected')
-        actions.add('reload', '')
         job.status = Job.USER_REJECTED
         job.save()
+
+        job_info = fill_job_info(job, generate_skaa_actions, profile)
+        actions.addJobInfo(job_info)
+        
         send_job_status_change(job, profile)
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
+
+
+@login_required
+def request_modification(request):
+    profile = get_profile_or_None(request)
+    data = simplejson.loads(request.body)
+    job = get_object_or_None(Job, id=data['job_id'])
+
+    actions = Actions()
+    actions.add('alert', 'There was an error processing your request.')
+    if job and profile and job.skaa == profile:
+        actions.clear()
+        actions.add('alert', 'The user has requested modification')
+        redir_url = reverse('contact', args=[job.id])
+        r =  RedirectData(redir_url,'the communication page')
+        actions.add('delay_redirect', r)
+        job.status = Job.USER_REQUESTS_MODIFICATION
+        job.save()
+        send_job_status_change(job, profile)
+        job_info = fill_job_info(job, generate_skaa_actions, profile)
+        actions.addJobInfo(job_info)
+
+    return HttpResponse(actions.to_json(), mimetype='application/json')
+
+
 
 
 

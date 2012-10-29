@@ -508,15 +508,6 @@ $(function(){
     },
 
     createMarkup: function(e) {
-      if(!creationEnabled)
-      {
-        console.log('no creation for you!');
-        return;
-      }
-      else
-      {
-        console.log('you can create!');
-      }
       if(e.which == 1 && creationEnabled) { // left click
         var initial_size = 10;
         /* This seems like a lot of work, but e.target seems a little bit

@@ -14,14 +14,14 @@ from common.models import Pic
 from common.calculations import calculate_job_payout
 from common.functions import get_profile_or_None
 
-from common.jobs import get_job_infos, get_pagination_info, JobInfo, DynamicAction
-from common.jobs import Actions, Action, RedirectData
-from common.jobs import send_job_status_change
-
+from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
+from common.jobs import Actions, Action, RedirectData, DynamicAction 
+from common.jobs import send_job_status_change, fill_job_info
+import pdb
 
 #TODO @permissions required to be here...
 @login_required
-@render_to('doctor_jobs.html')
+@render_to('jobs.html')
 def doc_job_page(request, page=1):
     jobs = None
     profile = get_profile_or_None(request)
@@ -31,19 +31,18 @@ def doc_job_page(request, page=1):
     else:
         return redirect('/')
 
-    page_info = get_pagination_info(jobs, page)    
-    pager = page_info['pager']
-    cur_page = page_info['cur_page']
+    pager, cur_page = get_pagination_info(jobs, page)    
 
+    job_infos_json = get_job_infos_json(cur_page, generate_doctor_actions, request)
 
-    job_infos = get_job_infos(cur_page, generate_doctor_actions, request)
-
-    return { 'job_infos' :job_infos , 'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 'new_jobs_page': False}
+    return { 'job_infos_json' : job_infos_json, 
+            'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 
+            'new_jobs_page': False, 'doc_page':True}
 
 
 #TODO @permissions required to be here...
 @login_required
-@render_to('doctor_jobs.html')
+@render_to('jobs.html')
 def new_job_page(request, page=1):
     jobs = None
     profile = get_profile_or_None(request)
@@ -52,16 +51,16 @@ def new_job_page(request, page=1):
     else:
         return redirect('/')
 
-    page_info = get_pagination_info(jobs, page)    
-    pager = page_info['pager']
-    cur_page = page_info['cur_page']
+    pager, cur_page = get_pagination_info(jobs, page)    
 
-    job_infos = get_job_infos(cur_page, generate_doctor_actions, request)
+    job_infos_json = get_job_infos_json(cur_page, generate_doctor_actions, request)
 
-    return { 'job_infos' :job_infos , 'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 'new_jobs_page': True}
+    return {'job_infos_json' : job_infos_json, 
+            'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 
+            'new_jobs_page': True, 'doc_page':True}
 
 #get and fill up possible actions based on the status of this job
-def generate_doctor_actions(job, request):
+def generate_doctor_actions(job):
     ret = []
     redirect_url = True
     #boring always created actions for populating below
@@ -138,15 +137,17 @@ def apply_for_job(request):
         for job in job_qs:
             if job.doctor is None:
                 job.doctor = doc
-                job.payout_price = calculate_job_payout(job, doc)
+                job.payout_price_cents = calculate_job_payout(job, doc)
                 job.status = Job.DOCTOR_ACCEPTED
                 job.save()
                 send_job_status_change(job, profile)
                 actions = Actions()
                 actions.add('alert', 'Congrats the job is yours!')
-                actions.add('remove_job_row', data['job_id'])
+                #actions.add('remove_job_row', data['job_id'])
                 r = RedirectData(reverse("doc_job_page"), 'your jobs')
                 actions.add('delay_redirect', r)
+                job_inf = fill_job_info(job, generate_doctor_actions, profile)
+                actions.addJobInfo(job_inf)
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
 
@@ -201,11 +202,12 @@ def mark_job_completed(request):
         actions.clear()
 
         if unfinished_count==0:
-            #TODO Check to see if there is an image for every group, email user
             actions.add('alert', 'The job has been marked as complete')
             job.status = Job.DOCTOR_SUBMITTED
             job.save()
             send_job_status_change(job, profile)
+            job_info = fill_job_info(job, generate_doctor_actions, profile)
+            actions.addJobInfo(job_info)
         else:
             plural = unfinished_count > 1
             plural_to_be = 'are' if plural else 'is'
@@ -214,6 +216,5 @@ def mark_job_completed(request):
             redir_url = reverse('markup_batch', args=[job.batch.id, missing_group.sequence])
             r =  RedirectData(redir_url,'the first missing picture')
             actions.add('delay_redirect', r)
-
     return HttpResponse(actions.to_json(), mimetype='application/json')
 

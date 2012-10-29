@@ -10,17 +10,96 @@ $(function(){
     return true_sync_func( method, model, options);
   };
 
-  var JobRow = Backbone.View.extend({
+  var JobInfo = Backbone.Model.extend({
+    // Default attributes for the Message Model
+    defaults: function() {
+      return {
+        job_id    : -1,
+        output_pic_count : '',
+        status : 'Unknown',
+        doctor_exists : false,
+        batch : -1,
+        batchurl : '',
+        pic_thumbs : [],
+        dynamic_actions : [],
+        doctor_payout : '',
+      };
+    },
+    
+    initialize : function() {
+    },
 
-    el: '',
+    clear: function() {
+      this.destroy();
+    },
 
+  });
+
+  // A collection of JobInfo elements
+  var JobList = Backbone.Collection.extend({
+
+    // Reference to this collection's model.
+    model: JobInfo,
+
+    initialize: function() {
+      this.container = null; 
+      this.bind('add', this.newJobRow, this);
+      this.bind('reset', this.setup, this);
+    },
+
+
+    newJobRow: function (job_info){
+      var view = new JobRowView( { model: job_info} );
+      this.container.append(view.el);
+    },
+
+    setup: function(){
+      var that = this;
+      this.each( function(el) {
+        that.newJobRow.call(that, el);
+      });
+
+    },
+
+  });
+
+  var JobRowView = Backbone.View.extend({
+    
+    className: 'row job_row fix_line_height',
+
+    template:  '',
 
     initialize: function(){
-      this.job_id=this.$el.attr('job_id');
+      //this is set in the job.html page
+      if(doc_page){
+        this.template = _.template($('#doctor_row_template').html().trim());
+      } else {
+        this.template = _.template($('#user_row_template').html().trim());
+      }
+      this.model.bind('change',  this.render,       this);
+      this.render();
     },
 
     events: {
       "click .dynamic_action_button" : "executeDynamicAction",
+    },
+
+    render: function(){
+      // Compile the template using underscore
+      
+      this.$el.html(this.template(
+        {
+          job_id              : this.model.get('job_id'),
+          output_pic_count    : this.model.get('output_pic_count'),
+          status              : this.model.get('status'),
+          doctor_exists       : this.model.get('doctor_exists'),
+          batch               : this.model.get('batch'),
+          batchurl            : this.model.get('batchurl'),
+          pic_thumbs          : this.model.get('pic_thumbs'),
+          dynamic_actions     : this.model.get('dynamic_actions'),
+          doctor_payout       : this.model.get('doctor_payout'),
+        }
+      ));
     },
 
     executeDynamicAction: function(event){
@@ -36,9 +115,10 @@ $(function(){
 
       var json_data = JSON.stringify(
         {
-          "job_id" : this.job_id,
+          "job_id" : this.model.get('job_id'),
         }
       );
+      var this_model = this.model;
       
       $.ajax({
         headers: {
@@ -51,7 +131,7 @@ $(function(){
           console.log(data);
           console.log(textStatus);
       //    location.href = "/jobs";
-          dynamicReaction(data);
+          dynamicReaction(data, this_model);
         },
         failure : function(jqXHR, textStatus, errorThrown) {
           console.log(jqXHR);
@@ -63,38 +143,58 @@ $(function(){
 
     },
 
-  })
 
-  function dynamicReaction(data) {
-   var actions = data.actions;
-   for (var i = 0; i < actions.length; i++) {
-     var action = actions[i];
-     switch(action.action)
-     {
-      case 'alert':
-        $(".alert_row").text(action.data);
-        animatedcollapse.show('alert_section'); 
-        break;
-      case 'reload':
-        location.href = location.href;
-        break;
-      case 'redirect':
-        location.href = action.data;
-        break;
-      case 'delay_redirect':
-        delay_redirect(action.data);
-        break;
-      case 'remove_job_row':
-        remove_row_by_job_id(action.data);
-        break;
-      default:
-        alert('Implementation failure for "' + action.action + '" with the data: "' + action.data + '"');
-        break;
-     }
-   }
+  });
+
+  function dynamicReaction(data, model) {
+    var actions = data.actions;
+    if(data.job_info!=null) {
+      replace_job_row(data.job_info, model); 
+    }
+    for (var i = 0; i < actions.length; i++) {
+      var action = actions[i];
+      switch(action.action)
+      {
+        case 'alert':
+          $(".alert_row").text(action.data);
+          animatedcollapse.show('alert_section'); 
+          break;
+        case 'reload':
+          location.href = location.href;
+          break;
+        case 'redirect':
+          location.href = action.data;
+          break;
+        case 'delay_redirect':
+          delay_redirect(action.data);
+          break;
+        case 'remove_job_row':
+          remove_row_by_job_id(action.data);
+          break;
+        default:
+          alert('Implementation failure for "' + action.action + '" with the data: "' + action.data + '"');
+          break;
+      }
+    }
   }
+  
+  function replace_job_row(job_info, model) {
+    var ji = job_info;
 
-  function remove_row_by_job_id(job_id){
+      model.set('job_id', ji.job_id);
+      model.set('output_pic_count', ji.output_pic_count);
+      model.set('status', ji.status);
+      model.set('doctor_exists', ji.doctor_exists);
+      model.set('batch', ji.batch);
+      model.set('batchurl', ji.batchurl);
+      model.set('pic_thumbs', ji.pic_thumbs);
+      model.set('dynamic_actions', ji.dynamic_actions);
+      model.set('doctor_payout', ji.doctor_payout);
+      $('.carousel').carousel('next');
+      $('.carousel').carousel();
+  }
+  
+  function remove_row_by_job_id(job_id) {
     $('.job_row').each(function(){
       if($(this).attr('job_id') == job_id){
         $(this).remove();
@@ -139,25 +239,8 @@ $(function(){
     }
   }
 
-
-  var JobView = Backbone.View.extend({
-
-    el: $("#job_app"),
-
-
-    initialize: function() {
-
-      $(".job_row").each( function() {
-        new JobRow({el:$(this)});
-      });
-    },
-
-    render: function() {
-        console.log('render job view');
-    },
-
-  });
-
-  var Jobs = new JobView;
-
+  var job_list = new JobList();
+  job_list.container = $("#jobs_rows");
+  var job_infos =  jQuery.parseJSON( $('.job_infos').html());
+  job_list.reset(job_infos);
 });

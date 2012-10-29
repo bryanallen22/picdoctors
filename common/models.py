@@ -510,6 +510,10 @@ class DocPicGroup(DeleteMixin):
         #if accepted self.pic blah blah blah
         return self.watermark_pic
 
+class Charge(DeleteMixin):
+    amount_cents     = models.IntegerField()
+    fee_cents        = models.IntegerField()
+    stripe_id        = models.CharField(max_length=32)
 
 # Create your models here.
 class Job(DeleteMixin):
@@ -518,7 +522,7 @@ class Job(DeleteMixin):
     TOO_LOW   = 'too_low' #not worth doctors time
     DOCTOR_ACCEPTED  = 'doctor_acc' #doctor accepted
     DOCTOR_REQUESTS_ADDITIONAL_INFORMATION = 'doc_need_info'
-    DOCTOR_SUBMITTED = 'docter_sub' #submitted to user for approval
+    DOCTOR_SUBMITTED = 'doctor_sub' #submitted to user for approval
     USER_ACCEPTED    = 'user_acc'   #user accepts the finished product
     USER_REQUESTS_MODIFICATION = 'user_add' #scope creep
     USER_REJECTED     = 'user_rej'   #user rejects product and wants a refund...
@@ -531,12 +535,12 @@ class Job(DeleteMixin):
         (DOCTOR_REQUESTS_ADDITIONAL_INFORMATION, 'Doctor Has Requested Additional Info'),
         (DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
         (USER_ACCEPTED, 'User Accepted Work'),
-        (USER_REQUESTS_MODIFICATION, 'User Has Requested Some Modification'),
+        (USER_REQUESTS_MODIFICATION, 'User Has Requested Modification'),
         (USER_REJECTED, 'User Has Rejected Work'),
     )
 
     #Never blank, no batch = no job. related_name since Batch already has a FK
-    batch              = models.ForeignKey(Batch, 
+    batch                   = models.ForeignKey(Batch, 
                                            db_index=True)
     skaa                    = models.ForeignKey(UserProfile, 
                                                 related_name='job_owner')
@@ -544,18 +548,19 @@ class Job(DeleteMixin):
                                                 related_name='job_doctor',
                                                 blank=True, null=True)
     #from something in the billions to 1 penny
-    price                   = models.DecimalField(blank=False, 
-                                                  max_digits=13, 
-                                                  decimal_places=2)
+    price_cents             = models.IntegerField(blank=False)
 
     #this price is set when a doctor takes the job.  payout prices 
     #that appear on the job page, vary based on accepted job count
-    payout_price            = models.DecimalField(blank=True, null=True,
-                                                  max_digits=13, 
-                                                  decimal_places=2)
+    payout_price_cents      = models.IntegerField(blank=True, null=True)
+    
     price_too_low_count     = models.IntegerField(blank=False, 
                                                   default=0)
-    #max_length refers to the shorthand versions above
+    # hmm okay, I see an issue here, so say we switch from stripe,
+    # or start using some other service as well, then we need to adjust
+    charge                  = models.ForeignKey(Charge)
+    
+    # max_length refers to the shorthand versions above
     status                  = models.CharField(max_length=15, 
                                                choices=STATUS_CHOICES, 
                                                default=USER_SUBMITTED)
@@ -581,7 +586,7 @@ class Job(DeleteMixin):
         else:
             out += self.doctor.user.username
 
-        out += " -- price: " + str(self.price)
+        out += " -- price cents: " + str(self.price_cents)
         out += " -- status: " + self.status
         return out
 
