@@ -27,7 +27,7 @@
     </div>
     {% endfor %}
     {% endif %}
-    <h2 class='markup_h2_header'>
+    <h2 class='markup_h2_header well'>
       {% if read_only %}
       User Images
       {% else %}
@@ -37,7 +37,7 @@
     <br/>
     {% for pic in pics %}
     <div class='markup_outer'>
-      <span class='markup_pic_container' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;cursor:default;"  uuid="{{ pic.uuid }}" >
+      <span class='markup_pic_container' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;"  uuid="{{ pic.uuid }}" >
         {# Do not, under any circumstances, change the padding or margin of  #}
         {# this .markup_pic_container or .pic unless you are 200% certain    #}
         {# that you aren't messing things up. Careful calculation of offsets #}
