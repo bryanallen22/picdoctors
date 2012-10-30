@@ -188,19 +188,19 @@
 /*****************************
   Markup page
 ******************************/
-#markup_app .markup_outer {
+.markup_outer {
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
 }
-#markup_app .markup_outer .markup_pic_container {
+.markup_outer .markup_pic_container {
   /* Do not, under any circumstances, change the padding or margin
-         of this .markup_pic_container or .pic unless you are 200% certain
-         you aren't messing things up. Careful calculation of offsets
-         for drawing markups at the right location is done, and if you
-         change them, old markups might appear at the wrong spot */
+       of this .markup_pic_container or .pic unless you are 200% certain
+       you aren't messing things up. Careful calculation of offsets
+       for drawing markups at the right location is done, and if you
+       change them, old markups might appear at the wrong spot */
 
   display: block;
   position: relative;
@@ -213,13 +213,27 @@
   margin-left: auto;
   margin-right: auto;
 }
-#markup_app .markup_outer .markup_desc_container {
+.markup_outer .markup_pic_container .markup {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  position: absolute;
+  border-radius: 6px;
+  box-shadow: 0 0 10px 1px #eeeeee;
+}
+.markup_outer .markup_pic_container .markup .markup-redx {
+  position: absolute;
+  cursor: default;
+}
+.markup_outer .markup_desc_container {
   margin-top: 5px;
   margin-bottom: 20px;
   margin-left: 20px;
   margin-right: auto;
 }
-#markup_app .markup_outer .markup_desc_container .markup_desc .desc_title {
+.markup_outer .markup_desc_container .markup_desc .desc_title {
   border-radius: 6px;
   box-shadow: 0 0 10px 1px #eeeeee;
   display: inline;
@@ -227,7 +241,7 @@
   padding-left: 4px;
   padding-right: 4px;
 }
-#markup_app .markup_outer .markup_desc_container .markup_desc .desc {
+.markup_outer .markup_desc_container .markup_desc .desc {
   margin-top: 5px;
   margin-bottom: 10px;
   width: 700px;
@@ -237,20 +251,14 @@
   display: block;
   margin-left: 40px;
 }
-#markup_app h1,
-#markup_app h2,
-#markup_app h3,
-#markup_app h4 {
-  color: inherit;
-  text-align: center;
-}
 .markup_h2_header {
-  /* I want this to be as wide as the picture, which is 800px. The well padding
-     (site wide) is 19px, so our width is
-       800 - 19*2 = 762
-   */
+  background-color: lightBlue;
+  border: black solid 1px;
+  color: black;
+  text-align: center;
+  /* I want this to be as wide as the picture, it's currently at 800 px */
 
-  width: 762px;
+  width: 800px;
 }
 /*****************************
   Job page
