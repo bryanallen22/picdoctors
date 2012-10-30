@@ -203,90 +203,92 @@
 /*****************************
   Markup page
 ******************************/
-.markup_outer {
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-  .markup_pic_container {
-
-    /* Do not, under any circumstances, change the padding or margin
-       of this .markup_pic_container or .pic unless you are 200% certain
-       you aren't messing things up. Careful calculation of offsets
-       for drawing markups at the right location is done, and if you
-       change them, old markups might appear at the wrong spot */
-    display: block;
-    position: relative;
-    cursor: crosshair;
+#markup_app {
+  .markup_outer {
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -o-user-select: none;
     user-select: none;
+    .markup_pic_container {
 
-    margin-left: auto;
-    margin-right: auto;
-
-    .markup {
+      /* Do not, under any circumstances, change the padding or margin
+         of this .markup_pic_container or .pic unless you are 200% certain
+         you aren't messing things up. Careful calculation of offsets
+         for drawing markups at the right location is done, and if you
+         change them, old markups might appear at the wrong spot */
+      display: block;
+      position: relative;
+      cursor: crosshair;
       -webkit-user-select: none;
       -khtml-user-select: none;
       -moz-user-select: none;
       -o-user-select: none;
       user-select: none;
 
-      position: absolute;
-      //left: 20px;
-      //top: 35px;
-      //height: 200px;
-      //width: 300px;
-      //border: 4px solid @pink;
-      border-radius: 6px;
-      //box-shadow: 2px 2px 3px #666;
-      box-shadow: 0 0 10px 1px @grayLighter;
-      .markup-redx {
+      margin-left: auto;
+      margin-right: auto;
+
+      .markup {
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+
         position: absolute;
-        cursor: default;
-      }
-    }
-  }
-
-  .markup_desc_container {
-    margin-top: 5px;
-    margin-bottom: 20px;
-    margin-left: 20px;
-    margin-right: auto;
-    .markup_desc {
-      .desc_title {
+        //left: 20px;
+        //top: 35px;
+        //height: 200px;
+        //width: 300px;
+        //border: 4px solid @pink;
         border-radius: 6px;
+        //box-shadow: 2px 2px 3px #666;
         box-shadow: 0 0 10px 1px @grayLighter;
-        display:inline;
-        white-space:nowrap;
-        padding-left: 4px;
-        padding-right: 4px;
+        .markup-redx {
+          position: absolute;
+          cursor: default;
+        }
       }
-      .desc {
-        margin-top: 5px;
-        margin-bottom: 10px;
-        width: 700px;
-       /* height: 55px;*/
-        max-width: 700px;
-        display:block;
-        margin-left: 40px;
+    }
+
+    .markup_desc_container {
+      margin-top: 5px;
+      margin-bottom: 20px;
+      margin-left: 20px;
+      margin-right: auto;
+      .markup_desc {
+        .desc_title {
+          border-radius: 6px;
+          box-shadow: 0 0 10px 1px @grayLighter;
+          display:inline;
+          white-space:nowrap;
+          padding-left: 4px;
+          padding-right: 4px;
+        }
+        .desc {
+          margin-top: 5px;
+          margin-bottom: 10px;
+          width: 700px;
+         /* height: 55px;*/
+          max-width: 700px;
+          display:block;
+          margin-left: 40px;
+        }
       }
     }
   }
+
+  .markup_h2_header {
+    text-align: center;
+    color: inherit;
+    /* Picture is 800 px wide. The margins on the well are 19px.
+       762 + 19*2 = 800
+     */
+    width:762px;
+  }
 }
 
-.markup_h2_header {
-  text-align: center;
-  background-color: lightBlue;
-  border: black solid 1px;
-  color: black;
-  text-align:center;
-  /* I want this to be as wide as the picture, it's currently at 800 px */
-  width:800px;
-}
 
 /*****************************
   Job page
