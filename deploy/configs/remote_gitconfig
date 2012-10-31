@@ -1,0 +1,15 @@
+[alias]
+        co = checkout
+        br = branch
+        st = status
+        lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+[color]
+        branch = auto
+        diff = auto
+        interactive = auto
+        status = auto
+[user]
+	email = deploy@picdoctors.com
+	name = Deploy Bot
+[am]
+	keepcr = true

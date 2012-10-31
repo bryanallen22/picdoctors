@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import patterns, include, url
-from picdoctors.views import *
+from views import *
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 import settings

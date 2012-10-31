@@ -1,0 +1,18 @@
+# Required for PIL:
+libjpeg8-dev
+zlib1g-dev
+libfreetype6-dev
+liblcms2-dev
+gcc
+python2.7-dev
+
+python-pip
+
+npm
+
+rabbitmq-server
+
+nginx
+uwsgi
+uwsgi-plugin-http
+uwsgi-plugin-python

@@ -122,7 +122,7 @@ MIDDLEWARE_CLASSES = (
     'debug_toolbar.middleware.DebugToolbarMiddleware', # Typically should be last
 )
 
-ROOT_URLCONF = 'picdoctors.urls'
+ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
 
 TEMPLATE_DIRS = (
@@ -141,15 +141,9 @@ BROKER_VHOST = 'carrot'
 BROKER_USER = 'weliketoeat'
 BROKER_PASSWORD = 'rabbitsfordinner'
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'django.contrib.admindocs',
+# These are apps whose tests must pass before we can deploy.
+# They are added to INSTALLED_APPS
+TESTABLE_APPS = (
     'storages',
     'debug_toolbar',
     'common',
@@ -159,6 +153,18 @@ INSTALLED_APPS = (
     'tasks',
     'djcelery',
 )
+
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django.contrib.admindocs',
+) + TESTABLE_APPS
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
