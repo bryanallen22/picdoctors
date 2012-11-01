@@ -56,7 +56,19 @@
                 {% else%}
                   <li><a href="/jobs/">My Jobs</a></li>
                 {% endif %}
-                <li><a href="/signout/">Log Out ({{user.username }})</a></li>
+                <li class="dropdown">
+                  <a class="dropdown-toggle"
+                     data-toggle="dropdown"
+                     href="#">
+                      {{user.username }}
+                      <b class="caret"></b>
+                    </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/account_settings/">Account Settings</a></li>
+                    <li><a href="/signout/">Log Out</a></li>
+                  </ul>
+                </li>
+
               {% endif %}
             </ul>
           </div>
@@ -68,10 +80,12 @@
 
       <hr>
       <footer>
-        <p>&copy; PicDoctors 2011</p>
+        <p>&copy; PicDoctors 2012</p>
       </footer>
     </div>
 
+    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
     {% block scripts %}
     {% endblock %}
 
