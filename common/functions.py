@@ -2,7 +2,7 @@
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 
-from common.models import Batch
+from common.models import Album
 
 import logging
 from datetime import datetime, timedelta
@@ -70,17 +70,17 @@ def get_time_string(prev_date):
 
     return ret
 
-def get_unfinished_batch(request):
-    batch = None
+def get_unfinished_album(request):
+    album = None
     redirect_url = None
     try:
-        batch = Batch.get_unfinished(request)
-        if not batch:
+        album = Album.get_unfinished(request)
+        if not album:
             redirect_url = reverse('upload')
     except MultipleObjectsReturned:
-        # Too many open unfinished batches. Resolve them.
+        # Too many open unfinished albums. Resolve them.
 
-        redirect_url = '%s?next=%s' % (reverse('merge_batches'),
+        redirect_url = '%s?next=%s' % (reverse('merge_albums'),
                                urllib.quote( request.get_full_path() ));
 
-    return (batch, redirect_url)
+    return (album, redirect_url)

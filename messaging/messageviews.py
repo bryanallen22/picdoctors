@@ -7,7 +7,7 @@ from django.utils import simplejson
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from common.models import Job, Batch, Group, Pic
+from common.models import Job, Album, Group, Pic
 from messaging.models import JobMessage, GroupMessage
 from common.functions import get_profile_or_None, get_time_string
 from django.core.mail import EmailMultiAlternatives
@@ -77,7 +77,7 @@ def contact(request, job_id):
 
     job_messages = prep_messages(JobMessage.get_messages(job), profile, job)
 
-    groups = Group.get_batch_groups(job.batch)
+    groups = Group.get_album_groups(job.album)
     groupings = []
     for group in groups:
         picco = PicComment()

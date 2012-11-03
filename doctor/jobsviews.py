@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from common.models import Job 
-from common.models import Batch
+from common.models import Album
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
@@ -69,12 +69,12 @@ def generate_doctor_actions(job):
 
     group = job.get_first_unfinished_group()
     group_seq = 1 if not group else group.sequence
-    work_job_url= reverse('markup_batch', args=[job.batch.id, group_seq])
+    work_job_url= reverse('markup_album', args=[job.album.id, group_seq])
     work_job = DynamicAction('Work On Job', work_job_url, redirect_url)
 
     complete_job = DynamicAction('Mark as Completed', '/mark_job_completed/')
     
-    view_job_url= reverse('markup_batch', args=[job.batch.id, 1])
+    view_job_url= reverse('markup_album', args=[job.album.id, 1])
     view_job = DynamicAction('View Job', view_job_url, True)
 
     if job.status == Job.USER_SUBMITTED:
@@ -213,7 +213,7 @@ def mark_job_completed(request):
             plural_to_be = 'are' if plural else 'is'
             plural_s = 's' if plural else ''
             actions.add('alert', str(unfinished_count) + ' group' + plural_s + ' ' + plural_to_be + ' missing a doctored picture.')
-            redir_url = reverse('markup_batch', args=[job.batch.id, missing_group.sequence])
+            redir_url = reverse('markup_album', args=[job.album.id, missing_group.sequence])
             r =  RedirectData(redir_url,'the first missing picture')
             actions.add('delay_redirect', r)
     return HttpResponse(actions.to_json(), mimetype='application/json')

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
 from common.models import Job
-from common.models import Batch
+from common.models import Album
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
@@ -53,7 +53,7 @@ def generate_skaa_actions(job):
     #u_like_pie = DynamicAction('Do You like Pie', '/u_like_pie')
     #ret.append(i_like_pie)
     #ret.append(u_like_pie)
-    view_job_url= reverse('markup_batch', args=[job.batch.id, 1])
+    view_job_url= reverse('markup_album', args=[job.album.id, 1])
     view_job = DynamicAction('View Job', view_job_url, True)
     
     if job.status == Job.USER_SUBMITTED:
@@ -95,18 +95,18 @@ def generate_skaa_actions(job):
     return ret
 
         
-def create_job(request, batch, charge):
+def create_job(request, album, charge):
     j = None
-    if batch is not None:
+    if album is not None:
         charge = generate_db_charge(charge)
         j = Job(skaa=request.user.get_profile(),
-                batch=batch, 
+                album=album, 
                 price_cents=charge.amount_cents, 
                 charge=charge,
                 status=Job.USER_SUBMITTED)
         
         j.save()       
-        set_groups_locks(batch, True)
+        set_groups_locks(album, True)
     return j
 
 def generate_db_charge(stripe_charge):
@@ -116,8 +116,8 @@ def generate_db_charge(stripe_charge):
     charge.save()
     return charge
 
-def set_groups_locks(batch_to_lock, state):
-    groups = Group.objects.filter(batch=batch_to_lock)
+def set_groups_locks(album_to_lock, state):
+    groups = Group.objects.filter(album=album_to_lock)
     #Performance Opportunity, just update all at once
     for group in groups:
         group.is_locked = state

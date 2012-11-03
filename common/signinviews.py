@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from common.models import Batch, UserProfile, DoctorInfo, SkaaInfo
+from common.models import Album, UserProfile, DoctorInfo, SkaaInfo
 from doctor.jobsviews import doc_job_page
 from views import index
 
@@ -106,9 +106,9 @@ def signin(request, usertype='user'):
         pass
 
     elif request.method == 'POST':
-        # Do they have a batch in the session? If so, let's keep a handle on it
+        # Do they have a album in the session? If so, let's keep a handle on it
         # so we can associate it with the user's profile.
-        batch = Batch.get_unfinished(request)
+        album = Album.get_unfinished(request)
 
         # Sign into existing account
         if request.POST['create_acct_radio'] == 'have':
@@ -131,7 +131,7 @@ def signin(request, usertype='user'):
             # Successful login. Take care of "remember me" button
             login(request, user)
             
-            associate_batch(request, batch, user)
+            associate_album(request, album, user)
 
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
@@ -158,13 +158,13 @@ def signout(request):
     logout(request)   
     return redirect('/')
 
-def associate_batch(request, batch, user):
-    if batch is not None:
-        batch.userprofile = user.get_profile()
-        batch.save()
+def associate_album(request, album, user):
+    if album is not None:
+        album.userprofile = user.get_profile()
+        album.save()
 
     # Once it has a user, clear the session back out
-    Batch.clear_session_batch(request)
+    Album.clear_session_album(request)
 
 def skaa_signin(request):
     # Don't use the word 'skaa' here -- it'll be visible in the html : )

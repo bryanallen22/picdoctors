@@ -160,7 +160,7 @@ def pic_thumbnails_path(instance, filename):
     return get_pic_path("thumbnails", instance, filename)
 
 class Pic(DeleteMixin):
-    batch                = models.ForeignKey('Batch', blank=True, null=True)
+    album                = models.ForeignKey('Album', blank=True, null=True)
     uuid                 = models.CharField(max_length=32, blank=False,
                                             unique=True, db_index=True)
     title                = models.CharField(max_length=60, blank=True, null=True)
@@ -294,7 +294,7 @@ class Pic(DeleteMixin):
 
 
 ################################################################################
-# Batch
+# Album
 #
 # A word on groupings:
 #
@@ -305,12 +305,12 @@ class Pic(DeleteMixin):
 #       - Any time a user modifies the groupings in some way, you must call
 #         kick_groups_modified(). Examples: new pic uploaded, grouping created,
 #         grouping deleted.
-#       - Anyone who needs up to date info on the groupings for this batch MUST
+#       - Anyone who needs up to date info on the groupings for this album MUST
 #         call set_sequences(). The call will only actually set sequences if
 #         kick_groups_modified() has been called more recently than set_sequences()
 #
 ################################################################################
-class Batch(DeleteMixin):
+class Album(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
     userprofile          = models.ForeignKey(UserProfile, blank=True, 
                                              null=True, db_index=True)
@@ -324,7 +324,7 @@ class Batch(DeleteMixin):
     sequences_last_set   = models.DateTimeField(auto_now_add=True)
     
     def get_job_or_None(self):
-        job = get_object_or_None(Job, batch=self)
+        job = get_object_or_None(Job, album=self)
         return job
     
     def kick_groups_modified(self):
@@ -338,7 +338,7 @@ class Batch(DeleteMixin):
 
     def set_sequences(self):
         """
-        Sets sequence for each picture in the batch.
+        Sets sequence for each picture in the album.
 
         This method must be called before you can trust any groupings. To
         prevent this method from being overly wasteful, it won't actually
@@ -350,11 +350,11 @@ class Batch(DeleteMixin):
         """
 
         if self.groups_last_modified < self.sequences_last_set:
-            logging.info("Batch.set_sequences bailing out early - no groups have been modified")
+            logging.info("Album.set_sequences bailing out early - no groups have been modified")
             return
 
-        pics = Pic.objects.filter( batch=self )
-        logging.info('setting sequences for batch_id %d' % self.id)
+        pics = Pic.objects.filter( album=self )
+        logging.info('setting sequences for album_id %d' % self.id)
 
         # This doesn't feel like the most efficient way to get a sorted,
         # unique list, but it works
@@ -367,7 +367,7 @@ class Batch(DeleteMixin):
             if id != ungroupedId:
                 # All matching pics get next_sequence
                 logging.info('creating new group')
-                g = Group(batch=self, sequence=next_sequence) 
+                g = Group(album=self, sequence=next_sequence) 
                 g.save()
                 for pic in matches:
                     #pic.group_id = next_sequence
@@ -378,7 +378,7 @@ class Batch(DeleteMixin):
                 # All ungrouped pics get their own sequence
                 for pic in matches:
                     logging.info('creating new group')
-                    g = Group(batch=self, sequence=next_sequence) 
+                    g = Group(album=self, sequence=next_sequence) 
                     g.save()
                     #pic.group_id = next_sequence
                     pic.group = g
@@ -393,44 +393,44 @@ class Batch(DeleteMixin):
         self.save()
 
     @staticmethod
-    def clear_session_batch(request):
+    def clear_session_album(request):
         """
-        Clear the batch_id from the session
+        Clear the album_id from the session
         """
-        if 'batch_id' in request.session:
-            del request.session['batch_id']
+        if 'album_id' in request.session:
+            del request.session['album_id']
 
     @staticmethod
-    def create_batch(request):
+    def create_album(request):
         """
-        Create a batch and return it. If the user is logged in, associate this
-        batch with that user. If not, store it in the session.
+        Create a album and return it. If the user is logged in, associate this
+        album with that user. If not, store it in the session.
         """
-        batch = Batch()
+        album = Album()
 
-        # Create a batch associated with a user
+        # Create a album associated with a user
         if request.user.is_authenticated():
-            batch.userprofile = request.user.get_profile()
-            batch.save()
+            album.userprofile = request.user.get_profile()
+            album.save()
 
-        # Create a batch and store it in the session
+        # Create a album and store it in the session
         else:
-            batch.save()
-            Batch.clear_session_batch(request)
-            # Make sure that this stays below the batch.save() method so we have an id:
-            request.session['batch_id'] = batch.id
+            album.save()
+            Album.clear_session_album(request)
+            # Make sure that this stays below the album.save() method so we have an id:
+            request.session['album_id'] = album.id
 
-        return batch
+        return album
 
 
     @staticmethod
     def get_unfinished(request):
         """
-        Returns the unfinished batch for either (the logged in user) or (the not
+        Returns the unfinished album for either (the logged in user) or (the not
         logged in user, based on their session). Preference is given to logged
         in users if both match.
 
-        If there is more than one unfinished batch associated with this user,
+        If there is more than one unfinished album associated with this user,
         something is wrong and we raise an exception.
         """
 
@@ -439,18 +439,18 @@ class Batch(DeleteMixin):
         # If user is logged in, look for one associated with profile
         user_profile = request.user.get_profile() if request.user.is_authenticated() else None
         if user_profile:
-            batches = Batch.objects.filter(finished=False, userprofile=user_profile)
-            if len(batches) >= 2:
-                raise MultipleObjectsReturned("%s unfinished batches at once!" 
-                                              % len(batches))
-            elif len(batches) == 1:
-                ret = batches[0]
+            albums = Album.objects.filter(finished=False, userprofile=user_profile)
+            if len(albums) >= 2:
+                raise MultipleObjectsReturned("%s unfinished albums at once!" 
+                                              % len(albums))
+            elif len(albums) == 1:
+                ret = albums[0]
 
         # If user is not logged in, check the session
-        elif 'batch_id' in request.session:
+        elif 'album_id' in request.session:
             try:
-                ret = Batch.objects.get(finished=False, pk=request.session['batch_id'])
-            except Batch.DoesNotExist:
+                ret = Album.objects.get(finished=False, pk=request.session['album_id'])
+            except Album.DoesNotExist:
                 ret = None
 
         return ret
@@ -458,9 +458,9 @@ class Batch(DeleteMixin):
 
     def __unicode__(self):
         if self.userprofile is not None:
-            return "Batch # " + str(self.id) + " -- owned by: " + self.userprofile.user.username
+            return "Album # " + str(self.id) + " -- owned by: " + self.userprofile.user.username
         else:
-            return "Batch # " + str(self.id) + " -- owned by the internet"  
+            return "Album # " + str(self.id) + " -- owned by the internet"  
 
 ################################################################################
 # Group
@@ -468,7 +468,7 @@ class Batch(DeleteMixin):
 ################################################################################
 class Group(models.Model):
     sequence        = models.IntegerField()
-    batch           = models.ForeignKey('Batch')
+    album           = models.ForeignKey('Album')
     is_locked       = models.BooleanField(default=False)
  
     def add_doctor_pic(self, pic, watermark_pic):
@@ -487,12 +487,12 @@ class Group(models.Model):
 
 
     @staticmethod
-    def get_batch_groups(batch):
-        return Group.objects.filter(batch=batch)
+    def get_album_groups(album):
+        return Group.objects.filter(album=album)
 
     @staticmethod
     def get_job_groups(job):
-        return Group.get_batch_groups(job.batch)
+        return Group.get_album_groups(job.album)
 
     def __unicode__(self):
         return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked)
@@ -539,8 +539,8 @@ class Job(DeleteMixin):
         (USER_REJECTED, 'User Has Rejected Work'),
     )
 
-    #Never blank, no batch = no job. related_name since Batch already has a FK
-    batch                   = models.ForeignKey(Batch, 
+    #Never blank, no album = no job. related_name since Album already has a FK
+    album                   = models.ForeignKey(Album, 
                                            db_index=True)
     skaa                    = models.ForeignKey(UserProfile, 
                                                 related_name='job_owner')

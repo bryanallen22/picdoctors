@@ -1302,7 +1302,7 @@
   // model in question. By default, makes a RESTful Ajax request
   // to the model's `url()`. Some possible customizations could be:
   //
-  // * Use `setTimeout` to batch rapid-fire updates into a single request.
+  // * Use `setTimeout` to album rapid-fire updates into a single request.
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
