@@ -8,8 +8,8 @@ from django.utils import simplejson
 from annoying.decorators import render_to
 
 from common.decorators import user_passes_test
-from common.functions import get_unfinished_batch
-from common.models import Batch
+from common.functions import get_unfinished_album
+from common.models import Album
 from common.models import Group
 from common.models import Pic
 from common.models import ungroupedId
@@ -54,15 +54,15 @@ def currency_to_cents(currency):
 def set_price(request):
     invalid_price = False
 
-    batch, redirect_url = get_unfinished_batch(request)
-    if not batch:
+    album, redirect_url = get_unfinished_album(request)
+    if not album:
         return redirect(redirect_url)
 
     # We need valid sequences in this view. Set them. (This will fall through
     # if that's not necessary)
-    batch.set_sequences()
+    album.set_sequences()
 
-    min_price = min_price_per_pic * batch.num_groups
+    min_price = min_price_per_pic * album.num_groups
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
@@ -78,13 +78,13 @@ def set_price(request):
                 amount=cents, # amount in cents, again
                 currency="usd",
                 card=token,
-                description=batch.userprofile.user.username
+                description=album.userprofile.user.username
             )
-            batch.finished = True
-            batch.save()
-            create_job(request, batch, charge)
-            logging.info("Batch owned by %s has been finished with price at $%s (cents)" %
-                         (batch.userprofile.user.username, cents))
+            album.finished = True
+            album.save()
+            create_job(request, album, charge)
+            logging.info("Album owned by %s has been finished with price at $%s (cents)" %
+                         (album.userprofile.user.username, cents))
             return redirect(reverse('job_page'))
         else:
             invalid_price = True

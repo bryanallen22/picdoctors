@@ -19,8 +19,8 @@ class JobInfo:
         self.output_pic_count = ''
         self.status = 'Unknown'
         self.doctor_exists = False
-        self.batch = -1
-        self.batchurl = ''
+        self.album = -1
+        self.albumurl = ''
         self.pic_thumbs = []
         self.dynamic_actions = []
 
@@ -91,7 +91,7 @@ def get_pagination_info(jobs, page):
     return pager, cur_page 
 
 #Populate job info based on job objects from database.
-#job infos are a mixture of Pic, Job, & Batch
+#job infos are a mixture of Pic, Job, & Album
 def get_job_infos_json(cur_page_jobs, action_generator, request):
     job_infos = []
 
@@ -112,7 +112,7 @@ def fill_job_info(job, action_generator, profile):
     job_inf.job_id = job.id
     job_inf.status = job.get_status_display()
     job_inf.doctor_exists = job.doctor is not None
-    batch = job.batch
+    album = job.album
     job_inf.dynamic_actions = action_generator(job)
 
     if job_inf.doctor_exists:
@@ -121,25 +121,25 @@ def fill_job_info(job, action_generator, profile):
     else:
         job_inf.doctor_payout = calculate_job_payout(job, profile)
 
-    if batch is not None:
-        job_inf.batch = batch.id
-        job_inf.batchurl = reverse('markup_batch', args=[job_inf.batch, 1])
-        job_inf.output_pic_count = batch.num_groups
-        job_inf.pic_thumbs = generate_pic_thumbs(batch)
+    if album is not None:
+        job_inf.album = album.id
+        job_inf.albumurl = reverse('markup_album', args=[job_inf.album, 1])
+        job_inf.output_pic_count = album.num_groups
+        job_inf.pic_thumbs = generate_pic_thumbs(album)
 
     return job_inf
 
-def generate_pic_thumbs(filter_batch):
+def generate_pic_thumbs(filter_album):
     """
-    Get all the pic thumbnails associated with a batch
+    Get all the pic thumbnails associated with a album
 
     Returns an array of tuples like this:
         (thumb_url, markup_url)
     """
     ret = []
-    pics = Pic.objects.filter(batch=filter_batch)
+    pics = Pic.objects.filter(album=filter_album)
     for pic in pics:
-        markup_url= reverse('markup_batch', args=[filter_batch.id, pic.group.sequence])
+        markup_url= reverse('markup_album', args=[filter_album.id, pic.group.sequence])
         tup = (pic.get_thumb_url(), markup_url)
         ret.append(tup)
     return ret

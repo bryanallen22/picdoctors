@@ -18,8 +18,8 @@ $(function(){
         output_pic_count : '',
         status : 'Unknown',
         doctor_exists : false,
-        batch : -1,
-        batchurl : '',
+        album : -1,
+        albumurl : '',
         pic_thumbs : [],
         dynamic_actions : [],
         doctor_payout : '',
@@ -93,8 +93,8 @@ $(function(){
           output_pic_count    : this.model.get('output_pic_count'),
           status              : this.model.get('status'),
           doctor_exists       : this.model.get('doctor_exists'),
-          batch               : this.model.get('batch'),
-          batchurl            : this.model.get('batchurl'),
+          album               : this.model.get('album'),
+          albumurl            : this.model.get('albumurl'),
           pic_thumbs          : this.model.get('pic_thumbs'),
           dynamic_actions     : this.model.get('dynamic_actions'),
           doctor_payout       : this.model.get('doctor_payout'),
@@ -185,8 +185,8 @@ $(function(){
       model.set('output_pic_count', ji.output_pic_count);
       model.set('status', ji.status);
       model.set('doctor_exists', ji.doctor_exists);
-      model.set('batch', ji.batch);
-      model.set('batchurl', ji.batchurl);
+      model.set('album', ji.album);
+      model.set('albumurl', ji.albumurl);
       model.set('pic_thumbs', ji.pic_thumbs);
       model.set('dynamic_actions', ji.dynamic_actions);
       model.set('doctor_payout', ji.doctor_payout);

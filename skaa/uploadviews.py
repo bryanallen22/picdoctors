@@ -13,9 +13,9 @@ from annoying.functions import get_object_or_None
 
 from django.core.files.uploadedfile import UploadedFile
 
-from common.functions import get_unfinished_batch
+from common.functions import get_unfinished_album
 from common.models import Pic
-from common.models import Batch
+from common.models import Album
 from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
@@ -40,17 +40,17 @@ def pic_json(pic):
 
 @render_to('upload.html')
 def upload_page(request):
-    batch, redirect_url = get_unfinished_batch(request)
-    if not batch:
+    album, redirect_url = get_unfinished_album(request)
+    if not album:
         if redirect_url == reverse('upload'):
             # Don't redirect them, they are already here!
-            # Just make a batch, already!
-            batch = Batch.create_batch(request)
+            # Just make a album, already!
+            album = Album.create_album(request)
         else:
             return redirect( redirect_url )
 
-    logging.info('batch.id is %d' % batch.id)
-    pics = Pic.objects.filter( batch__exact=batch.id );
+    logging.info('album.id is %d' % album.id)
+    pics = Pic.objects.filter( album__exact=album.id );
     return { "pics" : pics, "ungroupedId" :  ungroupedId }
 
 @render_to('need_cookies.html')
@@ -86,7 +86,7 @@ def has_doc_upload_access(request):
     if group is None:
         return False
 
-    job = get_object_or_None(Job, batch=group.batch.id)
+    job = get_object_or_None(Job, album=group.album.id)
 
     if job is None:
         return False
@@ -137,8 +137,8 @@ def upload_handler(request):
             logging.info(file.name)
             pic = Pic()
             pic.set_file(file)
-            batch = Batch.get_unfinished(request)
-            pic.batch = batch if batch else Batch.create_batch(request)
+            album = Album.get_unfinished(request)
+            pic.album = album if album else Album.create_album(request)
             pic.save()
 
             logging.info('File saving done')
@@ -146,8 +146,8 @@ def upload_handler(request):
             result = []
             result.append(pic_json(pic))
 
-            batch = Batch.get_unfinished(request)
-            batch.kick_groups_modified()
+            album = Album.get_unfinished(request)
+            album.kick_groups_modified()
 
             response_data = simplejson.dumps(result)
             #logging.info(response_data)
@@ -190,8 +190,8 @@ def group_pic_handler(request):
         pic.save()
 
     if pics is not None:
-        batch = Batch.get_unfinished(request)
-        batch.kick_groups_modified()
+        album = Album.get_unfinished(request)
+        album.kick_groups_modified()
         return HttpResponse('{ "success" : true }', mimetype='application/json')
     else:
         return HttpResponse('{ "success" : false }', mimetype='application/json')
@@ -207,9 +207,9 @@ def delete_pic_handler(request):
     return HttpResponse('{ "success" : false }', mimetype='application/json')
 
 def delete_groupings(request):
-    batch = Batch.get_unfinished(request)
-    if batch:
-        logging.info('deleting %d' % batch.id)
-        Group.objects.filter(batch=batch.id).delete()
-        batch.kick_groups_modified()
+    album = Album.get_unfinished(request)
+    if album:
+        logging.info('deleting %d' % album.id)
+        Group.objects.filter(album=album.id).delete()
+        album.kick_groups_modified()
 

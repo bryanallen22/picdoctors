@@ -1099,7 +1099,7 @@ jQuery.Callbacks = function( flags ) {
 					var length = list.length;
 					add( arguments );
 					// Do we need to add the callbacks to the
-					// current firing batch?
+					// current firing album?
 					if ( firing ) {
 						firingLength = list.length;
 					// With memory, if we're not firing then
@@ -1386,7 +1386,7 @@ jQuery.support = (function() {
 		return {};
 	}
 
-	// First batch of supports tests
+	// First album of supports tests
 	select = document.createElement( "select" );
 	opt = select.appendChild( document.createElement("option") );
 	input = div.getElementsByTagName( "input" )[ 0 ];

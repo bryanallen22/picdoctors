@@ -8,32 +8,32 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
 from common.models import Pic
-from common.models import Batch
+from common.models import Album
 from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
 from common.functions import get_profile_or_None
-from common.functions import get_unfinished_batch
+from common.functions import get_unfinished_album
 from models import Markup
 
 import pdb
 import logging
 
-def belongs_on_this_markup_page(request, batch_id, sequence):
-    batch_id = int(batch_id)
-    b = get_object_or_None(Batch, id=batch_id)
+def belongs_on_this_markup_page(request, album_id, sequence):
+    album_id = int(album_id)
+    b = get_object_or_None(Album, id=album_id)
 
-    #this batch doesn't exist
+    #this album doesn't exist
     if b is None:
         return False
 
     #if the user isn't logged in
     if not request.user.is_authenticated():
-        #get batch from session
-        req_batch = Batch.get_unfinished(request)
-        #does it match the batch they are trying to view?
-        if req_batch and req_batch.id == batch_id:
+        #get album from session
+        req_album = Album.get_unfinished(request)
+        #does it match the album they are trying to view?
+        if req_album and req_album.id == album_id:
             return True
         else:
             return False
@@ -41,11 +41,11 @@ def belongs_on_this_markup_page(request, batch_id, sequence):
     #the user is logged in by this point
     profile = request.user.get_profile()
 
-    #is batch owner
+    #is album owner
     if profile == b.userprofile:
         return True
 
-    j = get_object_or_None(Job, batch=batch_id)
+    j = get_object_or_None(Job, album=album_id)
 
     #is doctor of job
     if j.doctor == profile:
@@ -59,30 +59,30 @@ def belongs_on_this_markup_page(request, batch_id, sequence):
     return False
 
 def markup_page_test(request, sequence):
-    batch = Batch.get_unfinished(request)
-    if batch:
+    album = Album.get_unfinished(request)
+    if album:
         return True
     return False
 
-#markup page when we don't specify a batch_id (get it from request)
+#markup page when we don't specify a album_id (get it from request)
 @render_to('markup.html')
 @passes_test(markup_page_test, 'upload')
 def markup_page(request, sequence):
-    batch, redirect_url = get_unfinished_batch(request)
-    if not batch:
+    album, redirect_url = get_unfinished_album(request)
+    if not album:
         # Either send them to upload or merge
         return redirect(redirect_url)
-    return markup_page_batch(request, batch.id, sequence)
+    return markup_page_album(request, album.id, sequence)
 
-#markup page when we specify a batch_id
+#markup page when we specify a album_id
 @render_to('markup.html')
 @passes_test(belongs_on_this_markup_page, 'upload')
-def markup_page_batch(request, batch_id, sequence):
+def markup_page_album(request, album_id, sequence):
     sequence = int(sequence)
-    batch = Batch.objects.get( pk=int(batch_id) )
-    job = batch.get_job_or_None()
+    album = Album.objects.get( pk=int(album_id) )
+    job = album.get_job_or_None()
 
-    pics = Pic.objects.filter( batch=batch )
+    pics = Pic.objects.filter( album=album )
 
     if len(pics) == 0:
       # No pictures. How did they get here? Direct typing of the url?
@@ -91,12 +91,12 @@ def markup_page_batch(request, batch_id, sequence):
     
     # We need valid sequences in this view. Set them. (This will fall through
     # if that's not necessary)
-    batch.set_sequences()
+    album.set_sequences()
 
-    logging.info('sequence=%d, batch.id=%d, batch_num=%d' % (sequence, batch.id, batch.num_groups))
+    logging.info('sequence=%d, album.id=%d, album_num=%d' % (sequence, album.id, album.num_groups))
 
     logging.info('len(pics)=%d' % len(pics))
-    group = Group.objects.get(sequence=sequence,batch=batch)
+    group = Group.objects.get(sequence=sequence,album=album)
 
     doc_pic_groups = group.get_doctor_pics()
     doc_pics = []
@@ -126,13 +126,13 @@ def markup_page_batch(request, batch_id, sequence):
         is_job_user = True
 
     #previous next links
-    if sequence == batch.num_groups:
+    if sequence == album.num_groups:
         if read_only:
             next_url = reverse(job_page)
         else:
             next_url = reverse('set_price')
     else:
-        next_url = reverse('markup_batch', args=[batch.id, sequence+1])
+        next_url = reverse('markup_album', args=[album.id, sequence+1])
 
     if sequence == 1:
         if read_only:
@@ -140,7 +140,7 @@ def markup_page_batch(request, batch_id, sequence):
         else:
             previous_url = reverse('upload')
     else:
-        previous_url = reverse('markup_batch', args = [batch.id, sequence-1])
+        previous_url = reverse('markup_album', args = [album.id, sequence-1])
 
     return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 
             'group_id': group.id, 'doc_pics': doc_pics, 
@@ -206,10 +206,10 @@ def can_modify_markup(request, markup_id=None):
     if not pic:
         return False
 
-    batch = Batch.get_unfinished(request)
+    album = Album.get_unfinished(request)
 
-    #all pics are in a batch, all pics are in a grouping
-    if pic.group and pic.batch and pic.batch == batch:
+    #all pics are in a album, all pics are in a grouping
+    if pic.group and pic.album and pic.album == album:
         return not pic.group.is_locked
 
     return False
@@ -247,9 +247,9 @@ def markups_handler(request, markup_id=None):
             data = simplejson.loads(request.body)
             markup = Markup.objects.get(id=data['id'])
 
-            batch = Batch.get_unfinished(request)
-            batch_id = batch.id if batch else None
-            if batch_id and markup.pic.batch_id == batch_id:
+            album = Album.get_unfinished(request)
+            album_id = album.id if album else None
+            if album_id and markup.pic.album_id == album_id:
                 apply_markup_whitelist(markup, data)
                 markup.save()
         
@@ -265,12 +265,12 @@ def markups_handler(request, markup_id=None):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-#Implement logic to validate user has relation to batch/pic
+#Implement logic to validate user has relation to album/pic
 def can_modify_pic(request, pic):
     if pic:
-        if pic.batch:
-            req_batch = Batch.get_unfinished(request)
-            if req_batch and req_batch.id == pic.batch.id:
+        if pic.album:
+            req_album = Album.get_unfinished(request)
+            if req_album and req_album.id == pic.album.id:
                 return True
     return False
 
