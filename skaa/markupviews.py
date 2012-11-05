@@ -102,9 +102,8 @@ def markup_page_album(request, album_id, sequence):
     doc_pics = []
     revision = len(doc_pic_groups) + 1
     for doc_pic_group in doc_pic_groups:
-        #TODO add logic to figure out if we show watermark pic or other pic
         revision -= 1
-        doc_pics.append((revision, doc_pic_group.watermark_pic))
+        doc_pics.append((revision, doc_pic_group.get_pic()))
 
 
     read_only = group.is_locked

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+  <h1>Job # {{job_id|stringformat:"08d" }}</h1>
+</div>
+<div class='row'>
+  <div class='span12 contact_arena'>
+    <script type='application/json' class='previous_messages'>
+      {{job_messages|safe}}
+    </script>
+    <div class='row'>
+      <div class='message_arena'></div>
+      <div class='message_input_arena'>
+        <textarea class='message_input autosize-textarea' username='{{ request.user.username }}' group_id='' job_id='{{job_id}}' >Write your message here</textarea>
+      </div>
+    </div>
+  </div>
+</div>
+{% for group in groupings %}
+
+<div class='row grouping_row'>
+  <div class='span2'>
+    <div id="myCarousel" class="carousel slide carousel_no_bottom_margin">
+      <!-- Carousel items -->
+      <div class="carousel-inner pic_carousel">
+        {% for pic in group.user_pics %}
+        <div class="item"> 
+          <img src="{{ pic.get_thumb_url }}" class="pic_carousel" alt="">
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class='span2'>
+    {% if group.doc_pic %}
+    <img src="{{ group.doc_pic.get_thumb_url }}" class="" alt="">
+    {% endif %}
+    &nbsp;
+  </div>
+  <div class='span8 contact_arena'>
+    <script type='application/json' class='previous_messages'>
+      {{group.messages|safe}}
+    </script>
+    <div class='row'>
+      <div class='message_arena'></div>
+      <div class='message_input_arena'>
+        <textarea class='message_input autosize-textarea' username='{{ request.user.username }}' group_id='{{ group.group_id }}' job_id='{{job_id}}' >Write your message here</textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ STATIC_URL }}js/json2.js"></script>
+<script src="{{ STATIC_URL }}js/underscore.js"></script>
+<script src="{{ STATIC_URL }}js/backbone.js"></script>
+<script src="{{ STATIC_URL }}js/album.js"></script>
+<script src="{{ STATIC_URL }}js/shared.js"></script>
+<script type="text/template" id="message_template">
+  <div class='message_message'><span class='<%= unseen%>'><%= message %></span></div>
+  <div class='message_commentor'><%= commentor %> </div><div class='message_created'><%=created%></div>
+
+  <div style='clear:both'></div>
+</script>
+{% endblock %}
+

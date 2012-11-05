@@ -19,7 +19,6 @@ from common.jobs import Actions, Action, RedirectData, DynamicAction
 from common.jobs import send_job_status_change, fill_job_info
 import pdb
 
-#TODO @permissions required to be here...
 @login_required
 @render_to('jobs.html')
 def doc_job_page(request, page=1):
@@ -40,7 +39,6 @@ def doc_job_page(request, page=1):
             'new_jobs_page': False, 'doc_page':True}
 
 
-#TODO @permissions required to be here...
 @login_required
 @render_to('jobs.html')
 def new_job_page(request, page=1):
@@ -65,7 +63,7 @@ def generate_doctor_actions(job):
     redirect_url = True
     #boring always created actions for populating below
     #TODO redirect to contact page
-    contact = DynamicAction('Contact User', reverse('contact', args=[job.id]), True)
+    contact = DynamicAction('Contact User', reverse('message', args=[job.id]), True)
 
     group = job.get_first_unfinished_group()
     group_seq = 1 if not group else group.sequence
@@ -74,11 +72,14 @@ def generate_doctor_actions(job):
 
     complete_job = DynamicAction('Mark as Completed', '/mark_job_completed/')
     
-    view_job_url= reverse('markup_album', args=[job.album.id, 1])
-    view_job = DynamicAction('View Job', view_job_url, True)
+    view_markup_url= reverse('markup_album', args=[job.album.id, 1])
+    view_markup = DynamicAction('View Job', view_markup_url, True)
+    view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
+    
 
     if job.status == Job.USER_SUBMITTED:
-        ret.append(view_job)
+        ret.append(view_markup)
+        ret.append(view_album)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
     elif job.status == Job.TOO_LOW:

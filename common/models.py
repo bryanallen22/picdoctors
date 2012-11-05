@@ -480,10 +480,10 @@ class Group(models.Model):
         return (DocPicGroup.objects.filter(group=self).count() > 0)
 
     def get_doctor_pics(self):
-        return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
+        return DocPicGroup.objects.filter(group=self).filter(approved=True).order_by('updated').reverse()
 
     def get_latest_doctor_pic(self):
-        return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
+        return DocPicGroup.objects.filter(group=self).filter(approved=True).order_by('updated').reverse()[:1]
 
 
     @staticmethod
@@ -499,16 +499,28 @@ class Group(models.Model):
 
     
 # Doc Pic Group allows us to keep track of all pictures uploaded 
-# by a group for a group of pics from the user
+# by a doctor for a combination of pics from the user
 class DocPicGroup(DeleteMixin):
     group           = models.ForeignKey(Group, related_name='doc_pic_group')
     pic             = models.ForeignKey(Pic)
     watermark_pic   = models.ForeignKey(Pic, related_name='watermark_pic')
 
+    # By default images aren't approved for viewing
+    approved        = models.BooleanField(default=False)
+    # Until the user has accepted a job, they only see the watermarked pic
+    accepted        = models.BooleanField(default=False)
+
+
     #I can see me setting a value that flips this from watermark pic to pic
     def get_pic(self):
-        #if accepted self.pic blah blah blah
-        return self.watermark_pic
+        # I want it to crash right now if it isn't approved
+        if not self.approved:
+            return None
+
+        if self.accepted:
+            return self.pic
+        else:
+            return self.watermark_pic
 
 class Charge(DeleteMixin):
     amount_cents     = models.IntegerField()

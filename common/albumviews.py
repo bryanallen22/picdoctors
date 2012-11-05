@@ -58,13 +58,15 @@ def prep_messages(base_messages, profile, job):
     return simplejson.dumps(messages)
 
 @login_required
-@render_to('message.html')
-def message(request, job_id):
+@render_to('album.html')
+def album(request, album_id):
     #SECURITY (Move to Decorator)
     #############################
     profile = get_profile_or_None(request)
 
-    job = get_object_or_None(Job, pk=job_id)
+    album = get_object_or_None(Album, pk=album_id)
+    
+    job = album.get_job_or_None()
 
     if not job:
         return redirect('/')
