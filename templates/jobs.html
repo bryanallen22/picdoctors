@@ -186,7 +186,7 @@
         <%= output_pic_count %> output picture<%="".pluralize(output_pic_count)%>
       </div>
       <div class="span2 text-success">
-        <em>$<%= doctor_payout %> </em>
+        <em>$<%= (doctor_payout/100).toFixed(2) %> </em>
       </div>
       <div class="span3">
         <%= status %>

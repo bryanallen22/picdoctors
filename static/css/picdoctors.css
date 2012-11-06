@@ -55,9 +55,6 @@
 #indexapp .example p.bordered {
   text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
 }
-#indexapp .example p.shadowed {
-  text-shadow: 2px, 2px, #333333;
-}
 /*****************************
   Upload page
 ******************************/
@@ -309,15 +306,6 @@
 }
 .job_page .fix_line_height {
   line-height: 28px;
-}
-.job_page .text-success {
-  color: #468847;
-}
-.job_page .text-info {
-  color: #3A87AD;
-}
-.job_page .text-error {
-  color: #B94A48;
 }
 .carousel_no_bottom_margin {
   margin-bottom: 0px;

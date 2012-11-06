@@ -167,7 +167,6 @@ $(function(){
 
   $(".contact_arena").each( function(){
     var mg = new MessageGrouping({el:this});
-    mg.container = this;
   });
 
 });

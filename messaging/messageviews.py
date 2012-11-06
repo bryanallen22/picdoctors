@@ -93,6 +93,7 @@ def message(request, job_id):
 
     return {'job_id': job.id, 'job_messages' : job_messages, 'groupings' : groupings}
 
+#TODO  fix this so that it actually checks
 def can_add_message(request):
     return True
 

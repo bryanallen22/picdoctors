@@ -36,7 +36,7 @@ $(function(){
     
     className: 'message_row',
 
-    template:  _.template($('#message_template').html().trim()),
+    //template:  _.template($('#message_template').html().trim()),
 
     initialize: function(){
       this.render();
@@ -120,54 +120,45 @@ $(function(){
   });
 
 
-  // A collection of Message elements
-  var MessageList = Backbone.Collection.extend({
-
-    // Reference to this collection's model.
-    model: Message,
-
-    // Url base
-    url: '/message_handler/',
+  var RemoteControl = Backbone.View.extend({
+    events: {
+      'click       .before_button': 'before_click',
+      'click       .after_button':  'after_click',
+    },
 
     initialize: function() {
-      this.container = null; // Will be set to contact_arena element
-      this.bind('add', this.newMessage, this);
-      this.bind('reset', this.setup, this);
     },
 
-
-    newMessage: function (message){
-      var view = new MessageView( { model: message } );
-      this.container.append(view.el);
+    before_click: function() {
+      this.before.css('display', 'inherit');
+      this.after.css('display', 'none');
+      this.before_button.removeClass('btn-primary');
+      this.after_button.addClass('btn-primary');
     },
 
-    setup: function(){
-      var that = this;
-      this.each( function(el) {
-        that.newMessage.call(that, el);
-      });
-
+    after_click: function() {
+      this.before.css('display', 'none');
+      this.after.css('display', 'inherit');
+      this.before_button.addClass('btn-primary');
+      this.after_button.removeClass('btn-primary');
     },
 
   });
 
-  var MessageGrouping = Backbone.View.extend({
-    initialize: function(){
-      console.log('creating message group');
-      this.message_list = new MessageList();
-      this.message_list.container = this.$el.find('.message_arena');
-      var input = this.$el.find('.message_input_arena');
-      this.message_input = new MessageInput({el: input });
-      this.message_input.message_list = this.message_list;
-      var prev = this.$el.find('.previous_messages').html();
-      this.message_list.reset( jQuery.parseJSON( prev ) );
-      
+  var CombinationView = Backbone.View.extend({
+    initialize: function() {
+      var rc_el = this.$el.find('.remote_control');
+      this.remote_control = new RemoteControl({el: rc_el});
+      this.remote_control.before = this.$el.find('.before');
+      this.remote_control.after = this.$el.find('.after');
+      this.remote_control.before_button = this.$el.find('.before_button');
+      this.remote_control.after_button = this.$el.find('.after_button');
     },
+
   });
 
-  $(".contact_arena").each( function(){
-    var mg = new MessageGrouping({el:this});
-    mg.container = this;
+  $(".combination").each( function(){
+    var cb = new CombinationView({el:this});
   });
 
 });
