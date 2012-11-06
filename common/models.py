@@ -479,12 +479,17 @@ class Group(models.Model):
     def has_doctor_pic(self):
         return (DocPicGroup.objects.filter(group=self).count() > 0)
 
-    def get_doctor_pics(self):
-        return DocPicGroup.objects.filter(group=self).filter(approved=True).order_by('updated').reverse()
+    def get_doctor_pics(self, only_approved):
+        if only_approved:
+            return DocPicGroup.objects.filter(group=self).filter(approved=True).order_by('updated').reverse()
+        else:
+            return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
 
-    def get_latest_doctor_pic(self):
-        return DocPicGroup.objects.filter(group=self).filter(approved=True).order_by('updated').reverse()[:1]
-
+    def get_latest_doctor_pic(self, only_approved):
+        if only_approved:
+            return DocPicGroup.objects.filter(group=self).filter(approved=True).order_by('updated').reverse()[:1]
+        else:
+            return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
 
     @staticmethod
     def get_album_groups(album):
@@ -512,9 +517,9 @@ class DocPicGroup(DeleteMixin):
 
 
     #I can see me setting a value that flips this from watermark pic to pic
-    def get_pic(self):
+    def get_pic(self, only_approved):
         # I want it to crash right now if it isn't approved
-        if not self.approved:
+        if not self.approved and only_approved:
             return None
 
         if self.accepted:

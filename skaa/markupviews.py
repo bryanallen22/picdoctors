@@ -81,6 +81,7 @@ def markup_page_album(request, album_id, sequence):
     sequence = int(sequence)
     album = Album.objects.get( pk=int(album_id) )
     job = album.get_job_or_None()
+    profile = get_profile_or_None(request)
 
     pics = Pic.objects.filter( album=album )
 
@@ -93,17 +94,18 @@ def markup_page_album(request, album_id, sequence):
     # if that's not necessary)
     album.set_sequences()
 
+    only_approved = not profile.is_doctor
+
     logging.info('sequence=%d, album.id=%d, album_num=%d' % (sequence, album.id, album.num_groups))
 
     logging.info('len(pics)=%d' % len(pics))
     group = Group.objects.get(sequence=sequence,album=album)
-
-    doc_pic_groups = group.get_doctor_pics()
+    doc_pic_groups = group.get_doctor_pics(only_approved)
     doc_pics = []
     revision = len(doc_pic_groups) + 1
     for doc_pic_group in doc_pic_groups:
         revision -= 1
-        doc_pics.append((revision, doc_pic_group.get_pic()))
+        doc_pics.append((revision, doc_pic_group.get_pic(only_approved)))
 
 
     read_only = group.is_locked
@@ -112,7 +114,6 @@ def markup_page_album(request, album_id, sequence):
     
     job_page = 'job_page'
     is_job_doctor = False
-    profile = get_profile_or_None(request)
 
     if profile and profile.is_doctor:
         job_page = 'doc_job_page'

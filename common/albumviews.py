@@ -45,16 +45,21 @@ def album(request, album_id):
 
     #############################
     #############################
+
+    # when querying for pictures you can query for approved pics, or
+    # if your the doctor query for all pics they've uploaded
+    only_approved = not profile.is_doctor
+
     groups = Group.get_album_groups(job.album)
     groupings = []
     for group in groups:
         picco = Combination()
         picco.user_pics = Pic.get_group_pics(group)
         picco.group_id = group.id
-        docPicGroup = group.get_latest_doctor_pic()
+        docPicGroup = group.get_latest_doctor_pic(only_approved)
         if len(docPicGroup) > 0:
             docPicGroup = docPicGroup[0]
-            picco.doc_pic = docPicGroup.get_pic()
+            picco.doc_pic = docPicGroup.get_pic(only_approved)
         groupings.append(picco)
 
 
