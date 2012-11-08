@@ -59,9 +59,23 @@ def album(request, album_id):
         docPicGroup = group.get_latest_doctor_pic(only_approved)
         if len(docPicGroup) > 0:
             docPicGroup = docPicGroup[0]
-            picco.doc_pic = docPicGroup.get_pic(only_approved)
+            picco.doc_pic = docPicGroup.get_pic(profile)
         groupings.append(picco)
 
 
     return {'job_id': job.id, 'groupings' : groupings}
 
+@login_required
+def approve_album(request):
+    profile = get_profile_or_None(request)
+    data = simplejson.loads(request.body)
+    album = get_object_or_None(Album, id=data['album_id'])
+
+    # TODO figure out how to add a user permission and check it (moderator)
+    if album and profile: # and moderator
+        groups = Group.get_album_groups(album)
+
+        for group in groups:
+            group.approve_doctor_pics()
+
+    return HttpResponse({}, mimetype='application/json')

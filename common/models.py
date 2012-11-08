@@ -491,6 +491,13 @@ class Group(models.Model):
         else:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
 
+    def approve_doctor_pics(self):
+        dpgs = self.get_doctor_pics(False)
+        for dpg in dpgs:
+            if not dpg.approved:
+                dpg.approved = True
+                dpg.save()
+
     @staticmethod
     def get_album_groups(album):
         return Group.objects.filter(album=album)
@@ -517,9 +524,10 @@ class DocPicGroup(DeleteMixin):
 
 
     #I can see me setting a value that flips this from watermark pic to pic
-    def get_pic(self, only_approved):
-        # I want it to crash right now if it isn't approved
-        if not self.approved and only_approved:
+    def get_pic(self, profile):
+        # if not ( any valid reason to stay ) 
+        is_doctor = False if not profile else profile.is_doctor
+        if not ( self.approved or is_doctor ):
             return None
 
         if self.accepted:

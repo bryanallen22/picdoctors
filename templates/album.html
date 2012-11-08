@@ -17,7 +17,17 @@
     <div class='span2'>
       <button class="btn before_button btn-large" type="button">Before</button>
     </div>
-    <div class='span6'>
+    <div class='span1'>
+      &nbsp;
+    </div>
+    <div class='span4' style="text-align:center">
+      {% if group.doc_pic  %}
+      <div class='download_links'>
+        <a class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}'>Download Doctored Image</a>
+      </div>
+      {% endif %}
+    </div>
+    <div class='span1'>
       &nbsp;
     </div>
     <div class='span2' style="text-align:right">
@@ -28,8 +38,8 @@
   </div>
   <br />
   <div class='row'>
-    <div class='span10'>
-      <div id="myCarousel" class="carousel before slide">
+    <div class='before span10'>
+      <div id="myCarousel" class="carousel slide">
         <!-- Carousel items -->
         <div class="carousel-inner">
           {% for pic in group.user_pics %}
@@ -45,10 +55,8 @@
       </div>
     </div>
     {% if group.doc_pic %}
-    <div class='span10' >
-      <div class="after" style="display:none">
-            <img src="{{ group.doc_pic.get_preview_url }}" alt="">
-      </div>
+    <div class='after span10' style="display:none" >
+      <img src="{{ group.doc_pic.get_preview_url }}" alt="">
     </div>
     {% endif %}
   </div>

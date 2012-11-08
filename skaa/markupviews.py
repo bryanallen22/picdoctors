@@ -94,7 +94,8 @@ def markup_page_album(request, album_id, sequence):
     # if that's not necessary)
     album.set_sequences()
 
-    only_approved = not profile.is_doctor
+    # true if they have no profile, else not profile.is_doctor
+    only_approved = True if not profile else not profile.is_doctor
 
     logging.info('sequence=%d, album.id=%d, album_num=%d' % (sequence, album.id, album.num_groups))
 
@@ -105,7 +106,7 @@ def markup_page_album(request, album_id, sequence):
     revision = len(doc_pic_groups) + 1
     for doc_pic_group in doc_pic_groups:
         revision -= 1
-        doc_pics.append((revision, doc_pic_group.get_pic(only_approved)))
+        doc_pics.append((revision, doc_pic_group.get_pic(profile)))
 
 
     read_only = group.is_locked
