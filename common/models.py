@@ -498,6 +498,13 @@ class Group(models.Model):
                 dpg.approved = True
                 dpg.save()
 
+    def accept_doctor_pics(self):
+        dpgs = self.get_doctor_pics(False)
+        for dpg in dpgs:
+            if not dpg.accepted:
+                dpg.accepted = True
+                dpg.save()
+
     @staticmethod
     def get_album_groups(album):
         return Group.objects.filter(album=album)
@@ -615,3 +622,7 @@ class Job(DeleteMixin):
         out += " -- status: " + self.status
         return out
 
+
+from django.contrib import admin
+
+admin.site.register(DocPicGroup)

@@ -123,6 +123,7 @@ def generate_db_charge(stripe_charge):
     charge.save()
     return charge
 
+#TODO this is pointless, you could delete this stuff... you never use it...
 def set_groups_locks(album_to_lock, state):
     groups = Group.objects.filter(album=album_to_lock)
     #Performance Opportunity, just update all at once
@@ -144,6 +145,10 @@ def accept_doctors_work(request):
         actions.add('alert', 'The job was accepted, and yet I didn\'t pay the doctor')
         job.status = Job.USER_ACCEPTED
         job.save()
+        groups = Group.get_album_groups(job.album)
+
+        for group in groups:
+            group.accept_doctor_pics()
 
         job_info = fill_job_info(job, generate_skaa_actions, profile)
         actions.addJobInfo(job_info)

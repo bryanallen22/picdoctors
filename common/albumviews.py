@@ -22,6 +22,7 @@ import datetime
 class Combination():
     def __init__(self):
         self.user_pics = []
+        self.max_height = -1
         self.doc_pic = None
         self.messages = []
         self.group_id = -1
@@ -55,6 +56,8 @@ def album(request, album_id):
     for group in groups:
         picco = Combination()
         picco.user_pics = Pic.get_group_pics(group)
+        for x in picco.user_pics:
+            picco.max_height = max(picco.max_height, x.preview_height)
         picco.group_id = group.id
         docPicGroup = group.get_latest_doctor_pic(only_approved)
         if len(docPicGroup) > 0:
@@ -69,13 +72,14 @@ def album(request, album_id):
 def approve_album(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
-    album = get_object_or_None(Album, id=data['album_id'])
+    job_id = data['job_id']
+    job = get_object_or_None(Job, id=data['job_id'])
 
     # TODO figure out how to add a user permission and check it (moderator)
-    if album and profile: # and moderator
-        groups = Group.get_album_groups(album)
+    if job and job.album and profile: # and moderator
+        groups = Group.get_album_groups(job.album)
 
         for group in groups:
             group.approve_doctor_pics()
 
-    return HttpResponse({}, mimetype='application/json')
+    return HttpResponse(simplejson.dumps({}), mimetype='application/json')

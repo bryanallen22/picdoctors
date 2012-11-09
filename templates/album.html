@@ -8,8 +8,16 @@
 {% endblock %}
 
 {% block main %}
-<div class='row'>
-  <h1>Job # {{job_id|stringformat:"08d" }}</h1>
+<div class='row album_control' job_id='{{job_id}}'>
+  <div class='span5'>
+    <h1>Job # {{job_id|stringformat:"08d" }}</h1>
+  </div>
+  <div class='span4'>
+    <button class="btn btn_approve_all btn-large btn-primary" type="button">(Moderator) Approve All</button>
+  </div>
+  <div class='span3'>
+    <button class="btn btn_accept_job btn-large btn-primary" type="button">(User) Accept Job</button>
+  </div>
 </div>
 {% for group in groupings %}
 <div class='row hero-unit combination'>
@@ -43,8 +51,8 @@
         <!-- Carousel items -->
         <div class="carousel-inner">
           {% for pic in group.user_pics %}
-          <div class="item"> 
-            <img src="{{ pic.get_preview_url }}" alt="">
+          <div class="item" style="height:{{group.max_height}}px"> 
+            <img src="{{ pic.get_preview_url }}"  alt="">
           </div>
           {% endfor %}
         </div>

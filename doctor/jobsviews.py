@@ -87,21 +87,25 @@ def generate_doctor_actions(job):
         pass
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(work_job)
+        ret.append(view_album)
         ret.append(complete_job)
         ret.append(contact)
         #do something
     elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
         ret.append(work_job)
+        ret.append(view_album)
         ret.append(complete_job)
         ret.append(contact)
         #do something
     elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(contact)
+        ret.append(view_album)
     elif job.status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
         pass
     elif job.status == Job.USER_REQUESTS_MODIFICATION:
         ret.append(work_job)
+        ret.append(view_album)
         ret.append(complete_job)
         ret.append(contact)
         #do nothing these are for doctor
