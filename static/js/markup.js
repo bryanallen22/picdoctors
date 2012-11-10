@@ -261,9 +261,19 @@ $(function(){
       }
 
       // Doesn't display well on really small widths
-      if(!readonly)
-        this.$el.html( this.redX_template( {} ) );
-      this.$el.find('.markup-redx').css('left', this.model.get('width')-20 );
+      if(!readonly){
+        // I just wanted to add cool hackery like Bryan does and then write a monologue about
+        // how guilty I feel about doing it...  When you drag a markup really fast sometimes you get
+        // lucky and the browser is like, hey why don't I hook you up and let you grab the red-x
+        // image instead of continuing your markup drag... douche... So we do a slight stall in our
+        // redraw of the red-x (only important in the beginning when creating, but doesn't hurt
+        // anything later...
+        var that = this;
+        setTimeout(function(){
+            that.$el.html( that.redX_template( {} ) );
+            that.$el.find('.markup-redx').css('left', that.model.get('width')-20 );
+          }, 50);
+      }
 
       return this;
     },
@@ -508,6 +518,7 @@ $(function(){
     },
 
     createMarkup: function(e) {
+      console.log('create');
       if(e.which == 1 && creationEnabled) { // left click
         var initial_size = 10;
         /* This seems like a lot of work, but e.target seems a little bit
@@ -563,6 +574,7 @@ $(function(){
     },
 
     resizeMarkup: function(e) {
+      console.log('resize');
       // Only care if we're in the middle of a move and they the left mouse is pressed
       if( this.cur_markup && e.which == 1) {
         var img = this.pic_container;
@@ -625,8 +637,10 @@ $(function(){
     },
 
     finishMarkup: function(e) {
+      console.log('finish w/o pic_container');
       if (this.pic_container == null)
         return;
+      console.log('finish w pic_container');
 
       var x = e.pageX - this.pic_container.offset().left;
       var y = e.pageY - this.pic_container.offset().top;
