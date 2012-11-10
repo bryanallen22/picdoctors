@@ -2,9 +2,10 @@ from django.conf.urls.defaults import patterns, include, url
 
 from skaa.markupviews import markup_page, markup_page_album, markups_handler, pic_instruction_handler
 from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handler, upload_page, need_cookies
-from skaa.jobsviews import job_page, accept_doctors_work, reject_doctors_work, request_modification
+from skaa.jobsviews import job_page, reject_doctors_work, request_modification
 from skaa.setpriceviews import set_price
 from skaa.mergealbumsviews import merge_albums
+from skaa.accept_workviews import accept_work, accept_doctors_work
 
 # Uncomment the next two lines to enable the admin:
 # Uncomment the next two lines to enable the admin:
@@ -28,7 +29,8 @@ urlpatterns = patterns('',
     url(r'^jobs/$',                                        job_page,                 name='job_page'),
     url(r'^jobs/(?P<page>\d+)$',                           job_page,                 name='job_page_with_page'),
     url(r'^set_price/$',                                   set_price,                name='set_price'),
-    url(r'^merge_albums/$',                               merge_albums,            name='merge_albums'),
+    url(r'^merge_albums/$',                                merge_albums,             name='merge_albums'),
+    url(r'^accept_work/(?P<job_id>\d+)$',                  accept_work,              name='accept_work'),
     url(r'^accept_doctors_work/$',                         accept_doctors_work,      name='accept_doctors_work'),
     url(r'^reject_doctors_work/$',                         reject_doctors_work,      name='reject_doctors_work'),
     url(r'^request_modification/$',                        request_modification,     name='request_modification'),

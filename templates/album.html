@@ -16,7 +16,7 @@
     <button class="btn btn_approve_all btn-large btn-primary" type="button">(Moderator) Approve All</button>
   </div>
   <div class='span3'>
-    <button class="btn btn_accept_job btn-large btn-primary" type="button">(User) Accept Job</button>
+    <a class="btn btn_accept_job btn-large btn-primary" href="{% url accept_work job_id %}">(User) Accept Job</a>
   </div>
 </div>
 {% for group in groupings %}

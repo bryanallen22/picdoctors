@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+  <div class="span8 accept_view offset2 well" job_id={{job_id}}>
+
+    <legend>
+      Accept the Doctor's Work
+    </legend>
+
+    <div>
+      By clicking accept you are agreeing to the following things:
+      <br />
+      <br />
+
+      <li>The Doctors works is acceptable</li>
+      <li>The Money will be released to the doctor</li>
+      <li>You can no longer request a refund</li>
+      <li>Daniel is cooler than Bryan</li>
+    </div>
+      <br />
+      <br />
+    <button class="btn btn_accept_job btn-large btn-primary" type="button">Accept Job</button>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ STATIC_URL }}js/json2.js"></script>
+    <script src="{{ STATIC_URL }}js/underscore.js"></script>
+    <script src="{{ STATIC_URL }}js/backbone.js"></script>
+    <script src="{{ STATIC_URL }}js/accept_work.js"></script>
+{% endblock %}
+

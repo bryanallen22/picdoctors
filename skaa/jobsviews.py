@@ -56,6 +56,7 @@ def generate_skaa_actions(job):
     view_markup_url= reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Markups', view_markup_url, True)
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
+    accept_album = DynamicAction('Accept Job', reverse('accept_work', args=[job.id]), True)
     
     if job.status == Job.USER_SUBMITTED:
         pass
@@ -72,26 +73,26 @@ def generate_skaa_actions(job):
         ret.append(view_album)
         #do something
     elif job.status == Job.DOCTOR_SUBMITTED:
-        ret.append(DynamicAction('Accept', '/accept_doctors_work/'))
+        ret.append(accept_album)
         #ret.append(view_markup)
         ret.append(view_album)
         ret.append(contact)
         ret.append(DynamicAction('Request Modification', '/request_modification/'))
         ret.append(DynamicAction('Request New Doctor', '/request_new_doctor/'))
-        ret.append(DynamicAction('Reject', '/reject_doctors_work/'))
+        ret.append(DynamicAction('Reject Job', '/reject_doctors_work/'))
     elif job.status == Job.USER_ACCEPTED:
         #ret.append(view_markup)
         ret.append(view_album)
         #do something
         pass
     elif job.status == Job.USER_REQUESTS_MODIFICATION:
-        ret.append(DynamicAction('Accept', '/accept_doctors_work/'))
+        ret.append(accept_album)
         #ret.append(view_markup)
         ret.append(view_album)
         #do something
         ret.append(contact)
         ret.append(DynamicAction('Request New Doctor', '/request_new_doctor/'))
-        ret.append(DynamicAction('Reject', '/reject_doctors_work/'))
+        ret.append(DynamicAction('Reject Job', '/reject_doctors_work/'))
         pass
     elif job.status == Job.USER_REJECTED:
         pass
@@ -130,32 +131,6 @@ def set_groups_locks(album_to_lock, state):
     for group in groups:
         group.is_locked = state
         group.save()
-
-@login_required
-def accept_doctors_work(request):
-    profile = get_profile_or_None(request)
-    data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
-
-    actions = Actions()
-    actions.add('alert', 'There was an error processing your request.')
-    if job and profile and job.skaa == profile:
-        #TODO Put money into Doctors account 
-        actions.clear()
-        actions.add('alert', 'The job was accepted, and yet I didn\'t pay the doctor')
-        job.status = Job.USER_ACCEPTED
-        job.save()
-        groups = Group.get_album_groups(job.album)
-
-        for group in groups:
-            group.accept_doctor_pics()
-
-        job_info = fill_job_info(job, generate_skaa_actions, profile)
-        actions.addJobInfo(job_info)
-
-        send_job_status_change(job, profile)
-
-    return HttpResponse(actions.to_json(), mimetype='application/json')
 
 
 @login_required
