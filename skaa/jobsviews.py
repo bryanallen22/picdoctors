@@ -56,7 +56,7 @@ def generate_skaa_actions(job):
     view_markup_url= reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Markups', view_markup_url, True)
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
-    accept_album = DynamicAction('Accept Job', reverse('accept_work', args=[job.id]), True)
+    accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), True)
     
     if job.status == Job.USER_SUBMITTED:
         pass

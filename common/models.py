@@ -126,6 +126,7 @@ class SkaaInfo(DeleteMixin):
 class DoctorInfo(DeleteMixin):
     user_profile = models.ForeignKey(UserProfile, 
                                           related_name='associated_doctor')
+    auto_approve = models.BooleanField(default=False)
 
 
 def create_user_profile(sender, instance, created, **kwargs):
@@ -471,8 +472,8 @@ class Group(models.Model):
     album           = models.ForeignKey('Album')
     is_locked       = models.BooleanField(default=False)
  
-    def add_doctor_pic(self, pic, watermark_pic):
-        doc = DocPicGroup(group=self, pic=pic, watermark_pic=watermark_pic)
+    def add_doctor_pic(self, pic, watermark_pic, approved):
+        doc = DocPicGroup(group=self, pic=pic, watermark_pic=watermark_pic, approved=approved)
         doc.save()
         return doc
 

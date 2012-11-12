@@ -2,7 +2,7 @@ from celery import task
 from common.models import Pic
 from annoying.functions import get_object_or_None
 
-from common.models import Group
+from common.models import Group, UserProfile, DoctorInfo
 from skaa.picmask import generate_watermarked_image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
@@ -20,8 +20,19 @@ def savePic(pic_id, file):
     pic.save()
 
 @task()
-def saveWatermark(group_id, str_io_pic):
+def saveWatermark(profile_id, group_id, str_io_pic):
+    profile = get_object_or_None(UserProfile, id=profile_id)
+    if not profile:
+        return
+
+    doc_info = get_object_or_None(DoctorInfo, user_profile=profile)
+    if not doc_info:
+        return
+
     group = get_object_or_None(Group, id=group_id)
+    if not group:
+        return
+
     opened_image = Image.open(str_io_pic)
 
     #this may be a problem, what if they don't send a jpg
@@ -43,4 +54,4 @@ def saveWatermark(group_id, str_io_pic):
     wm_pic.save()
 
     #create a new entry in the DocPicGroup
-    group.add_doctor_pic(pic, wm_pic)
+    group.add_doctor_pic(pic, wm_pic, doc_info.auto_approve)

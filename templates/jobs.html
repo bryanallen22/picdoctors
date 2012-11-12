@@ -147,7 +147,7 @@
         <div class="btn-group dynamic_action_group">
           <% for (var i=0;i<Math.min(1,dynamic_actions.length);i++) {  %>
             <% var action = dynamic_actions[i]; %>
-          <button class="btn btn-primary dynamic_actionlbutton" postback_url= "<%= action.url %>" redir="<%= action.redir %>" ><%= action.text %></button>
+          <button class="btn btn-primary dynamic_action_button" postback_url= "<%= action.url %>" redir="<%= action.redir %>" ><%= action.text %></button>
           <% } %>
         <% if ( dynamic_actions.length > 1 ) { %>
           <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">

@@ -13,7 +13,7 @@ from annoying.functions import get_object_or_None
 
 from django.core.files.uploadedfile import UploadedFile
 
-from common.functions import get_unfinished_album
+from common.functions import get_unfinished_album, get_profile_or_None
 from common.models import Pic
 from common.models import Album
 from common.models import Group
@@ -101,6 +101,7 @@ def has_doc_upload_access(request):
 def doc_upload_handler(request):
     logging.info('got to %s' % __name__)
     if request.method == 'POST':
+        profile = get_profile_or_None(request)
         if request.FILES == None:
             return HttpResponseBadRequest('Must have files attached!')
         #don't worry, we validate the group_id at the decorator
@@ -112,8 +113,8 @@ def doc_upload_handler(request):
         if file is not None:
             pickleable_pic = StringIO(file.read())
             # if you want to use the workers use the line below
-            # saveWatermark.apply_async(args=[group_id, pickleable_pic])
-            saveWatermark(group_id, pickleable_pic)
+            # saveWatermark.apply_async(args=[profile.id, group_id, pickleable_pic])
+            saveWatermark(profile.id, group_id, pickleable_pic)
 
             logging.info('File saving done')
      

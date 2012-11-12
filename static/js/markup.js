@@ -300,6 +300,7 @@ $(function(){
 
     mouseIn: function() {
       if(readonly) {
+        console.log('show ' + this.model.get('color_name'));
         this.$el.attr('rel', 'popover');
         this.$el.attr('placement', 'right');
         var title = this.model.get('color_name') + ' area instructions';
@@ -307,11 +308,13 @@ $(function(){
         this.$el.attr('data-content', this.model.get('description'));
         this.$el.popover('show');
       }
-      console.log('mouse in');
     },
 
     mouseOut: function() {
-      console.log('mouse out');
+      if(readonly){
+        console.log('hide ' + this.model.get('color_name'));
+        this.$el.popover('hide');
+      }
     },
 
     fade: function() {
@@ -518,7 +521,7 @@ $(function(){
     },
 
     createMarkup: function(e) {
-      console.log('create');
+      //console.log('create');
       if(e.which == 1 && creationEnabled) { // left click
         var initial_size = 10;
         /* This seems like a lot of work, but e.target seems a little bit
@@ -574,7 +577,7 @@ $(function(){
     },
 
     resizeMarkup: function(e) {
-      console.log('resize');
+      //console.log('resize');
       // Only care if we're in the middle of a move and they the left mouse is pressed
       if( this.cur_markup && e.which == 1) {
         var img = this.pic_container;
@@ -637,10 +640,10 @@ $(function(){
     },
 
     finishMarkup: function(e) {
-      console.log('finish w/o pic_container');
+      //console.log('finish w/o pic_container');
       if (this.pic_container == null)
         return;
-      console.log('finish w pic_container');
+      //console.log('finish w pic_container');
 
       var x = e.pageX - this.pic_container.offset().left;
       var y = e.pageY - this.pic_container.offset().top;

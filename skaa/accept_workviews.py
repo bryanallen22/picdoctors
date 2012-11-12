@@ -29,7 +29,6 @@ def accept_work(request, job_id):
 
 @login_required
 def accept_doctors_work(request):
-    pdb.set_trace()
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
