@@ -50,6 +50,7 @@ def album(request, album_id):
     # when querying for pictures you can query for approved pics, or
     # if your the doctor query for all pics they've uploaded
     only_approved = not profile.is_doctor
+    user_acceptable = job.status == Job.DOCTOR_SUBMITTED and not profile.is_doctor
 
     groups = Group.get_album_groups(job.album)
     groupings = []
@@ -59,14 +60,14 @@ def album(request, album_id):
         for x in picco.user_pics:
             picco.max_height = max(picco.max_height, x.preview_height)
         picco.group_id = group.id
-        docPicGroup = group.get_latest_doctor_pic(only_approved)
+        docPicGroup = group.get_latest_doctor_pic(job, profile)
         if len(docPicGroup) > 0:
             docPicGroup = docPicGroup[0]
-            picco.doc_pic = docPicGroup.get_pic(profile)
+            picco.doc_pic = docPicGroup.get_pic(profile, job)
         groupings.append(picco)
 
 
-    return {'job_id': job.id, 'groupings' : groupings}
+    return {'job_id': job.id, 'user_acceptable': user_acceptable, 'groupings' : groupings}
 
 @login_required
 def approve_album(request):
@@ -77,9 +78,7 @@ def approve_album(request):
 
     # TODO figure out how to add a user permission and check it (moderator)
     if job and job.album and profile: # and moderator
-        groups = Group.get_album_groups(job.album)
-
-        for group in groups:
-            group.approve_doctor_pics()
+        job.approved = True
+        job.save()
 
     return HttpResponse(simplejson.dumps({}), mimetype='application/json')

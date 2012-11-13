@@ -37,10 +37,6 @@ def accept_doctors_work(request):
         #TODO Put money into Doctors account 
         job.status = Job.USER_ACCEPTED
         job.save()
-        groups = Group.get_album_groups(job.album)
-
-        for group in groups:
-            group.accept_doctor_pics()
 
         send_job_status_change(job, profile)
 

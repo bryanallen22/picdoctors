@@ -79,7 +79,6 @@ def generate_doctor_actions(job):
 
     if job.status == Job.USER_SUBMITTED:
         ret.append(view_markup)
-        ret.append(view_album)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
     elif job.status == Job.TOO_LOW:

@@ -13,10 +13,12 @@
     <h1>Job # {{job_id|stringformat:"08d" }}</h1>
   </div>
   <div class='span4'>
-    <button class="btn btn_approve_all btn-large btn-primary" type="button">(Moderator) Approve All</button>
+    <button class="btn btn_approve_all btn-large btn-primary" type="button">(Moderator) Approve</button>
   </div>
   <div class='span3'>
+    {% if user_acceptable %}
     <a class="btn btn_accept_job btn-large btn-primary" href="{% url accept_work job_id %}">(User) Accept Job</a>
+    {% endif %}
   </div>
 </div>
 {% for group in groupings %}

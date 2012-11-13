@@ -33,6 +33,8 @@ def saveWatermark(profile_id, group_id, str_io_pic):
     if not group:
         return
 
+    job = group.album.get_job_or_None()
+
     opened_image = Image.open(str_io_pic)
 
     #this may be a problem, what if they don't send a jpg
@@ -54,4 +56,4 @@ def saveWatermark(profile_id, group_id, str_io_pic):
     wm_pic.save()
 
     #create a new entry in the DocPicGroup
-    group.add_doctor_pic(pic, wm_pic, doc_info.auto_approve)
+    group.add_doctor_pic(pic, wm_pic)

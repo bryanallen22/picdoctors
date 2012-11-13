@@ -101,12 +101,12 @@ def markup_page_album(request, album_id, sequence):
 
     logging.info('len(pics)=%d' % len(pics))
     group = Group.objects.get(sequence=sequence,album=album)
-    doc_pic_groups = group.get_doctor_pics(only_approved)
+    doc_pic_groups = group.get_doctor_pics(job, profile)
     doc_pics = []
     revision = len(doc_pic_groups) + 1
     for doc_pic_group in doc_pic_groups:
         revision -= 1
-        doc_pics.append((revision, doc_pic_group.get_pic(profile)))
+        doc_pics.append((revision, doc_pic_group.get_pic(profile, job)))
 
 
     read_only = group.is_locked

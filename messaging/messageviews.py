@@ -78,15 +78,16 @@ def message(request, job_id):
     job_messages = prep_messages(JobMessage.get_messages(job), profile, job)
 
     groups = Group.get_album_groups(job.album)
+    only_approved = not profile.is_doctor
     groupings = []
     for group in groups:
         picco = PicComment()
         picco.user_pics = Pic.get_group_pics(group)
         picco.group_id = group.id
-        docPicGroup = group.get_latest_doctor_pic()
+        docPicGroup = group.get_latest_doctor_pic(job, profile)
         if len(docPicGroup) > 0:
             docPicGroup = docPicGroup[0]
-            picco.doc_pic = docPicGroup.get_pic()
+            picco.doc_pic = docPicGroup.get_pic(profile, job)
         picco.messages = prep_messages(GroupMessage.get_messages(group), profile, job)
         groupings.append(picco)
 

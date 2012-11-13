@@ -472,39 +472,32 @@ class Group(models.Model):
     album           = models.ForeignKey('Album')
     is_locked       = models.BooleanField(default=False)
  
-    def add_doctor_pic(self, pic, watermark_pic, approved):
-        doc = DocPicGroup(group=self, pic=pic, watermark_pic=watermark_pic, approved=approved)
+    def add_doctor_pic(self, pic, watermark_pic):
+        doc = DocPicGroup(group=self, pic=pic, watermark_pic=watermark_pic)
         doc.save()
         return doc
 
     def has_doctor_pic(self):
         return (DocPicGroup.objects.filter(group=self).count() > 0)
 
-    def get_doctor_pics(self, only_approved):
-        if only_approved:
-            return DocPicGroup.objects.filter(group=self).filter(approved=True).order_by('updated').reverse()
-        else:
+    def get_doctor_pics(self, job, profile):
+        if not job:
+            return []
+
+        if job.approved or job.doctor == profile:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
+            
+        return []
 
-    def get_latest_doctor_pic(self, only_approved):
-        if only_approved:
-            return DocPicGroup.objects.filter(group=self).filter(approved=True).order_by('updated').reverse()[:1]
-        else:
+
+    def get_latest_doctor_pic(self, job, profile):
+        if not job:
+            return []
+
+        if job.approved or job.doctor == profile:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
-
-    def approve_doctor_pics(self):
-        dpgs = self.get_doctor_pics(False)
-        for dpg in dpgs:
-            if not dpg.approved:
-                dpg.approved = True
-                dpg.save()
-
-    def accept_doctor_pics(self):
-        dpgs = self.get_doctor_pics(False)
-        for dpg in dpgs:
-            if not dpg.accepted:
-                dpg.accepted = True
-                dpg.save()
+            
+        return []
 
     @staticmethod
     def get_album_groups(album):
@@ -525,20 +518,18 @@ class DocPicGroup(DeleteMixin):
     pic             = models.ForeignKey(Pic)
     watermark_pic   = models.ForeignKey(Pic, related_name='watermark_pic')
 
-    # By default images aren't approved for viewing
-    approved        = models.BooleanField(default=False)
-    # Until the user has accepted a job, they only see the watermarked pic
-    accepted        = models.BooleanField(default=False)
-
-
     #I can see me setting a value that flips this from watermark pic to pic
-    def get_pic(self, profile):
+    def get_pic(self, profile, job):
         # if not ( any valid reason to stay ) 
         is_doctor = False if not profile else profile.is_doctor
-        if not ( self.approved or is_doctor ):
+
+        # TODO I could get the job in here, but it'd hurt my db feelings
+        # job = group.album.get_job_or_None()
+
+        if not ( job.approved or is_doctor ):
             return None
 
-        if self.accepted:
+        if job.is_accepted():
             return self.pic
         else:
             return self.watermark_pic
@@ -598,6 +589,10 @@ class Job(DeleteMixin):
                                                choices=STATUS_CHOICES, 
                                                default=USER_SUBMITTED)
     
+    # doc pics are approved for viewing by skaa
+    approved                = models.BooleanField(default=False)
+    
+    
     def is_part_of(self, profile):
         if not profile:
             return False
@@ -611,6 +606,9 @@ class Job(DeleteMixin):
 
         return None
 
+    def is_accepted(self):
+        return self.status == Job.USER_ACCEPTED
+
     def __unicode__(self):
         out = "Owner: " + self.skaa.user.username
         out += " -- Doctor: "
@@ -623,7 +621,3 @@ class Job(DeleteMixin):
         out += " -- status: " + self.status
         return out
 
-
-from django.contrib import admin
-
-admin.site.register(DocPicGroup)
