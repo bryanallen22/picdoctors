@@ -125,7 +125,48 @@ def validate_can_deploy(inst, cfg):
     # Do a local test to make sure something isn't broken
     test()
 
-def get_code_on_remote(inst, cfg, force_push=False):
+def webserver_config():
+    """
+    Set up nginx and apache
+    """
+    inst = get_instance()
+    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    cfg = get_config(deploy_type)
+
+    sudo('mkdir -p /etc/uwsgi/apps-available')
+    sudo('mkdir -p /etc/uwsgi/apps-enabled')
+    sudo('mkdir -p /var/log/uwsgi')
+    sudo('chown %s:%s %s' % (cfg.deploy_user, cfg.deploy_user, '/var/log/uwsgi'))
+
+    # push config
+    # TODO - these are already in /code/picdoctors -- just move them around
+    put('deploy/configs/uwsgi.conf',
+        '/etc/init/uwsgi.conf', use_sudo=True)
+    put('deploy/configs/uwsgi_picdoctorsapp.ini',
+        '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
+    put('deploy/configs/nginx_picdoctorsapp',
+        '/etc/nginx/sites-available/picdoctorsapp', use_sudo=True)
+
+    # Start 'er up
+    sudo('service uwsgi restart') # restart just in case it's already running
+
+    dst = '/etc/uwsgi/apps-enabled/picdoctorsapp.ini'
+    if not exists(dst):
+        sudo('ln -s /etc/uwsgi/apps-available/picdoctorsapp.ini %s' % dst)
+
+    dst = '/etc/nginx/sites-enabled/picdoctorsapp'
+    if not exists(dst):
+        sudo('sudo ln -s /etc/nginx/sites-available/picdoctorsapp %s' % dst)
+
+    sudo('service nginx restart')
+
+
+
+######################
+# Tasks
+######################
+@task
+def getcode(force_push=False):
     """
     Gets the code on the remote host to match the local HEAD
 
@@ -146,14 +187,26 @@ def get_code_on_remote(inst, cfg, force_push=False):
     print "Get code on remote..."
     print "--------"
 
+    inst = get_instance()
+    deploy_type = get_deploy_type(inst.tags['instance_name'])
     instance_name = inst.tags['instance_name']
+    cfg = get_config(deploy_type)
     
     # New box needs and ssh config so it can use bitbucket
+    sudo('mkdir -p %s/.ssh' % cfg.deploy_user_home_dir)
+    put(LocalConfig.deploybot_id_path,
+        '%s/.ssh/id_rsa' % cfg.deploy_user_home_dir, use_sudo=True)
+    put(LocalConfig.deploybot_pubid_path,
+        '%s/.ssh/id_rsa.pub' % cfg.deploy_user_home_dir, use_sudo=True)
+    put(LocalConfig.deploybot_ssh_config_git,
+        '%s/.ssh/config' % cfg.deploy_user_home_dir, use_sudo=True)
+    sudo('chown -R %s:%s %s' % 
+         (cfg.deploy_user, cfg.deploy_user, cfg.deploy_user_home_dir))
+    sudo('chmod 600 %s/.ssh/id_rsa' % cfg.deploy_user_home_dir)
+    sudo('chmod 600 %s/.ssh/id_rsa.pub' % cfg.deploy_user_home_dir)
+
+    # allow our default ssh user to have pretty git logs, etc
     put(LocalConfig.remote_gitconfig, '~/.gitconfig') # make git logs pretty on remote, etc
-    put(LocalConfig.deploybot_id_path, '~/.ssh/id_rsa')
-    put(LocalConfig.deploybot_pubid_path, '~/.ssh/id_rsa.pub')
-    sudo('chmod 600 ~/.ssh/id_rsa') # done as root
-    sudo('chmod 600 ~/.ssh/id_rsa.pub') # done as root
 
     # Create a spot for the code to exist
     sudo('mkdir -p %s' % os.path.dirname( cfg.code_dir ))
@@ -212,47 +265,11 @@ def get_code_on_remote(inst, cfg, force_push=False):
             # origin/master has moved
             sudo('git checkout %s' % head_sha, user=cfg.deploy_user)
 
-@task # TODO untaskify this
-def webserver_config():
-    """
-    Set up nginx and apache
-    """
-    inst = get_instance()
-    deploy_type = get_deploy_type(inst.tags['instance_name'])
-    cfg = get_config(deploy_type)
-
-    sudo('mkdir -p /etc/uwsgi/apps-available')
-    sudo('mkdir -p /etc/uwsgi/apps-enabled')
-    sudo('mkdir -p /var/log/uwsgi')
-    sudo('chown %s:%s %s' % (cfg.deploy_user, cfg.deploy_user, '/var/log/uwsgi'))
-
-    # push config
-    # TODO - these are already in /code/picdoctors -- just move them around
-    put('deploy/configs/uwsgi.conf',
-        '/etc/init/uwsgi.conf', use_sudo=True)
-    put('deploy/configs/uwsgi_picdoctorsapp.ini',
-        '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
-    put('deploy/configs/nginx_picdoctorsapp',
-        '/etc/nginx/sites-available/picdoctorsapp', use_sudo=True)
-
-    # Start 'er up
-    sudo('service uwsgi restart') # restart just in case it's already running
-
-    dst = '/etc/uwsgi/apps-enabled/picdoctorsapp.ini'
-    if not exists(dst):
-        sudo('ln -s /etc/uwsgi/apps-available/picdoctorsapp.ini %s' % dst)
-
-    dst = '/etc/nginx/sites-enabled/picdoctorsapp'
-    if not exists(dst):
-        sudo('sudo ln -s /etc/nginx/sites-available/picdoctorsapp %s' % dst)
-
-    sudo('service nginx restart')
+    # Save the sha to an easily accessible file
+    local('echo %s > /tmp/sha.txt' % head_sha)
+    put('/tmp/sha.txt', '%s/sha.txt' % cfg.code_dir, use_sudo=True )
 
 
-
-######################
-# Tasks
-######################
 @task
 def create():
     """
@@ -534,7 +551,7 @@ def deploy(force_push=False, update=True):
     # TODO Take nginx down here
 
     # Get our full project code over there
-    get_code_on_remote(inst, cfg, force_push)
+    getcode(force_push)
 
     # Update system packages, perform upgrades
     if update:

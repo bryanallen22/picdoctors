@@ -24,8 +24,8 @@ class LocalConfig():
                              'deploy/keys/picdoc_deploybot.id_rsa.pub')
 
     # Remote will need a ssh config to get to bitbucket
-    remote_ssh_config_git = os.path.join(pd_settings.PROJECT_ROOT,
-                              'deploy/configs/remote_ssh_config')
+    deploybot_ssh_config_git = os.path.join(pd_settings.PROJECT_ROOT,
+                              'deploy/configs/remote_sshconfig')
 
     # Give the remote a decent gitconfig so that git commands don't
     # totally suck on the remote
@@ -33,8 +33,8 @@ class LocalConfig():
                          'deploy/configs/remote_gitconfig')
 
     # Locally, what do we call bitbucket in our git commands?
-    git_remote = 'https'
-    #git_remote = 'origin'
+    #git_remote = 'https'
+    git_remote = 'origin'
 
     @staticmethod
     def get_proxy_command():
@@ -98,6 +98,9 @@ class RemoteConfig():
 
     # User that deployment runs as
     deploy_user = 'www-data'
+
+    # self explanatory
+    deploy_user_home_dir = '/var/www'
 
     # Where venvs go
     venv_dir = '/srv/venvs'
