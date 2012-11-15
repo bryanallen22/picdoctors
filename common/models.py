@@ -261,6 +261,7 @@ class Pic(DeleteMixin):
         try:
             size = width, height
             tmp_file = StringIO() # We'll return this as an image
+            file.seek(0) # rewind to beginning of the file
             im = Image.open(StringIO(file.read()))
             format = im.format # since new im won't have format
             if format == "gif" or format == "GIF":
