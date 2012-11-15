@@ -45,7 +45,14 @@
             <ul class="nav nav-pills">
               <li><a href="#about">How It Works</a></li>
               <li><a href="#faq">FAQ</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <!-- TODO put this in the CSS file with hover etc, I was too lazy to add it -->
+              <li><a id='feedback_link'
+                     class="feedback" 
+                     data-original-title="Enter your feedback:"
+                     rel="popover"
+                     data-placement="bottom"
+                     onclick="feedback(this)" href="#" >Feedback</a>
+              </li>
               {% if not user.is_authenticated %}
               <li><a href="/signin/">User Log In</a></li>
               <li><a href="/doc_home/">Doctors Start Here</a></li>
@@ -86,6 +93,14 @@
 
     <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
     <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/base.js"></script>
+    <script type="text/template" id="feedback_form">
+      <div>
+      <textarea id='feedback_textarea' style='height:100px;'></textarea>
+      <br />
+      <button class='btn btn-primary' onclick='submit_feedback()'>Submit Feedback</button>
+      </div>
+    </script>
     {% block scripts %}
     {% endblock %}
 

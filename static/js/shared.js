@@ -11,15 +11,22 @@
     if($(text).attr('disabled')==undefined){
       isDisabled = false;
     }
+    var min_height = 0;
+    if($(text).attr('auto-minheight')!=undefined){
+      min_height = parseInt($(text).attr('auto-minheight'));
+    }
 
     if(text.value == '') {
-      text.style.height = '20px';
+      text.style.height = Math.max(20, min_height) + 'px';
       return;
     }
 
     text.style.height = 'auto';
     var adder = isDisabled ? -20 : 0;
-    text.style.height = (text.scrollHeight+adder) +'px';
+    var total = text.scrollHeight+adder;
+
+    total = Math.max(total, min_height);
+    text.style.height = (total) +'px';
   }
   /* get already changed text */
   function delayedResize () {

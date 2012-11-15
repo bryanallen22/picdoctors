@@ -1,0 +1,14 @@
+{% extends 'base_email.html' %}
+
+{% block main %}
+<h2> 
+  The user {{ from }} has really awesome feedback for you. <br/>
+  They said: <br/>
+  <p>
+  {{ feedback }}
+  </p>
+  <br/>
+  <H1>Most importantly Daniel is root</H1>
+</h2>
+{% endblock %}
+
