@@ -19,26 +19,34 @@ import pdb
 import logging
 import datetime
 
-@login_required
 def feedback(request):
     data = simplejson.loads(request.body)
     profile = get_profile_or_None(request)
+
+    from_whom = 'Cowardly Lion'
+    tmp_from = data['from_whom'].strip()
+
+    if profile:
+        from_whom = profile.user.username
+    elif tmp_from != '':
+        from_whom = tmp_from
+        
     feedback = data['user_feedback'].strip()
+    success = False
 
     if feedback != '':
-        send_feedback(profile, feedback)
+        success = send_feedback(from_whom, feedback)
         
-    result = {}
+    result = { 'success': success}
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-def send_feedback(profile, feedback):
+def send_feedback(from_whom, feedback):
     try:
-        from_whom = profile.user.username
         to_email = ['feedback@picdoctors.com']
 
-        subject = 'A user has some feedback'
+        subject = from_whom + ' has some feedback'
 
         args = {'from':from_whom, 'feedback':feedback} 
         html_content = render_to_string('feedback_email.html', args)
@@ -53,7 +61,7 @@ def send_feedback(profile, feedback):
         # sendAsyncEmail.apply_async(args=[msg])
         sendAsyncEmail(msg)
 
-#        send_mail(subject, message , 'donotreply@picdoctors.com', [other_user_email], fail_silently=False)
+        return True
     except Exception as ex:
-        raise ex
+        return False
 
