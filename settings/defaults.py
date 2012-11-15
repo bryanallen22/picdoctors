@@ -2,13 +2,15 @@
 import os
 import djcelery
 
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+# PROJECT_ROOT is up a directory ( use dirname on this file twice )
+PROJECT_ROOT = os.path.abspath( os.path.dirname(os.path.dirname(__file__)) )
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
+    ('Bryan Allen', 'bryan@picdoctors.com'),
 )
 
 MANAGERS = ADMINS
@@ -17,7 +19,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/code/picdoctors/sqlite.db', # Or path to database file if using sqlite3.
+        'NAME': '%s/sqlite.db' % PROJECT_ROOT, # Or path to database file if using sqlite3.
     }
 }
 
@@ -131,7 +133,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 
     # bta - not sure why it likes this format when launched from cygwin:
-    '/code/picdoctors/templates/',
+    '%s/templates/' % PROJECT_ROOT,
 )
 
 djcelery.setup_loader()

@@ -23,6 +23,9 @@ urlpatterns = patterns('',
     (r'', include('doctor.urls')),
     (r'', include('common.urls')),
     (r'', include('messaging.urls')),
+
+    # Site wide views
+    url(r'^500/$',    error500,     name='error500'),
 )
 
 if settings.DEBUG:

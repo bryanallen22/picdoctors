@@ -23,7 +23,13 @@ import time
 ######################
 # Helper functions
 ######################
+def run_user(str, cfg):
+    sudo(str, user=cfg.deploy_user)
 
+def venv_run_user(str, cfg):
+    with cd(cfg.code_dir):
+        run_user(cfg.venv_activate + ' && ' + str, cfg)
+    
 def get_all_instances(refresh=False):
     """
     Find all instances
@@ -138,14 +144,17 @@ def webserver_config():
     sudo('mkdir -p /var/log/uwsgi')
     sudo('chown %s:%s %s' % (cfg.deploy_user, cfg.deploy_user, '/var/log/uwsgi'))
 
-    # push config
-    # TODO - these are already in /code/picdoctors -- just move them around
-    put('deploy/configs/uwsgi.conf',
-        '/etc/init/uwsgi.conf', use_sudo=True)
-    put('deploy/configs/uwsgi_picdoctorsapp.ini',
-        '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
-    put('deploy/configs/nginx_picdoctorsapp',
-        '/etc/nginx/sites-available/picdoctorsapp', use_sudo=True)
+    # move over uwsgi/nginx config files
+    put(LocalConfig.remote_uwsgi_conf,
+         '/etc/init/uwsgi.conf', use_sudo=True)
+    put(LocalConfig.remote_uwsgi_picdocini,
+         '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
+    put(LocalConfig.remote_nginx_picdocconf,
+                       '/etc/nginx/sites-available/picdoctorsapp', use_sudo=True)
+
+    # Tell uwsgi to start with the appropriate settings file
+    sudo('echo "env = DJANGO_SETTINGS_MODULE=settings.%s" >> '\
+         '/etc/uwsgi/apps-available/picdoctorsapp.ini' % deploy_type)
 
     # Start 'er up
     sudo('service uwsgi restart') # restart just in case it's already running
@@ -476,8 +485,6 @@ def setup_packages():
     # Duck typing: totally different config than localhost
     cfg = get_config(deploy_type)
 
-    run_user = lambda str: sudo(str, user=cfg.deploy_user)
-    
     #
     # Install required packages:
     #
@@ -505,6 +512,7 @@ def setup_packages():
     #
     # venv / pip
     #
+    print "Going to install all pip packages quietly. This takes a while. Grab a snickers."
     sudo("pip install --upgrade pip -q") # have pip update itself
     sudo("pip install virtualenv -q")
     # Make our destination
@@ -512,14 +520,33 @@ def setup_packages():
     sudo("chown %s:%s %s" % (cfg.deploy_user, cfg.deploy_user, cfg.venv_dir))
     # Make the virtual env if it doesn't already exist:
     if not exists( os.path.join(cfg.venv_dir, cfg.venv_proj) ):
-        run_user("virtualenv %s/%s" % (cfg.venv_dir, cfg.venv_proj))
-    with cd(cfg.code_dir):
-        run_user(cfg.venv_activate + ' && pip install -r requirements.txt -q')
+        run_user("virtualenv %s/%s" % (cfg.venv_dir, cfg.venv_proj), cfg)
+    venv_run_user('pip install -r requirements.txt -q', cfg)
 
     #
     # node stuff. Probably don't actually need this on the server, though
     #
     sudo('npm install -g less jshint recess uglify-js')
+
+@task
+def setup_db():
+    """
+    Get the db ready.
+
+    Sandbox: sqlite - do a syncdb
+    Test: look for rds test db, spin up if necessary
+    Production: assert. I think this should be done by hand
+    """
+    inst = get_instance()
+    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    cfg = get_config(deploy_type)
+
+    # TODO - probably shouldn't do case by case basis here. Figure out later
+    # when I've thought about it more
+    if deploy_type == "sandbox":
+        venv_run_user('echo no | python manage.py syncdb', cfg)
+    else:
+        abort("Not yet implemented!")
 
 @task
 def deploy(force_push=False, update=True):
@@ -563,8 +590,10 @@ def deploy(force_push=False, update=True):
 
     # nginx/uwsgi configurations
     webserver_config()
+
+    setup_db()
     
-    # restart nginx/uwsgi
+    print "Try it out: http://%s or http://%s" % (inst.ip_address or '---', inst.dns_name or '---')
 
 @task(default=True)
 def print_help():

@@ -32,6 +32,18 @@ class LocalConfig():
     remote_gitconfig = os.path.join(pd_settings.PROJECT_ROOT,
                          'deploy/configs/remote_gitconfig')
 
+    # uwsgi config
+    remote_uwsgi_conf = os.path.join(pd_settings.PROJECT_ROOT,
+                                 'deploy/configs/uwsgi.conf')
+
+    # picdoctors uwsgi config
+    remote_uwsgi_picdocini = os.path.join(pd_settings.PROJECT_ROOT,
+                                  'deploy/configs/uwsgi_picdoctorsapp.ini')
+
+    # nginx config
+    remote_nginx_picdocconf = os.path.join(pd_settings.PROJECT_ROOT,
+                                   'deploy/configs/nginx_picdoctorsapp')
+
     # Locally, what do we call bitbucket in our git commands?
     #git_remote = 'https'
     git_remote = 'origin'
