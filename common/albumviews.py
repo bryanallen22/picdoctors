@@ -41,7 +41,8 @@ def album(request, album_id):
     if not job:
         return redirect('/')
 
-    if job.skaa != profile and job.doctor != profile:
+    moderator =  profile.user.has_perm('common.view_album')
+    if job.skaa != profile and job.doctor != profile and not moderator:
         return redirect('/')
 
     #############################
@@ -49,7 +50,7 @@ def album(request, album_id):
 
     # when querying for pictures you can query for approved pics, or
     # if your the doctor query for all pics they've uploaded
-    only_approved = not profile.is_doctor
+    only_approved = not profile.is_doctor and not moderator
     user_acceptable = job.status == Job.DOCTOR_SUBMITTED and not profile.is_doctor
 
     groups = Group.get_album_groups(job.album)
@@ -80,5 +81,6 @@ def approve_album(request):
     if job and job.album and profile: # and moderator
         job.approved = True
         job.save()
-
-    return HttpResponse(simplejson.dumps({}), mimetype='application/json')
+    
+    resp = simplejson.dumps({'redirect':reverse('album_approval_page')})
+    return HttpResponse(resp, mimetype='application/json')

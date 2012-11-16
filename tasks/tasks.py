@@ -40,6 +40,7 @@ def saveWatermark(profile_id, group_id, str_io_pic):
     #this may be a problem, what if they don't send a jpg
     file = InMemoryUploadedFile(str_io_pic, None, 'original.jpg', 'image/jpeg',
                                           str_io_pic.len, None)
+    file.seek(0)
     pic = Pic(path_owner="doc")
     pic.set_file(file)
     pic.save()
@@ -50,6 +51,8 @@ def saveWatermark(profile_id, group_id, str_io_pic):
 
     wm_file = InMemoryUploadedFile(wm_stream, None, 'wm.jpg', 'image/jpeg',
                                           wm_stream.len, None)
+
+    wm_file.seek(0)
 
     wm_pic = Pic(path_owner="doc", watermark=True)
     wm_pic.set_file(wm_file)

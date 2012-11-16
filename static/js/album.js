@@ -71,14 +71,8 @@ $(function(){
         success : function(data, textStatus) {
           console.log(data);
           console.log(textStatus);
-          location.href = location.href;
-        },
-        failure : function(jqXHR, textStatus, errorThrown) {
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
+          location.href = data.redirect;
         }
-
       });
     },
 
@@ -101,11 +95,6 @@ $(function(){
           console.log(data);
           console.log(textStatus);
           location.href = location.href;
-        },
-        failure : function(jqXHR, textStatus, errorThrown) {
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
         }
 
       });

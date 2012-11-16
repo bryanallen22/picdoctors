@@ -62,6 +62,9 @@
                 {% else%}
                   <li><a href="/jobs/">My Jobs</a></li>
                 {% endif %}
+                {% if perms.common.approve_album %}
+                  <li><a href="/album_approval_page/">Jobs Needing Approval</a></li>
+                {% endif %}
                 <li class="dropdown">
                   <a class="dropdown-toggle"
                      data-toggle="dropdown"

@@ -213,6 +213,7 @@ class Pic(DeleteMixin):
         # TODO -- this fetches the image all over again. Me no likey.
         # Find some other way?
         # Why not load the image using Pil and get the width/height from it?
+        # TODO Why do we care about the original width/height?
         self.original_width = self.original.width
         self.original_height = self.original.height
 
@@ -324,6 +325,12 @@ class Album(DeleteMixin):
     # need to reorder our sequences
     groups_last_modified = models.DateTimeField(auto_now_add=True)
     sequences_last_set   = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        permissions = (
+                ("view_album", "Can view all albums"),
+                ("approve_album", "Can approve all albums"),
+        )
     
     def get_job_or_None(self):
         job = get_object_or_None(Job, album=self)
@@ -484,8 +491,10 @@ class Group(models.Model):
     def get_doctor_pics(self, job, profile):
         if not job:
             return []
+        
+        moderator =  profile.user.has_perm('common.view_album')
 
-        if job.approved or job.doctor == profile:
+        if job.approved or job.doctor == profile or moderator:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
             
         return []
@@ -495,7 +504,9 @@ class Group(models.Model):
         if not job:
             return []
 
-        if job.approved or job.doctor == profile:
+        moderator =  profile.user.has_perm('common.view_album')
+
+        if job.approved or job.doctor == profile or moderator:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
             
         return []
@@ -526,10 +537,12 @@ class DocPicGroup(DeleteMixin):
 
         # TODO I could get the job in here, but it'd hurt my db feelings
         # job = group.album.get_job_or_None()
+        moderator =  profile.user.has_perm('common.view_album')
 
-        if not ( job.approved or is_doctor ):
+        if not ( job.approved or is_doctor or moderator ):
             return None
 
+        # I still don't have to return the full pic, just the watermark for now :)
         if job.is_accepted():
             return self.pic
         else:

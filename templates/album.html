@@ -13,7 +13,11 @@
     <h1>Job # {{job_id|stringformat:"08d" }}</h1>
   </div>
   <div class='span4'>
-    <button class="btn btn_approve_all btn-large btn-primary" type="button">(Moderator) Approve</button>
+    {% if perms.common.approve_album %}
+    <button class="btn btn_approve_all btn-large btn-primary" type="button">Approve Album</button>
+    {% else %}
+    &nbsp;
+    {% endif %}
   </div>
   <div class='span3'>
     {% if user_acceptable %}
