@@ -274,6 +274,20 @@ $(function(){
             that.$el.find('.markup-redx').css('left', that.model.get('width')-20 );
           }, 50);
       }
+      
+      if(readonly) {
+        console.log('show ' + this.model.get('color_name'));
+        var title = this.model.get('color_name') + ' area instructions';
+        //  attr('rel', 'popover');
+        this.$el.popover(
+          {
+            placement :"right",
+            title : title,
+            content: this.model.get("description"),
+            trigger: "hover",
+          }
+        );
+      }
 
       return this;
     },
@@ -299,21 +313,12 @@ $(function(){
 
 
     mouseIn: function() {
-      if(readonly) {
-        console.log('show ' + this.model.get('color_name'));
-        this.$el.attr('rel', 'popover');
-        this.$el.attr('placement', 'right');
-        var title = this.model.get('color_name') + ' area instructions';
-        this.$el.attr('data-original-title', title);
-        this.$el.attr('data-content', this.model.get('description'));
-        this.$el.popover('show');
-      }
     },
 
     mouseOut: function() {
       if(readonly){
         console.log('hide ' + this.model.get('color_name'));
-        this.$el.popover('hide');
+       // this.$el.popover('hide');
       }
     },
 

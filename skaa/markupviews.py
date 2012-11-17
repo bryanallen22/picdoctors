@@ -47,12 +47,15 @@ def belongs_on_this_markup_page(request, album_id, sequence):
 
     j = get_object_or_None(Job, album=album_id)
 
-    #is doctor of job
-    if j.doctor == profile:
-        return True
+    if not j:
+        return False
 
     #is a doctor and the job doesn't have a doctor (aka they can view it)
-    if j.doctor is None and profile.is_doctor:
+    if not j.doctor and profile.is_doctor:
+        return True
+
+    #is doctor of job
+    if j.doctor and j.doctor == profile:
         return True
 
     #assume false
