@@ -50,6 +50,7 @@
                      data-original-title="Enter your feedback:"
                      rel="popover"
                      data-placement="bottom"
+                     data-trigger="manual"
                      onclick="feedback(this)" href="#" >Feedback</a>
               </li>
               {% if not user.is_authenticated %}
@@ -94,7 +95,8 @@
     </div>
 
     <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
-    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+    <!-- DELETE the line below!!! -->
     <script src="{{ STATIC_URL }}js/base.js"></script>
     <script type="text/template" id="feedback_form">
       <div>

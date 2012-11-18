@@ -30,8 +30,8 @@ function feedback(el){
     el.attr('data-set', 'moo');
     el.attr('data-content', template);
     el.attr('data-original-title','We appreciate your feedback!');
-    setTimeout(function(){el.popover('show');}, 10);
   }
+  el.popover('toggle');
 }
 
 function fill_previous_feedback(){
