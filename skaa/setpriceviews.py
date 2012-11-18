@@ -16,16 +16,18 @@ from common.models import ungroupedId
 from models import Markup
 from skaa.jobsviews import create_job
 
-import stripe
-
 import pdb
 import logging
+
+import settings
+import balanced
+
+# the key is either 'test' or 'live' mode depending on 
+balanced.configure(settings.BALANCED_API_KEY_SECRET)
 
 # Require at least $2.00 for each output picture
 min_price_per_pic = 2.0
 
-# test key! use real key in production
-stripe.api_key = 'sk_whv5t7wgdlPz1YTZ8mGWpXiD4C8Ag'
 
 def currency_to_cents(currency):
     """
@@ -49,11 +51,50 @@ def currency_to_cents(currency):
     price = int(float(stripped)*100)
     return price
 
+def create_charge_handler(request):
+    """
+    Save credit card info, create hold on card for the price they offer
+
+    This is where we get credit card info (what we are allowed to have,
+    at least)
+
+    Returns:
+        { "status" : 200, "next" : next_url } -- everything good
+        { "status" : 402, "next" : "" }       -- less than min_price
+    """
+    if request.method != 'POST':
+        return HttpResponse('[ ]', mimetype='application/json')
+
+    ret = {
+            "status"  : 200,
+            "next"     : reverse('job_page'),
+          }
+
+    # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
+    # convert it to cents and validate that it's an acceptable amount
+    cents = currency_to_cents( request.POST['price'] );
+    if cents >= min_price * 100:
+        # https://www.balancedpayments.com/docs/python/buyer#mobile-platforms
+        # TODO - add card to account
+        # TODO - actually do the 'hold'
+        # TODO - change skaa/jobsviews 'generate_db_charge' and common/models 'Charge'
+        album.finished = True
+        album.save()
+        create_job(request, album, charge)
+        logging.info("Album owned by %s has been finished with price at $%s (cents)" %
+                     (album.userprofile.user.username, cents))
+        return redirect(reverse('job_page'))
+    else:
+        ret['status'] = 402 # Payment required
+        ret['next'] = ''
+
+    #return HttpResponse('[ ]', mimetype='application/json')
+    response_data = simplejson.dumps(ret)
+    return HttpResponse(response_data, mimetype='application/json')
+
 @login_required
 @render_to('set_price.html')
 def set_price(request):
-    invalid_price = False
-
     album, redirect_url = get_unfinished_album(request)
     if not album:
         return redirect(redirect_url)
@@ -65,36 +106,15 @@ def set_price(request):
     min_price = min_price_per_pic * album.num_groups
     if request.method == 'GET':
         pass
-    elif request.method == 'POST':
-        # get the credit card details submitted by the form
-        token = request.POST['stripeToken']
-
-        # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
-        # convert it to cents and validate that it's an acceptable amount
-        cents = currency_to_cents( request.POST['price'] );
-        if (cents/100.0) >= min_price:
-            # create the charge on Stripe's servers - this will charge the user's card
-            charge = stripe.Charge.create(
-                amount=cents, # amount in cents, again
-                currency="usd",
-                card=token,
-                description=album.userprofile.user.username
-            )
-            album.finished = True
-            album.save()
-            create_job(request, album, charge)
-            logging.info("Album owned by %s has been finished with price at $%s (cents)" %
-                         (album.userprofile.user.username, cents))
-            return redirect(reverse('job_page'))
-        else:
-            invalid_price = True
-
     str_min_price = "{0:.2f}".format(min_price)
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
+    str_num_pics = "%s" % album.num_groups
     return { 
+        'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
-        'invalid_price'     : invalid_price,
+        'num_pics'          : str_num_pics,
+        'DEBUG'             : settings.DEBUG,
     }
 
 

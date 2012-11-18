@@ -117,6 +117,7 @@ def create_job(request, album, charge):
         set_groups_locks(album, True)
     return j
 
+# TODO make this a balanced charge
 def generate_db_charge(stripe_charge):
     charge = Charge(stripe_id=stripe_charge.id, 
                 amount_cents=stripe_charge.amount, 

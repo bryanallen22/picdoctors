@@ -11,7 +11,6 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 
 from collections import namedtuple
-import stripe
 
 import pdb
 import logging

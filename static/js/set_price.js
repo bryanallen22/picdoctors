@@ -1,22 +1,89 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
 
-  function stripeResponseHandler(status, response) {
-      if (response.error) {
-          // show the errors on the form
-          $("#payment-errors").text(response.error.message).show();
-          $(".submit-button").removeAttr("disabled");
-      } else {
-          var form$ = $("#payment-form");
-          // token contains id, last4, and card type
-          var token = response['id'];
-          // insert the token into the form so it gets submitted to the server
-          form$.append("<input type='hidden' name='stripeToken' value='" 
-                        + token + "'/>");
-          // and submit
-          form$.get(0).submit();
-      }
+  balanced.init(marketplace_uri);
+  var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
+
+  var debug = function (tag, content) {
+    $('<' + tag + '>' + content + '</' + tag + '>').appendTo('#result');
+    $('<br/><br/>').appendTo('#result');
+  };
+
+  function success(data) {
+    if(data)
+    {
+      alert(data);
+    }
   }
+
+  function balancedCallback(response) {
+    // response.data - An object containing the URI of the newly created account.
+    // response.error - Details of the error.
+    // response.status - HTTP response code.
+    var tag = (response.status < 300) ? 'pre' : 'code';
+    debug(tag, JSON.stringify(response));
+
+    switch (response.status) {
+      case 400:
+        // missing field - check response.error for details
+        break;
+      case 402:
+        // we couldn't authorize the buyer's credit card
+        // check response.error for details
+        break
+      case 404:
+        // your marketplace URI is incorrect
+        break;
+      case 201:
+        // WOO HOO!
+        // response.data.uri == uri of the card or bank account resource
+
+        // Add 'price' to our post data
+        response.data.price = $('#price').val();
+        $.ajax({
+          headers: {
+            "X-CSRFToken":CSRF_TOKEN
+          },
+          type: "POST",
+          url: '/create_charge_handler/',
+          data: response.data,
+          success : function(data, textStatus) {
+
+          },
+        });
+    }
+  }
+
+  var tokenizeCard = function(e) {
+    e.preventDefault();
+
+    var $form = $('form#payment');
+    var cardData = {
+      // strip out '-' and ' ' from credit card
+      card_number: $form.find('[name="card_number"]').val().replace(/[- ]/g, ''),
+      expiration_month: $form.find('[name="expiration_month"]').val(),
+      expiration_year: $form.find('[name="expiration_year"]').val(),
+      security_code: $form.find('[name="security_code"]').val()
+    };
+
+    balanced.card.create(cardData, balancedCallback);
+  };
+
+  $('#payment').submit(tokenizeCard);
+
+  /*******************************************/
+  /*******************************************/
+  /*******************************************/
+
+  $("input[name='expiration_year']").change( function() {
+    val = $(this).val();
+    if( parseInt(val) < 100 ) {
+      // They're just putting the last two digits. Go ahead
+      // and add in the first two.
+      // Note to Y2.1K programmers: Change this!
+      $(this).val('20' + val);
+    }
+  });
 
   $("#price").focusout( function() {
     /* minimum_price is set directly in the html page above this script */
@@ -40,13 +107,6 @@ $(function(){
     $("#payment-form").submit(function(event) {
       // disable the submit button to prevent repeated clicks
       $('.submit-button').attr("disabled", "disabled");
-
-      Stripe.createToken({
-          number: $('.card-number').val(),
-          cvc: $('.card-cvc').val(),
-          exp_month: $('.card-expiry-month').val(),
-          exp_year: $('.card-expiry-year').val()
-      }, stripeResponseHandler);
 
       // prevent the form from submitting with the default action
       return false;

@@ -210,10 +210,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 # django-storages -- used for S3
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-#DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
-AWS_ACCESS_KEY_ID = 'AKIAIXCLPXQHNZTMBRXQ'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'picdoctors'
 #AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
 AWS_HEADERS = {
     #'Expires': 'Thu, 15 Apr 2010 20:00:00 GMT',

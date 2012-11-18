@@ -18,48 +18,66 @@
         <div class="span8 well">
 
           <legend>
-              Please set a price for this job
+              Please set a price for these {{ num_pics }} pics
           </legend>
           <div class="row">
 
             {# Left side -- credit card info #}
             <div class="span5">
-              <form action="" method="POST" id="payment-form">
+
+              <form id="payment">
                 {% csrf_token %}
-                <div>
-                  <label>How much will you offer?</label>
-                  <input id="price" type="text" size="20" autocomplete="off"
-                         class="span1" value="" name="price" />
-                  <div id="min-price-msg" class="label label-important"
-                      {% if not invalid_price %}
-                        style="display:none;"
-                      {% endif %}
-                  > {# <-- close the div's open tag #}
-                      You must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)
+
+                <div class="row">
+                  <div class="span3 offset1">
+                    <label>How much will you offer?</label>
+                    <input id="price" type="text" size="20" autocomplete="off"
+                           class="span1" value="" name="price" />
+                    <div id="min-price-msg" class="label label-important" style="display:none;">
+                        You must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <label>Card Number --- CVC</label>
-                  <input type="text" size="20" autocomplete="off"
-                         class="card-number span2" value="4242424242424242" />
-                  <input type="text" size="4" autocomplete="off" class="card-cvc span1"
-                         value="123" />
+
+                <div class="row">
+                  <div class="span2 offset1">
+                    <label for="card_number">Card Number</label>
+                    <input type="text" name="card_number">
+                  </div>
                 </div>
-                <div>
+
+                <div class="row">
+                  <div class="span2 offset1">
+                    <label for="expiration_month">Expiration</label>
+                    <input type="text" name="expiration_month" class="span1" > /
+                    <input type="text" name="expiration_year"  class="span1" >
+                  </div>
+                  <div class="span1">
+                    <label for="security_code">CCV2</label>
+                    <input type="text" name="security_code" class="span1" >
+                  </div>
                 </div>
-                <div>
-                  <label>Expiration (MM/YYYY)</label>
-                  <input type="text" size="2" class="card-expiry-month span1"
-                         value="02" />
-                  <span> / </span>
-                  <input type="text" size="4" class="card-expiry-year span1"
-                         value="2014" />
+
+                <div class="row">
+                  <div class="offset1">
+                    <button type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+                  </div>
                 </div>
-                <div id="payment-errors" class="label label-important" style="display:none;">
-                </div>
-                <button type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+
               </form>
-            </div> {# Left side span3 #}
+
+              {% if DEBUG %}
+              <div class="row">
+                <div class="offset1">
+                  Test Credit Cards:<br/>
+                  <button id="btn-visa" type="submit" class="btn btn-info">Visa</button>
+                  <button id="btn-amex" type="submit" class="btn btn-warning">AMEX</button>
+                  <button id="btn-mastercard" type="submit" class="btn btn-danger">Mastercard</button>
+                </div>
+              </div>
+              {% endif %}
+
+            </div> {# Left side span5 #}
 
             {# Right side -- suggested pricing #}
             <div class="span3">
@@ -110,8 +128,14 @@
             </div>   {# right side span3        #}
           </div>     {# row                     #}
 
-        </div>       {# span6                   #}
+        </div>       {# span8                   #}
       </div>         {# row                     #}
+      {# TODO remove this silly thing #}
+      <div class="row">
+        <div id="result">
+          Results go here <br/>
+        </div>
+      </div>
     </div>           {# container               #}
 
   </div>
@@ -121,14 +145,16 @@
 
 {% block scripts %}
     {# Isotope stuff: #}
-    <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
+    <script type="text/javascript" src="https://js.balancedpayments.com/v1/balanced.js"></script>
     <script type="text/javascript">
-      // this identifies your website in the createToken call below
-      Stripe.setPublishableKey('pk_V8f3VqqFTmJZf8jJ3THswX9sPi6ik');
-    </script>
-    <script type="text/javascript">
-      minimum_price = {{ min_price }};
+      var minimum_price = {{ min_price }};
+      var marketplace_uri = '{{ marketplace_uri }}';
     </script>
     <script src="{{STATIC_URL}}js/set_price.js"></script>
+    {% if DEBUG %}
+    {# This file will be around in production, but nobody should see it. #}
+    {# Even if someone found it, these cards won't work in production #}
+    <script src="{{STATIC_URL}}js/set_price_debugcards.js"></script>
+    {% endif %}
 {% endblock %}
 
