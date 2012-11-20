@@ -3,7 +3,7 @@ from django.conf.urls.defaults import patterns, include, url
 from skaa.markupviews import markup_page, markup_page_album, markups_handler, pic_instruction_handler
 from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handler, upload_page, need_cookies
 from skaa.jobsviews import job_page, reject_doctors_work, request_modification
-from skaa.setpriceviews import set_price
+from skaa.setpriceviews import set_price, create_charge_handler
 from skaa.mergealbumsviews import merge_albums
 from skaa.accept_workviews import accept_work, accept_doctors_work
 

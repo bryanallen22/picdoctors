@@ -9,13 +9,6 @@ $(function(){
     $('<br/><br/>').appendTo('#result');
   };
 
-  function success(data) {
-    if(data)
-    {
-      alert(data);
-    }
-  }
-
   function balancedCallback(response) {
     // response.data - An object containing the URI of the newly created account.
     // response.error - Details of the error.
@@ -26,13 +19,43 @@ $(function(){
     switch (response.status) {
       case 400:
         // missing field - check response.error for details
+
+
+        $('.submit-button').removeAttr("disabled");
+
+        var gotError = false;
+
+        // White list a few errors here
+        if( response.error.card_number ) {
+          $("#error_card").show();
+          gotError = true;
+        }
+        if( response.error.expiration ) {
+          $("#error_exp").show();
+          gotError = true;
+        }
+        if( response.error.security_code ) {
+          $("#error_seccode").show();
+          gotError = true;
+        }
+
+        if( !gotError ) {
+          // We've got some kind of 400 error, but we don't have
+          // it whitelisted. Still show some generic error
+          $("#error_400").show();
+        }
+
         break;
       case 402:
         // we couldn't authorize the buyer's credit card
         // check response.error for details
+        $('.submit-button').removeAttr("disabled");
+        $("#error_402").show();
         break
       case 404:
         // your marketplace URI is incorrect
+        $('.submit-button').removeAttr("disabled");
+        $("#error_404").show();
         break;
       case 201:
         // WOO HOO!
@@ -48,7 +71,14 @@ $(function(){
           url: '/create_charge_handler/',
           data: response.data,
           success : function(data, textStatus) {
-
+            if ( data.status == '402' ) {
+              $('#min-price-msg').show();
+              $('.submit-button').removeAttr("disabled");
+            }
+            else if ( data.status == '200' ) {
+              // Okay, payment accepted, let's move off this page
+              document.location.href = data.next;
+            }
           },
         });
     }
@@ -56,6 +86,10 @@ $(function(){
 
   var tokenizeCard = function(e) {
     e.preventDefault();
+    $('.submit-button').attr("disabled", "disabled");
+
+    // Hide all errors
+    $(".balanced_error").hide();
 
     var $form = $('form#payment');
     var cardData = {
@@ -99,7 +133,7 @@ $(function(){
     var priceStr = $("#price").val();
     var priceDbl = parseFloat(priceStr);
     if( priceDbl ) {
-      $("#price").val( '$' + (priceDbl).toMoney(2, '.', ',') );
+      $("#price").val( (priceDbl).toMoney(2, '.', ',') );
     }
   } );
 

@@ -31,18 +31,24 @@
                 <div class="row">
                   <div class="span3 offset1">
                     <label>How much will you offer?</label>
-                    <input id="price" type="text" size="20" autocomplete="off"
-                           class="span1" value="" name="price" />
-                    <div id="min-price-msg" class="label label-important" style="display:none;">
-                        You must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)
+
+                    <div class="input-prepend">
+                      <span class="add-on">$</span>
+                      <input id="price" type="text" size="20" autocomplete="off"
+                        class="span1" value="" name="price" /><br/>
                     </div>
+                    <p id="min-price-msg" class="label label-important" style="display:none;">
+                        You must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)
+                    </p>
+
                   </div>
                 </div>
 
                 <div class="row">
-                  <div class="span2 offset1">
+                  <div id="card_div" class="span2 offset1">
                     <label for="card_number">Card Number</label>
-                    <input type="text" name="card_number">
+                    <input type="text" name="card_number"><br/>
+                    <p id="error_card" class="label label-important balanced_error" style="display:none;">Invalid card number</p>
                   </div>
                 </div>
 
@@ -56,6 +62,11 @@
                     <label for="security_code">CCV2</label>
                     <input type="text" name="security_code" class="span1" >
                   </div>
+                  <br/><p id="error_exp" class="offset1 label label-important balanced_error" style="display:none;">Invalid expiration date</p>
+                  <br/><p id="error_seccode" class="offset1 label label-important balanced_error" style="display:none;">Invalid security code</p>
+                  <br/><p id="error_400" class="offset1 label label-important balanced_error" style="display:none;">Your card information is wrong.</p>
+                  <br/><p id="error_402" class="offset1 label label-important balanced_error" style="display:none;">Your card could not be authorized.</p>
+                  <br/><p id="error_404" class="offset1 label label-important balanced_error" style="display:none;">The marketplace could not be reached.</p>
                 </div>
 
                 <div class="row">
@@ -66,7 +77,7 @@
 
               </form>
 
-              {% if DEBUG %}
+              {% if not IS_PRODUCTION %}
               <div class="row">
                 <div class="offset1">
                   Test Credit Cards:<br/>
@@ -151,7 +162,7 @@
       var marketplace_uri = '{{ marketplace_uri }}';
     </script>
     <script src="{{STATIC_URL}}js/set_price.js"></script>
-    {% if DEBUG %}
+    {% if not IS_PRODUCTION %}
     {# This file will be around in production, but nobody should see it. #}
     {# Even if someone found it, these cards won't work in production #}
     <script src="{{STATIC_URL}}js/set_price_debugcards.js"></script>

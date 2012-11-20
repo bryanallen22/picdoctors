@@ -41,6 +41,10 @@ def currency_to_cents(currency):
     Output:
         -123456
     """
+
+    if not currency:
+        return 0
+
     # Strip away '$' and any commas. Boy, I sure hope people start giving
     # prices with commas (plural)!
     stripped = currency.replace('$','').replace(',','')
@@ -67,24 +71,38 @@ def create_charge_handler(request):
 
     ret = {
             "status"  : 200,
-            "next"     : reverse('job_page'),
+            "next"    : reverse('job_page'),
           }
+
+    album, redirect_url = get_unfinished_album(request)
+    min_price = min_price_per_pic * album.num_groups
+
+    #pdb.set_trace()
 
     # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
     # convert it to cents and validate that it's an acceptable amount
-    cents = currency_to_cents( request.POST['price'] );
+    cents = currency_to_cents( request.POST['price'] )
+
     if cents >= min_price * 100:
+
+        card_uri = request.POST['uri']
+
         # https://www.balancedpayments.com/docs/python/buyer#mobile-platforms
         # TODO - add card to account
         # TODO - actually do the 'hold'
         # TODO - change skaa/jobsviews 'generate_db_charge' and common/models 'Charge'
-        album.finished = True
-        album.save()
-        create_job(request, album, charge)
-        logging.info("Album owned by %s has been finished with price at $%s (cents)" %
-                     (album.userprofile.user.username, cents))
-        return redirect(reverse('job_page'))
+        #### def create_buyer(self, email_address, card_uri, name=None, meta=None):
+
+        #album.finished = True
+        #album.save()
+        #create_job(request, album, charge)
+        #logging.info("Album owned by %s has been finished with price at $%s (cents)" %
+                     #(album.userprofile.user.username, cents))
+        #return redirect(reverse('job_page'))
     else:
+        # TODO - do I bother to display an error on the client? If they got here, it's probably
+        # because they used a debugger to go under the client side min, and I don't feel any
+        # particular need to be UI friendly to them. Perhaps I'll just ignore them?
         ret['status'] = 402 # Payment required
         ret['next'] = ''
 
@@ -114,7 +132,7 @@ def set_price(request):
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
         'num_pics'          : str_num_pics,
-        'DEBUG'             : settings.DEBUG,
+        'IS_PRODUCTION'     : settings.IS_PRODUCTION,
     }
 
 
