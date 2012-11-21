@@ -605,6 +605,12 @@ class Job(DeleteMixin):
     
     # doc pics are approved for viewing by skaa
     approved                = models.BooleanField(default=False)
+
+    # last communication user
+    last_communicator       = models.ForeignKey(UserProfile,
+                                                related_name='last_communicator',
+                                                blank=True, null=True)
+
     
     
     def is_part_of(self, profile):

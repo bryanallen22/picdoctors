@@ -46,56 +46,52 @@ def generate_skaa_actions(job):
     ret = []
 
     #boring always created actions for populating below
-    contact = DynamicAction('Contact Doctor', reverse('message', args=[job.id]), True)
-
-    #TODO remove pie, this is for fun and testing
-    #i_like_pie = DynamicAction('I like Pie', 'i_like_pie')
-    #u_like_pie = DynamicAction('Do You like Pie', '/u_like_pie')
-    #ret.append(i_like_pie)
-    #ret.append(u_like_pie)
+    contact = DynamicAction('Contact Doctor', reverse('contact', args=[job.id]), True)
     view_markup_url= reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Markups', view_markup_url, True)
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
     accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), True)
+    refund = DynamicAction('Request Refund', '/request_refund/')
+    switch_doc = DynamicAction('Switch Doctor', 'http://www.zombo.com', True)
     
     if job.status == Job.USER_SUBMITTED:
-        pass
+        ret.append(view_album)
+        ret.append(contact)
+        ret.append(refund)
+
     elif job.status == Job.TOO_LOW:
-        #Do something
         pass
+
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(contact)
         ret.append(view_album)
-#        ret.append(view_markup)
-        #do something
+        ret.append(refund)
+
     elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
         ret.append(contact)
         ret.append(view_album)
-        #do something
+        ret.append(refund)
+
     elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(accept_album)
-        #ret.append(view_markup)
-        ret.append(view_album)
         ret.append(contact)
-        ret.append(DynamicAction('Request Modification', '/request_modification/'))
-        ret.append(DynamicAction('Request New Doctor', '/request_new_doctor/'))
-        ret.append(DynamicAction('Reject Job', '/reject_doctors_work/'))
-    elif job.status == Job.USER_ACCEPTED:
-        #ret.append(view_markup)
         ret.append(view_album)
-        #do something
-        pass
+        ret.append(switch_doc)
+        ret.append(refund)
+
+    elif job.status == Job.USER_ACCEPTED:
+        ret.append(view_album)
+
     elif job.status == Job.USER_REQUESTS_MODIFICATION:
         ret.append(accept_album)
-        #ret.append(view_markup)
-        ret.append(view_album)
-        #do something
         ret.append(contact)
-        ret.append(DynamicAction('Request New Doctor', '/request_new_doctor/'))
-        ret.append(DynamicAction('Reject Job', '/reject_doctors_work/'))
-        pass
+        ret.append(view_album)
+        ret.append(switch_doc)
+        ret.append(refund)
+
     elif job.status == Job.USER_REJECTED:
         pass
+
     else:
         #How did we get here???
         pass
@@ -167,7 +163,7 @@ def request_modification(request):
     if job and profile and job.skaa == profile:
         actions.clear()
         actions.add('alert', 'The user has requested modification')
-        redir_url = reverse('message', args=[job.id])
+        redir_url = reverse('contact', args=[job.id])
         r =  RedirectData(redir_url,'the communication page')
         actions.add('delay_redirect', r)
         job.status = Job.USER_REQUESTS_MODIFICATION

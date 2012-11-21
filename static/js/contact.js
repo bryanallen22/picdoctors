@@ -20,6 +20,7 @@ $(function(){
         created   : null,
         commentor : '',
         unseen    : '',
+        is_doctor : false,
       };
     },
     
@@ -44,7 +45,15 @@ $(function(){
 
     render: function(){
       // Compile the template using underscore
-      
+      if(this.model.get('is_doctor')){
+        this.$el.addClass('left_arrow_box');
+        this.$el.css('float','right');
+      } else {
+        this.$el.addClass('right_arrow_box');
+        this.$el.css('float','left');
+      }
+      this.$el.css('width','75%');
+
       this.$el.html(this.template(
         {
           group_id  : this.model.get('group_id'),
@@ -110,7 +119,8 @@ $(function(){
             message   :       message,
             created   :       'Less than a minute ago',
             commentor :       username,
-            unseen    :       'unseen'
+            unseen    :       'unseen',
+            is_doctor :       is_doctor,
           }
         );
         src.val('');
@@ -139,6 +149,7 @@ $(function(){
     newMessage: function (message){
       var view = new MessageView( { model: message } );
       this.container.append(view.el);
+      this.container.append('<div style="clear:both"></div><div class="row"><br /></div>');
     },
 
     setup: function(){

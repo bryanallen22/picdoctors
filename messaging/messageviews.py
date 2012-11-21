@@ -25,6 +25,7 @@ class Message():
         self.message = ''
         self.created = ''
         self.unseen = ''
+        self.is_doctor = False
 
 
 class PicComment():
@@ -33,7 +34,7 @@ class PicComment():
         self.doc_pic = None
         self.messages = []
         self.group_id = -1
-
+        self.sequence = 0
 
 def prep_messages(base_messages, profile, job):
     """ get the information from either the job or the group message  """
@@ -43,6 +44,7 @@ def prep_messages(base_messages, profile, job):
         message.commentor = msg.commentor.user.username
         message.message = msg.message
         message.created = get_time_string(msg.created)
+        message.is_doctor = msg.commentor.is_doctor
         messages.append(message.__dict__)
         if msg.skaa_viewed == False and job.skaa == profile:
             message.unseen = 'unseen'
@@ -58,8 +60,8 @@ def prep_messages(base_messages, profile, job):
     return simplejson.dumps(messages)
 
 @login_required
-@render_to('message.html')
-def message(request, job_id):
+@render_to('contact.html')
+def contact(request, job_id):
     #SECURITY (Move to Decorator)
     #############################
     profile = get_profile_or_None(request)
@@ -75,13 +77,16 @@ def message(request, job_id):
     #############################
     #############################
 
-    job_messages = prep_messages(JobMessage.get_messages(job), profile, job)
+    #job_messages = prep_messages(JobMessage.get_messages(job), profile, job)
 
     groups = Group.get_album_groups(job.album)
     only_approved = not profile.is_doctor
     groupings = []
+    group_seq = 1
     for group in groups:
         picco = PicComment()
+        picco.sequence = group_seq
+        group_seq += 1
         picco.user_pics = Pic.get_group_pics(group)
         picco.group_id = group.id
         docPicGroup = group.get_latest_doctor_pic(job, profile)
@@ -92,7 +97,7 @@ def message(request, job_id):
         groupings.append(picco)
 
 
-    return {'job_id': job.id, 'job_messages' : job_messages, 'groupings' : groupings}
+    return {'job_id': job.id, 'is_doctor': profile.is_doctor, 'groupings' : groupings}
 
 #TODO  fix this so that it actually checks
 def can_add_message(request):
@@ -125,7 +130,12 @@ def message_handler(request):
                 msg.skaa_viewed = True
             elif job.doctor == profile:
                 msg.doctor_viewed = True
+
             msg.save()
+
+            job.last_communicator = profile
+            job.save()
+
 
             generate_message_email(job, profile, message)
 
@@ -147,7 +157,7 @@ def generate_message_email(job, profile, message):
         subject = 'The ' + from_whom + ' commented on your job'
         #Do I want to send the message to them, or make them go to the page?a
         args = {'from_whom':from_whom, 'job_id':job.id} 
-        html_content = render_to_string('message_email.html', args)
+        html_content = render_to_string('contact_email.html', args)
                                         
         
         # this strips the html, so people will have the text
@@ -161,5 +171,6 @@ def generate_message_email(job, profile, message):
 
 #        send_mail(subject, message , 'donotreply@picdoctors.com', [other_user_email], fail_silently=False)
     except Exception as ex:
-        raise ex
+        #raise ex
+        pass
 
