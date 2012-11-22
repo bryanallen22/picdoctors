@@ -8,6 +8,7 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
 from common.models import Job, Album, Group, Pic
+from messaging.messageviews import prep_messages
 from messaging.models import JobMessage, GroupMessage
 from common.functions import get_profile_or_None, get_time_string
 from django.core.mail import EmailMultiAlternatives
@@ -58,6 +59,7 @@ def album(request, album_id):
     for group in groups:
         picco = Combination()
         picco.user_pics = Pic.get_group_pics(group)
+        picco.messages = prep_messages(GroupMessage.get_messages(group), profile, job)
         for x in picco.user_pics:
             picco.max_height = max(picco.max_height, x.preview_height)
         picco.group_id = group.id
@@ -68,7 +70,7 @@ def album(request, album_id):
         groupings.append(picco)
 
 
-    return {'job_id': job.id, 'user_acceptable': user_acceptable, 'groupings' : groupings}
+    return {'job_id': job.id, 'user_acceptable': user_acceptable, 'is_owner': (profile == job.skaa), 'groupings' : groupings}
 
 @login_required
 def approve_album(request):

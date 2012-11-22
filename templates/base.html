@@ -54,8 +54,8 @@
                      onclick="feedback(this)" href="#" >Feedback</a>
               </li>
               {% if not user.is_authenticated %}
-              <li><a href="/signin/">User Log In</a></li>
-              <li><a href="/doc_home/">Doctors Start Here</a></li>
+              <li><a href="/doc_home/">Become a Pic Doctor</a></li>
+              <li><a href="/signin/">Log In</a></li>
               {% else %}
                 {% if user.get_profile.is_doctor %}
                   <li><a href="/new_jobs/">Available Jobs</a></li>

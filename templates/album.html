@@ -74,6 +74,19 @@
     </div>
     {% endif %}
   </div>
+  <div class='span10 contact_arena'>
+    <script type='application/json' class='previous_messages'>
+      {{group.messages|safe}}
+    </script>
+    <div class='row'>
+      <div class='message_arena'>
+      </div>
+      <br />
+      <div class='message_input_arena'>
+        <textarea class='message_input autosize-textarea' username='{{ request.user.username }}' group_id='{{ group.group_id }}' job_id='{{job_id}}' >Write your message here</textarea>
+      </div>
+    </div>
+  </div>
 </div>
 {% endfor %}
 {% endblock %}
@@ -83,6 +96,16 @@
 <script src="{{ STATIC_URL }}js/underscore.js"></script>
 <script src="{{ STATIC_URL }}js/backbone.js"></script>
 <script src="{{ STATIC_URL }}js/album.js"></script>
+<script>
+  var is_owner = {{ is_owner|lower }};
+</script>
+<script src="{{ STATIC_URL }}js/contact.js"></script>
 <script src="{{ STATIC_URL }}js/shared.js"></script>
+<script type="text/template" id="message_template">
+  <div class='message_message'><span class='<%= unseen%>'><%= message %></span></div>
+  <div class='message_commentor'><%= commentor %> </div><div class='message_created'><%=created%></div>
+
+  <div style='clear:both'></div>
+</script>
 {% endblock %}
 

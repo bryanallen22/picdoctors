@@ -20,7 +20,7 @@ $(function(){
         created   : null,
         commentor : '',
         unseen    : '',
-        is_doctor : false,
+        is_owner  : false,
       };
     },
     
@@ -45,7 +45,7 @@ $(function(){
 
     render: function(){
       // Compile the template using underscore
-      if(this.model.get('is_doctor')){
+      if(!this.model.get('is_owner')){
         this.$el.addClass('left_arrow_box');
         this.$el.css('float','right');
       } else {
@@ -120,7 +120,7 @@ $(function(){
             created   :       'Less than a minute ago',
             commentor :       username,
             unseen    :       'unseen',
-            is_doctor :       is_doctor,
+            is_owner  :       is_owner,
           }
         );
         src.val('');

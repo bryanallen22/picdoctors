@@ -25,7 +25,7 @@ class Message():
         self.message = ''
         self.created = ''
         self.unseen = ''
-        self.is_doctor = False
+        self.is_owner = False
 
 
 class PicComment():
@@ -44,7 +44,7 @@ def prep_messages(base_messages, profile, job):
         message.commentor = msg.commentor.user.username
         message.message = msg.message
         message.created = get_time_string(msg.created)
-        message.is_doctor = msg.commentor.is_doctor
+        message.is_owner = msg.commentor == job.skaa
         messages.append(message.__dict__)
         if msg.skaa_viewed == False and job.skaa == profile:
             message.unseen = 'unseen'
@@ -77,27 +77,9 @@ def contact(request, job_id):
     #############################
     #############################
 
-    #job_messages = prep_messages(JobMessage.get_messages(job), profile, job)
+    job_messages = prep_messages(JobMessage.get_messages(job), profile, job)
 
-    groups = Group.get_album_groups(job.album)
-    only_approved = not profile.is_doctor
-    groupings = []
-    group_seq = 1
-    for group in groups:
-        picco = PicComment()
-        picco.sequence = group_seq
-        group_seq += 1
-        picco.user_pics = Pic.get_group_pics(group)
-        picco.group_id = group.id
-        docPicGroup = group.get_latest_doctor_pic(job, profile)
-        if len(docPicGroup) > 0:
-            docPicGroup = docPicGroup[0]
-            picco.doc_pic = docPicGroup.get_pic(profile, job)
-        picco.messages = prep_messages(GroupMessage.get_messages(group), profile, job)
-        groupings.append(picco)
-
-
-    return {'job_id': job.id, 'is_doctor': profile.is_doctor, 'groupings' : groupings}
+    return {'job_id': job.id, 'is_owner': (profile == job.skaa), 'job_messages' : job_messages}
 
 #TODO  fix this so that it actually checks
 def can_add_message(request):
