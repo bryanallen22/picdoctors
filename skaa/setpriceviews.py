@@ -9,6 +9,7 @@ from annoying.decorators import render_to
 
 from common.decorators import user_passes_test
 from common.functions import get_unfinished_album
+from common.functions import get_profile_or_None
 from common.models import Album
 from common.models import Group
 from common.models import Pic
@@ -21,9 +22,6 @@ import logging
 
 import settings
 import balanced
-
-# the key is either 'test' or 'live' mode depending on 
-balanced.configure(settings.BALANCED_API_KEY_SECRET)
 
 # Require at least $2.00 for each output picture
 min_price_per_pic = 2.0
@@ -55,7 +53,7 @@ def currency_to_cents(currency):
     price = int(float(stripped)*100)
     return price
 
-def create_charge_handler(request):
+def create_hold_handler(request):
     """
     Save credit card info, create hold on card for the price they offer
 
@@ -69,11 +67,7 @@ def create_charge_handler(request):
     if request.method != 'POST':
         return HttpResponse('[ ]', mimetype='application/json')
 
-    ret = {
-            "status"  : 200,
-            "next"    : reverse('job_page'),
-          }
-
+    ret = {}
     album, redirect_url = get_unfinished_album(request)
     min_price = min_price_per_pic * album.num_groups
 
@@ -85,20 +79,53 @@ def create_charge_handler(request):
 
     if cents >= min_price * 100:
 
-        card_uri = request.POST['uri']
-
         # https://www.balancedpayments.com/docs/python/buyer#mobile-platforms
         # TODO - add card to account
         # TODO - actually do the 'hold'
         # TODO - change skaa/jobsviews 'generate_db_charge' and common/models 'Charge'
         #### def create_buyer(self, email_address, card_uri, name=None, meta=None):
+        #### def hold(self, amount, description=None, meta=None, source_uri=None,
+        ####          appears_on_statement_as=None):
 
-        #album.finished = True
-        #album.save()
-        #create_job(request, album, charge)
-        #logging.info("Album owned by %s has been finished with price at $%s (cents)" %
-                     #(album.userprofile.user.username, cents))
-        #return redirect(reverse('job_page'))
+        card_uri = request.POST['uri']
+        email_address = request.user.email
+        profile = get_profile_or_None(request)
+        if not profile:
+            raise Exception("Someone's not logged in here. Bad.")
+
+        balanced.configure(settings.BALANCED_API_KEY_SECRET)
+
+        if not profile.bp_account_wrapper:
+            try: 
+                account = balanced.Marketplace.my_marketplace.create_buyer(
+                                            email_address, card_uri=card_uri)
+                account.add_card(card_uri)
+                profile.bp_account_wrapper = BPAccountWrapper(uri=acct.uri)
+                profile.bp_account_wrapper.save()
+                
+            except balanced.exc.HTTPError as ex:
+                if ex.category_code == 'duplicate-email-address':
+                    buyer = balanced.Account.query.filter(email_address=email_address)[0]
+                    buyer.add_card(card_uri)
+                else:
+                    # TODO: handle 400 or 409 errors
+                    raise
+
+        # This creates a hold on the card. We are guaranteed that we can
+        # actually debit this amount for up to 7 days from now.
+        hold = buyer.hold(cents, meta={}, source_uri=card_uri,
+                          appears_on_statement_as="PicDoctors.com")
+
+        job = create_job(request, album, hold)
+        album.finished = True
+        album.save()
+        logging.info("Album owned by %s has been finished with price at $%s (cents)" %
+                         (album.userprofile.user.username, cents))
+
+
+        ret['status'] = 200
+        ret['next'] = reverse('job_page')
+
     else:
         # TODO - do I bother to display an error on the client? If they got here, it's probably
         # because they used a debugger to go under the client side min, and I don't feel any

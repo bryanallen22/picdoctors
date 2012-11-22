@@ -68,7 +68,7 @@ $(function(){
             "X-CSRFToken":CSRF_TOKEN
           },
           type: "POST",
-          url: '/create_charge_handler/',
+          url: '/create_hold_handler/',
           data: response.data,
           success : function(data, textStatus) {
             if ( data.status == '402' ) {

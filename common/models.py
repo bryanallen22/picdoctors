@@ -93,6 +93,56 @@ class GlobalMixin(BaseMixin):
     class Meta:
         abstract = True
 
+################################################################################
+# BPAccountWrapper
+################################################################################
+class BPAccountWrapper(DeleteMixin):
+    """
+    Balanced Payment Account - represents either a user or a doctor
+    """
+    uri = models.CharField(max_length=128, blank=True)
+
+    def fetch(self):
+        """
+        Go get the object from Balanced. This is slow.
+        """
+        return balanced.Account.find(uri)
+
+################################################################################
+# BPHoldWrapper
+################################################################################
+class BPHoldWrapper(DeleteMixin):
+    """
+    Balanced Payment Hold - reserves money for up to 7 days
+    """
+    uri   = models.CharField(max_length=128, blank=True)
+
+    # Cached info:
+    cents = models.IntegerField(blank=False)
+
+    def fetch(self):
+        """
+        Go get the object from Balanced. This is slow.
+        """
+        return balanced.Hold.find(uri)
+
+################################################################################
+# BPDebitWrapper
+################################################################################
+class BPDebitWrapper(DeleteMixin):
+    """
+    Balanced Payment Debit - actual charge of a credit card
+    """
+    uri   = models.CharField(max_length=128, blank=True)
+
+    # Cached info:
+    cents = models.IntegerField(blank=False)
+
+    def fetch(self):
+        """
+        Go get the object from Balanced. This is slow.
+        """
+        return balanced.Debit.find(uri)
 
 ################################################################################
 # UserProfile
@@ -109,6 +159,8 @@ class UserProfile(DeleteMixin):
 
     # Everyone is a User/Skaa, even if they don't know or care. Some are also doctors
     is_doctor = models.BooleanField()
+
+    bp_account_wrapper = models.ForeignKey(BPAccountWrapper, blank=True, null=True)
 
     def __unicode__(self):
         out = ""
@@ -164,7 +216,7 @@ class Pic(DeleteMixin):
     album                = models.ForeignKey('Album', blank=True, null=True)
     uuid                 = models.CharField(max_length=32, blank=False,
                                             unique=True, db_index=True)
-    title                = models.CharField(max_length=60, blank=True, null=True)
+    title                = models.CharField(max_length=60, blank=True)
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
     group                = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
     original             = models.ImageField(upload_to = pic_originals_path)
@@ -548,11 +600,6 @@ class DocPicGroup(DeleteMixin):
         else:
             return self.watermark_pic
 
-class Charge(DeleteMixin):
-    amount_cents     = models.IntegerField()
-    fee_cents        = models.IntegerField()
-    stripe_id        = models.CharField(max_length=32)
-
 # Create your models here.
 class Job(DeleteMixin):
     #Job status constants
@@ -594,9 +641,12 @@ class Job(DeleteMixin):
     
     price_too_low_count     = models.IntegerField(blank=False, 
                                                   default=0)
-    # hmm okay, I see an issue here, so say we switch from stripe,
-    # or start using some other service as well, then we need to adjust
-    charge                  = models.ForeignKey(Charge)
+
+    # the hold for the charge (good for up to 7 days after creation)
+    bp_hold_wrapper         = models.ForeignKey(BPHoldWrapper)
+
+    # the actual debit associated with that hold
+    bp_debit_wrapper        = models.ForeignKey(BPDebitWrapper, blank=True, null=True)
     
     # max_length refers to the shorthand versions above
     status                  = models.CharField(max_length=15, 

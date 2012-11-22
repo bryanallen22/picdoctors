@@ -9,7 +9,7 @@ from common.models import Album
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
-from common.models import Charge
+from common.models import BPHoldWrapper
 from common.functions import get_profile_or_None
 from common.calculations import calculate_job_payout
 from django.contrib.auth.models import User
@@ -102,28 +102,20 @@ def generate_skaa_actions(job):
 
     return ret
 
-        
-def create_job(request, album, charge):
+def create_job(request, album, hold):
     j = None
+    bp_hold_wrapper = BPHoldWrapper(uri=hold.uri, cents=hold.amount)
+    bp_hold_wrapper.save()
     if album is not None:
-        charge = generate_db_charge(charge)
         j = Job(skaa=request.user.get_profile(),
                 album=album, 
-                price_cents=charge.amount_cents, 
-                charge=charge,
+                price_cents=hold.amount,
+                bp_hold_wrapper=bp_hold_wrapper,
                 status=Job.USER_SUBMITTED)
         
         j.save()       
         set_groups_locks(album, True)
     return j
-
-# TODO make this a balanced charge
-def generate_db_charge(stripe_charge):
-    charge = Charge(stripe_id=stripe_charge.id, 
-                amount_cents=stripe_charge.amount, 
-                fee_cents=stripe_charge.fee)
-    charge.save()
-    return charge
 
 #TODO this is pointless, you could delete this stuff... you never use it...
 def set_groups_locks(album_to_lock, state):
