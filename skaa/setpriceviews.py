@@ -53,6 +53,50 @@ def currency_to_cents(currency):
     price = int(float(stripped)*100)
     return price
 
+def place_hold(album, user, cents, card_uri):
+    """
+    Do the actual 7 day hold associated with the album and user
+    """
+    email_address = user.email
+    profile = user.get_profile()
+
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+
+    if not profile.bp_account_wrapper:
+        try:
+            account = balanced.Marketplace.my_marketplace.create_buyer(
+                                        email_address, card_uri=card_uri)
+            account.add_card(card_uri)
+            profile.bp_account_wrapper = BPAccountWrapper(uri=acct.uri)
+            profile.bp_account_wrapper.save()
+            
+        except balanced.exc.HTTPError as ex:
+            if ex.category_code == 'duplicate-email-address':
+                # So, Balanced already has an account associated with this email
+                # address, but we don't have it saved under thir profile. Weird.
+                #  1) We didn't save it, but we were supposed to. Why not?
+                #  2) Some weird thing happened with changed emails? Or something? 
+                #     Does that even make sense?
+                raise
+
+                # bob@stuff.com registers, pays, saves cc
+                #buyer = balanced.Account.query.filter(email_address=email_address)[0]
+                #buyer.add_card(card_uri)
+            else:
+                # TODO: handle 400 or 409 errors
+                raise
+
+    # This creates a hold on the card. We are guaranteed that we can
+    # actually debit this amount for up to 7 days from now.
+    hold = buyer.hold(cents, meta={}, source_uri=card_uri,
+                      appears_on_statement_as="PicDoctors.com")
+
+    job = create_job(request, album, hold)
+    album.finished = True
+    album.save()
+    logging.info("Album owned by %s has been finished with price at $%s (cents)" %
+                     (album.userprofile.user.username, cents))
+
 def create_hold_handler(request):
     """
     Save credit card info, create hold on card for the price they offer
@@ -68,10 +112,8 @@ def create_hold_handler(request):
         return HttpResponse('[ ]', mimetype='application/json')
 
     ret = {}
-    album, redirect_url = get_unfinished_album(request)
+    album, _ = get_unfinished_album(request)
     min_price = min_price_per_pic * album.num_groups
-
-    #pdb.set_trace()
 
     # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
     # convert it to cents and validate that it's an acceptable amount
@@ -79,49 +121,7 @@ def create_hold_handler(request):
 
     if cents >= min_price * 100:
 
-        # https://www.balancedpayments.com/docs/python/buyer#mobile-platforms
-        # TODO - add card to account
-        # TODO - actually do the 'hold'
-        # TODO - change skaa/jobsviews 'generate_db_charge' and common/models 'Charge'
-        #### def create_buyer(self, email_address, card_uri, name=None, meta=None):
-        #### def hold(self, amount, description=None, meta=None, source_uri=None,
-        ####          appears_on_statement_as=None):
-
-        card_uri = request.POST['uri']
-        email_address = request.user.email
-        profile = get_profile_or_None(request)
-        if not profile:
-            raise Exception("Someone's not logged in here. Bad.")
-
-        balanced.configure(settings.BALANCED_API_KEY_SECRET)
-
-        if not profile.bp_account_wrapper:
-            try: 
-                account = balanced.Marketplace.my_marketplace.create_buyer(
-                                            email_address, card_uri=card_uri)
-                account.add_card(card_uri)
-                profile.bp_account_wrapper = BPAccountWrapper(uri=acct.uri)
-                profile.bp_account_wrapper.save()
-                
-            except balanced.exc.HTTPError as ex:
-                if ex.category_code == 'duplicate-email-address':
-                    buyer = balanced.Account.query.filter(email_address=email_address)[0]
-                    buyer.add_card(card_uri)
-                else:
-                    # TODO: handle 400 or 409 errors
-                    raise
-
-        # This creates a hold on the card. We are guaranteed that we can
-        # actually debit this amount for up to 7 days from now.
-        hold = buyer.hold(cents, meta={}, source_uri=card_uri,
-                          appears_on_statement_as="PicDoctors.com")
-
-        job = create_job(request, album, hold)
-        album.finished = True
-        album.save()
-        logging.info("Album owned by %s has been finished with price at $%s (cents)" %
-                         (album.userprofile.user.username, cents))
-
+        place_hold(album, request.user, cents, request.POST['uri'])
 
         ret['status'] = 200
         ret['next'] = reverse('job_page')
