@@ -72,13 +72,14 @@ def generate_doctor_actions(job):
 
     complete_job = DynamicAction('Mark as Completed', '/mark_job_completed/')
     
-    view_markup_url= reverse('markup_album', args=[job.album.id, 1])
+    view_markup_url = reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Job', view_markup_url, True)
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
     
 
     if job.status == Job.USER_SUBMITTED:
         ret.append(view_markup)
+        ret.append(contact)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
     elif job.status == Job.TOO_LOW:

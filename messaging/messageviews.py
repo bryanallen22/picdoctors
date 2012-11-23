@@ -56,7 +56,6 @@ def prep_messages(base_messages, profile, job):
             msg.doctor_viewed = True
             msg.save()
 
-
     return simplejson.dumps(messages)
 
 @login_required
@@ -71,7 +70,8 @@ def contact(request, job_id):
     if not job:
         return redirect('/')
 
-    if job.skaa != profile and job.doctor != profile:
+    if not (job.skaa == profile or job.doctor == profile or
+        ( profile.is_doctor and job.status == Job.USER_SUBMITTED )):
         return redirect('/')
 
     #############################
