@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+  <div class="span8 accept_view offset2 well" job_id={{job_id}}>
+
+    <legend>
+      {% if is_refund %}
+      Are you sure you'd like to request a refund?
+      {% else %}
+      Are you sure you'd like to switch doctors?
+      {% endif %}
+    </legend>
+
+    <div>
+      Before giving up, can we convince you to consider the following options?
+
+      If you like your pic doctor's work, but still thought their was room for improvement would you
+      consider contacting the doctor?
+      <br />
+      <br />
+
+      <a class="btn btn-large btn-primary" job_id="{{job_id}}"  href="{% url contact job_id %}">Contact Doctor</a>
+      <br />
+      <br />
+
+      {% if is_refund %}
+      If you are unsatisfied with your doctor's work, or they are taking too long to complete their
+      work would you consider placing the job back on the market and allowing a different doctor to
+      work on it?
+      <br />
+      <br />
+
+
+      <button class="btn btn_switch btn-large btn-primary" job_id="{{job_id}}" type="button">Switch Doctor</button>
+      <br />
+      <br />
+
+      If you are completely unsatisfied and would still like to continue with the refund process
+      press the Refund Job button below.
+      {% else %}
+      If you are still unsatisfied and would still like to continue with the switching doctor process
+      press the Switch Doctor button below.
+
+      {% endif %}
+
+    </div>
+    <br />
+    <br />
+    {% if is_refund %}
+    <button class="btn btn_refund btn-large" job_id="{{job_id}}" type="button">Refund job</button>
+    {% else %}
+    <button class="btn btn_switch btn-large" job_id="{{job_id}}" type="button">Switch Doctor</button>
+    {% endif %}
+
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ STATIC_URL }}js/json2.js"></script>
+<script src="{{ STATIC_URL }}js/underscore.js"></script>
+<script src="{{ STATIC_URL }}js/backbone.js"></script>
+<script src="{{ STATIC_URL }}js/reject.js"></script>
+{% endblock %}
+

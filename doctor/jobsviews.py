@@ -11,6 +11,7 @@ from common.models import Album
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
+from common.models import DocBlock
 from common.calculations import calculate_job_payout
 from common.functions import get_profile_or_None
 
@@ -141,18 +142,27 @@ def apply_for_job(request):
         job_qs = Job.objects.select_for_update().filter(pk=job.id)
         for job in job_qs:
             if job.doctor is None:
-                job.doctor = doc
-                job.payout_price_cents = calculate_job_payout(job, doc)
-                job.status = Job.DOCTOR_ACCEPTED
-                job.save()
-                send_job_status_change(job, profile)
-                actions = Actions()
-                actions.add('alert', 'Congrats the job is yours!')
-                #actions.add('remove_job_row', data['job_id'])
-                r = RedirectData(reverse("doc_job_page"), 'your jobs')
-                actions.add('delay_redirect', r)
-                job_inf = fill_job_info(job, generate_doctor_actions, profile)
-                actions.addJobInfo(job_inf)
+                db = get_object_or_None(DocBlock, job=job)
+                if db:
+                    actions = Actions()
+                    actions.add('alert', 'Unfortunately you are unable to take this job, we apologize.')
+                    actions.add('remove_job_row', data['job_id'])
+                else:
+                    job.doctor = doc
+                    job.payout_price_cents = calculate_job_payout(job, doc)
+                    job.status = Job.DOCTOR_ACCEPTED
+                    job.save()
+                    send_job_status_change(job, profile)
+                    actions = Actions()
+                    actions.add('alert', 'Congrats the job is yours!')
+                    #actions.add('remove_job_row', data['job_id'])
+                    r = RedirectData(reverse("doc_job_page"), 'your jobs')
+                    actions.add('delay_redirect', r)
+                    job_inf = fill_job_info(job, generate_doctor_actions, profile)
+                    actions.addJobInfo(job_inf)
+                    
+                    db = DocBlock(job=job, doctor=doc)
+                    db.save()
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
 

@@ -109,6 +109,7 @@
     <a href='#' class='btn-primary btn-mini' onclick='javascript:continue_redirect=false;'> Don't Go</a>
   </script>
   <script type="text/template" id="user_row_template">
+      <div class="job_id" job_id="<%= job_id %>"></div>
       <div class="span1">
         <b><a href="<%= albumurl %>"><%= job_id.padLeft(8) %></a></b>
       </div>
@@ -165,6 +166,7 @@
       </div>
   </script>
   <script type="text/template" id="doctor_row_template">
+      <div class="job_id" job_id="<%= job_id %>"></div>
       <div class="span1">
         <b><a href="<%= albumurl %>"><%= job_id.padLeft(8) %></a></b>
       </div>

@@ -195,11 +195,14 @@ $(function(){
   }
   
   function remove_row_by_job_id(job_id) {
+    var jr = $('.job_row');
     $('.job_row').each(function(){
-      if($(this).attr('job_id') == job_id){
+      var job_id_div = $(this).find('.job_id');
+      if(job_id_div.attr('job_id') == job_id){
         $(this).remove();
       }
     });
+
   }
 
   function delay_redirect(data){

@@ -51,8 +51,8 @@ def generate_skaa_actions(job):
     view_markup = DynamicAction('View Markups', view_markup_url, True)
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
     accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), True)
-    refund = DynamicAction('Request Refund', '/request_refund/')
-    switch_doc = DynamicAction('Switch Doctor', 'http://www.zombo.com', True)
+    refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), True)
+    switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), True)
     
     if job.status == Job.USER_SUBMITTED:
         ret.append(view_album)
@@ -65,11 +65,13 @@ def generate_skaa_actions(job):
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(contact)
         ret.append(view_album)
+        ret.append(switch_doc)
         ret.append(refund)
 
     elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
         ret.append(contact)
         ret.append(view_album)
+        ret.append(switch_doc)
         ret.append(refund)
 
     elif job.status == Job.DOCTOR_SUBMITTED:
@@ -109,7 +111,8 @@ def create_job(request, album, charge):
                 charge=charge,
                 status=Job.USER_SUBMITTED)
         
-        j.save()       
+        j.save()
+
         set_groups_locks(album, True)
     return j
 

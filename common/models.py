@@ -477,7 +477,7 @@ class Album(DeleteMixin):
 ################################################################################
 class Group(models.Model):
     sequence        = models.IntegerField()
-    album           = models.ForeignKey('Album')
+    album           = models.ForeignKey('Album', db_index=True)
     is_locked       = models.BooleanField(default=False)
  
     def add_doctor_pic(self, pic, watermark_pic):
@@ -511,6 +511,12 @@ class Group(models.Model):
             
         return []
 
+    def delete_doctor_pics(self):
+        groups = DocPicGroup.objects.filter(group=self)
+        for group in groups:
+            #Delete calls save
+            group.delete()
+
     @staticmethod
     def get_album_groups(album):
         return Group.objects.filter(album=album)
@@ -526,7 +532,7 @@ class Group(models.Model):
 # Doc Pic Group allows us to keep track of all pictures uploaded 
 # by a doctor for a combination of pics from the user
 class DocPicGroup(DeleteMixin):
-    group           = models.ForeignKey(Group, related_name='doc_pic_group')
+    group           = models.ForeignKey(Group, related_name='doc_pic_group', db_index=True)
     pic             = models.ForeignKey(Pic)
     watermark_pic   = models.ForeignKey(Pic, related_name='watermark_pic')
 
@@ -553,16 +559,14 @@ class Charge(DeleteMixin):
     fee_cents        = models.IntegerField()
     stripe_id        = models.CharField(max_length=32)
 
-# Create your models here.
+# This model is used for storing the job information and state
 class Job(DeleteMixin):
     #Job status constants
     USER_SUBMITTED = 'user_sub' #submitted to doctors
     TOO_LOW   = 'too_low' #not worth doctors time
     DOCTOR_ACCEPTED  = 'doctor_acc' #doctor accepted
-    DOCTOR_REQUESTS_ADDITIONAL_INFORMATION = 'doc_need_info'
     DOCTOR_SUBMITTED = 'doctor_sub' #submitted to user for approval
     USER_ACCEPTED    = 'user_acc'   #user accepts the finished product
-    USER_REQUESTS_MODIFICATION = 'user_add' #scope creep
     USER_REJECTED     = 'user_rej'   #user rejects product and wants a refund...
 
     #Job status Choices for the job_status field below
@@ -570,10 +574,8 @@ class Job(DeleteMixin):
         (USER_SUBMITTED, 'User Submitted'),
         (TOO_LOW, 'Price Too Low'),
         (DOCTOR_ACCEPTED, 'Doctor Accepted Job'),
-        (DOCTOR_REQUESTS_ADDITIONAL_INFORMATION, 'Doctor Has Requested Additional Info'),
         (DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
         (USER_ACCEPTED, 'User Accepted Work'),
-        (USER_REQUESTS_MODIFICATION, 'User Has Requested Modification'),
         (USER_REJECTED, 'User Has Rejected Work'),
     )
 
@@ -581,7 +583,8 @@ class Job(DeleteMixin):
     album                   = models.ForeignKey(Album, 
                                            db_index=True)
     skaa                    = models.ForeignKey(UserProfile, 
-                                                related_name='job_owner')
+                                                related_name='job_owner', 
+                                                db_index=True)
     doctor                  = models.ForeignKey(UserProfile, 
                                                 related_name='job_doctor',
                                                 blank=True, null=True)
@@ -601,7 +604,8 @@ class Job(DeleteMixin):
     # max_length refers to the shorthand versions above
     status                  = models.CharField(max_length=15, 
                                                choices=STATUS_CHOICES, 
-                                               default=USER_SUBMITTED)
+                                               default=USER_SUBMITTED, 
+                                               db_index=True)
     
     # doc pics are approved for viewing by skaa
     approved                = models.BooleanField(default=False)
@@ -640,4 +644,10 @@ class Job(DeleteMixin):
         out += " -- price cents: " + str(self.price_cents)
         out += " -- status: " + self.status
         return out
+
+# Post switching from a doctor we won't allow them to take that job again
+class DocBlock(DeleteMixin):
+    
+    job            = models.ForeignKey(Job, db_index=True)
+    doctor         = models.ForeignKey(UserProfile)
 
