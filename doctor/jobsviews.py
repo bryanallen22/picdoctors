@@ -92,25 +92,25 @@ def generate_doctor_actions(job):
         ret.append(complete_job)
         ret.append(contact)
         #do something
-    elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
-        ret.append(work_job)
-        ret.append(view_album)
-        ret.append(complete_job)
-        ret.append(contact)
-        #do something
+    #elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
+    #    ret.append(work_job)
+    #    ret.append(view_album)
+    #    ret.append(complete_job)
+    #    ret.append(contact)
+    #    #do something
     elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(contact)
         ret.append(view_album)
     elif job.status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
         pass
-    elif job.status == Job.USER_REQUESTS_MODIFICATION:
-        ret.append(work_job)
-        ret.append(view_album)
-        ret.append(complete_job)
-        ret.append(contact)
-        #do nothing these are for doctor
-        pass
+    #elif job.status == Job.USER_REQUESTS_MODIFICATION:
+    #    ret.append(work_job)
+    #    ret.append(view_album)
+    #    ret.append(complete_job)
+    #    ret.append(contact)
+    #    #do nothing these are for doctor
+    #    pass
     elif job.status == Job.USER_REJECTED:
         #do nothing these are fordoctor
         pass
@@ -196,6 +196,7 @@ def job_price_too_low(request):
 
 @login_required
 def mark_job_completed(request):
+    pdb.set_trace()
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])

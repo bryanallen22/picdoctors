@@ -68,11 +68,11 @@ def generate_skaa_actions(job):
         ret.append(switch_doc)
         ret.append(refund)
 
-    elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
-        ret.append(contact)
-        ret.append(view_album)
-        ret.append(switch_doc)
-        ret.append(refund)
+    #elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
+    #    ret.append(contact)
+    #    ret.append(view_album)
+    #    ret.append(switch_doc)
+    #    ret.append(refund)
 
     elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(accept_album)
@@ -84,12 +84,12 @@ def generate_skaa_actions(job):
     elif job.status == Job.USER_ACCEPTED:
         ret.append(view_album)
 
-    elif job.status == Job.USER_REQUESTS_MODIFICATION:
-        ret.append(accept_album)
-        ret.append(contact)
-        ret.append(view_album)
-        ret.append(switch_doc)
-        ret.append(refund)
+   # elif job.status == Job.USER_REQUESTS_MODIFICATION:
+   #     ret.append(accept_album)
+   #     ret.append(contact)
+   #     ret.append(view_album)
+   #     ret.append(switch_doc)
+   #     ret.append(refund)
 
     elif job.status == Job.USER_REJECTED:
         pass

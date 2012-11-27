@@ -1,6 +1,8 @@
 
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+from annoying.functions import get_object_or_None
 
 from common.models import Album
 
@@ -84,3 +86,53 @@ def get_unfinished_album(request):
                                urllib.quote( request.get_full_path() ));
 
     return (album, redirect_url)
+
+from django.contrib.auth.models import Group
+from annoying.decorators import render_to
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives
+from tasks.tasks import sendAsyncEmail
+
+
+#TODO Remove this
+@csrf_exempt
+@render_to("gopro.html")
+def go_pro(request):
+    user = request.user
+    moderator = get_object_or_None(Group, name='Album Moderators')
+    user.groups.add(moderator)
+
+    send_go_pro_email(request)
+
+    return {}
+
+
+def send_go_pro_email(request):
+    try:
+        to_email = 'feedback@picdoctors.com'
+
+        user = request.user
+
+        which_user = user.username
+        which_id = user.id
+
+
+        args = {'which_user':which_user, 'which_id':which_id} 
+        html_content = render_to_string('gopro_email.html', args)
+                                        
+        
+        # this strips the html, so people will have the text
+        text_content = strip_tags(html_content) 
+        # create the email, and attach the HTML version as well.
+        msg = EmailMultiAlternatives('user went pro', text_content, 'donotreply@picdoctors.com', [to_email])
+        msg.attach_alternative(html_content, "text/html")
+        #TODO if you want to switch to using the workers
+        # sendAsyncEmail.apply_async(args=[msg])
+        sendAsyncEmail(msg)
+
+    except Exception as ex:
+        # later I'd like to ignore this, but for now, let's see errors happen
+        # raise ex
+        pass
+

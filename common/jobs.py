@@ -1,12 +1,12 @@
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
 
 from common.models import Pic
 from common.calculations import calculate_job_payout
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives
 from tasks.tasks import sendAsyncEmail
 
 import pdb
