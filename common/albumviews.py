@@ -52,7 +52,7 @@ def album(request, album_id):
     # when querying for pictures you can query for approved pics, or
     # if your the doctor query for all pics they've uploaded
     only_approved = not profile.is_doctor and not moderator
-    user_acceptable = job.status == Job.DOCTOR_SUBMITTED and job.skaa == profile and job.approved
+    user_acceptable = job.status == Job.DOCTOR_SUBMITTED and job.skaa == profile and job.is_approved()
 
     groups = Group.get_album_groups(job.album)
     groupings = []
@@ -72,6 +72,7 @@ def album(request, album_id):
 
     return {'job_id': job.id, 'user_acceptable': user_acceptable, 'is_owner': (profile == job.skaa), 'groupings' : groupings}
 
+#This is for a moderator to approve an album
 @login_required
 def approve_album(request):
     profile = get_profile_or_None(request)
@@ -79,9 +80,12 @@ def approve_album(request):
     job_id = data['job_id']
     job = get_object_or_None(Job, id=data['job_id'])
 
-    # TODO figure out how to add a user permission and check it (moderator)
-    if job and job.album and profile: # and moderator
+    moderator =  profile.user.has_perm('common.approve_album')
+
+    if job and job.album and profile and moderator: # and moderator
+        # only necessary for doctors that aren't auto_approve
         job.approved = True
+        job.status = Job.DOCTOR_SUBMITTED
         job.save()
     
     resp = simplejson.dumps({'redirect':reverse('album_approval_page')})

@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from common.models import Job 
 from common.models import Album
 from common.models import Group
-from common.models import UserProfile
+from common.models import UserProfile, DoctorInfo
 from common.models import Pic
 from common.models import DocBlock
 from common.calculations import calculate_job_payout
@@ -83,37 +83,41 @@ def generate_doctor_actions(job):
         ret.append(contact)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
+
     elif job.status == Job.TOO_LOW:
         #Doctor won't be informed that a job appears too low
         pass
+
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(work_job)
         ret.append(view_album)
         ret.append(complete_job)
         ret.append(contact)
-        #do something
-    #elif job.status == Job.DOCTOR_REQUESTS_ADDITIONAL_INFORMATION:
-    #    ret.append(work_job)
-    #    ret.append(view_album)
-    #    ret.append(complete_job)
-    #    ret.append(contact)
-    #    #do something
+
+    elif job.status == Job.MODERATOR_APPROVAL_NEEDED:
+        ret.append(view_album)
+        ret.append(complete_job)
+        ret.append(contact)
+
     elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(contact)
         ret.append(view_album)
+
     elif job.status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
         pass
+
     #elif job.status == Job.USER_REQUESTS_MODIFICATION:
     #    ret.append(work_job)
     #    ret.append(view_album)
     #    ret.append(complete_job)
     #    ret.append(contact)
     #    #do nothing these are for doctor
-    #    pass
+
     elif job.status == Job.USER_REJECTED:
         #do nothing these are fordoctor
         pass
+
     else:
         #How did we get here???
         pass
@@ -139,16 +143,22 @@ def apply_for_job(request):
         #result = ['actions': {'alert':'This job is no longer available', 'reload':''}]
         pass 
     else:
+        # Get exclusive access to the job
         job_qs = Job.objects.select_for_update().filter(pk=job.id)
         for job in job_qs:
+            # if the job has no doctor
             if job.doctor is None:
+                # find out if this job has had this doctor before
                 db = get_object_or_None(DocBlock, job=job)
                 if db:
                     actions = Actions()
                     actions.add('alert', 'Unfortunately you are unable to take this job, we apologize.')
                     actions.add('remove_job_row', data['job_id'])
                 else:
+                    docinfo = DoctorInfo.get_docinfo_or_None(doc)
+
                     job.doctor = doc
+                    job.approved = docinfo.auto_approve
                     job.payout_price_cents = calculate_job_payout(job, doc)
                     job.status = Job.DOCTOR_ACCEPTED
                     job.save()
@@ -196,7 +206,6 @@ def job_price_too_low(request):
 
 @login_required
 def mark_job_completed(request):
-    pdb.set_trace()
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
@@ -219,7 +228,14 @@ def mark_job_completed(request):
 
         if unfinished_count==0:
             actions.add('alert', 'The job has been marked as complete')
-            job.status = Job.DOCTOR_SUBMITTED
+            docinfo = DoctorInfo.get_docinfo_or_None(profile)
+
+            # elitest doctor is auto approved, skip to submitted state!
+            if docinfo.auto_approve:
+                job.status = Job.DOCTOR_SUBMITTED
+            else:
+                job.status = Job.MODERATOR_APPROVAL_NEEDED
+
             job.save()
             send_job_status_change(job, profile)
             job_info = fill_job_info(job, generate_doctor_actions, profile)

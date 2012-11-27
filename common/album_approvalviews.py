@@ -28,7 +28,7 @@ import pdb
 @render_to('jobs.html')
 def album_approval_page(request, page=1):
     if request.user.is_authenticated():
-        jobs = Job.objects.filter(approved=False, status=Job.DOCTOR_SUBMITTED).order_by('created').reverse()
+        jobs = Job.objects.filter(status=Job.MODERATOR_APPROVAL_NEEDED).order_by('created').reverse()
     else:
         #TODO they shouldn't ever get here based on future permissions
         jobs = []

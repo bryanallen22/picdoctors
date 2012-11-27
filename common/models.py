@@ -128,6 +128,12 @@ class DoctorInfo(DeleteMixin):
                                           related_name='associated_doctor')
     auto_approve = models.BooleanField(default=False)
 
+    @staticmethod
+    def get_docinfo_or_None(profile):
+        info = get_object_or_None(DoctorInfo, user_profile=profile)
+        return info
+
+
 
 def create_user_profile(sender, instance, created, **kwargs):
         if created:
@@ -494,7 +500,7 @@ class Group(models.Model):
         
         moderator =  profile.user.has_perm('common.view_album')
 
-        if job.approved or job.doctor == profile or moderator:
+        if job.is_approved() or job.doctor == profile or moderator:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
             
         return []
@@ -506,7 +512,7 @@ class Group(models.Model):
 
         moderator =  profile.user.has_perm('common.view_album')
 
-        if job.approved or job.doctor == profile or moderator:
+        if job.is_approved() or job.doctor == profile or moderator:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
             
         return []
@@ -545,7 +551,7 @@ class DocPicGroup(DeleteMixin):
         # job = group.album.get_job_or_None()
         moderator =  profile.user.has_perm('common.view_album')
 
-        if not ( job.approved or is_doctor or moderator ):
+        if not ( job.is_approved() or is_doctor or moderator ):
             return None
 
         # I still don't have to return the full pic, just the watermark for now :)
@@ -566,6 +572,7 @@ class Job(DeleteMixin):
     TOO_LOW   = 'too_low' #not worth doctors time
     DOCTOR_ACCEPTED  = 'doctor_acc' #doctor accepted
     DOCTOR_SUBMITTED = 'doctor_sub' #submitted to user for approval
+    MODERATOR_APPROVAL_NEEDED = 'mod_need'
     USER_ACCEPTED    = 'user_acc'   #user accepts the finished product
     USER_REJECTED     = 'user_rej'   #user rejects product and wants a refund...
 
@@ -575,6 +582,7 @@ class Job(DeleteMixin):
         (TOO_LOW, 'Price Too Low'),
         (DOCTOR_ACCEPTED, 'Doctor Accepted Job'),
         (DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
+        (MODERATOR_APPROVAL_NEEDED, 'Work Submitted, Approval Pending'),
         (USER_ACCEPTED, 'User Accepted Work'),
         (USER_REJECTED, 'User Has Rejected Work'),
     )
@@ -629,6 +637,13 @@ class Job(DeleteMixin):
                 return group
 
         return None
+
+    def is_approved(self):
+        approved = self.approved
+        if not approved and self.doctor:
+            doc_profile = DoctorInfo.get_docinfo_or_None(self.doctor)
+            approved = approved or doc_profile.auto_approve
+        return approved
 
     def is_accepted(self):
         return self.status == Job.USER_ACCEPTED

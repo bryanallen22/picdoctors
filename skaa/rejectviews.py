@@ -8,12 +8,16 @@ from common.models import Job, UserProfile
 from common.jobs import send_job_status_change
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 import pdb
 
 @login_required
 @render_to("reject.html")
 def refund(request, job_id):
+
+    if not reject_belongs(request, job_id):
+        return redirect('/')
 
     return {'job_id': job_id, 'is_refund':True}
 
@@ -23,10 +27,20 @@ def refund(request, job_id):
 @render_to("reject.html")
 def switch_doctor(request, job_id):
 
+    if not reject_belongs(request, job_id):
+        return redirect('/')
+
     return {'job_id': job_id, 'is_refund':False}
 
+def reject_belongs(request, job_id):
+    profile = get_profile_or_None(request)
+    job = get_object_or_None(Job, id=job_id)
 
+    if not job or not profile:
+        return False
 
+    if job.skaa != profile:
+        return False
 
 @login_required
 def refund_user_endpoint(request):
@@ -51,9 +65,11 @@ def switch_doctor_endpoint(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
 
+
     if job and profile and job.skaa == profile:
         job.status = Job.USER_SUBMITTED
         job.doctor = None
+        job.approved = False
         job.save()
         
         groups = Group.get_job_groups(job)
