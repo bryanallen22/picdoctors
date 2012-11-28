@@ -575,6 +575,7 @@ class Job(DeleteMixin):
     MODERATOR_APPROVAL_NEEDED = 'mod_need'
     USER_ACCEPTED    = 'user_acc'   #user accepts the finished product
     USER_REJECTED     = 'user_rej'   #user rejects product and wants a refund...
+    REFUND            = 'refund'     #user requested refund
 
     #Job status Choices for the job_status field below
     STATUS_CHOICES = (
@@ -585,6 +586,7 @@ class Job(DeleteMixin):
         (MODERATOR_APPROVAL_NEEDED, 'Work Submitted, Approval Pending'),
         (USER_ACCEPTED, 'User Accepted Work'),
         (USER_REJECTED, 'User Has Rejected Work'),
+        (REFUND, 'Job Refunded'),
     )
 
     #Never blank, no album = no job. related_name since Album already has a FK

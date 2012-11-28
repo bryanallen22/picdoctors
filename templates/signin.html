@@ -47,11 +47,11 @@
       <input type="hidden" style="display:none;" name="usertype" value="{{ usertype }}">
 
       <label class="radio">
-        <input type="radio" name="create_acct_radio" id="create" value="create" checked>
+        <input type="radio" name="create_acct_radio" id="create" value="create" {{create_checked}}>
         Create a new account
       </label>
       <label class="radio">
-        <input type="radio" name="create_acct_radio" id="have" value="have">
+        <input type="radio" name="create_acct_radio" id="have" value="have" {{have_checked}}>
         I already have an account
       </label>
       <input type="text" id="email" class="span4" name="email"

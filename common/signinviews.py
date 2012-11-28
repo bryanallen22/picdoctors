@@ -99,9 +99,13 @@ def signin(request, usertype='user'):
     """
 
     # Set defaults here. Overridden below if necessary
-    ret = { 'usertype' : usertype }
+    ret = { 'usertype' : usertype , 'create_checked' : 'checked'}
 
     if request.method == 'GET':
+        # if they aren't going anywhere, they clicked login, show login by default, not create
+        if not 'next' in request.GET:
+            ret['have_checked'] = 'checked'
+            ret['create_checked'] = ''
         # Nothing to do here now...
         pass
 

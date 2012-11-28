@@ -22,7 +22,6 @@ def refund(request, job_id):
     return {'job_id': job_id, 'is_refund':True}
 
 
-
 @login_required
 @render_to("reject.html")
 def switch_doctor(request, job_id):
@@ -42,6 +41,8 @@ def reject_belongs(request, job_id):
     if job.skaa != profile:
         return False
 
+    return True
+
 @login_required
 def refund_user_endpoint(request):
     profile = get_profile_or_None(request)
@@ -50,7 +51,7 @@ def refund_user_endpoint(request):
 
     if job and profile and job.skaa == profile:
         #TODO Refund User
-        job.status = Job.USER_REJECTED
+        job.status = Job.REFUND
         job.save()
 
         send_job_status_change(job, profile)
