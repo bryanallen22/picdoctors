@@ -17,6 +17,9 @@
       <div class="span2 redirect_row_buttons">
       </div>
     </div>
+    <div class="page-header row" style="text-align: center;">
+      <h1>{{ title }}</h1>
+    </div>
     <div class="row job_header_row lead">
     {% if doc_page %}
       <div class="span1">
@@ -134,14 +137,7 @@
         <em><%= status %></em>
       </div>
       <div class="span2">
-        <div class="btn-group">
-          <% if (doctor_exists) { %>
-          &nbsp;
-          <% } else { %>
-          Job has yet to be taken
-          <% } %>
-
-        </div>
+        <%= unread_message_count %> unread message<%="".pluralize(unread_message_count)%>
       </div>
       <div class="span2">
         <% if (dynamic_actions.length > 0) { %>

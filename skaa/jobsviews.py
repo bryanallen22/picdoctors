@@ -39,7 +39,7 @@ def job_page(request, page=1):
 
     return {'job_infos_json':job_infos_json,
             'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page), 
-            'doc_page':False}
+            'doc_page':False, 'title': 'My Jobs'}
 
 #get and fill up possible actions based on the status of this job
 def generate_skaa_actions(job):
@@ -54,9 +54,8 @@ def generate_skaa_actions(job):
     refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), True)
     switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), True)
     
-    if job.status == Job.USER_SUBMITTED:
+    if job.status == Job.IN_MARKET:
         ret.append(view_album)
-        ret.append(contact)
         ret.append(refund)
 
     elif job.status == Job.TOO_LOW:
@@ -109,7 +108,7 @@ def create_job(request, album, charge):
                 album=album, 
                 price_cents=charge.amount_cents, 
                 charge=charge,
-                status=Job.USER_SUBMITTED)
+                status=Job.IN_MARKET)
         
         j.save()
 

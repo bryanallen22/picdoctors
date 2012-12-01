@@ -68,9 +68,10 @@ def switch_doctor_endpoint(request):
 
 
     if job and profile and job.skaa == profile:
-        job.status = Job.USER_SUBMITTED
+        job.status = Job.IN_MARKET
         job.doctor = None
         job.approved = False
+        job.payout_price_cents = 0
         job.save()
         
         groups = Group.get_job_groups(job)

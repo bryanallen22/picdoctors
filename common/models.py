@@ -568,7 +568,7 @@ class Charge(DeleteMixin):
 # This model is used for storing the job information and state
 class Job(DeleteMixin):
     #Job status constants
-    USER_SUBMITTED = 'user_sub' #submitted to doctors
+    IN_MARKET = 'in_market' #submitted to doctors
     TOO_LOW   = 'too_low' #not worth doctors time
     DOCTOR_ACCEPTED  = 'doctor_acc' #doctor accepted
     DOCTOR_SUBMITTED = 'doctor_sub' #submitted to user for approval
@@ -579,7 +579,7 @@ class Job(DeleteMixin):
 
     #Job status Choices for the job_status field below
     STATUS_CHOICES = (
-        (USER_SUBMITTED, 'User Submitted'),
+        (IN_MARKET, 'Available in Market'),
         (TOO_LOW, 'Price Too Low'),
         (DOCTOR_ACCEPTED, 'Doctor Accepted Job'),
         (DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
@@ -614,7 +614,7 @@ class Job(DeleteMixin):
     # max_length refers to the shorthand versions above
     status                  = models.CharField(max_length=15, 
                                                choices=STATUS_CHOICES, 
-                                               default=USER_SUBMITTED, 
+                                               default=IN_MARKET, 
                                                db_index=True)
     
     # doc pics are approved for viewing by skaa

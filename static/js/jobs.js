@@ -17,7 +17,7 @@ $(function(){
         job_id    : -1,
         output_pic_count : '',
         status : 'Unknown',
-        doctor_exists : false,
+        unread_message_count : 0,  
         album : -1,
         albumurl : '',
         pic_thumbs : [],
@@ -92,7 +92,7 @@ $(function(){
           job_id              : this.model.get('job_id'),
           output_pic_count    : this.model.get('output_pic_count'),
           status              : this.model.get('status'),
-          doctor_exists       : this.model.get('doctor_exists'),
+          unread_message_count: this.model.get('unread_message_count'),
           album               : this.model.get('album'),
           albumurl            : this.model.get('albumurl'),
           pic_thumbs          : this.model.get('pic_thumbs'),
@@ -184,7 +184,7 @@ $(function(){
       model.set('job_id', ji.job_id);
       model.set('output_pic_count', ji.output_pic_count);
       model.set('status', ji.status);
-      model.set('doctor_exists', ji.doctor_exists);
+      model.set('unread_message_count', ji.unread_message_count);
       model.set('album', ji.album);
       model.set('albumurl', ji.albumurl);
       model.set('pic_thumbs', ji.pic_thumbs);

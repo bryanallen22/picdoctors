@@ -71,7 +71,7 @@ def contact(request, job_id):
         return redirect('/')
 
     if not (job.skaa == profile or job.doctor == profile or
-        ( profile.is_doctor and job.status == Job.USER_SUBMITTED )):
+        ( profile.is_doctor and job.status == Job.IN_MARKET)):
         return redirect('/')
 
     #############################
@@ -104,8 +104,8 @@ def message_handler(request):
                 msg.group = group
             else:
                 msg = JobMessage()
-                msg.job = job
-
+            
+            msg.job = job
             msg.message = message
             msg.commentor = profile
             if job.skaa == profile:

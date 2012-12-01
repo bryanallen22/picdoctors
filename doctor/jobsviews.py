@@ -37,7 +37,7 @@ def doc_job_page(request, page=1):
 
     return { 'job_infos_json' : job_infos_json, 
             'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 
-            'new_jobs_page': False, 'doc_page':True}
+            'new_jobs_page': False, 'doc_page':True, 'title': 'My Jobs'}
 
 
 @login_required
@@ -56,7 +56,7 @@ def new_job_page(request, page=1):
 
     return {'job_infos_json' : job_infos_json, 
             'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 
-            'new_jobs_page': True, 'doc_page':True}
+            'new_jobs_page': True, 'doc_page':True, 'title': 'Available Jobs'}
 
 #get and fill up possible actions based on the status of this job
 def generate_doctor_actions(job):
@@ -69,7 +69,7 @@ def generate_doctor_actions(job):
     group = job.get_first_unfinished_group()
     group_seq = 1 if not group else group.sequence
     work_job_url= reverse('markup_album', args=[job.album.id, group_seq])
-    work_job = DynamicAction('Work On Job', work_job_url, redirect_url)
+    work_job = DynamicAction('Work on Job', work_job_url, redirect_url)
 
     complete_job = DynamicAction('Mark as Completed', '/mark_job_completed/')
     
@@ -78,7 +78,7 @@ def generate_doctor_actions(job):
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
     
 
-    if job.status == Job.USER_SUBMITTED:
+    if job.status == Job.IN_MARKET:
         ret.append(view_markup)
         ret.append(contact)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))

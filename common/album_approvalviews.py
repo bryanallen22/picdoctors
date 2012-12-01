@@ -39,7 +39,7 @@ def album_approval_page(request, page=1):
 
     return {'job_infos_json':job_infos_json,
             'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page), 
-            'doc_page':False}
+            'doc_page':False, 'title':'Jobs Needing Approval'}
 
 #get and fill up possible actions based on the status of this job
 def generate_album_approval_actions(job):
