@@ -19,7 +19,6 @@ class JobInfo:
         self.job_id = '1'
         self.output_pic_count = ''
         self.status = 'Unknown'
-        self.unread_message_count = 0
         self.album = -1
         self.albumurl = ''
         self.pic_thumbs = []
@@ -129,29 +128,8 @@ def fill_job_info(job, action_generator, profile):
         job_inf.albumurl = reverse('markup_album', args=[job_inf.album, 1])
         job_inf.output_pic_count = album.num_groups
         job_inf.pic_thumbs = generate_pic_thumbs(album)
-        job_inf.unread_message_count = get_unread(job, profile)
 
     return job_inf
-
-def get_unread(job, profile):
-    job_mess = None
-    group_mess = None
-    count = 0
-
-    if job.doctor and profile == job.doctor:
-        job_mess = JobMessage.objects.filter(job=job).filter(doctor_viewed=False)
-        group_mess = GroupMessage.objects.filter(job=job).filter(doctor_viewed=False)
-    elif profile == job.skaa:
-        job_mess = JobMessage.objects.filter(job=job).filter(skaa_viewed=False)
-        group_mess = GroupMessage.objects.filter(job=job).filter(skaa_viewed=False)
-
-    if job_mess:
-        count = len(job_mess)
-        
-    if group_mess:
-        count += len(group_mess)
-        
-    return count
 
 def generate_pic_thumbs(filter_album):
     """

@@ -19,7 +19,6 @@ $(function(){
         message   : '',
         created   : null,
         commentor : '',
-        unseen    : '',
         is_owner  : false,
       };
     },
@@ -61,7 +60,6 @@ $(function(){
           message   : this.model.get('message'),
           created   : this.model.get('created'),
           commentor : this.model.get('commentor'),
-          unseen    : this.model.get('unseen'),
         }
       ));
     }
@@ -119,7 +117,6 @@ $(function(){
             message   :       message,
             created   :       'Less than a minute ago',
             commentor :       username,
-            unseen    :       'unseen',
             is_owner  :       is_owner,
           }
         );

@@ -46,7 +46,7 @@ def generate_skaa_actions(job):
     ret = []
 
     #boring always created actions for populating below
-    contact = DynamicAction('Contact Doctor', reverse('contact', args=[job.id]), True)
+    contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), True)
     view_markup_url= reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Markups', view_markup_url, True)
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
@@ -55,6 +55,7 @@ def generate_skaa_actions(job):
     switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), True)
     
     if job.status == Job.IN_MARKET:
+        ret.append(contact)
         ret.append(view_album)
         ret.append(refund)
 

@@ -64,7 +64,7 @@ def generate_doctor_actions(job):
     redirect_url = True
     #boring always created actions for populating below
     #TODO redirect to contact page
-    contact = DynamicAction('Contact User', reverse('contact', args=[job.id]), True)
+    contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), True)
 
     group = job.get_first_unfinished_group()
     group_seq = 1 if not group else group.sequence

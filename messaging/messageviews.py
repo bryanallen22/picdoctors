@@ -24,7 +24,6 @@ class Message():
         self.commentor = None
         self.message = ''
         self.created = ''
-        self.unseen = ''
         self.is_owner = False
 
 
@@ -46,15 +45,6 @@ def prep_messages(base_messages, profile, job):
         message.created = get_time_string(msg.created)
         message.is_owner = msg.commentor == job.skaa
         messages.append(message.__dict__)
-        if msg.skaa_viewed == False and job.skaa == profile:
-            message.unseen = 'unseen'
-            msg.skaa_viewed = True
-            msg.save()
-
-        if msg.doctor_viewed == False and job.doctor == profile:
-            message.unseen = 'unseen'
-            msg.doctor_viewed = True
-            msg.save()
 
     return simplejson.dumps(messages)
 
@@ -108,18 +98,13 @@ def message_handler(request):
             msg.job = job
             msg.message = message
             msg.commentor = profile
-            if job.skaa == profile:
-                msg.skaa_viewed = True
-            elif job.doctor == profile:
-                msg.doctor_viewed = True
-
             msg.save()
 
             job.last_communicator = profile
             job.save()
 
 
-            generate_message_email(job, profile, message)
+            generate_message_email(job, profile, msg)
 
 
     response_data = simplejson.dumps(result)
@@ -128,13 +113,15 @@ def message_handler(request):
 
 def generate_message_email(job, profile, message):
     try:
-        from_whom = 'User'
-        to_email = job.doctor.user.email
-
-
-        if job.doctor == profile:
+        if message.commentor == job.skaa:
+            from_whom = 'User'
+            to_email = get_doctor_emails(job, message)
+        else:
             from_whom = 'Doctor'
-            other_user_email = job.skaa.user.email
+            to_email = [job.skaa.user.email]
+
+        if len(to_email) == 0:
+            return
 
         subject = 'The ' + from_whom + ' commented on your job'
         #Do I want to send the message to them, or make them go to the page?a
@@ -145,7 +132,7 @@ def generate_message_email(job, profile, message):
         # this strips the html, so people will have the text
         text_content = strip_tags(html_content) 
         # create the email, and attach the HTML version as well.
-        msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', [to_email])
+        msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', to_email)
         msg.attach_alternative(html_content, "text/html")
         #TODO if you want to switch to using the workers
         # sendAsyncEmail.apply_async(args=[msg])
@@ -155,4 +142,19 @@ def generate_message_email(job, profile, message):
     except Exception as ex:
         #raise ex
         pass
+
+def get_doctor_emails(job, message):
+    ret = []
+    # if there is a job doctor, only reply to him
+    if job.doctor:
+        ret.append(job.doctor.user.email)
+    # no job doctor yet, reply to all doctors who have commented
+    else:
+        jms = JobMessage.objects.filter(job=job)
+        for jm in jms:
+            # skip users, and only add unique doctors
+            if jm.commentor != job.skaa and jm.commentor.user.email not in ret:
+                ret.append(jm.commentor.user.email)
+
+    return ret
 

@@ -8,22 +8,17 @@ class BaseMessage(DeleteMixin):
     commentor         = models.ForeignKey(UserProfile)
     #Actual Message
     message           = models.TextField(blank=True)
-    #Convenient info for making new messages pop out
-    skaa_viewed       = models.BooleanField(default=False)
-    doctor_viewed     = models.BooleanField(default=False)
-
-class JobMessage(BaseMessage):
     job               = models.ForeignKey(Job,
                                           db_index=True)
+
+class JobMessage(BaseMessage):
+    # Nothing here as of yet
 
     @staticmethod
     def get_messages(job):
         return JobMessage.objects.filter(job=job).order_by('created')
         
 class GroupMessage(BaseMessage):
-    job               = models.ForeignKey(Job,
-                                          db_index=True) 
-                                          
     group             = models.ForeignKey(Group, 
                                           db_index=True)
 
