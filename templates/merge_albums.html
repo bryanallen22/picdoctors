@@ -8,11 +8,10 @@
 {% endblock %}
 
 {% block main %}
-<div class='row span9'>
-  <h2>Oops! You've started two separate sets of pictures!</h2>
-  <p class="lead span7">
-    It looks like you already had a previous album of {{ oldpic_thumbs|length }}
-    pictures started {{ older_date_str }}. What would you like to do?
+<div class='row span12' >
+  <h1 style='text-align:center'>Oops! You've started two separate albums!</h1>
+  <p class="lead span8">
+  A previous album started {{ older_date_str }} with {{ oldpic_thumbs|length }} picture{{oldpic_thumbs|pluralize}} was never finished. What would you like to do with those pictures?
   </p>
 </div>
 
@@ -20,45 +19,47 @@
   <div id="merge_carousel" class="carousel slide offset3">
     <!-- Carousel items -->
     <div class="carousel-inner">
-        {% for pic in oldpic_thumbs %}
-          {% if forloop.first %}
-            <div class="active item merge_carousel_pic"> 
-          {% else %}
-            <div class="item merge_carousel_pic"> 
+      {% for pic in oldpic_thumbs %}
+      {% if forloop.first %}
+      <div class="active item merge_carousel_pic"> 
+        {% else %}
+        <div class="item merge_carousel_pic"> 
           {% endif %}
-              <a href="{{pic.markup_url}}">
-                <img src="{{ pic.pic_url }}" alt="">
-              </a>
-            </div>
+          <a href="{{pic.markup_url}}">
+            <img src="{{ pic.pic_url }}" alt="">
+          </a>
+        </div>
         {% endfor %}
+      </div>
+      {% if oldpic_thumbs|length > 1 %}
+      <!-- Carousel nav -->
+      <a class="carousel-control left" href="#merge_carousel" data-slide="prev">&lsaquo;</a>
+      <a class="carousel-control right" href="#merge_carousel" data-slide="next">&rsaquo;</a>
+      {% endif %}
     </div>
-    <!-- Carousel nav -->
-    <a class="carousel-control left" href="#merge_carousel" data-slide="prev">&lsaquo;</a>
-    <a class="carousel-control right" href="#merge_carousel" data-slide="next">&rsaquo;</a>
   </div>
-</div>
 
-<div class='row'>
-  <div class='span6 offset2'>
-    {% comment %}
-    <button id='delete' class='btn btn-primary btn-large'>Delete them</button>
-    <button id='merge' class='btn btn-primary btn-large'>Add them to my current pics</button>
-    {% endcomment %}
-    <form method="POST">
-      {% csrf_token %}
-      <input type="submit" name="delete" class='btn btn-large' value="Delete them" >
-      <input type="submit" name="merge"  class='btn btn-primary btn-large' value="Add them to my current pics">
-    </form>
+  <div class='row'>
+    <div class='span6 offset2'>
+      {% comment %}
+      <button id='delete' class='btn btn-primary btn-large'>Delete them</button>
+      <button id='merge' class='btn btn-primary btn-large'>Add them to my current pics</button>
+      {% endcomment %}
+      <form method="POST">
+        {% csrf_token %}
+        <input type="submit" name="delete" class='btn btn-large' value="Delete them" >
+        <input type="submit" name="merge"  class='btn btn-primary btn-large' value="Add them to my current album">
+      </form>
+    </div>
   </div>
-</div>
 
-{% endblock %}
+  {% endblock %}
 
-{% block scripts %}
+  {% block scripts %}
   <script>
     $(function() {
       $('.carousel').carousel( { interval: 2500 } );
     });
   </script>
-{% endblock %}
+  {% endblock %}
 

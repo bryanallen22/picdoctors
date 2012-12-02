@@ -341,6 +341,9 @@ class Album(DeleteMixin):
     def get_job_or_None(self):
         job = get_object_or_None(Job, album=self)
         return job
+
+    def get_picture_count(self):
+        return Pic.objects.filter(album=self).count()
     
     def kick_groups_modified(self):
         """
@@ -357,7 +360,7 @@ class Album(DeleteMixin):
 
         This method must be called before you can trust any groupings. To
         prevent this method from being overly wasteful, it won't actually
-        set any groupings if there hasn't been a call to kick_groups_modified()
+        set any groupings if th`ere hasn't been a call to kick_groups_modified()
         since this method was last called.
         
         Note that this will quite happily override any existing sequence
@@ -446,7 +449,7 @@ class Album(DeleteMixin):
         in users if both match.
 
         If there is more than one unfinished album associated with this user,
-        something is wrong and we raise an exception.
+        and both album has pictures in it then we raise an exception.
         """
 
         ret = None
@@ -455,6 +458,18 @@ class Album(DeleteMixin):
         user_profile = request.user.get_profile() if request.user.is_authenticated() else None
         if user_profile:
             albums = Album.objects.filter(finished=False, userprofile=user_profile)
+            empty_album = False
+            if len(albums) >= 2:
+                # check to see if one of the albums is empty
+                for album in albums:
+                    if album.get_picture_count() == 0:
+                        empty_album = True
+                        album.delete()
+
+            # Only requery if we deleted one+ of the albums
+            if empty_album:
+                albums = Album.objects.filter(finished=False, userprofile=user_profile)
+
             if len(albums) >= 2:
                 raise MultipleObjectsReturned("%s unfinished albums at once!" 
                                               % len(albums))

@@ -28,7 +28,7 @@ def generate_carousel_imgs(filter_album):
         if pic.group:
             markup_url = reverse('markup_album', args=[filter_album.id, pic.group.sequence])
         else:
-            markup_url = reverse('markup')
+            markup_url = reverse('markup', args=[1])
         tup = CarouselPic(pic.get_thumb_url(), markup_url)
         ret.append(tup)
     return ret
