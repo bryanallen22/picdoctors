@@ -43,39 +43,44 @@
           </div>
           <div style="float:right; display:inline;">
             <ul class="nav nav-pills">
-              <li><a href="#about">How It Works</a></li>
-              <li><a href="#faq">FAQ</a></li>
+              <li><a href="#about"><i class="icon-picture"></i> How It Works</a></li>
+              <li><a href="#faq"><i class="icon-info-sign"></i> FAQ</a></li>
               <li><a id='feedback_link'
                      class="feedback" 
                      data-original-title="Enter your feedback:"
                      rel="popover"
                      data-placement="bottom"
                      data-trigger="manual"
-                     onclick="feedback(this)" href="#" >Feedback</a>
+                     onclick="feedback(this)" href="#" ><i class="icon-comment"></i> Feedback</a>
               </li>
               {% if not user.is_authenticated %}
-              <li><a href="/doc_home/">Become a Pic Doctor</a></li>
-              <li><a href="/signin/">Log In</a></li>
+              <li><a href="/doc_home/"><i class="icon-edit"></i> Become a Pic Doctor</a></li>
+              {% endif %}
+              {% if request.has_cart %}
+              <li><a href="/upload/"><i class="icon-shopping-cart"></i> Cart ({{ request.pic_count }})</a></li>
+              {% endif %}
+              {% if not user.is_authenticated %}
+              <li><a href="/signin/"><i class="icon-user"></i> Log In</a></li>
               {% else %}
                 {% if user.get_profile.is_doctor %}
-                  <li><a href="/new_jobs/">Available Jobs</a></li>
-                  <li><a href="/doc_jobs/">My Jobs</a></li>
+                  <li><a href="/new_jobs/"><i class="icon-star"></i> Available Jobs</a></li>
+                  <li><a href="/doc_jobs/"><i class="icon-tasks"></i> My Jobs</a></li>
                 {% else%}
-                  <li><a href="/jobs/">My Jobs</a></li>
+                  <li><a href="/jobs/"><i class="icon-tasks"></i> My Jobs</a></li>
                 {% endif %}
                 {% if perms.common.approve_album %}
-                  <li><a href="/album_approval_page/">Jobs Needing Approval</a></li>
+                  <li><a href="/album_approval_page/"> Jobs Needing Approval</a></li>
                 {% endif %}
                 <li class="dropdown">
                   <a class="dropdown-toggle"
                      data-toggle="dropdown"
                      href="#">
-                      {{user.username }}
+                      <i class="icon-user"></i> {{user.username }}
                       <b class="caret"></b>
                     </a>
                   <ul class="dropdown-menu">
-                    <li><a href="/account_settings/">Account Settings</a></li>
-                    <li><a href="/signout/">Log Out</a></li>
+                    <li><a href="/account_settings/"><i class="icon-cog"></i> Account Settings</a></li>
+                    <li><a href="/signout/"><i class="icon-user"></i> Log Out</a></li>
                   </ul>
                 </li>
 
