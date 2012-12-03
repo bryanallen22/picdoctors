@@ -22,8 +22,7 @@
           </legend>
           <div class="row">
 
-            {# Left side -- credit card info #}
-            <div class="span5">
+            <div class="span5"> {# Left side -- credit card info #}
 
               <form id="payment">
                 {% csrf_token %}
@@ -44,36 +43,47 @@
                   </div>
                 </div>
 
-                <div class="row">
-                  <div id="card_div" class="span2 offset1">
-                    <label for="card_number">Card Number</label>
-                    <input type="text" name="card_number"><br/>
-                    <p id="error_card" class="label label-important balanced_error" style="display:none;">Invalid card number</p>
+                {% for card in credit_cards %}
+                <span class="row payment_type">
+                  <div>{{ card.brand }} - Exp: {{ card.expiration_month }}/{{ card.expiration_year }}</div>
+                  <div>XXXX-XXXX-XXXX-{{ card.last_four }}</div>
+                  <div class='uri' style='display:none;'>{{ card.uri }}</div>
+                </span>
+                {% endfor %}
+                
+                {# Enter a card #}
+                <span class="row payment_type">
+                  <div class="row">
+                    <div id="card_div" class="span2 offset1">
+                      <label for="card_number">Card Number</label>
+                      <input type="text" name="card_number"><br/>
+                      <p id="error_card" class="label label-important balanced_error" style="display:none;">Invalid card number</p>
+                    </div>
                   </div>
-                </div>
 
-                <div class="row">
-                  <div class="span2 offset1">
-                    <label for="expiration_month">Expiration</label>
-                    <input type="text" name="expiration_month" class="span1" > /
-                    <input type="text" name="expiration_year"  class="span1" >
+                  <div class="row">
+                    <div class="span2 offset1">
+                      <label for="expiration_month">Expiration</label>
+                      <input type="text" name="expiration_month" class="span1" > /
+                      <input type="text" name="expiration_year"  class="span1" >
+                    </div>
+                    <div class="span1">
+                      <label for="security_code">CCV2</label>
+                      <input type="text" name="security_code" class="span1" >
+                    </div>
+                    <br/><p id="error_exp" class="offset1 label label-important balanced_error" style="display:none;">Invalid expiration date</p>
+                    <br/><p id="error_seccode" class="offset1 label label-important balanced_error" style="display:none;">Invalid security code</p>
+                    <br/><p id="error_400" class="offset1 label label-important balanced_error" style="display:none;">Your card information is wrong.</p>
+                    <br/><p id="error_402" class="offset1 label label-important balanced_error" style="display:none;">Your card could not be authorized.</p>
+                    <br/><p id="error_404" class="offset1 label label-important balanced_error" style="display:none;">The marketplace could not be reached.</p>
                   </div>
-                  <div class="span1">
-                    <label for="security_code">CCV2</label>
-                    <input type="text" name="security_code" class="span1" >
-                  </div>
-                  <br/><p id="error_exp" class="offset1 label label-important balanced_error" style="display:none;">Invalid expiration date</p>
-                  <br/><p id="error_seccode" class="offset1 label label-important balanced_error" style="display:none;">Invalid security code</p>
-                  <br/><p id="error_400" class="offset1 label label-important balanced_error" style="display:none;">Your card information is wrong.</p>
-                  <br/><p id="error_402" class="offset1 label label-important balanced_error" style="display:none;">Your card could not be authorized.</p>
-                  <br/><p id="error_404" class="offset1 label label-important balanced_error" style="display:none;">The marketplace could not be reached.</p>
-                </div>
 
-                <div class="row">
-                  <div class="offset1">
-                    <button type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+                  <div class="row">
+                    <div class="offset1">
+                      <button type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+                    </div>
                   </div>
-                </div>
+                </span> {# credit card .payment_type #}
 
               </form>
 
@@ -141,12 +151,15 @@
 
         </div>       {# span8                   #}
       </div>         {# row                     #}
-      {# TODO remove this silly thing #}
+      {% comment %}
+      This was useful for seeing the JS values returned
+      from balanced. Maybe it'll be useful again someday
       <div class="row">
         <div id="result">
           Results go here <br/>
         </div>
       </div>
+      {% endcomment %}
     </div>           {# container               #}
 
   </div>

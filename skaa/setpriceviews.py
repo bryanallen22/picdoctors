@@ -14,18 +14,19 @@ from common.models import Album
 from common.models import Group
 from common.models import Pic
 from common.models import ungroupedId
+from common.models import BPAccountWrapper
 from models import Markup
 from skaa.jobsviews import create_job
 
-import pdb
+import ipdb
 import logging
 
 import settings
 import balanced
 
+
 # Require at least $2.00 for each output picture
 min_price_per_pic = 2.0
-
 
 def currency_to_cents(currency):
     """
@@ -64,11 +65,11 @@ def place_hold(album, user, cents, card_uri):
 
     if not profile.bp_account_wrapper:
         try:
-            account = balanced.Marketplace.my_marketplace.create_buyer(
-                                        email_address, card_uri=card_uri)
-            account.add_card(card_uri)
-            profile.bp_account_wrapper = BPAccountWrapper(uri=acct.uri)
-            profile.bp_account_wrapper.save()
+            account = balanced.Marketplace.my_marketplace.create_buyer(email_address, card_uri)
+            wrapper = BPAccountWrapper(uri=account.uri)
+            wrapper.save()
+            profile.bp_account_wrapper = wrapper
+            profile.save()
             
         except balanced.exc.HTTPError as ex:
             if ex.category_code == 'duplicate-email-address':
@@ -77,21 +78,24 @@ def place_hold(album, user, cents, card_uri):
                 #  1) We didn't save it, but we were supposed to. Why not?
                 #  2) Some weird thing happened with changed emails? Or something? 
                 #     Does that even make sense?
-                raise
+                raise Exception("Duplicate email address... this should have been saved under profile.bp_account_wrapper...")
 
                 # bob@stuff.com registers, pays, saves cc
-                #buyer = balanced.Account.query.filter(email_address=email_address)[0]
-                #buyer.add_card(card_uri)
+                #account = balanced.Account.query.filter(email_address=email_address)[0]
+                #account.add_card(card_uri)
             else:
                 # TODO: handle 400 or 409 errors
                 raise
+    else:
+        # Get the account specified by profile.bp_account_wrapper
+        pass
 
     # This creates a hold on the card. We are guaranteed that we can
     # actually debit this amount for up to 7 days from now.
-    hold = buyer.hold(cents, meta={}, source_uri=card_uri,
+    hold = account.hold(cents, meta={}, source_uri=card_uri,
                       appears_on_statement_as="PicDoctors.com")
 
-    job = create_job(request, album, hold)
+    create_job(profile, album, hold)
     album.finished = True
     album.save()
     logging.info("Album owned by %s has been finished with price at $%s (cents)" %
@@ -148,18 +152,37 @@ def set_price(request):
     # if that's not necessary)
     album.set_sequences()
 
+    profile = get_profile_or_None(request)
+    
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+
+    if profile.bp_account_wrapper:
+        # Get the balanced account info. This is slow.
+        acct = balanced.Account.find( profile.bp_account_wrapper.uri )
+
+        user_credit_cards = [c for c in acct.cards]
+    else:
+        user_credit_cards = []
+
+    # card.brand = 'Visa'
+    # card.last_four = '1234'
+    # card.expiration_month
+    # card.expiration_year
+
     min_price = min_price_per_pic * album.num_groups
     if request.method == 'GET':
         pass
     str_min_price = "{0:.2f}".format(min_price)
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
     str_num_pics = "%s" % album.num_groups
+
     return { 
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
+        'IS_PRODUCTION'     : settings.IS_PRODUCTION,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
         'num_pics'          : str_num_pics,
-        'IS_PRODUCTION'     : settings.IS_PRODUCTION,
+        'credit_cards'      : user_credit_cards,
     }
 
 

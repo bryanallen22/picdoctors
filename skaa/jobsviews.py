@@ -102,12 +102,12 @@ def generate_skaa_actions(job):
 
     return ret
 
-def create_job(request, album, hold):
+def create_job(profile, album, hold):
     j = None
     bp_hold_wrapper = BPHoldWrapper(uri=hold.uri, cents=hold.amount)
     bp_hold_wrapper.save()
     if album is not None:
-        j = Job(skaa=request.user.get_profile(),
+        j = Job(skaa=profile,
                 album=album, 
                 price_cents=hold.amount,
                 bp_hold_wrapper=bp_hold_wrapper,

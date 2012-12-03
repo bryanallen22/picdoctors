@@ -5,8 +5,8 @@ $(function(){
   var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
 
   var debug = function (tag, content) {
-    $('<' + tag + '>' + content + '</' + tag + '>').appendTo('#result');
-    $('<br/><br/>').appendTo('#result');
+    //$('<' + tag + '>' + content + '</' + tag + '>').appendTo('#result');
+    //$('<br/><br/>').appendTo('#result');
   };
 
   function balancedCallback(response) {
