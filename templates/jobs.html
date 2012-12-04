@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load dyn_url_reverse %}
 
 {% block styles %}
 {# picdoctors.css already included by default #}
@@ -67,19 +68,14 @@
     <div id='jobs_rows'>
 
     </div>
-
+        
     <div class="pagination pagination-centered">
       <ul>
         {% for i in num_pages %}
-        {% if new_jobs_page %}         
-        {% url new_job_page_with_page i as new_url %}
-        {% else %}
-        {% url doc_job_page_with_page i as new_url %}
-        {% endif %}
         {% if i == cur_page %}
-        <li class="active"><a href="{{ new_url }}">{{i}}</a></li>
+        <li class="active"><a href="#">{{i}}</a></li>
         {% else %}
-        <li ><a href="{{ new_url }}">{{i}}</a></li>
+        <li ><a href="{{ reverser|dyn_url_reverse:i  }}">{{i}}</a></li>
         {% endif %}
         {% endfor %}
       </ul>

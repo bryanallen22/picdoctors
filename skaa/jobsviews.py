@@ -39,7 +39,7 @@ def job_page(request, page=1):
 
     return {'job_infos_json':job_infos_json,
             'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page), 
-            'doc_page':False, 'title': 'My Jobs'}
+            'reverser': 'job_page_with_page', 'doc_page':False, 'title': 'My Jobs'}
 
 #get and fill up possible actions based on the status of this job
 def generate_skaa_actions(job):
