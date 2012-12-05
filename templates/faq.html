@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+  <ul class="nav nav-pills nav-stacked">
+    <li>
+    <a href="#1">
+      1. Who can see my pictures?
+    </a>
+    </li>
+    <li>
+    <a href="#2">
+      2. Can I get a refund? 
+    </a>
+    </li>
+    <li>
+    <a href="#3">
+      3. How am I paid as a Doctor?
+    </a>
+    </li>
+  </ul>
+  <a id="#1"></a>
+  <div class="alert alert-info">
+    <h4>
+      1. Who can see my pictures?
+    </h4>
+    At PicDoctors.com we understand how important privacy is.  When you upload your pictures they
+    are visible to our Pic Doctors.  Once a Pic Doctor has taken on your job, your pictures are only
+    visible to that Pic Doctor and you.  
+  </div>
+  <a id="#2"></a>
+  <div class="alert alert-info">
+    <h4>
+      2. Can I get a refund?
+    </h4>
+    Yes!  We want you to be completely satisfied.  You can get a refund all the way until you accept
+    the Doctor's work.  Once the Doctor's work has been accepted your payment is released to the
+    Doctor.  
+  </div>
+  <a id="#3"></a>
+  <div class="alert alert-info">
+    <h4>
+      3. How am I paid as a Doctor?
+    </h4>
+    Doctor's are given a base pay of 50%.  As you work and jobs are completed, the payout for jobs
+    taken after you've reached the next tier increases!  
+    <h5> 
+      <table class="table table-striped">
+        <thead>
+          <tr><td>Jobs Accepted</td><td>Payout Percent</td><td>Plus Doctor Approval
+              Rating</td><td>Maximum Possible Payout</td></tr>
+        </thead>
+        <tbody>
+          <tr><td>0-9    </td><td>50%</td><td></td><td>50%</td></tr> 
+        <tr><td>10-29  </td><td>60%</td><td>0-5%</td><td>65%</td></tr>
+        <tr><td>30-59  </td><td>65%</td><td>0-5%</td><td>70%</td></tr>
+        <tr><td>60-99  </td><td>67%</td><td>0-5%</td><td>72%</td></tr>
+        <tr><td>100-149 </td><td>69%</td><td>0-5%</td><td>74%</td></tr>
+        <tr><td>150-209</td><td>70%</td><td>0-5%</td><td>75%</td></tr>
+        <tr><td>210-279</td><td>71%</td><td>0-5%</td><td>76%</td></tr>
+        <tr><td>280-399</td><td>72%</td><td>0-5%</td><td>77%</td></tr>
+        <tr><td>400-999</td><td>75%</td><td>0-5%</td><td>80%</td></tr>
+        <tr><td>1000+  </td><td>80%</td><td>0-5%</td><td>85%</td></tr>
+        </tbody>
+    </table>
+    </h5>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

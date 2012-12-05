@@ -6,6 +6,7 @@ from common.albumviews import album, approve_album
 from common.feedbackviews import feedback
 from common.album_approvalviews import album_approval_page
 from common.functions import go_pro
+from common.faqviews import faq
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -22,5 +23,6 @@ urlpatterns = patterns('',
     url(r'^album_approval_page/$',              album_approval_page,        name='album_approval_page'),
     url(r'^album_approval_page/(?P<page>\d+)$', album_approval_page,        name='album_approval_page_with_page'),
     url(r'^go_pro/$',                           go_pro,                     name='go_pro'),
+    url(r'^faq/$',                              faq,                        name='faq'),
 )
 
