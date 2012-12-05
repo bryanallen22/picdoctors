@@ -78,7 +78,8 @@ def place_hold(album, user, cents, card_uri):
                 #  1) We didn't save it, but we were supposed to. Why not?
                 #  2) Some weird thing happened with changed emails? Or something? 
                 #     Does that even make sense?
-                raise Exception("Duplicate email address... this should have been saved under profile.bp_account_wrapper...")
+                raise KeyError("Duplicate email address %s... this should have been saved under " \
+                               "profile.bp_account_wrapper..." % email_address)
 
                 # bob@stuff.com registers, pays, saves cc
                 #account = balanced.Account.query.filter(email_address=email_address)[0]
@@ -87,8 +88,17 @@ def place_hold(album, user, cents, card_uri):
                 # TODO: handle 400 or 409 errors
                 raise
     else:
-        # Get the account specified by profile.bp_account_wrapper
-        pass
+        account = balanced.Account.find( profile.bp_account_wrapper.uri )
+        card = balanced.Card.find( card_uri )
+
+        # As of 12/2012, card.account doesn't even exist. I can see them making it exist
+        # later with 'None' as the value, though.
+        if not hasattr(card, 'account') or not card.account:
+            account.add_card( card_uri )
+        elif card.account.uri != account.uri:
+            raise KeyError("This card's account uri (%s) is already set, and does not match the "\
+                           "current user account uri (%s)!" % (card.account.uri, account.uri))
+
 
     # This creates a hold on the card. We are guaranteed that we can
     # actually debit this amount for up to 7 days from now.
@@ -125,7 +135,7 @@ def create_hold_handler(request):
 
     if cents >= min_price * 100:
 
-        place_hold(album, request.user, cents, request.POST['uri'])
+        place_hold(album, request.user, cents, request.POST['card_uri'])
 
         ret['status'] = 200
         ret['next'] = reverse('job_page')
@@ -147,6 +157,8 @@ def set_price(request):
     album, redirect_url = get_unfinished_album(request)
     if not album:
         return redirect(redirect_url)
+    if album.num_groups == 0:
+        return redirect(reverse('upload'))
 
     # We need valid sequences in this view. Set them. (This will fall through
     # if that's not necessary)

@@ -15,10 +15,17 @@
 
     <div class="container">
       <div class="row">
-        <div class="span8 well">
+        <div class="span8">
 
           <legend>
-              Please set a price for these {{ num_pics }} pics
+            <h3>Please set a price for 
+              {% if num_pics == '1' %}
+              this pic
+              {% else %}
+              these {{ num_pics }} pics
+              {% endif %}
+
+            </h3>
           </legend>
           <div class="row">
 
@@ -28,7 +35,7 @@
                 {% csrf_token %}
 
                 <div class="row">
-                  <div class="span3 offset1">
+                  <div class="span3">
                     <label>How much will you offer?</label>
 
                     <div class="input-prepend">
@@ -43,53 +50,71 @@
                   </div>
                 </div>
 
+                {% if credit_cards|length > 0 %}
+                  <p style="margin-bottom:0px">Choose a credit card:</p>
+                {% endif %}
+
                 {% for card in credit_cards %}
-                <span class="row payment_type">
-                  <div>{{ card.brand }} - Exp: {{ card.expiration_month }}/{{ card.expiration_year }}</div>
+                <div class="card_choice span4">
+                  <input class="radio existing" type="radio" name="card_radio_group" value="myval"
+                  {% if forloop.first %}
+                    checked
+                  {% endif %}
+                  >
+                  <div>{{ card.brand }}</div>
+                  <div>Exp: {{ card.expiration_month }}/{{ card.expiration_year }}</div>
                   <div>XXXX-XXXX-XXXX-{{ card.last_four }}</div>
                   <div class='uri' style='display:none;'>{{ card.uri }}</div>
-                </span>
+                </div>
                 {% endfor %}
                 
                 {# Enter a card #}
-                <span class="row payment_type">
+                <div class="card_choice new_card span4">
+
+                  {% if credit_cards|length > 0 %}
+                    <input class="radio" type="radio" name="card_radio_group" value="myval">
+                  {% endif %}
+                  <p>Create a new card</p>
                   <div class="row">
-                    <div id="card_div" class="span2 offset1">
-                      <label for="card_number">Card Number</label>
+                    <div id="card_div" class="span2">
+                      <label for="card_number">Card Number:</label>
                       <input type="text" name="card_number"><br/>
                       <p id="error_card" class="label label-important balanced_error" style="display:none;">Invalid card number</p>
                     </div>
                   </div>
 
                   <div class="row">
-                    <div class="span2 offset1">
-                      <label for="expiration_month">Expiration</label>
+                    <div class="span2">
+                      <label for="expiration_month">Expiration:</label>
                       <input type="text" name="expiration_month" class="span1" > /
                       <input type="text" name="expiration_year"  class="span1" >
                     </div>
                     <div class="span1">
-                      <label for="security_code">CCV2</label>
+                      <label for="security_code">CCV2:</label>
                       <input type="text" name="security_code" class="span1" >
                     </div>
-                    <br/><p id="error_exp" class="offset1 label label-important balanced_error" style="display:none;">Invalid expiration date</p>
-                    <br/><p id="error_seccode" class="offset1 label label-important balanced_error" style="display:none;">Invalid security code</p>
-                    <br/><p id="error_400" class="offset1 label label-important balanced_error" style="display:none;">Your card information is wrong.</p>
-                    <br/><p id="error_402" class="offset1 label label-important balanced_error" style="display:none;">Your card could not be authorized.</p>
-                    <br/><p id="error_404" class="offset1 label label-important balanced_error" style="display:none;">The marketplace could not be reached.</p>
-                  </div>
-
-                  <div class="row">
-                    <div class="offset1">
-                      <button type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+                    <div class="span3">
+                      <p id="error_exp" class="label label-important balanced_error" style="display:none;">Invalid expiration date</p>
+                      <p id="error_seccode" class="label label-important balanced_error" style="display:none;">Invalid security code</p>
+                      <p id="error_400" class="label label-important balanced_error" style="display:none;">Your card information is wrong.</p>
+                      <p id="error_402" class="label label-important balanced_error" style="display:none;">Your card could not be authorized.</p>
+                      <p id="error_404" class="label label-important balanced_error" style="display:none;">The marketplace could not be reached.</p>
                     </div>
                   </div>
-                </span> {# credit card .payment_type #}
+                </div> {# credit card .card_choice #}
+
+                {# Submit button #}
+                <div class="row">
+                  <div class="span3"> {# we need nested divs for css to not go riley on us #}
+                    <button type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+                  </div>
+                </div>
 
               </form>
 
               {% if not IS_PRODUCTION %}
               <div class="row">
-                <div class="offset1">
+                <div class="span5">
                   Test Credit Cards:<br/>
                   <button id="btn-visa" type="submit" class="btn btn-info">Visa</button>
                   <button id="btn-amex" type="submit" class="btn btn-warning">AMEX</button>

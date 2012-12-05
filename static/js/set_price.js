@@ -9,7 +9,31 @@ $(function(){
     //$('<br/><br/>').appendTo('#result');
   };
 
-  function balancedCallback(response) {
+  var createHold = function(card_uri, price)
+  {
+    var obj = { "card_uri" : card_uri, 'price' : price };
+
+    $.ajax({
+      headers: {
+        "X-CSRFToken":CSRF_TOKEN
+      },
+      type: "POST",
+      url: '/create_hold_handler/',
+      data: obj,
+      success : function(data, textStatus) {
+        if ( data.status == '402' ) {
+          $('#min-price-msg').show();
+          $('.submit-button').removeAttr("disabled");
+        }
+        else if ( data.status == '200' ) {
+          // Okay, payment accepted, let's move off this page
+          document.location.href = data.next;
+        }
+      },
+    });
+  }
+
+  var balancedCallback = function(response) {
     // response.data - An object containing the URI of the newly created account.
     // response.error - Details of the error.
     // response.status - HTTP response code.
@@ -62,35 +86,13 @@ $(function(){
         // response.data.uri == uri of the card or bank account resource
 
         // Add 'price' to our post data
-        response.data.price = $('#price').val();
-        $.ajax({
-          headers: {
-            "X-CSRFToken":CSRF_TOKEN
-          },
-          type: "POST",
-          url: '/create_hold_handler/',
-          data: response.data,
-          success : function(data, textStatus) {
-            if ( data.status == '402' ) {
-              $('#min-price-msg').show();
-              $('.submit-button').removeAttr("disabled");
-            }
-            else if ( data.status == '200' ) {
-              // Okay, payment accepted, let's move off this page
-              document.location.href = data.next;
-            }
-          },
-        });
+        var price = $('#price').val();
+        var card_uri = response.data.uri;
+        createHold(card_uri, price);
     }
   }
 
-  var tokenizeCard = function(e) {
-    e.preventDefault();
-    $('.submit-button').attr("disabled", "disabled");
-
-    // Hide all errors
-    $(".balanced_error").hide();
-
+  var tokenizeCard = function() {
     var $form = $('form#payment');
     var cardData = {
       // strip out '-' and ' ' from credit card
@@ -103,11 +105,36 @@ $(function(){
     balanced.card.create(cardData, balancedCallback);
   };
 
-  $('#payment').submit(tokenizeCard);
+  $('#payment').submit( function(e) {
+
+    e.preventDefault();
+    $('.submit-button').attr("disabled", "disabled");
+
+    // Hide all errors. They'll come back server side if they are valid
+    $(".balanced_error").hide();
+
+    // If there is a checked radio button exists for an existing credit card,
+    // we need to use that one.
+    var checked = $('input.radio.existing:checked');
+    if ( checked.length > 0 )
+    {
+      var card_uri = checked.parent().find(".uri").text();
+      var price = $('#price').val();
+      createHold(card_uri, price);
+    }
+    else
+    {
+      tokenizeCard();
+    }
+  } );
 
   /*******************************************/
   /*******************************************/
   /*******************************************/
+
+  $(".new_card input").focus( function() {
+    $(this).closest('.card_choice').find(".radio").attr('checked', true);
+  });
 
   $("input[name='expiration_year']").change( function() {
     val = $(this).val();
