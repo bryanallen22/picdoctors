@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 
 from collections import namedtuple
 
-import pdb
+import ipdb
 import logging
 from datetime import datetime
 

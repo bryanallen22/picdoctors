@@ -17,7 +17,7 @@ from common.functions import get_profile_or_None
 from common.functions import get_unfinished_album
 from models import Markup
 
-import pdb
+import ipdb
 import logging
 
 def belongs_on_this_markup_page(request, album_id, sequence):
