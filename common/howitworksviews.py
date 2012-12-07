@@ -4,6 +4,6 @@ import pdb
 import logging
 import datetime
 
-@render_to('faq.html')
-def faq(request):
+@render_to('howitworks.html')
+def howitworks(request):
     return {}
