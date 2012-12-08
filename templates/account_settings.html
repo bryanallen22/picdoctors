@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{############################}
+{% block main %}
+<div id='account_settings' class='row span9'>
+  <h4>Account Settings</h4>
+
+  <div class="well">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#home" data-toggle="tab">Profile</a></li>
+      <li><a href="#profile" data-toggle="tab">Password</a></li>
+      {% block settings_tabs %}
+      {% endblock %}
+    </ul>
+    <div id="myTabContent" class="tab-content">
+
+      {# Profile tab #}
+      <div class="tab-pane active in" id="home">
+        <form id="tabEmail">
+          <label>Email</label>
+          <input type="text" value="{{ email }}" class="input-xlarge span3">
+          <div>
+            <button class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+
+      {# Password tab #}
+      <div class="tab-pane fade" id="profile">
+        <form id="tabPassword">
+          <label>New Password</label>
+          <input type="password" class="input-xlarge">
+          <div>
+            <button class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+
+      {% block settings_body %}
+      {% endblock %}
+
+    </div>
+  </div>
+
+{% endblock %}
+{############################}
+
+{% block scripts %}
+  <script src="{{ STATIC_URL }}js/account_settings.js"></script>
+{% endblock %}
+

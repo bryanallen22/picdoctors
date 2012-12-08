@@ -54,15 +54,11 @@ def currency_to_cents(currency):
     price = int(float(stripped)*100)
     return price
 
-def place_hold(album, user, cents, card_uri):
+def create_or_get_balanced_account(profile, email_address, card_uri):
     """
-    Do the actual 7 day hold associated with the album and user
+    Create (or retrieve) a balanced account. Create card for the user if they
+    don't already have it.
     """
-    email_address = user.email
-    profile = user.get_profile()
-
-    balanced.configure(settings.BALANCED_API_KEY_SECRET)
-
     if not profile.bp_account_wrapper:
         try:
             account = balanced.Marketplace.my_marketplace.create_buyer(email_address, card_uri)
@@ -99,6 +95,19 @@ def place_hold(album, user, cents, card_uri):
             raise KeyError("This card's account uri (%s) is already set, and does not match the "\
                            "current user account uri (%s)!" % (card.account.uri, account.uri))
 
+    return account
+
+
+def place_hold(album, user, cents, card_uri):
+    """
+    Do the actual 7 day hold associated with the album and user
+    """
+    email_address = user.email
+    profile = user.get_profile()
+
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+
+    account = create_or_get_balanced_account(profile, email_address, card_uri)
 
     # This creates a hold on the card. We are guaranteed that we can
     # actually debit this amount for up to 7 days from now.
@@ -172,7 +181,7 @@ def set_price(request):
         # Get the balanced account info. This is slow.
         acct = balanced.Account.find( profile.bp_account_wrapper.uri )
 
-        user_credit_cards = [c for c in acct.cards]
+        user_credit_cards = [c for c in acct.cards if c.is_valid]
     else:
         user_credit_cards = []
 
