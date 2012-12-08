@@ -9,7 +9,6 @@ from common.models import Album
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
-from common.models import Charge
 from common.functions import get_profile_or_None
 from common.calculations import calculate_job_payout
 from django.contrib.auth.models import User

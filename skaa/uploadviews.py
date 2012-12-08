@@ -23,7 +23,7 @@ from common.decorators import passes_test
 from skaa.picmask import generate_watermarked_image
 from PIL import Image
 from StringIO import StringIO
-import pdb
+import ipdb
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from django.core.urlresolvers import reverse

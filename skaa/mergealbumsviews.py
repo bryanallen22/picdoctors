@@ -11,9 +11,8 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 
 from collections import namedtuple
-import stripe
 
-import pdb
+import ipdb
 import logging
 from datetime import datetime
 

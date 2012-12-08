@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from common.models import Album, Group, Job, UserProfile
 from common.jobs import send_job_status_change
 
-import pdb
+import ipdb
 import logging
 import datetime
 

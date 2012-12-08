@@ -384,9 +384,9 @@
   right: 5px;
   left: auto;
 }
-/*
-    More Info/Modification Page
-*/
+/*****************************
+  More Info/Modification Page
+*****************************/
 .left_arrow_box {
   position: relative;
   background: #88b7d5;
@@ -444,4 +444,20 @@
   border-width: 16px;
   top: 50%;
   margin-top: -16px;
+}
+/*****************************
+  Set Price page
+******************************/
+#payment .card_choice {
+  border-radius: 5px;
+  position: relative;
+  margin: 4px 4px 4px 0px;
+  padding: 8px;
+  background-color: #eeeeee;
+}
+#payment .card_choice .radio {
+  display: inline;
+  margin-left: -30px;
+  margin-top: 30px;
+  position: absolute;
 }
