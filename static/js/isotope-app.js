@@ -287,7 +287,7 @@ $(function(){
     {
       placement : "left",
       title     : "Need to combine images?",
-      content   : "Do you want the best of multiple pictures combined? Click individual pictures to select them, and then click \"Group\"",
+      content   : "Do you want the best part of multiple pictures combined? Click individual pictures on the left to select them, and then click \"Group\"",
       trigger   : "hover",
     } );
 
