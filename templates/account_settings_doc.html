@@ -1,14 +1,68 @@
 {% extends 'account_settings.html' %}
 
-{% block settings_user %}
-<div class='row span9'>
-  <h2>Docs can have user settings too, right?</h2>
-</div>
+{% block settings_tabs %}
+      <li><a href="#bank_transfer" data-toggle="tab">Bank Transfer</a></li>
 {% endblock %}
 
-{% block settings_doc %}
-<div class='row span9'>
-  <h2>Doc settings n stuff</h2>
-</div>
-{% endblock %}
+{% block settings_body %}
+      <div class="tab-pane fade" id="bank_transfer">
+        {# List saved credit cards #}
+        {% if bank_account %}
+          <h5>Your bank account details:</h5>
+        {% else %}
+          <h5>You do not have a bank account saved. You will not be
+            able to withdraw money until you add one.<h5>
 
+          <form action="#" method="POST" id="bank-account-form">
+            <fieldset>
+              <legend>Bank Account Information</legend>
+              <label>Account Holder's Name
+                <input type="text"
+                autocomplete="off"
+                placeholder="Bank Account Holder's name"
+                class="ba-name">
+              </label>
+              <label>Routing Number
+                <input type="text"
+                autocomplete="off"
+                placeholder="Routing Number"
+                class="ba-rn">
+              </label>
+              <label>Account Number
+                <input type="text"
+                autocomplete="off"
+                placeholder="Account Number"
+                class="ba-an">
+              </label>
+              <label>Account Type
+                <select>
+                  <option value='' disabled selected style='display:none;'>
+                  Select Account Type
+                  </option>
+                  <option value="checking">CHECKING</option>
+                  <option value="savings">SAVINGS</option>
+                </select>
+              </label>
+              <button type="submit" class="btn">
+                Tokenize
+              </button>
+            </fieldset>
+          </form>
+
+          {% if not IS_PRODUCTION %}
+            {# Include some debug accounts #}
+            <div class="row">
+              <div class="span7">
+                Test Bank Accounts:<br/>
+                <button id="btn-badrouting" type="submit" class="btn btn-info">Invalid Routing Number</button>
+                <button id="btn-pending" type="submit" class="btn btn-warning">State -> Pending</button>
+                <button id="btn-paid" type="submit" class="btn btn-danger">State -> Paid</button>
+                <button id="btn-failed" type="submit" class="btn btn-success">State -> Failed</button>
+              </div>
+            </div>
+
+          {% endif %}
+
+        {% endif %}
+      </div>
+{% endblock %}

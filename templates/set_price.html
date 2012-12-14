@@ -201,8 +201,8 @@
     </script>
     <script src="{{STATIC_URL}}js/set_price.js"></script>
     {% if not IS_PRODUCTION %}
-    {# This file will be around in production, but nobody should see it. #}
-    {# Even if someone found it, these cards won't work in production #}
+    {# This file will be in the directory in production, but nobody should #}
+    {# see it. Even if someone found it, these cards won't work in production #}
     <script src="{{STATIC_URL}}js/set_price_debugcards.js"></script>
     {% endif %}
 {% endblock %}

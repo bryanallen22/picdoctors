@@ -53,6 +53,15 @@
 {############################}
 
 {% block scripts %}
+  <script type="text/javascript">
+    var marketplace_uri = '{{ marketplace_uri }}';
+  </script>
   <script src="{{ STATIC_URL }}js/account_settings.js"></script>
+  <script type="text/javascript" src="https://js.balancedpayments.com/v1/balanced.js"></script>
+  {% if not IS_PRODUCTION %}
+  {# This file will be in the directory in production, but nobody should #}
+  {# see it. Even if someone found it, these cards won't work in production #}
+  <script src="{{STATIC_URL}}js/set_price_debugbank.js"></script>
+  {% endif %}
 {% endblock %}
 
