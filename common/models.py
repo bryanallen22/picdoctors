@@ -180,12 +180,12 @@ class DoctorInfo(DeleteMixin):
                                           related_name='associated_doctor')
     auto_approve = models.BooleanField(default=False)
 
+    rating       = models.FloatField(default=0.0)
+
     @staticmethod
     def get_docinfo_or_None(profile):
         info = get_object_or_None(DoctorInfo, user_profile=profile)
         return info
-
-
 
 def create_user_profile(sender, instance, created, **kwargs):
         if created:
@@ -630,7 +630,6 @@ class DocPicGroup(DeleteMixin):
 class Job(DeleteMixin):
     #Job status constants
     IN_MARKET = 'in_market' #submitted to doctors
-    TOO_LOW   = 'too_low' #not worth doctors time
     DOCTOR_ACCEPTED  = 'doctor_acc' #doctor accepted
     DOCTOR_SUBMITTED = 'doctor_sub' #submitted to user for approval
     MODERATOR_APPROVAL_NEEDED = 'mod_need'
@@ -641,7 +640,6 @@ class Job(DeleteMixin):
     #Job status Choices for the job_status field below
     STATUS_CHOICES = (
         (IN_MARKET, 'Available in Market'),
-        (TOO_LOW, 'Price Too Low'),
         (DOCTOR_ACCEPTED, 'Doctor Accepted Job'),
         (DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
         (MODERATOR_APPROVAL_NEEDED, 'Work Submitted, Approval Pending'),
@@ -659,8 +657,6 @@ class Job(DeleteMixin):
     doctor                  = models.ForeignKey(UserProfile, 
                                                 related_name='job_doctor',
                                                 blank=True, null=True)
-    #from something in the billions to 1 penny
-    price_cents             = models.IntegerField(blank=False)
 
     #this price is set when a doctor takes the job.  payout prices 
     #that appear on the job page, vary based on accepted job count
@@ -722,13 +718,41 @@ class Job(DeleteMixin):
         else:
             out += self.doctor.user.username
 
-        out += " -- price cents: " + str(self.price_cents)
+        out += " -- price cents: " + str(self.bp_hold_wrapper.cents)
         out += " -- status: " + self.status
         return out
 
+# Keep track of who said the job was too low
+# That way you don't have the same doctor say it 50 times
+class PriceToLowContributor(DeleteMixin):
+    job     = models.ForeignKey(Job, db_index=True)
+    doctor  = models.ForeignKey(UserProfile, db_index=True)
+
 # Post switching from a doctor we won't allow them to take that job again
 class DocBlock(DeleteMixin):
-    
     job            = models.ForeignKey(Job, db_index=True)
     doctor         = models.ForeignKey(UserProfile)
+
+# Individual Doctor Ratings
+class DocRating(DeleteMixin):
+    doctor         = models.ForeignKey(UserProfile, db_index=True)
+    job            = models.ForeignKey(Job)
+    overall_rating = models.IntegerField()
+    comments       = models.TextField()
+
+def update_doctor_rating(sender, instance, created, **kwargs):
+    ratings = DocRating.objects.filter(doctor=instance.doctor)
+    total = 0.0
+    for rating in ratings:
+        total += rating.overall_rating
+
+    if len(ratings) > 0:
+        total /= len(ratings)
+
+    doc_info = DoctorInfo.get_docinfo_or_None(instance.doctor)
+    if doc_info:
+        doc_info.rating = total
+        doc_info.save()
+
+post_save.connect(update_doctor_rating, sender=DocRating)
 

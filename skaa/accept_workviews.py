@@ -9,7 +9,7 @@ from annoying.functions import get_object_or_None
 from common.functions import get_profile_or_None
 from django.contrib.auth.decorators import login_required
 
-from common.models import Album, Group, Job, UserProfile
+from common.models import Album, Group, Job, UserProfile, DocRating
 from common.jobs import send_job_status_change
 
 import ipdb
@@ -24,23 +24,37 @@ def accept_work(request, job_id):
     if job.skaa != profile:
         redirect('/')
 
+    if request.method == 'POST':
+        if job and profile and job.skaa == profile:
+            #TODO Put money into Doctors account 
+            job.status = Job.USER_ACCEPTED
+            job.save()
+            
+            dr = DocRating()
+            dr.doctor = job.doctor
+            dr.job = job
+            dr.overall_rating = get_rating(request)
+            dr.comments = request.POST['comment']
+            dr.save()
+
+            send_job_status_change(job, profile)
+            return redirect(reverse('album', args=[job.album.id]))
+
     return {'job_id':job_id}
 
 
-@login_required
-def accept_doctors_work(request):
-    profile = get_profile_or_None(request)
-    data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
 
-    if job and profile and job.skaa == profile:
-        #TODO Put money into Doctors account 
-        job.status = Job.USER_ACCEPTED
-        job.save()
-
-        send_job_status_change(job, profile)
-
-    result = { 'relocate' : reverse('album', args=[job.album.id]) }
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
+def get_rating(request):
+    rating = 1
+    try:
+        rating = int(request.POST['rating_val'])
+    except ValueError:
+        rating = 1 
+    # Make sure between 1 and 5
+    rating = min(5, rating)
+    rating = max(1, rating)
+
+    return rating

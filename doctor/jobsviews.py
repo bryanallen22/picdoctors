@@ -12,13 +12,14 @@ from common.models import Group
 from common.models import UserProfile, DoctorInfo
 from common.models import Pic
 from common.models import DocBlock
+from common.models import PriceToLowContributor
 from common.calculations import calculate_job_payout
 from common.functions import get_profile_or_None
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
 from common.jobs import Actions, Action, RedirectData, DynamicAction 
 from common.jobs import send_job_status_change, fill_job_info
-import pdb
+import ipdb
 
 @login_required
 @render_to('jobs.html')
@@ -71,7 +72,7 @@ def generate_doctor_actions(job):
     work_job_url= reverse('markup_album', args=[job.album.id, group_seq])
     work_job = DynamicAction('Work on Job', work_job_url, redirect_url)
 
-    complete_job = DynamicAction('Mark as Completed', '/mark_job_completed/')
+    mark_as_completed = DynamicAction('Mark as Completed', '/mark_job_completed/')
     
     view_markup_url = reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Job', view_markup_url, True)
@@ -84,19 +85,14 @@ def generate_doctor_actions(job):
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
 
-    elif job.status == Job.TOO_LOW:
-        #Doctor won't be informed that a job appears too low
-        pass
-
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(work_job)
         ret.append(view_album)
-        ret.append(complete_job)
+        ret.append(mark_as_completed)
         ret.append(contact)
 
     elif job.status == Job.MODERATOR_APPROVAL_NEEDED:
         ret.append(view_album)
-        ret.append(complete_job)
         ret.append(contact)
 
     elif job.status == Job.DOCTOR_SUBMITTED:
@@ -110,7 +106,7 @@ def generate_doctor_actions(job):
     #elif job.status == Job.USER_REQUESTS_MODIFICATION:
     #    ret.append(work_job)
     #    ret.append(view_album)
-    #    ret.append(complete_job)
+    #    ret.append(mark_as_completed)
     #    ret.append(contact)
     #    #do nothing these are for doctor
 
@@ -193,13 +189,29 @@ def job_price_too_low(request):
     actions = Actions()
     actions.add('alert', 'There was an error processing your request.')
 
-    if job and not job.doctor:
-        job_qs = Job.objects.select_for_update().filter(pk=job.id)
-        for job in job_qs:
-            job.price_too_low_count += 1
-            job.save()
-        actions.clear()
-        actions.add('alert', 'Thank you for your input.')
+    # if the job exists and doesn't have a doctor yet
+    if job:
+        if job.doctor:
+            actions.clear()
+            actions.add('alert', 'This Job has been taken by another doctor.')
+            actions.add('remove_job_row', job.id)
+        else:
+            too_low_contributor = PriceToLowContributor.objects.filter(job=job.id).filter(doctor=doc.id)
+            if len(too_low_contributor) == 0:
+                job_qs = Job.objects.select_for_update().filter(pk=job.id)
+                for job in job_qs:
+                    job.price_too_low_count += 1
+                    job.save()
+                    contrib=PriceToLowContributor(job=job, doctor=doc)
+                    contrib.save()
+
+                actions.clear()
+                actions.add('alert', 'Thank you for your input.')
+            else:
+                actions.clear()
+                actions.add('alert', 'Thanks, but you\'ve already marked this too low.')
+
+
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
 

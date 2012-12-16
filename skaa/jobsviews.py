@@ -59,9 +59,6 @@ def generate_skaa_actions(job):
         ret.append(view_album)
         ret.append(refund)
 
-    elif job.status == Job.TOO_LOW:
-        pass
-
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(contact)
         ret.append(view_album)
@@ -107,7 +104,6 @@ def create_job(profile, album, hold):
     if album is not None:
         j = Job(skaa=profile,
                 album=album, 
-                price_cents=hold.amount,
                 bp_hold_wrapper=bp_hold_wrapper,
                 status=Job.IN_MARKET)
         

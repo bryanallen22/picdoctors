@@ -5,7 +5,7 @@ from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handl
 from skaa.jobsviews import job_page, reject_doctors_work, request_modification
 from skaa.setpriceviews import set_price, create_hold_handler
 from skaa.mergealbumsviews import merge_albums
-from skaa.accept_workviews import accept_work, accept_doctors_work
+from skaa.accept_workviews import accept_work
 from skaa.rejectviews import refund, switch_doctor, switch_doctor_endpoint, refund_user_endpoint
 
 # Uncomment the next two lines to enable the admin:
@@ -33,7 +33,6 @@ urlpatterns = patterns('',
     url(r'^create_hold_handler/$',                         create_hold_handler,      name='create_hold_handler'),
     url(r'^merge_albums/$',                                merge_albums,             name='merge_albums'),
     url(r'^accept_work/(?P<job_id>\d+)$',                  accept_work,              name='accept_work'),
-    url(r'^accept_doctors_work/$',                         accept_doctors_work,      name='accept_doctors_work'),
     url(r'^request_modification/$',                        request_modification,     name='request_modification'),
     url(r'^refund/(?P<job_id>\d+)$',                       refund,                   name='refund'),
     url(r'^switch_doctor/(?P<job_id>\d+)$',                switch_doctor,            name='switch_doctor'),

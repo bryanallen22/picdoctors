@@ -9,6 +9,6 @@ def calculate_job_payout(job, doc):
     #if request.user.get_profile().is_cool_doctor or stupid
     #chop off extra half penny
     doctors_cut = .5
-    return int(math.floor(job.price_cents * doctors_cut))
+    return int(math.floor(job.bp_hold_wrapper.cents * doctors_cut))
 
 

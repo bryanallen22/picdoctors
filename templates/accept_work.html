@@ -9,34 +9,63 @@
 
 {% block main %}
 <div class='row'>
-  <div class="span8 accept_view offset2 well" job_id={{job_id}}>
+  <form method='post' id='accept_job' onsubmit='return get_rating()'>
+    {% csrf_token %}
+    <div class="span8 accept_view offset2 well" job_id={{job_id}}>
 
-    <legend>
-      Accept the Doctor's Work
-    </legend>
+      <legend>
+        Accept the Doctor's Work
+      </legend>
 
-    <div>
-      By clicking accept you are agreeing to the following things:
+      <div>
+        By clicking accept you are agreeing to the following things:
+        <br />
+        <br />
+
+        <li>The Doctors works is acceptable</li>
+        <li>The Money will be released to the doctor</li>
+        <li>You can no longer request a refund</li>
+        <li>Daniel is cooler than Bryan</li>
+      </div>
       <br />
       <br />
 
-      <li>The Doctors works is acceptable</li>
-      <li>The Money will be released to the doctor</li>
-      <li>You can no longer request a refund</li>
-      <li>Daniel is cooler than Bryan</li>
+      <legend>
+        Rate the Doctor's Work:
+      </legend>
+      <h4>Overall Rating</h4>
+      <div style="clear:both">
+        <select class="rating">
+           <option value="1">Terrible</option>  
+           <option value="2">Poor</option>  
+           <option value="3" selected="selected">Good</option>  
+           <option value="4">Great!</option>  
+           <option value="5">Excellent!</option>  
+      </select>
+      </div>
+      <br />
+      <br />
+      <h4>Additional Feedback:</h4>
+      <input class="span8" name="comment" value="{{ comment }}"/>
+      <input type="hidden" name="job_id" value="{{ job_id }}"/>
+      <input type="hidden" name="rating_val" id="rating_val"  value=""/>
+      <br />
+      <br />
+      <button class="btn btn_accept_job btn-large btn-primary" type="submit">Accept Job</button>
+
     </div>
-      <br />
-      <br />
-    <button class="btn btn_accept_job btn-large btn-primary" type="button">Accept Job</button>
-
-  </div>
+  </form>
 </div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ STATIC_URL }}js/json2.js"></script>
-    <script src="{{ STATIC_URL }}js/underscore.js"></script>
-    <script src="{{ STATIC_URL }}js/backbone.js"></script>
-    <script src="{{ STATIC_URL }}js/accept_work.js"></script>
+<script src="{{ STATIC_URL }}js/json2.js"></script>
+<script src="{{ STATIC_URL }}js/underscore.js"></script>
+<script src="{{ STATIC_URL }}js/backbone.js"></script>
+<script src="{{ STATIC_URL }}js/accept_work.js"></script>
+<script src="{{ STATIC_URL }}rating/jquery.rating.js" type="text/javascript" language="javascript"></script>
+
+<link href="{{ STATIC_URL }}rating/jquery.rating.css" type="text/css" rel="stylesheet"/>
+
 {% endblock %}
 
