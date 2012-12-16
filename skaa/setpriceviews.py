@@ -79,9 +79,15 @@ def create_or_get_balanced_account(profile, email_address, card_uri):
                 #     the same user
                 if not settings.IS_PRODUCTION:
                     # In testlandia we just re link up user accounts with email addresses
-                    # we know that there is exists an account with this email address (hence the
+                    # we know that there exists an account with this email address (hence the
                     # error)
                     account = balanced.Account.query.filter(email_address=email_address)[0]
+                    # remove all our old cards associated with a pre-existing email_address
+                    # at this point it's not like I can go back and uncreate our new card
+                    for card in account.cards:
+                        card.is_valid = False
+                        card.save()
+
                     account.add_card(card_uri)
                     wrapper = BPAccountWrapper(uri=account.uri)
                     wrapper.save()

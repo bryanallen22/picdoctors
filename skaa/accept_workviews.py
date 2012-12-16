@@ -21,8 +21,8 @@ import datetime
 def accept_work(request, job_id):
     profile = get_profile_or_None(request)
     job = get_object_or_None(Job, id=job_id)
-    if job.skaa != profile:
-        redirect('/')
+    if job.skaa != profile or job.status != Job.DOCTOR_SUBMITTED:
+        return redirect('/')
 
     if request.method == 'POST':
         if job and profile and job.skaa == profile:
