@@ -21,9 +21,12 @@ $(function(){
       url: '/create_bank_account/',
       data: obj,
       success : function(data, textStatus) {
-          debugger
         if ( data.success ) {
-          // reload page?
+          // reload the page (on this tab)
+          console.log('reloaaaad!');
+          // TODO - use window.location.reload if we are already here?
+          window.location = window.location.pathname + "#bank_tab";
+          window.location.reload()
         }
         else {
           // Silently fail to do anything if we are unable to delete.
@@ -92,5 +95,47 @@ $(function(){
     createAcct();
   });
 
+  $(".delete_bank_account").click( function() {
+    var bank_account_uri = $(this).parent().find(".uri").text();
+
+    var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
+
+    var obj = { "bank_account_uri" : bank_account_uri };
+
+    $.ajax({
+      headers: {
+        "X-CSRFToken":CSRF_TOKEN
+      },
+      type: "POST",
+      url: '/delete_bank_account/',
+      data: obj,
+      success : function(data, textStatus) {
+        if ( data.success ) {
+          // reload the page (on this tab)
+          console.log('reloaaaad!');
+          // TODO - use window.location.reload if we are already here?
+          window.location = window.location.pathname + "#bank_tab";
+          window.location.reload()
+        }
+        else {
+          // Silently fail to do anything if we are unable to delete.
+          // REVISIT
+        }
+      },
+    });
+  });
+
+});
+
+/*
+ * This dealio will let you put #some_tab in the url and it'll automatically
+ * select that tab when the page loads
+ */
+$(function(){
+  if ( window.location.hash ) {
+    // They put the id in the url, and it gets clicked.
+    // Used to preselect tabs settings
+    $( window.location.hash ).click();
+  }
 });
 

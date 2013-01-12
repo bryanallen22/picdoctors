@@ -19,7 +19,6 @@ def create_bank_account(request):
         return HttpResponse('{ }', mimetype='application/json')
 
     try:
-
         # Configure balanced
         balanced.configure(settings.BALANCED_API_KEY_SECRET)
         
@@ -29,6 +28,8 @@ def create_bank_account(request):
         else:
             # Create a new account and associate it with this profile
             account = balanced.Account().save()
+            account.email_address = email_address
+            account.save()
             wrapper = BPAccountWrapper(uri=account.uri)
             wrapper.save()
             profile.bp_account_wrapper = wrapper
@@ -49,6 +50,29 @@ def create_bank_account(request):
     response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')
 
+@login_required
+def delete_bank_account(request):
+    # TODO - don't delete the uri unless it's associated with
+    # the logged in user. Just to be sure.
+
+    profile = get_profile_or_None(request)
+    if not profile or not profile.bp_account_wrapper:
+        ret = { "success" : False }
+    else:
+        balanced.configure(settings.BALANCED_API_KEY_SECRET)
+
+        account = balanced.Account.find(profile.bp_account_wrapper.uri)
+        bank_accounts_uris = [ba.uri for ba in account.bank_accounts if ba.is_valid]
+        delete_uri = request.POST['bank_account_uri']
+        if delete_uri in bank_accounts_uris:
+            bank_account = balanced.BankAccount.find(delete_uri)
+            bank_account.delete()
+            ret = { "success" : True }
+        else:
+            ret = { "success" : False }
+
+    response_data = simplejson.dumps(ret)
+    return HttpResponse(response_data, mimetype='application/json')
 
 @login_required
 @render_to('account_settings_doc.html')
@@ -57,7 +81,7 @@ def settings_doc(request):
     balanced.configure(settings.BALANCED_API_KEY_SECRET)
     if profile.bp_account_wrapper:
         account = balanced.BankAccount.find(profile.bp_account_wrapper.uri)
-        bank_accounts = [ba for ba in account.bank_accounts]
+        bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
     else:
         bank_accounts = None
 
