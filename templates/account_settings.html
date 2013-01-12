@@ -14,15 +14,15 @@
 
   <div class="well">
     <ul class="nav nav-tabs">
-      <li class="active"><a href="#home" data-toggle="tab">Profile</a></li>
-      <li><a href="#profile" data-toggle="tab">Password</a></li>
+      <li class="active"><a id="home_tab" href="#home_pane" data-toggle="tab">Profile</a></li>
+      <li><a id="profile_tab" href="#profile_pane" data-toggle="tab">Password</a></li>
       {% block settings_tabs %}
       {% endblock %}
     </ul>
     <div id="myTabContent" class="tab-content">
 
       {# Profile tab #}
-      <div class="tab-pane active in" id="home">
+      <div class="tab-pane active in" id="home_pane">
         <form id="tabEmail">
           <label>Email</label>
           <input type="text" value="{{ email }}" class="input-xlarge span3">
@@ -33,7 +33,7 @@
       </div>
 
       {# Password tab #}
-      <div class="tab-pane fade" id="profile">
+      <div class="tab-pane fade" id="profile_pane">
         <form id="tabPassword">
           <label>New Password</label>
           <input type="password" class="input-xlarge">
@@ -53,6 +53,15 @@
 {############################}
 
 {% block scripts %}
+  <script type="text/javascript">
+    var marketplace_uri = '{{ marketplace_uri }}';
+  </script>
   <script src="{{ STATIC_URL }}js/account_settings.js"></script>
+  <script type="text/javascript" src="https://js.balancedpayments.com/v1/balanced.js"></script>
+  {% if not IS_PRODUCTION %}
+  {# This file will be in the directory in production, but nobody should #}
+  {# see it. Even if someone found it, these cards won't work in production #}
+  <script src="{{STATIC_URL}}js/set_price_debugbank.js"></script>
+  {% endif %}
 {% endblock %}
 

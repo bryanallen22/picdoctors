@@ -684,8 +684,6 @@ class Job(DeleteMixin):
     last_communicator       = models.ForeignKey(UserProfile,
                                                 related_name='last_communicator',
                                                 blank=True, null=True)
-
-    
     
     def is_part_of(self, profile):
         if not profile:
