@@ -19,12 +19,24 @@
                 <dd>Routing Number: {{ ba.routing_number }}</dd>
               </dt>
               <p class="uri" style='display:none;'>{{ ba.uri }}</p>
-              <button class="delete_bank_account btn btn-danger">Delete</button>
+              <a class="btn btn-danger delete_bank_account" href="#"><i class="icon-trash icon-white"></i> Delete</a>
             </dl>
           {% endfor %}
         {% else %}
-          <h5>You do not have a bank account saved. You will not be
-            able to withdraw money until you add one.<h5>
+          <h3>You do not have a bank account saved. You will not be
+            able to withdraw money until you add one.</h3>
+
+          <div class="alert alert-error">
+            <button class="close" data-dismiss="alert">×</button>
+            <strong>Warning!</strong>
+            Please be careful when entering your bank account information!
+            <br/>
+            Due to the nature of the ACH network, it can take up to <strong>5 business days</strong>
+            for us to even find out that the transfer failed.
+          </div>
+
+          <img src="{{ STATIC_URL }}images/check_image.png">
+          <br/> <br/>
 
           <form action="#" method="POST" id="bank-account-form">
             <fieldset>
