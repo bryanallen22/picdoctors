@@ -8,35 +8,37 @@
 {% endblock %}
 
 {% block main %}
+<h4>
 <div class='row'>
-  <div class='span2'>PicDoctors.Com</div>
+  <div class='span3 how_it_works_box'>Go to PicDoctors.Com</div>
+</div>
+<div class='row' style='margin:20px;text-align:center;'>
+  <div class='span2'> <img class='rotate_90' style='height:60px'  src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
 </div>
 <div class='row'>
-  <div class='span1'> |<br/>|<br/>|<br/>|<br/>|<br/>V </div>
+  <div class='span3 how_it_works_box'>Upload Pictures</div>
+  <div class='span1'> <img src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
+  <div class='span3 how_it_works_box'>Mark up pictures</div>
+  <div class='span1'> <img src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
+  <div class='span3 how_it_works_box'>Pay</div>
+</div>
+<div class='row' style='margin:20px;text-align:center;'>
+  <div class='offset8 span2'> <img class='rotate_90' style='height:60px;'  src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
 </div>
 <div class='row'>
-  <div class='span3'>Upload Pictures</div>
-  <div class='span1'> ------- &gt;</div>
-  <div class='span3'>Mark the changes you'd like done</div>
-  <div class='span1'> -------  &gt;</div>
-  <div class='span3'>Pay</div>
+  <div class='span3 how_it_works_box'>Download Pictures</div>
+  <div class='span1'> <img class='rotate_180' src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
+  <div class='span3 how_it_works_box'>Accept Work</div>
+  <div class='span1'> <img class='rotate_180' src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
+  <div class='span3 how_it_works_box'>Doctor takes and does job</div>
+</div>
+<div class='row' style='margin:20px;text-align:center;'>
+  <div class='span2'> <img class='rotate_90' style='height:60px'  src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
 </div>
 <div class='row'>
-  <div class='offset9 span1'> |<br/>|<br/>|<br/>|<br/>|<br/>V </div>
+  <div class='span3 how_it_works_box'>Enjoy Your Pictures!</div>
 </div>
-<div class='row'>
-  <div class='span3'>Download Pictures</div>
-  <div class='span1'> &lt; -------  </div>
-  <div class='span3'>Accept Work</div>
-  <div class='span1'> &lt; -------  </div>
-  <div class='span3'>Doctor chooses the job and does the work</div>
-</div>
-<div class='row'>
-  <div class='span1'> |<br/>|<br/>|<br/>|<br/>|<br/>V </div>
-</div>
-<div class='row'>
-  <div class='span2'>Enjoy Your Pictures!</div>
-</div>
+</h4>
 {% endblock %}
 
 {% block scripts %}
