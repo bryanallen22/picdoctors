@@ -1,14 +1,93 @@
 {% extends 'account_settings.html' %}
 
-{% block settings_user %}
-<div class='row span9'>
-  <h2>Docs can have user settings too, right?</h2>
-</div>
+{% block settings_tabs %}
+      <li><a id="bank_tab" href="#bank_pane" data-toggle="tab">Bank Transfer</a></li>
 {% endblock %}
 
-{% block settings_doc %}
-<div class='row span9'>
-  <h2>Doc settings n stuff</h2>
-</div>
-{% endblock %}
+{% block settings_body %}
+      <div class="tab-pane fade" id="bank_pane">
+        {# List saved credit cards #}
+        {% if bank_accounts %}
+          <h5>Your bank account details:</h5>
+          {% for ba in bank_accounts %}
+            <dl>
+              <dt>
+                <dd>Bank Name: {{ ba.bank_name|capfirst }}</dd>
+                <dd>Name: {{ ba.name }}</dd>
+                <dd>Type: {{ ba.type|capfirst }}</dd>
+                <dd>Account Number: {{ ba.account_number }}</dd>
+                <dd>Routing Number: {{ ba.routing_number }}</dd>
+              </dt>
+              <p class="uri" style='display:none;'>{{ ba.uri }}</p>
+              <a class="btn btn-danger delete_bank_account" href="#"><i class="icon-trash icon-white"></i> Delete</a>
+            </dl>
+          {% endfor %}
+        {% else %}
+          <h3>You do not have a bank account saved. You will not be
+            able to withdraw money until you add one.</h3>
 
+          <div class="alert alert-error">
+            <button class="close" data-dismiss="alert">×</button>
+            <strong>Warning!</strong>
+            Please be careful when entering your bank account information!
+            <br/>
+            Due to the nature of the ACH network, it can take up to <strong>5 business days</strong>
+            for us to even find out that the transfer failed.
+          </div>
+
+          <img src="{{ STATIC_URL }}images/check_image.png">
+          <br/> <br/>
+
+          <form action="#" method="POST" id="bank-account-form">
+            <fieldset>
+              <legend>Bank Account Information</legend>
+              <label>Account Holder's Name
+                <input type="text"
+                autocomplete="off"
+                placeholder="Bank Account Holder's name"
+                class="ba-name">
+              </label>
+              <label>Routing Number
+                <input type="text"
+                autocomplete="off"
+                placeholder="Routing Number"
+                class="ba-rn">
+              </label>
+              <label>Account Number
+                <input type="text"
+                autocomplete="off"
+                placeholder="Account Number"
+                class="ba-an">
+              </label>
+              <label>Account Type
+                <select>
+                  <option value='' disabled selected style='display:none;'>
+                  Select Account Type
+                  </option>
+                  <option value="checking">CHECKING</option>
+                  <option value="savings">SAVINGS</option>
+                </select>
+              </label>
+              <button type="submit" class="btn btn-primary">
+                Create Account
+              </button>
+            </fieldset>
+          </form>
+          <p id="error_bankaccount" class="label label-important balanced_error" style="display:none;">Invalid Bank Account Information, please try again.</p>
+
+          {% if not IS_PRODUCTION %}
+            {# Include some debug accounts #}
+            <div class="row">
+              <div class="span7">
+                Test Bank Accounts:<br/>
+                <button id="btn-badrouting" type="submit" class="btn btn-info">Invalid Routing Number</button>
+                <button id="btn-pending" type="submit" class="btn btn-warning">State -> Pending</button>
+                <button id="btn-paid" type="submit" class="btn btn-danger">State -> Paid</button>
+                <button id="btn-failed" type="submit" class="btn btn-success">State -> Failed</button>
+              </div>
+            </div>
+
+          {% endif %}
+        {% endif %}
+      </div>
+{% endblock %}
