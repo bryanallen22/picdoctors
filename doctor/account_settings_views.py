@@ -90,3 +90,52 @@ def settings_doc(request):
         'bank_accounts'     : bank_accounts,
     }
 
+@login_required
+def merchant_info(request):
+    """
+    POST should contain info to underwrite a doctor
+    """
+    profile = get_profile_or_None(request)
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+
+    # Person
+    merchant_data = {
+        'type': 'person',
+
+        'name': 'Timmy Q. CopyPasta',
+        'street_address': '121 Skriptkid Row',
+        'postal_code': '94110',
+        'phone_number': '+14089999999',
+        'dob': '1989-12',
+    }
+    
+    # Business
+    merchant_data = {
+        'type': 'business',
+
+        'name': 'Skripts4Kids',
+        'street_address': '555 VoidMain Road',
+        'postal_code': '91111',
+        'phone_number': '+140899188155',
+        'tax_id': '211111111',
+
+        'person': {
+            'name': 'Timmy Q. CopyPasta',
+            'street_address': '121 Skriptkid Row',
+            'postal_code': '94110',
+            'phone_number': '+14089999999',
+            'dob': '1989-12',
+        },
+    }
+
+    account = balanced.Account().save()
+
+    try:
+        account.add_merchant(merchant_data)
+    except balanced.exc.MoreInformationRequiredError as ex:
+        # could not identify this account.
+        logging.info('redirect merchant to:', ex.redirect_uri)
+    except balanced.exc.HTTPError as error:
+        # TODO: handle 400 and 409 exceptions as required
+        raise
+

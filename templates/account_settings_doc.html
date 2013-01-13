@@ -2,11 +2,16 @@
 
 {% block settings_tabs %}
       <li><a id="bank_tab" href="#bank_pane" data-toggle="tab">Bank Transfer</a></li>
+      <li><a id="merchant_tab" href="#merchant_pane" data-toggle="tab">Merchant Info</a></li>
 {% endblock %}
 
 {% block settings_body %}
+
+      {#####################################################}
+      {# Bank Account Pane                                 #}
+      {#####################################################}
       <div class="tab-pane fade" id="bank_pane">
-        {# List saved credit cards #}
+        {# List saved bank accounts #}
         {% if bank_accounts %}
           <h5>Your bank account details:</h5>
           {% for ba in bank_accounts %}
@@ -90,4 +95,118 @@
           {% endif %}
         {% endif %}
       </div>
+
+      {#####################################################}
+      {# Merchant Underwriting Pane                        #}
+      {#####################################################}
+      <div class="tab-pane fade" id="merchant_pane">
+        <h3>Merchant Information</h3>
+        <div class="alert alert-error">
+          <button class="close" data-dismiss="alert">×</button>
+          We're legally required to collect some information to satisfy Know Your Customer and Anti Money Laundering laws.
+        </div>
+        <form action="{% url merchant_info %}" method="POST" id="bank-account-form">
+
+          <label class="radio">
+            <input type="radio" name="merchant_type_radio" id="person" value="person" checked>
+            Individual
+          </label>
+          <label class="radio">
+            <input type="radio" name="merchant_type_radio" id="business" value="business">
+            Business
+          </label>
+
+          {########################}
+          {# Business only fields #}
+          {########################}
+          <fieldset>
+            <label class="business_field" style="display:none;">Business Name
+              <input type="text"
+              placeholder="John's Photography"
+              class="business_name">
+            </label>
+
+            <label class="business_field" style="display:none;">Business Street Address
+              <input type="text"
+              placeholder="222 Aperture Way"
+              class="business_street_address">
+            </label>
+
+            <label class="business_field" style="display:none;">Business Postal Code
+              <input type="text"
+              placeholder="12345"
+              class="business_postal_code">
+            </label>
+
+            <label class="business_field" style="display:none;">Business Phone Number
+              <input type="text"
+              placeholder="(987)-654-3210"
+              class="business_phone_number">
+            </label>
+
+            <label class="business_field" style="display:none;">Federal Tax Id
+              <input type="text"
+              placeholder="211111111"
+              class="business_tax_id">
+            </label>
+          </fieldset>
+
+          {#########################################}
+          {# Person fields (used for business too) #}
+          {#########################################}
+          <fieldset>
+            <label>Your Name
+              <input type="text"
+              placeholder="John Doe"
+              class="name">
+            </label>
+
+            <label>Your Street Address
+              <input type="text"
+              placeholder="123 Cherry Lane"
+              class="street_address">
+            </label>
+
+            <label>Your Postal Code
+              <input type="text"
+              placeholder="12345"
+              class="postal_code">
+            </label>
+
+            <label>Your Phone Number
+              <input type="text"
+              placeholder="(987)-654-3210"
+              class="phone_number">
+            </label>
+
+            <label>Your Birth Month
+              <select class="birth_month">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </label>
+
+            <label>Your Birth Year
+              <input type="text"
+              placeholder="1980"
+              class="birth_year">
+            </label>
+
+          </fieldset>
+          <input type="submit" name="submit" class='btn btn-primary' value="Submit" >
+
+        </form>
+      </div>
+
+
 {% endblock %}

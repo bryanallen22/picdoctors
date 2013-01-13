@@ -1,7 +1,21 @@
 // This script gets loaded on both the account settings page for both users
 // and doctors.
 
-// Load the application once the DOM is ready, using `jQuery.ready`:
+/*
+ * This dealio will let you put #some_tab in the url and it'll automatically
+ * select that tab when the page loads
+ */
+$(function(){
+  if ( window.location.hash ) {
+    // They put the id in the url, and it gets clicked.
+    // Used to preselect tabs settings
+    $( window.location.hash ).click();
+  }
+});
+
+/*
+ * Bank account stuff
+ */
 $(function(){
   /* uri comes directly from template */
   balanced.init(marketplace_uri);
@@ -128,14 +142,20 @@ $(function(){
 });
 
 /*
- * This dealio will let you put #some_tab in the url and it'll automatically
- * select that tab when the page loads
+ * Merchant Info stuff
  */
 $(function(){
-  if ( window.location.hash ) {
-    // They put the id in the url, and it gets clicked.
-    // Used to preselect tabs settings
-    $( window.location.hash ).click();
-  }
+
+  $('input:radio[name=merchant_type_radio]').click( function() {
+    var checked = $(this).val();
+    if( checked == "person" ) {
+      // Individual person
+      $(".business_field").hide();
+    }
+    else if( checked == "business" ) {
+      // They already have an account
+      $(".business_field").show();
+    }
+  });
 });
 

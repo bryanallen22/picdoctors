@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from doctor.account_settings_views import create_bank_account, delete_bank_account
+from doctor.account_settings_views import create_bank_account, delete_bank_account, merchant_info
 from doctor.homeviews import doc_home
 from doctor.jobsviews import doc_job_page, new_job_page, apply_for_job 
 from doctor.jobsviews import job_price_too_low, mark_job_completed
@@ -22,5 +22,6 @@ urlpatterns = patterns('',
     url(r'^doc_home/$',              doc_home,            name='doc_home'),
     url(r'^create_bank_account/$',   create_bank_account, name='create_bank_account'),
     url(r'^delete_bank_account/$',   delete_bank_account, name='delete_bank_account'),
+    url(r'^merchant_info/$',         merchant_info,       name='merchant_info'),
 )
 
