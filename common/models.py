@@ -629,17 +629,19 @@ class DocPicGroup(DeleteMixin):
 
 class Job(DeleteMixin):
     #Job status constants
-    IN_MARKET = 'in_market' #submitted to doctors
-    DOCTOR_ACCEPTED  = 'doctor_acc' #doctor accepted
-    DOCTOR_SUBMITTED = 'doctor_sub' #submitted to user for approval
+    IN_MARKET = 'in_market' # submitted to doctors
+    OUT_OF_MARKET = 'out_market' # out of market
+    DOCTOR_ACCEPTED  = 'doctor_acc' # doctor accepted
+    DOCTOR_SUBMITTED = 'doctor_sub' # submitted to user for approval
     MODERATOR_APPROVAL_NEEDED = 'mod_need'
-    USER_ACCEPTED    = 'user_acc'   #user accepts the finished product
-    USER_REJECTED     = 'user_rej'   #user rejects product and wants a refund...
-    REFUND            = 'refund'     #user requested refund
+    USER_ACCEPTED    = 'user_acc'   # user accepts the finished product
+    USER_REJECTED     = 'user_rej'   # user rejects product and wants a refund...
+    REFUND            = 'refund'     # user requested refund
 
     #Job status Choices for the job_status field below
     STATUS_CHOICES = (
         (IN_MARKET, 'Available in Market'),
+        (OUT_OF_MARKET, 'Job not taken, consider upping price'),
         (DOCTOR_ACCEPTED, 'Doctor Accepted Job'),
         (DOCTOR_SUBMITTED, 'Doctor Submitted Work'),
         (MODERATOR_APPROVAL_NEEDED, 'Work Submitted, Approval Pending'),

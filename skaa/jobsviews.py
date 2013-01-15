@@ -19,19 +19,25 @@ from decimal import *
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
 from common.jobs import Actions, Action, RedirectData, DynamicAction
 from common.jobs import send_job_status_change, fill_job_info
+from datetime import timedelta
+import datetime
+from django.utils.timezone import utc
 
 import math
 import ipdb
 
 
+
 @login_required
 @render_to('jobs.html')
 def job_page(request, page=1):
+    ### get a list of the jobs by this user ###
     if request.user.is_authenticated():
         jobs = Job.objects.filter(skaa=request.user.get_profile()).order_by('created').reverse()
     else:
-        #TODO they shouldn't ever get here based on future permissions
         jobs = []
+
+    update_old_jobs(jobs)
 
     pager, cur_page = get_pagination_info(jobs, page)    
 
@@ -41,7 +47,28 @@ def job_page(request, page=1):
             'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page), 
             'reverser': 'job_page_with_page', 'doc_page':False, 'title': 'My Jobs'}
 
-#get and fill up possible actions based on the status of this job
+# if a job ends up being older 7 days, we change the state to
+# you suck, and need to up the price or something
+# What a bummer for them, but not my problem
+def update_old_jobs(list_of_jobs):
+
+    if not list_of_jobs or len(list_of_jobs)==0:
+        return
+
+    now = datetime.datetime.utcnow().replace(tzinfo=utc)
+    # just to let future you know, there is an hour period where the job
+    # has been removed, but won't get updated to out of market if
+    # they hit this page, but I don't feel bad about that
+    seven_days_ago = now - timedelta(days=7)
+
+    for job in list_of_jobs:
+        if job.bp_hold_wrapper.created < seven_days_ago:
+            job.status=Job.OUT_OF_MARKET
+            job.save()
+            # TODO maybe do something else here?  I dunno
+            
+
+# get and fill up possible actions based on the status of this job
 def generate_skaa_actions(job):
     ret = []
 

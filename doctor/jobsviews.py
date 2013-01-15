@@ -19,6 +19,9 @@ from common.functions import get_profile_or_None
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
 from common.jobs import Actions, Action, RedirectData, DynamicAction 
 from common.jobs import send_job_status_change, fill_job_info
+from datetime import timedelta
+import datetime
+from django.utils.timezone import utc
 import ipdb
 
 @login_required
@@ -47,7 +50,12 @@ def new_job_page(request, page=1):
     jobs = None
     profile = get_profile_or_None(request)
     if profile and profile.is_doctor:
-        jobs = Job.objects.filter(doctor__isnull=True)
+        # only show jobs where a hold has been placed in the last 6 days 23 hours 
+        # (hold only lasts 7 days)
+        # if a job hasn't been taken in 7 days inform user to up the price!
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        seven_days_ago = now - timedelta(days=6, hours=23)
+        jobs = Job.objects.filter(doctor__isnull=True).filter(bp_hold_wrapper__created__gte=seven_days_ago)
     else:
         return redirect('/')
 
@@ -153,12 +161,20 @@ def apply_for_job(request):
                 else:
                     docinfo = DoctorInfo.get_docinfo_or_None(doc)
 
+                    # Update Job Info
                     job.doctor = doc
                     job.approved = docinfo.auto_approve
                     job.payout_price_cents = calculate_job_payout(job, doc)
                     job.status = Job.DOCTOR_ACCEPTED
                     job.save()
+
+                    # Debit Card
+                    debit_job(job, profile)
+
+                    # Email
                     send_job_status_change(job, profile)
+                    
+                    # Response
                     actions = Actions()
                     actions.add('alert', 'Congrats the job is yours!')
                     #actions.add('remove_job_row', data['job_id'])
@@ -171,6 +187,10 @@ def apply_for_job(request):
                     db.save()
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
+
+def debit_job(job, profile):
+    # TODO debit the card already!!! 
+    return
 
 def has_rights_to_act(profile, job):
     if profile and job:
