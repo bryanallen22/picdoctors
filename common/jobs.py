@@ -26,6 +26,7 @@ class JobInfo:
 
         #doctor specific
         self.doctor_payout = ''
+        self.job_worth = ''
 
 # TODO remove the dup stuff, I'm just doing it so I don't break the current functionality
     def to_dict(self):
@@ -114,7 +115,7 @@ def fill_job_info(job, action_generator, profile):
     album = job.album
     job_inf.dynamic_actions = action_generator(job)
 
-
+    job_inf.job_worth = job.bp_hold_wrapper.cents
 
     if job.doctor:
         #pull price from what we promised them

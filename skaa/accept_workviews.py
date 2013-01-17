@@ -29,6 +29,9 @@ def accept_work(request, job_id):
             #TODO Put money into Doctors account 
             job.status = Job.USER_ACCEPTED
             job.save()
+
+            # Update Doctor Approval Count (for use in figuring out how much $$/job)
+            DoctorInfo.update_approval_count(profile)
             
             dr = DocRating()
             dr.doctor = job.doctor

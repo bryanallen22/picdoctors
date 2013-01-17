@@ -175,17 +175,28 @@ class SkaaInfo(DeleteMixin):
     user_profile = models.ForeignKey(UserProfile, 
                                         related_name='associated_skaa')
 
-class DoctorInfo(DeleteMixin):
-    user_profile = models.ForeignKey(UserProfile, 
-                                          related_name='associated_doctor')
-    auto_approve = models.BooleanField(default=False)
 
-    rating       = models.FloatField(default=0.0)
+class DoctorInfo(DeleteMixin):
+    user_profile       = models.ForeignKey(UserProfile, 
+                                          related_name='associated_doctor')
+
+    auto_approve       = models.BooleanField(default=False)
+
+    rating             = models.FloatField(default=0.0)
+
+    approval_count   = models.IntegerField(default=0)
 
     @staticmethod
     def get_docinfo_or_None(profile):
         info = get_object_or_None(DoctorInfo, user_profile=profile)
         return info
+
+    @staticmethod
+    def update_approval_count(profile):
+        self = DoctorInfo.get_docinfo_or_None(profile)
+        if self:
+            self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
+            self.save()
 
 def create_user_profile(sender, instance, created, **kwargs):
         if created:

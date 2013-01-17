@@ -14,15 +14,16 @@ $(function(){
     // Default attributes for the Message Model
     defaults: function() {
       return {
-        job_id    : -1,
-        output_pic_count : '',
-        status : 'Unknown',
+        job_id               : -1,
+        output_pic_count     : '',
+        status               : 'Unknown',
         unread_message_count : 0,  
-        album : -1,
-        albumurl : '',
-        pic_thumbs : [],
-        dynamic_actions : [],
-        doctor_payout : '',
+        album                : -1,
+        albumurl             : '',
+        pic_thumbs           : [],
+        dynamic_actions      : [],
+        doctor_payout        : '',
+        job_worth            : '',
       };
     },
     
@@ -98,6 +99,7 @@ $(function(){
           pic_thumbs          : this.model.get('pic_thumbs'),
           dynamic_actions     : this.model.get('dynamic_actions'),
           doctor_payout       : this.model.get('doctor_payout'),
+          job_worth           : this.model.get('job_worth'),
         }
       ));
     },
@@ -190,6 +192,7 @@ $(function(){
       model.set('pic_thumbs', ji.pic_thumbs);
       model.set('dynamic_actions', ji.dynamic_actions);
       model.set('doctor_payout', ji.doctor_payout);
+      model.set('job_worth', ji.job_worth);
       $('.carousel').carousel('next');
       $('.carousel').carousel();
   }
