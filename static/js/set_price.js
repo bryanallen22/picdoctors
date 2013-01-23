@@ -137,7 +137,7 @@ $(function(){
   });
 
   $("input[name='expiration_year']").change( function() {
-    val = $(this).val();
+    var val = $(this).val();
     if( parseInt(val) < 100 ) {
       // They're just putting the last two digits. Go ahead
       // and add in the first two.

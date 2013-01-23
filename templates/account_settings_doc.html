@@ -103,7 +103,7 @@
         <h3>Merchant Information</h3>
         <div class="alert alert-error">
           <button class="close" data-dismiss="alert">×</button>
-          We're legally required to collect some information to satisfy Know Your Customer and Anti Money Laundering laws.
+          We're legally required to collect some information to satisfy Know Your Customer and Anti-Money Laundering laws.
         </div>
         <form action="{% url merchant_info %}" method="POST" id="bank-account-form">
 
@@ -140,8 +140,8 @@
 
             <label class="business_field" style="display:none;">Business Phone Number
               <input type="text"
-              placeholder="(987)-654-3210"
-              class="business_phone_number">
+              placeholder="(987) 654-3210"
+              class="business_phone_number phone">
             </label>
 
             <label class="business_field" style="display:none;">Federal Tax Id
@@ -175,8 +175,8 @@
 
             <label>Your Phone Number
               <input type="text"
-              placeholder="(987)-654-3210"
-              class="phone_number">
+              placeholder="(987) 654-3210"
+              class="phone_number phone">
             </label>
 
             <label>Your Birth Month
@@ -207,6 +207,5 @@
 
         </form>
       </div>
-
-
 {% endblock %}
+

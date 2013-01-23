@@ -157,5 +157,38 @@ $(function(){
       $(".business_field").show();
     }
   });
+
+  $('.phone').keypress( function(e) {
+    // Stop the normal entry of the key (we want to format it first)
+    e.preventDefault();
+
+    // append this keypress
+    var val = $(this).val() + String.fromCharCode(e.which);
+
+    // strip out all non-numerics
+    val = val.replace(/[^0-9]/g, '');
+
+    // strip long distance leading 1, if it's there
+    if(val[0] == '1') {
+      val = val.slice(1);
+    }
+
+    var p1 = val.slice(0,3);
+    var p2 = val.slice(3,6);
+    var p3 = val.slice(6,10);
+
+    if(p1.length > 0) {
+      var fmt_val = "(" + p1;
+      if(p1.length == 3) {
+        fmt_val += ") " + p2;
+        if(p2.length == 3) {
+          fmt_val += "-" + p3;
+        }
+      }
+      $(this).val(fmt_val);
+    }
+
+  });
+
 });
 
