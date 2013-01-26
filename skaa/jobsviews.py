@@ -65,21 +65,24 @@ def update_old_jobs(list_of_jobs):
         if job.bp_hold_wrapper.created < seven_days_ago:
             job.status=Job.OUT_OF_MARKET
             job.save()
-            # TODO maybe do something else here?  I dunno
+            # TODO we may need to do other things in the future
             
 
 # get and fill up possible actions based on the status of this job
 def generate_skaa_actions(job):
     ret = []
 
+    redir=True
+
     #boring always created actions for populating below
-    contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), True)
+    contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), redir)
     view_markup_url= reverse('markup_album', args=[job.album.id, 1])
-    view_markup = DynamicAction('View Markups', view_markup_url, True)
-    view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
-    accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), True)
-    refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), True)
-    switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), True)
+    view_markup = DynamicAction('View Markups', view_markup_url, redir)
+    view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), redir)
+    accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), redir)
+    refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), redir)
+    switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), redir)
+    increase_price = DynamicAction('Increase Price', reverse('set_price'), redir)
     
     if job.status == Job.IN_MARKET:
         ret.append(contact)
@@ -108,12 +111,8 @@ def generate_skaa_actions(job):
     elif job.status == Job.USER_ACCEPTED:
         ret.append(view_album)
 
-   # elif job.status == Job.USER_REQUESTS_MODIFICATION:
-   #     ret.append(accept_album)
-   #     ret.append(contact)
-   #     ret.append(view_album)
-   #     ret.append(switch_doc)
-   #     ret.append(refund)
+    elif job.status == Job.OUT_OF_MARKET:
+        ret.append(increase_price)
 
     elif job.status == Job.USER_REJECTED:
         pass
@@ -137,12 +136,16 @@ def create_job(profile, album, hold):
         j.save()
 
         set_groups_locks(album, True)
+
     return j
 
-#TODO this is pointless, you could delete this stuff... you never use it...
+# We mostly use this for finding out when things are read_only etc
 def set_groups_locks(album_to_lock, state):
     groups = Group.objects.filter(album=album_to_lock)
-    #Performance Opportunity, just update all at once
+    # Performance Opportunity, just update all at once, in fact
+    # the line below would do it, but then I think that skips 
+    # the modified date time update
+    # Group.objects.filter(album=album_to_lock).update(is_locked=state)
     for group in groups:
         group.is_locked = state
         group.save()

@@ -71,8 +71,8 @@ def new_job_page(request, page=1):
 def generate_doctor_actions(job):
     ret = []
     redirect_url = True
-    #boring always created actions for populating below
-    #TODO redirect to contact page
+
+    # boring actions used by multiple cases belowg below
     contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), True)
 
     group = job.get_first_unfinished_group()
@@ -111,13 +111,6 @@ def generate_doctor_actions(job):
         #do nothing these are for doctor
         pass
 
-    #elif job.status == Job.USER_REQUESTS_MODIFICATION:
-    #    ret.append(work_job)
-    #    ret.append(view_album)
-    #    ret.append(mark_as_completed)
-    #    ret.append(contact)
-    #    #do nothing these are for doctor
-
     elif job.status == Job.USER_REJECTED:
         #do nothing these are fordoctor
         pass
@@ -136,7 +129,6 @@ def apply_for_job(request):
     result = []
     doc = request.user.get_profile()
 
-    #TODO create cool actions, alert, reload, redirect, remove_job_row
     actions = Actions()
     actions.add('alert', 'This job is no longer available')
     actions.add('remove_job_row', data['job_id'])
@@ -199,7 +191,6 @@ def has_rights_to_act(profile, job):
 
     return False
 
-#TODO THIS is bad, it would let the same doctor complain over and over... 
 @login_required
 def job_price_too_low(request):
     data = simplejson.loads(request.body)
