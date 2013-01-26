@@ -5,7 +5,7 @@ from django.http import HttpResponse
 
 from annoying.decorators import render_to
 
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_or_create_balanced_account
 from common.models import BPAccountWrapper
 
 import balanced
@@ -21,19 +21,7 @@ def create_bank_account(request):
     try:
         # Configure balanced
         balanced.configure(settings.BALANCED_API_KEY_SECRET)
-        
-        # Get their account if they have one
-        if profile.bp_account_wrapper:
-            account = balanced.Account.find(profile.bp_account_wrapper.uri)
-        else:
-            # Create a new account and associate it with this profile
-            account = balanced.Account().save()
-            account.email_address = email_address
-            account.save()
-            wrapper = BPAccountWrapper(uri=account.uri)
-            wrapper.save()
-            profile.bp_account_wrapper = wrapper
-            profile.save()
+        account = get_or_create_balanced_account(request, profile)
 
         # Add the bank account to the user's account
         account.add_bank_account(request.POST['bank_account_uri'])
@@ -88,6 +76,7 @@ def settings_doc(request):
     return { 
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'bank_accounts'     : bank_accounts,
+        'is_merchant'       : 'merchant' in account.roles,
     }
 
 @login_required
@@ -98,44 +87,52 @@ def merchant_info(request):
     profile = get_profile_or_None(request)
     balanced.configure(settings.BALANCED_API_KEY_SECRET)
 
-    # Person
-    merchant_data = {
-        'type': 'person',
+    # used for both 'person' and 'business'
+    if request.POST['merchant_type'] == 'person':
+        merchant_data = {
+            'type'           : request.POST['merchant_type'],
+            'name'           : request.POST['name'],
+            'street_address' : request.POST['street_address'],
+            'postal_code'    : request.POST['postal_code'],
+            'phone_number'   : request.POST['phone_number'],
+            'dob'            : request.POST['birth_year'] + '-' + request.POST['birth_month'],
+        }
+    elif request.POST['merchant_type'] == 'business':
+        merchant_data = {
+            'type' : request.POST['merchant_type'],
 
-        'name': 'Timmy Q. CopyPasta',
-        'street_address': '121 Skriptkid Row',
-        'postal_code': '94110',
-        'phone_number': '+14089999999',
-        'dob': '1989-12',
-    }
-    
-    # Business
-    merchant_data = {
-        'type': 'business',
+            # business things
+            'name'           : request.POST['business_name'],
+            'street_address' : request.POST['business_street_address'],
+            'postal_code'    : request.POST['business_postal_code'],
+            'phone_number'   : request.POST['business_phone_number'],
+            'tax_id'         : request.POST['business_tax_id'],
 
-        'name': 'Skripts4Kids',
-        'street_address': '555 VoidMain Road',
-        'postal_code': '91111',
-        'phone_number': '+140899188155',
-        'tax_id': '211111111',
+            # personal things
+            'person' : {
+                'name'           : request.POST['name'],
+                'street_address' : request.POST['street_address'],
+                'postal_code'    : request.POST['postal_code'],
+                'phone_number'   : request.POST['phone_number'],
+                'dob'            : request.POST['birth_year'] + '-' + required.POST['birth_month'],
+            }
+        }
 
-        'person': {
-            'name': 'Timmy Q. CopyPasta',
-            'street_address': '121 Skriptkid Row',
-            'postal_code': '94110',
-            'phone_number': '+14089999999',
-            'dob': '1989-12',
-        },
-    }
+    else:
+        raise
 
-    account = balanced.Account().save()
+    account = get_or_create_balanced_account(request, profile)
 
     try:
         account.add_merchant(merchant_data)
     except balanced.exc.MoreInformationRequiredError as ex:
         # could not identify this account.
         logging.info('redirect merchant to:', ex.redirect_uri)
+        return redirect( ex.redirect_uri )
     except balanced.exc.HTTPError as error:
         # TODO: handle 400 and 409 exceptions as required
         raise
+
+    # Bring them back to this page
+    return redirect( reverse('account_settings') + '#merchant_tab' )
 

@@ -158,7 +158,7 @@ $(function(){
     }
   });
 
-  $('.phone').keypress( function(e) {
+  $('.phone_number').keypress( function(e) {
     // Stop the normal entry of the key (we want to format it first)
     e.preventDefault();
 

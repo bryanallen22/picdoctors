@@ -101,86 +101,94 @@
       {#####################################################}
       <div class="tab-pane fade" id="merchant_pane">
         <h3>Merchant Information</h3>
-        <div class="alert alert-error">
-          <button class="close" data-dismiss="alert">×</button>
-          We're legally required to collect some information to satisfy Know Your Customer and Anti-Money Laundering laws.
-        </div>
-        <form action="{% url merchant_info %}" method="POST" id="bank-account-form">
+        {% if is_merchant %}
+          <div class="alert alert-success">
+            <button class="close" data-dismiss="alert">×</button>
+            We've already got your merchant info, thanks!
+            {# TODO - fetch it? (see balanced ticket 2524) #}
+          </div>
 
-          <label class="radio">
-            <input type="radio" name="merchant_type_radio" id="person" value="person" checked>
-            Individual
-          </label>
-          <label class="radio">
-            <input type="radio" name="merchant_type_radio" id="business" value="business">
-            Business
-          </label>
+        {% else %}
+          <div class="alert alert-error">
+            <button class="close" data-dismiss="alert">×</button>
+            We're legally required to collect some information to satisfy Know Your Customer and Anti-Money Laundering laws.
+          </div>
+          <form action="{% url merchant_info %}" method="POST" id="bank-account-form">
+            {% csrf_token %}
 
-          {########################}
-          {# Business only fields #}
-          {########################}
-          <fieldset>
+            <label class="radio">
+              <input type="radio" name="merchant_type" id="person" value="person" checked>
+              Individual
+            </label>
+            <label class="radio">
+              <input type="radio" name="merchant_type" id="business" value="business">
+              Business
+            </label>
+
+            {########################}
+            {# Business only fields #}
+            {########################}
             <label class="business_field" style="display:none;">Business Name
               <input type="text"
               placeholder="John's Photography"
-              class="business_name">
+              name="business_name">
             </label>
 
             <label class="business_field" style="display:none;">Business Street Address
               <input type="text"
               placeholder="222 Aperture Way"
-              class="business_street_address">
+              name="business_street_address">
             </label>
 
             <label class="business_field" style="display:none;">Business Postal Code
               <input type="text"
               placeholder="12345"
-              class="business_postal_code">
+              name="business_postal_code">
             </label>
 
             <label class="business_field" style="display:none;">Business Phone Number
               <input type="text"
+              class="phone_number"
               placeholder="(987) 654-3210"
-              class="business_phone_number phone">
+              name="business_phone_number">
             </label>
 
             <label class="business_field" style="display:none;">Federal Tax Id
               <input type="text"
               placeholder="211111111"
-              class="business_tax_id">
+              name="business_tax_id">
             </label>
-          </fieldset>
 
-          {#########################################}
-          {# Person fields (used for business too) #}
-          {#########################################}
-          <fieldset>
+            {#########################################}
+            {# Person fields (used for business too) #}
+            {#########################################}
             <label>Your Name
               <input type="text"
               placeholder="John Doe"
-              class="name">
+              name="name">
             </label>
 
             <label>Your Street Address
               <input type="text"
               placeholder="123 Cherry Lane"
-              class="street_address">
+              name="street_address">
             </label>
 
             <label>Your Postal Code
               <input type="text"
               placeholder="12345"
-              class="postal_code">
+              name="postal_code">
             </label>
 
             <label>Your Phone Number
               <input type="text"
+              class="phone_number"
               placeholder="(987) 654-3210"
-              class="phone_number phone">
+              name="phone_number">
             </label>
 
             <label>Your Birth Month
-              <select class="birth_month">
+              <select name="birth_month">
                 <option value="1">January</option>
                 <option value="2">February</option>
                 <option value="3">March</option>
@@ -199,13 +207,14 @@
             <label>Your Birth Year
               <input type="text"
               placeholder="1980"
-              class="birth_year">
+              name="birth_year">
             </label>
 
-          </fieldset>
-          <input type="submit" name="submit" class='btn btn-primary' value="Submit" >
+            <input type="submit" name="submit" class='btn btn-primary' value="Submit" >
 
-        </form>
+          </form>
+
+        {% endif %}
       </div>
 {% endblock %}
 

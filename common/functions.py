@@ -14,11 +14,33 @@ import urlparse
 import pdb
 import pytz
 
+import balanced
+import settings
+
 def get_profile_or_None(request):
     """ Get the request user profile if they are logged in """
     if request.user.is_authenticated():
         return request.user.get_profile()
     return None
+
+def get_or_create_balanced_account(request, profile=None):
+    # Configure balanced
+    if not profile:
+        profile = get_profile_or_None(request)
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+    
+    # Get their account if they have one
+    if profile.bp_account_wrapper:
+        account = balanced.Account.find(profile.bp_account_wrapper.uri)
+    else:
+        # Create a new account and associate it with this profile
+        account = balanced.Account().save()
+        account.email_address = email_address
+        account.save()
+        wrapper = BPAccountWrapper(uri=account.uri)
+        wrapper.save()
+        profile.bp_account_wrapper = wrapper
+        profile.save()
    
 def get_time_string(prev_date):
     """
