@@ -2,6 +2,7 @@
 from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 from annoying.decorators import render_to
 
@@ -14,7 +15,7 @@ import settings
 @login_required
 def create_bank_account(request):
     profile = get_profile_or_None(request)
-    email_address = request.user.email
+    
     if not profile or not profile.is_doctor:
         return HttpResponse('{ }', mimetype='application/json')
 
@@ -29,7 +30,7 @@ def create_bank_account(request):
     except balanced.exc.HTTPError as ex:
         if ex.category_code == 'duplicate-email-address':
             raise KeyError("Duplicate email address %s... this should have been saved under " \
-                           "profile.bp_account_wrapper..." % email_address)
+                           "profile.bp_account_wrapper..." % request.user.email)
         else:
             raise
 
@@ -70,13 +71,15 @@ def settings_doc(request):
     if profile.bp_account_wrapper:
         account = balanced.BankAccount.find(profile.bp_account_wrapper.uri)
         bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
+        is_merchant = 'merchant' in account.roles
     else:
         bank_accounts = None
+        is_merchant = False
 
     return { 
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'bank_accounts'     : bank_accounts,
-        'is_merchant'       : 'merchant' in account.roles,
+        'is_merchant'       : is_merchant,
     }
 
 @login_required
