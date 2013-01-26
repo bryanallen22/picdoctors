@@ -34,7 +34,7 @@ $(function(){
       type: "POST",
       url: '/create_bank_account/',
       data: obj,
-      success : function(data, textStatus) {
+      success : function(data) {
         if ( data.success ) {
           // reload the page (on this tab)
           console.log('reloaaaad!');
@@ -123,7 +123,7 @@ $(function(){
       type: "POST",
       url: '/delete_bank_account/',
       data: obj,
-      success : function(data, textStatus) {
+      success : function(data) {
         if ( data.success ) {
           // reload the page (on this tab)
           console.log('reloaaaad!');
@@ -188,6 +188,54 @@ $(function(){
       $(this).val(fmt_val);
     }
 
+  });
+
+});
+
+/*
+ * Password/email stuff
+ */
+$(function(){
+
+  function postTo(url, obj, callback) {
+    var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
+
+    $.ajax({
+      headers: {
+        "X-CSRFToken":CSRF_TOKEN
+      },
+      type: "POST",
+      url: url,
+      data: obj,
+      success : callback,
+    });
+
+  }
+
+
+  $("#password-form").find("button:submit").click( function(e) {
+    e.preventDefault();
+
+    var obj = {
+      'old_password' :      $('input[name="old_password"]').val(),
+      'new_password' :      $('input[name="new_password"]').val(),
+      'confirm_password' :  $('input[name="confirm_password"]').val(),
+    };
+
+    // if there is already an alert showing, hide it
+    $(".password_alert").hide();
+
+    postTo('/change_password/', obj, function(data) {
+        if ( data.success ) {
+          $("#password-success").show();
+        }
+        else if ( data.bad_oldpassword ) {
+          $("#password-oldbad").show();
+        }
+        else if ( data.nomatch ) {
+          $("#password-nomatch").show();
+        }
+    });
   });
 
 });

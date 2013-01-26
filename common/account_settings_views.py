@@ -1,5 +1,6 @@
 # Create your views here.
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate
 from django.utils import simplejson
 from django.http import HttpResponse
 
@@ -16,6 +17,14 @@ import settings
 import balanced
 
 @login_required
+def get_shared_params(request, profile):
+    email_address = request.user.email
+
+    return {
+        'email':            email_address,
+    }
+
+@login_required
 def account_settings(request):
     # if user, send them to settings_user
     # if doc, send them to settings_doc
@@ -23,10 +32,19 @@ def account_settings(request):
     if not profile:
         return redirect('/')
 
+    # Okay, Bryan is a bad person. This is a horrible hack upon hacks, and
+    # all of this stuff needs a rewrite. Eventually. So.
+    # This method is the handles user settings for both doctors and users.
+    # They have a shared parent template, and we need to fetch some basics
+    # for the parent template. Child handlers fetch things for the child
+    # template things.
+
+    parent_params = get_shared_params(request, profile)
+
     if profile.is_doctor:
-        return settings_doc(request)
+        return settings_doc(request, parent_params)
     else:
-        return settings_user(request)
+        return settings_user(request, parent_params)
 
     return {}
 
@@ -51,6 +69,27 @@ def account_settings_delete_card(request):
         result = { "success" : True }
     else:
         result = { "success" : False }
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
+
+@login_required
+def change_password(request):
+    # Send them back to their current page
+
+    profile = get_profile_or_None(request)
+    user = authenticate(username=request.user.email,
+                        password=request.POST['old_password'])
+
+    if user and user.is_active and user == request.user:
+        if request.POST['new_password'] == request.POST['confirm_password']:
+            user.set_password( request.POST['new_password'] )
+            user.save()
+            result = { 'success' : True }
+        else:
+            result = { 'nomatch' : True }
+    else:
+        result = { 'bad_oldpassword' : True }
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')

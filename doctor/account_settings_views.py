@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
 
 from annoying.decorators import render_to
 
@@ -64,25 +65,6 @@ def delete_bank_account(request):
     return HttpResponse(response_data, mimetype='application/json')
 
 @login_required
-@render_to('account_settings_doc.html')
-def settings_doc(request):
-    profile = get_profile_or_None(request)
-    balanced.configure(settings.BALANCED_API_KEY_SECRET)
-    if profile.bp_account_wrapper:
-        account = balanced.BankAccount.find(profile.bp_account_wrapper.uri)
-        bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
-        is_merchant = 'merchant' in account.roles
-    else:
-        bank_accounts = None
-        is_merchant = False
-
-    return { 
-        'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
-        'bank_accounts'     : bank_accounts,
-        'is_merchant'       : is_merchant,
-    }
-
-@login_required
 def merchant_info(request):
     """
     POST should contain info to underwrite a doctor
@@ -138,4 +120,27 @@ def merchant_info(request):
 
     # Bring them back to this page
     return redirect( reverse('account_settings') + '#merchant_tab' )
+
+@login_required
+@render_to('account_settings_doc.html')
+def settings_doc(request, parent_params):
+    profile = get_profile_or_None(request)
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+    if profile.bp_account_wrapper:
+        account = balanced.BankAccount.find(profile.bp_account_wrapper.uri)
+        bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
+        is_merchant = 'merchant' in account.roles
+    else:
+        bank_accounts = None
+        is_merchant = False
+
+    my_params = {
+        'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
+        'bank_accounts'     : bank_accounts,
+        'is_merchant'       : is_merchant,
+    }
+
+    my_params.update(parent_params)
+
+    return my_params
 

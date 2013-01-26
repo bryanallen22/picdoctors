@@ -11,8 +11,7 @@ import ipdb
 
 @login_required
 @render_to('account_settings_user.html')
-def settings_user(request):
-    email_address = request.user.email
+def settings_user(request, parent_params):
     profile = get_profile_or_None(request)
     
     balanced.configure(settings.BALANCED_API_KEY_SECRET)
@@ -25,7 +24,11 @@ def settings_user(request):
     else:
         user_credit_cards = []
 
-    return {
-        'email':            email_address,
+    my_params = {
         'credit_cards':     user_credit_cards,
     }
+
+    my_params.update(parent_params)
+
+    return my_params
+
