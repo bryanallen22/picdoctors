@@ -3,7 +3,7 @@ from django.conf.urls.defaults import patterns, include, url
 from skaa.markupviews import markup_page, markup_page_album, markups_handler, pic_instruction_handler
 from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handler, upload_page, need_cookies
 from skaa.jobsviews import job_page, reject_doctors_work, request_modification
-from skaa.setpriceviews import set_price, create_hold_handler
+from skaa.setpriceviews import set_price, increase_price, create_hold_handler
 from skaa.mergealbumsviews import merge_albums
 from skaa.accept_workviews import accept_work
 from skaa.rejectviews import refund, switch_doctor, switch_doctor_endpoint, refund_user_endpoint
@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^jobs/$',                                        job_page,                 name='job_page'),
     url(r'^jobs/(?P<page>\d+)$',                           job_page,                 name='job_page_with_page'),
     url(r'^set_price/$',                                   set_price,                name='set_price'),
+    url(r'^increase_price/(?P<job_id>\d+)$',               increase_price,           name='increase_price'),
     url(r'^create_hold_handler/$',                         create_hold_handler,      name='create_hold_handler'),
     url(r'^merge_albums/$',                                merge_albums,             name='merge_albums'),
     url(r'^accept_work/(?P<job_id>\d+)$',                  accept_work,              name='accept_work'),

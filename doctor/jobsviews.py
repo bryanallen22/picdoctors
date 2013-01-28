@@ -39,9 +39,14 @@ def doc_job_page(request, page=1):
 
     job_infos_json = get_job_infos_json(cur_page, generate_doctor_actions, request)
 
-    return { 'job_infos_json' : job_infos_json, 
-            'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 
-            'reverser': 'doc_job_page_with_page', 'doc_page':True, 'title': 'My Jobs'}
+    return { 
+            'job_infos_json'   : job_infos_json, 
+            'num_pages'        : range(1,pager.num_pages+1), 
+            'cur_page'         : page, 
+            'reverser'         : 'doc_job_page_with_page', 
+            'doc_page'         : True, 
+            'title'            : 'My Jobs'
+    }
 
 
 @login_required
@@ -63,9 +68,14 @@ def new_job_page(request, page=1):
 
     job_infos_json = get_job_infos_json(cur_page, generate_doctor_actions, request)
 
-    return {'job_infos_json' : job_infos_json, 
-            'num_pages': range(1,pager.num_pages+1), 'cur_page': page, 
-            'reverser': 'new_job_page_with_page', 'doc_page':True, 'title': 'Available Jobs'}
+    return {
+            'job_infos_json'   : job_infos_json, 
+            'num_pages'        : range(1,pager.num_pages+1), 
+            'cur_page'         : page, 
+            'reverser'         : 'new_job_page_with_page',
+            'doc_page'         : True, 
+            'title'            : 'Available Jobs'
+    }
 
 #get and fill up possible actions based on the status of this job
 def generate_doctor_actions(job):

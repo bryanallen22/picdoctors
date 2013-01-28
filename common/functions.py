@@ -17,6 +17,8 @@ import pytz
 import balanced
 import settings
 
+import re
+
 def get_profile_or_None(request):
     """ Get the request user profile if they are logged in """
     if request.user.is_authenticated():
@@ -111,6 +113,24 @@ def get_unfinished_album(request):
                                urllib.quote( request.get_full_path() ));
 
     return (album, redirect_url)
+
+
+def get_referer_view_and_id(request, default=None):
+
+    # if the user typed the url directly in the browser's address bar
+    referer = request.META.get('HTTP_REFERER')
+    if not referer:
+        return default
+
+    # remove the protocol and split the url at the slashes
+    referer = re.sub('^https?:\/\/', '', referer).split('/')
+    if referer[0] != request.META.get('HTTP_HOST'):
+        return default
+
+    if len(referer) > 2:
+        return referer[1], referer[2]
+
+    return default
 
 from django.contrib.auth.models import Group
 from annoying.decorators import render_to

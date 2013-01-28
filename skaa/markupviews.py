@@ -146,9 +146,16 @@ def markup_page_album(request, album_id, sequence):
     else:
         previous_url = reverse('markup_album', args = [album.id, sequence-1])
 
-    return { 'pics' : pics, 'next_url' : next_url, 'previous_url' : previous_url, 
-            'group_id': group.id, 'doc_pics': doc_pics, 
-            'is_job_doctor': is_job_doctor, 'is_job_user': is_job_user, 'read_only': read_only}
+    return { 
+            'pics'          : pics, 
+            'next_url'      : next_url, 
+            'previous_url'  : previous_url, 
+            'group_id'      : group.id, 
+            'doc_pics'      : doc_pics, 
+            'is_job_doctor' : is_job_doctor, 
+            'is_job_user'   : is_job_user, 
+            'read_only'     : read_only,
+    }
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes

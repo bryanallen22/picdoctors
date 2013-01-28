@@ -6,17 +6,21 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.utils import simplejson
 
 from annoying.decorators import render_to
+from annoying.functions import get_object_or_None
 
 from common.decorators import user_passes_test
 from common.functions import get_unfinished_album
 from common.functions import get_profile_or_None
+from common.functions import get_referer_view_and_id
 from common.models import Album
 from common.models import Group
+from common.models import Job 
 from common.models import Pic
 from common.models import ungroupedId
 from common.models import BPAccountWrapper
 from models import Markup
 from skaa.jobsviews import create_job
+from skaa.jobsviews import update_job_hold
 
 import ipdb
 import logging
@@ -118,7 +122,7 @@ def create_or_get_balanced_account(profile, email_address, card_uri):
     return account
 
 
-def place_hold(album, user, cents, card_uri):
+def place_hold(job, album, user, cents, card_uri):
     """
     Do the actual 7 day hold associated with the album and user
     """
@@ -134,7 +138,11 @@ def place_hold(album, user, cents, card_uri):
     hold = account.hold(cents, meta={}, source_uri=card_uri,
                       appears_on_statement_as="PicDoctors.com")
 
-    create_job(profile, album, hold)
+    if job:
+        update_job_hold(job, hold)
+    else:
+        create_job(profile, album, hold)
+
     album.finished = True
     album.save()
     logging.info("Album owned by %s has been finished with price at $%s (cents)" %
@@ -155,30 +163,92 @@ def create_hold_handler(request):
         return HttpResponse('[ ]', mimetype='application/json')
 
     ret = {}
-    album, _ = get_unfinished_album(request)
-    min_price = min_price_per_pic * album.num_groups
+    album = None
+    job = None
 
-    # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
-    # convert it to cents and validate that it's an acceptable amount
-    cents = currency_to_cents( request.POST['price'] )
+    # do we update a current job, or create a new job?
+    view, job_id = get_referer_view_and_id(request)
+    if view == 'increase_price':
+        job_id = int(job_id)
+        job = get_object_or_None(Job, id=job_id)
+        profile = get_profile_or_None(request)
 
-    if cents >= min_price * 100:
-
-        place_hold(album, request.user, cents, request.POST['card_uri'])
-
-        ret['status'] = 200
-        ret['next'] = reverse('job_page')
+        # check permissions and state
+        if job and job.skaa == profile and (job.status == Job.IN_MARKET or job.state == Job.OUT_OF_MARKET):
+            album = job.album
 
     else:
-        # TODO - do I bother to display an error on the client? If they got here, it's probably
-        # because they used a debugger to go under the client side min, and I don't feel any
-        # particular need to be UI friendly to them. Perhaps I'll just ignore them?
-        ret['status'] = 402 # Payment required
+        album, _ = get_unfinished_album(request)
+
+    if album == None:
+        ret['status'] = 400
         ret['next'] = ''
+    else:
+       min_price = min_price_per_pic * album.num_groups
+
+       # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
+       # convert it to cents and validate that it's an acceptable amount
+       cents = currency_to_cents( request.POST['price'] )
+
+       if cents >= min_price * 100:
+
+           place_hold(job, album, request.user, cents, request.POST['card_uri'])
+
+           ret['status'] = 200
+           ret['next'] = reverse('job_page')
+
+       else:
+           # TODO - do I bother to display an error on the client? If they got here, it's probably
+           # because they used a debugger to go under the client side min, and I don't feel any
+           # particular need to be UI friendly to them. Perhaps I'll just ignore them?
+           ret['status'] = 402 # Payment required
+           ret['next'] = ''
 
     #return HttpResponse('[ ]', mimetype='application/json')
     response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')
+
+@login_required
+@render_to('set_price.html')
+def increase_price(request, job_id):
+
+    job = get_object_or_None(Job, id=job_id)
+    profile = get_profile_or_None(request)
+
+    if not job or not profile or job.skaa != profile:
+        return redirect('/')
+        
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+
+    if profile.bp_account_wrapper:
+        # Get the balanced account info. This is slow.
+        acct = balanced.Account.find( profile.bp_account_wrapper.uri )
+
+        user_credit_cards = [c for c in acct.cards if c.is_valid]
+    else:
+        user_credit_cards = []
+
+
+
+    original_price = (job.bp_hold_wrapper.cents / 100) 
+    min_price = original_price + 1
+    if request.method == 'GET':
+        pass
+    str_min_price = "{0:.2f}".format(min_price)
+    str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
+    str_num_pics = "%s" % job.album.num_groups
+    str_original_price =  "{0:.2f}".format(original_price)
+
+    return { 
+        'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
+        'IS_PRODUCTION'     : settings.IS_PRODUCTION,
+        'min_price'         : str_min_price,
+        'min_price_per_pic' : str_min_price_per_pic,
+        'num_pics'          : str_num_pics,
+        'credit_cards'      : user_credit_cards,
+        'increase_price'    : True,
+        'original_price'    : str_original_price,
+    }
 
 @login_required
 @render_to('set_price.html')

@@ -18,12 +18,21 @@
         <div class="span8">
 
           <legend>
+            {% if increase_price %}
+            <h3>Increase the price for
+            {% else %}
             <h3>Please set a price for 
-              {% if num_pics == '1' %}
-              this pic
-              {% else %}
-              these {{ num_pics }} pics
-              {% endif %}
+            {% endif %}
+
+            {% if num_pics == '1' %}
+            this pic
+            {% else %}
+            these {{ num_pics }} pics
+            {% endif %}
+
+            {% if increase_price %}
+              &nbsp;( Original price: ${{ original_price }} )
+            {% endif %}
 
             </h3>
           </legend>
@@ -35,7 +44,7 @@
                 {% csrf_token %}
 
                 <div class="row">
-                  <div class="span3">
+                  <div class="span4">
                     <label>How much will you offer?</label>
 
                     <div class="input-prepend">

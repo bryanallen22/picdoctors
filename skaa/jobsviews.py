@@ -43,9 +43,14 @@ def job_page(request, page=1):
 
     job_infos_json = get_job_infos_json(cur_page, generate_skaa_actions, request)
 
-    return {'job_infos_json':job_infos_json,
-            'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page), 
-            'reverser': 'job_page_with_page', 'doc_page':False, 'title': 'My Jobs'}
+    return {
+            'job_infos_json'   : job_infos_json,
+            'num_pages'        : range(1,pager.num_pages+1), 
+            'cur_page'         : int(page), 
+            'reverser'         : 'job_page_with_page', 
+            'doc_page'         : False, 
+            'title'            : 'My Jobs',
+    }
 
 # if a job ends up being older 7 days, we change the state to
 # you suck, and need to up the price or something
@@ -72,21 +77,22 @@ def update_old_jobs(list_of_jobs):
 def generate_skaa_actions(job):
     ret = []
 
-    redir=True
+    url_redirect=True
 
     #boring always created actions for populating below
-    contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), redir)
+    contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), url_redirect)
     view_markup_url= reverse('markup_album', args=[job.album.id, 1])
-    view_markup = DynamicAction('View Markups', view_markup_url, redir)
-    view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), redir)
-    accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), redir)
-    refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), redir)
-    switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), redir)
-    increase_price = DynamicAction('Increase Price', reverse('set_price'), redir)
+    view_markup = DynamicAction('View Markups', view_markup_url, url_redirect)
+    view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), url_redirect)
+    accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), url_redirect)
+    refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), url_redirect)
+    switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), url_redirect)
+    increase_price = DynamicAction('Increase Price', reverse('increase_price', args=[job.id]), url_redirect)
     
     if job.status == Job.IN_MARKET:
         ret.append(contact)
         ret.append(view_album)
+        ret.append(increase_price)
         ret.append(refund)
 
     elif job.status == Job.DOCTOR_ACCEPTED:
@@ -122,22 +128,39 @@ def generate_skaa_actions(job):
         pass
 
     return ret
+    
 
+# when the user sets a price, we create a job
 def create_job(profile, album, hold):
-    j = None
+    job = None
     bp_hold_wrapper = BPHoldWrapper(uri=hold.uri, cents=hold.amount)
     bp_hold_wrapper.save()
     if album is not None:
-        j = Job(skaa=profile,
+        job = Job(skaa=profile,
                 album=album, 
                 bp_hold_wrapper=bp_hold_wrapper,
                 status=Job.IN_MARKET)
         
-        j.save()
+        job.save()
 
         set_groups_locks(album, True)
 
-    return j
+    return job
+
+
+# When a user increases the price of a job
+# we call this method to update the hold
+def update_job_hold(job, hold):
+    bp_hold_wrapper = BPHoldWrapper(uri=hold.uri, cents=hold.amount)
+    bp_hold_wrapper.save()
+
+    if job.bp_hold_wrapper:
+        job.bp_hold_wrapper.delete()
+
+    job.bp_hold_wrapper = bp_hold_wrapper
+    job.save()
+
+    return job
 
 # We mostly use this for finding out when things are read_only etc
 def set_groups_locks(album_to_lock, state):
