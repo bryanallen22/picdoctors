@@ -9,9 +9,9 @@ from annoying.decorators import render_to
 from skaa.account_settings_views import settings_user
 from doctor.account_settings_views import settings_doc
 
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_or_create_balanced_account
 
-import ipdb
+import logging
 
 import settings
 import balanced
@@ -94,3 +94,38 @@ def change_password(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
+@login_required
+def change_email(request):
+
+    profile = get_profile_or_None(request)
+    new_email = request.POST['new_email']
+    old_email = request.user.email
+
+    # Initialize to fail
+    result = { 'success' : False }
+
+    logging.info("Changing user email %s to %s" % (request.user.email, new_email))
+
+    # Change the email on the balanced side
+    try:
+        balanced.configure(settings.BALANCED_API_KEY_SECRET)
+        account = get_or_create_balanced_account(request, profile)
+        account.email_address = new_email
+        account.save()
+
+        request.user.username = new_email
+        request.user.email = new_email
+        request.user.save()
+
+        result = { 'success' : True }
+    except:
+        # TODO - make sure our local db copy is okay
+        logging.info("Error updating user email from %s to %s! Resetting our local copy, just in case."
+                     % (request.user.email, new_email))
+        request.user.username = old_email
+        request.user.email = old_email
+        request.user.save()
+        raise
+    
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')

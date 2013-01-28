@@ -212,9 +212,15 @@ $(function(){
 
   }
 
-
   $("#password-form").find("button:submit").click( function(e) {
     e.preventDefault();
+
+    // Disable the button
+    var $button = $(this);
+    $button.attr("disabled", "disabled");
+
+    // if there is already an alert showing, hide it
+    $(".password_alert").hide();
 
     var obj = {
       'old_password' :      $('input[name="old_password"]').val(),
@@ -222,20 +228,48 @@ $(function(){
       'confirm_password' :  $('input[name="confirm_password"]').val(),
     };
 
-    // if there is already an alert showing, hide it
-    $(".password_alert").hide();
-
     postTo('/change_password/', obj, function(data) {
-        if ( data.success ) {
-          $("#password-success").show();
-        }
-        else if ( data.bad_oldpassword ) {
-          $("#password-oldbad").show();
-        }
-        else if ( data.nomatch ) {
-          $("#password-nomatch").show();
-        }
+      // enable the button again
+      $button.removeAttr("disabled");
+
+      if ( data.success ) {
+        $("#password-success").show();
+      }
+      else if ( data.bad_oldpassword ) {
+        $("#password-oldbad").show();
+      }
+      else if ( data.nomatch ) {
+        $("#password-nomatch").show();
+      }
     });
+  });
+
+  $("#email-form").find("button:submit").click( function(e) {
+    e.preventDefault();
+
+    // Disable the button
+    var $button = $(this);
+    $button.attr("disabled", "disabled");
+
+    // if there is already an alert showing, hide it
+    $(".email_alert").hide();
+
+    obj = {
+      'new_email' : $('input[name="new_email"]').val(),
+    };
+
+    postTo('/change_email/', obj, function(data) {
+      // enable the button again
+      $button.removeAttr("disabled");
+
+      if ( data.success ) {
+        $("#email-success").show();
+      }
+      else {
+        $("#email-fail").show();
+      }
+    });
+
   });
 
 });

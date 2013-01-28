@@ -9,7 +9,7 @@ from common.functions import go_pro
 from common.faqviews import faq
 from common.howitworksviews import howitworks
 from common.account_settings_views import account_settings, account_settings_delete_card
-from common.account_settings_views import change_password
+from common.account_settings_views import change_password, change_email
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -31,5 +31,6 @@ urlpatterns = patterns('',
     url(r'^faq/$',                              faq,                          name='faq'),
     url(r'^howitworks/$',                       howitworks,                   name='howitworks'),
     url(r'^change_password/$',                  change_password,              name='change_password'),
+    url(r'^change_email/$',                     change_email,                 name='change_email'),
 )
 
