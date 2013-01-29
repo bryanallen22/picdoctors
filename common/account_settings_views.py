@@ -18,10 +18,10 @@ import balanced
 
 @login_required
 def get_shared_params(request, profile):
-    email_address = request.user.email
 
     return {
-        'email':            email_address,
+        'email'           : request.user.email,
+        'marketplace_uri' : settings.BALANCED_MARKETPLACE_URI,
     }
 
 @login_required

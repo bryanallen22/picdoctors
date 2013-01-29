@@ -135,7 +135,6 @@ def settings_doc(request, parent_params):
         is_merchant = False
 
     my_params = {
-        'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'bank_accounts'     : bank_accounts,
         'is_merchant'       : is_merchant,
     }
