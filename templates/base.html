@@ -79,6 +79,9 @@
                       <b class="caret"></b>
                     </a>
                   <ul class="dropdown-menu">
+                    {% if user.get_profile.is_doctor %}
+                    <li><a href="{% url withdraw %}"><i class="icon-shopping-cart"></i> Withdraw Earnings</a></li>
+                    {% endif %}
                     <li><a href="{% url account_settings %}"><i class="icon-cog"></i> Account Settings</a></li>
                     <li><a href="{% url signout %}"><i class="icon-user"></i> Log Out</a></li>
                   </ul>

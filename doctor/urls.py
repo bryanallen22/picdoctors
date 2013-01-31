@@ -4,6 +4,7 @@ from doctor.account_settings_views import create_bank_account, delete_bank_accou
 from doctor.homeviews import doc_home
 from doctor.jobsviews import doc_job_page, new_job_page, apply_for_job 
 from doctor.jobsviews import job_price_too_low, mark_job_completed
+from doctor.withdrawviews import withdraw
 from skaa.uploadviews import doc_upload_handler
 
 # Uncomment the next two lines to enable the admin:
@@ -23,5 +24,6 @@ urlpatterns = patterns('',
     url(r'^create_bank_account/$',   create_bank_account, name='create_bank_account'),
     url(r'^delete_bank_account/$',   delete_bank_account, name='delete_bank_account'),
     url(r'^merchant_info/$',         merchant_info,       name='merchant_info'),
+    url(r'^withdraw/$',              withdraw,            name='withdraw'),
 )
 

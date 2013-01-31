@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% load picdoctags %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+  {# Uhh, there's a space here because without it, the div collapses. Whatever. #}
+  <div class='span6 offset3'>
+
+    <strong><p>Available balance: {{ balance|currency }} </p></strong>
+
+    {% if balance >= 5.00 %}
+      <form id="withdraw-form">
+        <p>How much would you like to withdraw?</p>
+        <div class="input-prepend">
+          <span class="add-on">$</span>
+          <input id="price" type="text" size="20" autocomplete="off"
+            class="span1" value="" name="price" /><br/>
+        </div>
+      </form>
+    {% else %}
+      <h4>You're poor. Sorry.</h4>
+    {% endif %}
+
+  </div>
+</div> {# 'row' #}
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
