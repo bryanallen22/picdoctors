@@ -1,0 +1,9 @@
+{
+    "name": "bootstrap-tour",
+    "version": "0.1",
+    "main": "./bootstrap-tour.js",
+    "dependencies": {
+        "bootstrap": "2.2.2",
+        "jquery": "~1.9.0"
+    }
+}
