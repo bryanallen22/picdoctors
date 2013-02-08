@@ -61,6 +61,7 @@
             <textarea class="desc autosize-textarea">{{ pic.general_instructions }}</textarea>
 
           </div>
+          <div class="imaginary_instruction_for_tour"></div>
         </div>
       </div>
     </div>
@@ -77,6 +78,7 @@
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
       <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Previous</a>
       <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 12px;'>Next</a>
+      <div class="btn btn-info btn-large" onclick="begin_tour()" style="display : block; margin-top:12px;">Help</div>
       {% if is_job_doctor  %}
 
       <form action="{% url doc_upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
@@ -99,6 +101,11 @@
 <script src="{{ STATIC_URL }}js/underscore.js"></script>
 <script src="{{ STATIC_URL }}js/backbone.js"></script>
 <script src="{{ STATIC_URL }}js/markup.js"></script>
+
+<script src="{{ STATIC_URL }}js/markup-tour.js"></script>
+<script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
+<script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
+
 <script src="{{ STATIC_URL }}js/shared.js"></script>
 {# Templates #}
 {# This template is just the *style* attribute for the markup div      #}
@@ -115,8 +122,8 @@
 <script type="text/template" id="markup-template-desc">
   <p class="desc_title" style="border: 4px <%= color %>; border-style: <%= border_style %>;">
   <%= color_name %>
-  </p>
-  <textarea class="desc autosize-textarea" ><%= desc %></textarea>
+  </p><div class="dyn_instruction">
+  <textarea class="desc autosize-textarea" ><%= desc %></textarea></div>
 </script>
 
 {% endblock %}

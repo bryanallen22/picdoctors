@@ -78,7 +78,7 @@ var BorderGroups = (function ($) {
 // categoryRows custom layout mode
 $.extend( $.Isotope.prototype, {
   
-  extraHeight : 260,
+  extraHeight : 320,
 
   _categoryRowsReset : function() {
     this.categoryRows = {
