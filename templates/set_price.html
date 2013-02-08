@@ -48,9 +48,14 @@
                     <label>How much will you offer?</label>
 
                     <div class="input-prepend">
+                      <div style="font-size:14px;width:90px">
+                        <div id="price_tour_anchor"></div>
+                      </div>
                       <span class="add-on">$</span>
                       <input id="price" type="text" size="20" autocomplete="off"
-                        class="span1" value="" name="price" /><br/>
+                      class="span1" value="" name="price" />
+                      <!-- if I don't clear the input-prepend ruins the popup -->
+                        <br/>
                     </div>
                     <p id="min-price-msg" class="label label-important" style="display:none;">
                         You must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)
@@ -115,7 +120,8 @@
                 {# Submit button #}
                 <div class="row">
                   <div class="span3"> {# we need nested divs for css to not go riley on us #}
-                    <button type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+                    <button id="submit_payment" type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+                    <div onclick="begin_tour()" class="submit-button btn btn-info">Help</div>
                   </div>
                 </div>
 
@@ -136,7 +142,7 @@
 
             {# Right side -- suggested pricing #}
             <div class="span3">
-              <a href="#" data-toggle="collapse" data-target="#pricing-table-container">
+              <a id="suggestions" href="#" data-toggle="collapse" data-target="#pricing-table-container">
                 Want suggestions?
               </a>
  
@@ -208,6 +214,9 @@
       var minimum_price = {{ min_price }};
       var marketplace_uri = '{{ marketplace_uri }}';
     </script>
+    <script src="{{ STATIC_URL }}js/setprice_tour.js"></script>
+    <script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
+    <script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
     <script src="{{STATIC_URL}}js/set_price.js"></script>
     {% if not IS_PRODUCTION %}
     {# This file will be in the directory in production, but nobody should #}
