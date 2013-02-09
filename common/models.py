@@ -9,140 +9,17 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.contrib import admin
-from django.core.exceptions import FieldError, MultipleObjectsReturned
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
-from django.db.models.query import QuerySet
 from django.db.models.signals import post_save
 from django.utils import simplejson
 
+from common.basemodels import *
+from common.balancedmodels import *
+
 from annoying.functions import get_object_or_None
-
-################################################################################
-# Some of this comes from:
-#   http://stackoverflow.com/questions/809210/django-manager-chaining
-# 
-# Basically, we (most) all of our classes to be subclasses of DeleteMixin, so
-# that instead of deleting objects, we simply mark them deleted. Good for
-# recovering from bugs, etc.
-################################################################################
-
-################################################################################
-# MixinManager
-#
-# Don't show deleted objects
-################################################################################
-class MixinManager(models.Manager):    
-
-    def get_query_set(self):
-        try:
-            return self.model.MixinQuerySet(self.model).filter(deleted=False)
-        except FieldError:
-            return self.model.MixinQuerySet(self.model)
-
-
-################################################################################
-# BaseMixin
-#
-# Abstract class. Add things to admin, use MixinManager
-################################################################################
-class BaseMixin(models.Model):
-    admin   = models.Manager()
-    objects = MixinManager()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-
-    class MixinQuerySet(QuerySet):
-
-        def globals(self):
-            try:
-                return self.filter(is_global=True)
-            except FieldError:
-                return self.all()
-
-    class Meta:
-        abstract = True
-
-
-################################################################################
-# DeleteMixin
-#
-# Most things should be a subclass of this. That way they delete by simply
-# marking themselves deleted.
-################################################################################
-class DeleteMixin(BaseMixin):
-    deleted = models.BooleanField(default=False)
-
-    class Meta:
-        abstract = True
-
-    def delete(self):
-        self.deleted = True
-        self.save()
-
-
-################################################################################
-# GlobalMixin
-#
-# Globals, be a subclass of this. 'Nuff said.
-################################################################################
-class GlobalMixin(BaseMixin):
-    is_global = models.BooleanField(default=True)
-
-    class Meta:
-        abstract = True
-
-################################################################################
-# BPAccountWrapper
-################################################################################
-class BPAccountWrapper(DeleteMixin):
-    """
-    Balanced Payment Account - represents either a user or a doctor
-    """
-    uri = models.CharField(max_length=128, blank=True)
-
-    def fetch(self):
-        """
-        Go get the object from Balanced. This is slow.
-        """
-        return balanced.Account.find(uri)
-
-################################################################################
-# BPHoldWrapper
-################################################################################
-class BPHoldWrapper(DeleteMixin):
-    """
-    Balanced Payment Hold - reserves money for up to 7 days
-    """
-    uri   = models.CharField(max_length=128, blank=True)
-
-    # Cached info:
-    cents = models.IntegerField(blank=False)
-
-    def fetch(self):
-        """
-        Go get the object from Balanced. This is slow.
-        """
-        return balanced.Hold.find(uri)
-
-################################################################################
-# BPDebitWrapper
-################################################################################
-class BPDebitWrapper(DeleteMixin):
-    """
-    Balanced Payment Debit - actual charge of a credit card
-    """
-    uri   = models.CharField(max_length=128, blank=True)
-
-    # Cached info:
-    cents = models.IntegerField(blank=False)
-
-    def fetch(self):
-        """
-        Go get the object from Balanced. This is slow.
-        """
-        return balanced.Debit.find(uri)
 
 ################################################################################
 # UserProfile
@@ -160,7 +37,7 @@ class UserProfile(DeleteMixin):
     # Everyone is a User/Skaa, even if they don't know or care. Some are also doctors
     is_doctor = models.BooleanField()
 
-    bp_account_wrapper = models.ForeignKey(BPAccountWrapper, blank=True, null=True)
+    bp_account = models.ForeignKey(BPAccount, blank=True, null=True)
 
     def __unicode__(self):
         out = ""
@@ -679,10 +556,10 @@ class Job(DeleteMixin):
                                                   default=0)
 
     # the hold for the charge (good for up to 7 days after creation)
-    bp_hold_wrapper         = models.ForeignKey(BPHoldWrapper)
+    bp_hold                 = models.ForeignKey(BPHold)
 
     # the actual debit associated with that hold
-    bp_debit_wrapper        = models.ForeignKey(BPDebitWrapper, blank=True, null=True)
+    bp_debit_wrapper        = models.ForeignKey(BPDebit, blank=True, null=True)
     
     # max_length refers to the shorthand versions above
     status                  = models.CharField(max_length=15, 
@@ -729,7 +606,7 @@ class Job(DeleteMixin):
         else:
             out += self.doctor.user.username
 
-        out += " -- price cents: " + str(self.bp_hold_wrapper.cents)
+        out += " -- price cents: " + str(self.bp_hold.cents)
         out += " -- status: " + self.status
         return out
 

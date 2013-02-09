@@ -8,8 +8,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 
 from annoying.decorators import render_to
 
-from common.functions import get_profile_or_None, get_or_create_balanced_account
-from common.models import BPAccountWrapper
+from common.functions import get_profile_or_None, get_merchant_account
 
 import balanced
 import settings
@@ -20,7 +19,7 @@ import settings
 @render_to('withdraw.html')
 def withdraw(request):
     profile = get_profile_or_None(request)
-    account = get_or_create_balanced_account(request, profile)
+    account = get_merchant_account(request, profile)
 
     if request.method == "GET":
         return {

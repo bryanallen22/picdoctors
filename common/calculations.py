@@ -37,6 +37,6 @@ def calculate_job_payout(job, doc):
     if cnt >= 10:
         doctors_cut += doc_info.rating
     
-    return int(math.floor(job.bp_hold_wrapper.cents * doctors_cut))
+    return int(math.floor(job.bp_hold.cents * doctors_cut))
 
 

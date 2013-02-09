@@ -17,7 +17,7 @@ from common.models import Group
 from common.models import Job 
 from common.models import Pic
 from common.models import ungroupedId
-from common.models import BPAccountWrapper
+from common.balancedfunctions import *
 from models import Markup
 from skaa.jobsviews import create_job
 from skaa.jobsviews import update_job_hold
@@ -26,7 +26,6 @@ import ipdb
 import logging
 
 import settings
-import balanced
 
 
 # Require at least $2.00 for each output picture
@@ -57,96 +56,6 @@ def currency_to_cents(currency):
     # This truncates -- does not round. Should be okay.
     price = int(float(stripped)*100)
     return price
-
-def create_or_get_balanced_account(profile, email_address, card_uri):
-    """
-    Create (or retrieve) a balanced account. Create card for the user if they
-    don't already have it.
-    """
-    account = None
-    if not profile.bp_account_wrapper:
-        try:
-            account = balanced.Marketplace.my_marketplace.create_buyer(email_address, card_uri)
-            wrapper = BPAccountWrapper(uri=account.uri)
-            wrapper.save()
-            profile.bp_account_wrapper = wrapper
-            profile.save()
-            
-        except balanced.exc.HTTPError as ex:
-            if ex.category_code == 'duplicate-email-address':
-                # So, Balanced already has an account associated with this email
-                # address, but we don't have it saved under thir profile. Weird.
-                #  1) We didn't save it, but we were supposed to. Why not?
-                #  2) Some weird thing happened with changed emails? Or something? 
-                #     Does that even make sense?
-                #  3) you aren't in production and you keep wiping your db and adding 
-                #     the same user
-                if not settings.IS_PRODUCTION:
-                    # In testlandia we just re link up user accounts with email addresses
-                    # we know that there exists an account with this email address (hence the
-                    # error)
-                    account = balanced.Account.query.filter(email_address=email_address)[0]
-                    # remove all our old cards associated with a pre-existing email_address
-                    # at this point it's not like I can go back and uncreate our new card
-                    for card in account.cards:
-                        card.is_valid = False
-                        card.save()
-
-                    account.add_card(card_uri)
-                    wrapper = BPAccountWrapper(uri=account.uri)
-                    wrapper.save()
-                    profile.bp_account_wrapper = wrapper
-                    profile.save()
-                else:
-                    raise KeyError("Duplicate email address %s... this should have been saved under " \
-                                   "profile.bp_account_wrapper..." % email_address)
-
-                # bob@stuff.com registers, pays, saves cc
-                #account = balanced.Account.query.filter(email_address=email_address)[0]
-                #account.add_card(card_uri)
-            else:
-                # TODO: handle 400 or 409 errors
-                raise
-    else:
-        account = balanced.Account.find( profile.bp_account_wrapper.uri )
-        card = balanced.Card.find( card_uri )
-
-        # As of 12/2012, card.account doesn't even exist. I can see them making it exist
-        # later with 'None' as the value, though.
-        if not hasattr(card, 'account') or not card.account:
-            account.add_card( card_uri )
-        elif card.account.uri != account.uri:
-            raise KeyError("This card's account uri (%s) is already set, and does not match the "\
-                           "current user account uri (%s)!" % (card.account.uri, account.uri))
-
-    return account
-
-
-def place_hold(job, album, user, cents, card_uri):
-    """
-    Do the actual 7 day hold associated with the album and user
-    """
-    email_address = user.email
-    profile = user.get_profile()
-
-    balanced.configure(settings.BALANCED_API_KEY_SECRET)
-
-    account = create_or_get_balanced_account(profile, email_address, card_uri)
-
-    # This creates a hold on the card. We are guaranteed that we can
-    # actually debit this amount for up to 7 days from now.
-    hold = account.hold(cents, meta={}, source_uri=card_uri,
-                      appears_on_statement_as="PicDoctors.com")
-
-    if job:
-        update_job_hold(job, hold)
-    else:
-        create_job(profile, album, hold)
-
-    album.finished = True
-    album.save()
-    logging.info("Album owned by %s has been finished with price at $%s (cents)" %
-                     (album.userprofile.user.username, cents))
 
 def create_hold_handler(request):
     """
@@ -218,11 +127,9 @@ def increase_price(request, job_id):
     if not job or not profile or job.skaa != profile:
         return redirect('/')
         
-    balanced.configure(settings.BALANCED_API_KEY_SECRET)
-
     if profile.bp_account_wrapper:
         # Get the balanced account info. This is slow.
-        acct = balanced.Account.find( profile.bp_account_wrapper.uri )
+        acct = profile.bp_account_wrapper.fetch()
 
         user_credit_cards = [c for c in acct.cards if c.is_valid]
     else:
@@ -230,7 +137,7 @@ def increase_price(request, job_id):
 
 
 
-    original_price = (job.bp_hold_wrapper.cents / 100) 
+    original_price = (job.bp_hold.cents / 100) 
     min_price = original_price + 1
     if request.method == 'GET':
         pass
@@ -265,11 +172,9 @@ def set_price(request):
 
     profile = get_profile_or_None(request)
     
-    balanced.configure(settings.BALANCED_API_KEY_SECRET)
-
     if profile.bp_account_wrapper:
         # Get the balanced account info. This is slow.
-        acct = balanced.Account.find( profile.bp_account_wrapper.uri )
+        acct = profile.bp_account_wrapper.fetch()
 
         user_credit_cards = [c for c in acct.cards if c.is_valid]
     else:

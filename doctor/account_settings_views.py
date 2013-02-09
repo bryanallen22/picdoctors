@@ -7,8 +7,7 @@ from django.core.urlresolvers import reverse
 
 from annoying.decorators import render_to
 
-from common.functions import get_profile_or_None, get_or_create_balanced_account
-from common.models import BPAccountWrapper
+from common.functions import get_profile_or_None, get_merchant_account
 
 import balanced
 import settings
@@ -20,20 +19,10 @@ def create_bank_account(request):
     if not profile or not profile.is_doctor:
         return HttpResponse('{ }', mimetype='application/json')
 
-    try:
-        # Configure balanced
-        balanced.configure(settings.BALANCED_API_KEY_SECRET)
-        account = get_or_create_balanced_account(request, profile)
+    account = get_merchant_account(request, profile)
 
-        # Add the bank account to the user's account
-        account.add_bank_account(request.POST['bank_account_uri'])
-
-    except balanced.exc.HTTPError as ex:
-        if ex.category_code == 'duplicate-email-address':
-            raise KeyError("Duplicate email address %s... this should have been saved under " \
-                           "profile.bp_account_wrapper..." % request.user.email)
-        else:
-            raise
+    # Add the bank account to the user's account
+    account.add_bank_account(request.POST['bank_account_uri'])
 
     # TODO add bank stuff here
     ret = { "success" : True }
@@ -46,12 +35,12 @@ def delete_bank_account(request):
     # the logged in user. Just to be sure.
 
     profile = get_profile_or_None(request)
-    if not profile or not profile.bp_account_wrapper:
+    if not profile or not profile.bp_account:
         ret = { "success" : False }
     else:
         balanced.configure(settings.BALANCED_API_KEY_SECRET)
 
-        account = balanced.Account.find(profile.bp_account_wrapper.uri)
+        account = profile.bp_account.fetch()
         bank_accounts_uris = [ba.uri for ba in account.bank_accounts if ba.is_valid]
         delete_uri = request.POST['bank_account_uri']
         if delete_uri in bank_accounts_uris:
@@ -106,7 +95,7 @@ def merchant_info(request):
     else:
         raise
 
-    account = get_or_create_balanced_account(request, profile)
+    account = get_merchant_account(request, profile)
 
     try:
         account.add_merchant(merchant_data)
@@ -125,9 +114,8 @@ def merchant_info(request):
 @render_to('account_settings_doc.html')
 def settings_doc(request, parent_params):
     profile = get_profile_or_None(request)
-    balanced.configure(settings.BALANCED_API_KEY_SECRET)
-    if profile.bp_account_wrapper:
-        account = balanced.BankAccount.find(profile.bp_account_wrapper.uri)
+    if profile.bp_account:
+        account = profile.bp_account.fetch()
         bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
         is_merchant = 'merchant' in account.roles
     else:

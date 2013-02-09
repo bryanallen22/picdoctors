@@ -9,7 +9,7 @@ from annoying.decorators import render_to
 from skaa.account_settings_views import settings_user
 from doctor.account_settings_views import settings_doc
 
-from common.functions import get_profile_or_None, get_or_create_balanced_account
+from common.functions import get_profile_or_None, get_merchant_account
 
 import logging
 
@@ -59,7 +59,7 @@ def account_settings_delete_card(request):
     
     profile = get_profile_or_None(request)
     balanced.configure(settings.BALANCED_API_KEY_SECRET)
-    acct = balanced.Account.find( profile.bp_account_wrapper.uri )
+    acct = profile.bp_account.fetch()
     user_card_uris = [ c.uri for c in acct.cards ]
 
     if card_uri in user_card_uris:
@@ -108,8 +108,7 @@ def change_email(request):
 
     # Change the email on the balanced side
     try:
-        balanced.configure(settings.BALANCED_API_KEY_SECRET)
-        account = get_or_create_balanced_account(request, profile)
+        account = get_merchant_account(request, profile)
         account.email_address = new_email
         account.save()
 

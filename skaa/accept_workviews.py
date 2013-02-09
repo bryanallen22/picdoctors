@@ -6,11 +6,12 @@ from django.contrib.auth.models import User
 
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_merchant_account
 from django.contrib.auth.decorators import login_required
 
 from common.models import Album, Group, Job, UserProfile, DocRating
 from common.jobs import send_job_status_change
+from common.balancedfunctions import *
 
 import ipdb
 import logging
@@ -26,7 +27,8 @@ def accept_work(request, job_id):
 
     if request.method == 'POST':
         if job and profile and job.skaa == profile:
-            #TODO Put money into Doctors account 
+            do_debit(request, profile, job)
+
             job.status = Job.USER_ACCEPTED
             job.save()
 
@@ -41,6 +43,7 @@ def accept_work(request, job_id):
             dr.save()
 
             send_job_status_change(job, profile)
+
             return redirect(reverse('album', args=[job.album.id]))
 
     return {'job_id':job_id}

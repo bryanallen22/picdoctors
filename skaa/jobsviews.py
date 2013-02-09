@@ -9,7 +9,7 @@ from common.models import Album
 from common.models import Group
 from common.models import UserProfile
 from common.models import Pic
-from common.models import BPHoldWrapper
+from common.balancedmodels import BPHold
 from common.functions import get_profile_or_None
 from common.calculations import calculate_job_payout
 from django.contrib.auth.models import User
@@ -67,7 +67,7 @@ def update_old_jobs(list_of_jobs):
     seven_days_ago = now - timedelta(days=7)
 
     for job in list_of_jobs:
-        if job.bp_hold_wrapper.created < seven_days_ago:
+        if job.bp_hold.created < seven_days_ago:
             job.status=Job.OUT_OF_MARKET
             job.save()
             # TODO we may need to do other things in the future
@@ -133,12 +133,12 @@ def generate_skaa_actions(job):
 # when the user sets a price, we create a job
 def create_job(profile, album, hold):
     job = None
-    bp_hold_wrapper = BPHoldWrapper(uri=hold.uri, cents=hold.amount)
-    bp_hold_wrapper.save()
+    bp_hold= BPHold(uri=hold.uri, cents=hold.amount)
+    bp_hold.save()
     if album is not None:
         job = Job(skaa=profile,
                 album=album, 
-                bp_hold_wrapper=bp_hold_wrapper,
+                bp_hold=bp_hold,
                 status=Job.IN_MARKET)
         
         job.save()
@@ -151,13 +151,13 @@ def create_job(profile, album, hold):
 # When a user increases the price of a job
 # we call this method to update the hold
 def update_job_hold(job, hold):
-    bp_hold_wrapper = BPHoldWrapper(uri=hold.uri, cents=hold.amount)
-    bp_hold_wrapper.save()
+    bp_hold = BPHold(uri=hold.uri, cents=hold.amount)
+    bp_hold.save()
 
-    if job.bp_hold_wrapper:
-        job.bp_hold_wrapper.delete()
+    if job.bp_hold:
+        job.bp_hold.delete()
 
-    job.bp_hold_wrapper = bp_hold_wrapper
+    job.bp_hold = bp_hold
     job.save()
 
     return job
