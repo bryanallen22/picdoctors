@@ -83,7 +83,7 @@ def generate_skaa_actions(job):
     contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), url_redirect)
     view_markup_url= reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Markups', view_markup_url, url_redirect)
-    view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), url_redirect)
+    view_album = DynamicAction('Before & After Album', reverse('album', args=[job.album.id]), url_redirect)
     accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), url_redirect)
     refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), url_redirect)
     switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), url_redirect)

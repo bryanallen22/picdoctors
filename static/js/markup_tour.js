@@ -36,6 +36,5 @@ $(function(){
 });
 
 function begin_tour(){
-
   tour.restart();
 }

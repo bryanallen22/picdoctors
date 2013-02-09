@@ -94,7 +94,7 @@ def generate_doctor_actions(job):
     
     view_markup_url = reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Job', view_markup_url, True)
-    view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
+    view_album = DynamicAction('Before & After Album', reverse('album', args=[job.album.id]), True)
     
 
     if job.status == Job.IN_MARKET:

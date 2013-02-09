@@ -18,8 +18,29 @@
       <div class="span2 redirect_row_buttons">
       </div>
     </div>
-    <div class="page-header row" style="text-align: center;">
-      <h1>{{ title }}</h1>
+    <div class="page-header row" style="text-align: left;">
+      <div class="span5">
+        <h1>{{ title }}</h1>
+      </div>
+      <div class="offset5 span2" style="text-align: right;">
+        <div class="btn btn-info" onclick="begin_tour()">
+          Help Me
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div id="col1_hook" class="span1"></div>
+      <div id="col2_hook" class="span1"></div>
+      <div id="col3_hook" class="span1"></div>
+      <div id="col4_hook" class="span1"></div>
+      <div id="col5_hook" class="span1"></div>
+      <div id="col6_hook" class="span1"></div>
+      <div id="col7_hook" class="span1"></div>
+      <div id="col8_hook" class="span1"></div>
+      <div id="col9_hook" class="span1"></div>
+      <div id="col10_hook" class="span1"></div>
+      <div id="col11_hook" class="span1"></div>
+      <div id="col12_hook" class="span1"></div>
     </div>
     <div class="row job_header_row lead">
     {% if doc_page %}
@@ -57,7 +78,7 @@
       <div class="span2">
         &nbsp; 
       </div>
-      <div class="span2">
+      <div  class="span2">
         Actions
       </div>
     {% endif %}
@@ -90,6 +111,14 @@
   <script src="{{ STATIC_URL }}js/jobs.js"></script>
   <script src="{{ STATIC_URL }}js/animatedcollapse.js"></script>
   <script src="{{ STATIC_URL }}js/shared.js"></script>
+{% if doc_page %}
+  <script src="{{ STATIC_URL }}js/job_doc_tour.js"></script>
+{% else %}
+  <script src="{{ STATIC_URL }}js/job_user_tour.js"></script>
+{% endif %}
+  <script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
+  <script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
+
   <script>
     var doc_page = {{ doc_page|lower }};
     $(function() {

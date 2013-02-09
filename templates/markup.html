@@ -37,7 +37,7 @@
     <br/>
     {% for pic in pics %}
     <div class='markup_outer'>
-      <span class='markup_pic_container' style="background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;"  uuid="{{ pic.uuid }}" >
+      <span class='markup_pic_container' style="{% if read_only %}cursor:default;{% endif %}background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;"  uuid="{{ pic.uuid }}" >
         {# Do not, under any circumstances, change the padding or margin of  #}
         {# this .markup_pic_container or .pic unless you are 200% certain    #}
         {# that you aren't messing things up. Careful calculation of offsets #}
@@ -78,7 +78,7 @@
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
       <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Previous</a>
       <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 12px;'>Next</a>
-      <div class="btn btn-info btn-large" onclick="begin_tour()" style="display : block; margin-top:12px;">Help</div>
+      <div class="btn btn-info btn-large" onclick="begin_tour()" style="display : block;margin-top:12px;">Help Me</div>
       {% if is_job_doctor  %}
 
       <form action="{% url doc_upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
