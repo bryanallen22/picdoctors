@@ -12,7 +12,6 @@ import settings
 
 import ipdb
 #ipdb.set_trace()
-#balanced.configure(settings.BALANCED_API_KEY_SECRET)
 
 ################################################################################
 # BPAccount
@@ -27,7 +26,8 @@ class BPAccount(DeleteMixin):
         """
         Go get the object from Balanced. This is slow.
         """
-        return balanced.Account.find(uri)
+        balanced.configure(settings.BALANCED_API_KEY_SECRET)
+        return balanced.Account.find(self.uri)
 
 ################################################################################
 # BPHold
@@ -45,7 +45,8 @@ class BPHold(DeleteMixin):
         """
         Go get the object from Balanced. This is slow.
         """
-        return balanced.Hold.find(uri)
+        balanced.configure(settings.BALANCED_API_KEY_SECRET)
+        return balanced.Hold.find(self.uri)
 
 ################################################################################
 # BPCredit
@@ -63,7 +64,8 @@ class BPCredit(DeleteMixin):
         """
         Go get the object from Balanced. This is slow.
         """
-        return balanced.Credit.find(uri)
+        balanced.configure(settings.BALANCED_API_KEY_SECRET)
+        return balanced.Credit.find(self.uri)
 
 ################################################################################
 # BPDebit
@@ -83,5 +85,6 @@ class BPDebit(DeleteMixin):
         """
         Go get the object from Balanced. This is slow.
         """
-        return balanced.Debit.find(uri)
+        balanced.configure(settings.BALANCED_API_KEY_SECRET)
+        return balanced.Debit.find(self.uri)
 

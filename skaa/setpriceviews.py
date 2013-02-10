@@ -19,7 +19,6 @@ from common.models import Pic
 from common.models import ungroupedId
 from common.balancedfunctions import *
 from models import Markup
-from skaa.jobsviews import create_job
 from skaa.jobsviews import update_job_hold
 
 import ipdb
@@ -127,9 +126,9 @@ def increase_price(request, job_id):
     if not job or not profile or job.skaa != profile:
         return redirect('/')
         
-    if profile.bp_account_wrapper:
+    if profile.bp_account:
         # Get the balanced account info. This is slow.
-        acct = profile.bp_account_wrapper.fetch()
+        acct = profile.bp_account.fetch()
 
         user_credit_cards = [c for c in acct.cards if c.is_valid]
     else:
@@ -172,9 +171,9 @@ def set_price(request):
 
     profile = get_profile_or_None(request)
     
-    if profile.bp_account_wrapper:
+    if profile.bp_account:
         # Get the balanced account info. This is slow.
-        acct = profile.bp_account_wrapper.fetch()
+        acct = profile.bp_account.fetch()
 
         user_credit_cards = [c for c in acct.cards if c.is_valid]
     else:

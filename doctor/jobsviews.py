@@ -60,7 +60,7 @@ def new_job_page(request, page=1):
         # if a job hasn't been taken in 7 days inform user to up the price!
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
         seven_days_ago = now - timedelta(days=6, hours=23)
-        jobs = Job.objects.filter(doctor__isnull=True).filter(bp_hold_wrapper__created__gte=seven_days_ago)
+        jobs = Job.objects.filter(doctor__isnull=True).filter(bp_hold__created__gte=seven_days_ago)
     else:
         return redirect('/')
 

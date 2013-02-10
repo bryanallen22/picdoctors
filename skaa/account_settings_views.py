@@ -13,8 +13,8 @@ import ipdb
 def settings_user(request, parent_params):
     profile = get_profile_or_None(request)
     
-    if profile.bp_account_wrapper:
-        acct = profile.bp_account_wrapper.fetch()
+    if profile.bp_account:
+        acct = profile.bp_account.fetch()
 
         user_credit_cards = [c for c in acct.cards if c.is_valid]
     else:

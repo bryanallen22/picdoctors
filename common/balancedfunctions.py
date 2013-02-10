@@ -12,7 +12,107 @@ import settings
 
 import ipdb
 #ipdb.set_trace()
-#balanced.configure(settings.BALANCED_API_KEY_SECRET)
+
+from skaa.jobsviews import create_job
+
+################################################################################
+# Accounts stuff
+################################################################################
+def get_buyer_account(profile, email_address, card_uri):
+    """
+    Create (or retrieve) a balanced account. Create card for the user if they
+    don't already have it.
+    """
+    account = None
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+    if not profile.bp_account:
+        try:
+            account = balanced.Marketplace.my_marketplace.create_buyer(email_address, card_uri)
+            wrapper = BPAccount(uri=account.uri)
+            wrapper.save()
+            profile.bp_account = wrapper
+            profile.save()
+            
+        except balanced.exc.HTTPError as ex:
+            if ex.category_code == 'duplicate-email-address':
+                # So, Balanced already has an account associated with this email
+                # address, but we don't have it saved under thir profile. Weird.
+                #  1) We didn't save it, but we were supposed to. Why not?
+                #  2) Some weird thing happened with changed emails? Or something? 
+                #     Does that even make sense?
+                #  3) you aren't in production and you keep wiping your db and adding 
+                #     the same user
+                if not settings.IS_PRODUCTION:
+                    # In testlandia we just re link up user accounts with email addresses
+                    # we know that there exists an account with this email address (hence the
+                    # error)
+                    account = balanced.Account.query.filter(email_address=email_address)[0]
+                    # remove all our old cards associated with a pre-existing email_address
+                    # at this point it's not like I can go back and uncreate our new card
+                    for card in account.cards:
+                        card.is_valid = False
+                        card.save()
+
+                    account.add_card(card_uri)
+                    wrapper = BPAccount(uri=account.uri)
+                    wrapper.save()
+                    profile.bp_account = wrapper
+                    profile.save()
+                else:
+                    raise KeyError("Duplicate email address %s... this should have been saved under " \
+                                   "profile.bp_account..." % email_address)
+
+                # bob@stuff.com registers, pays, saves cc
+                #account = balanced.Account.query.filter(email_address=email_address)[0]
+                #account.add_card(card_uri)
+            else:
+                # TODO: handle 400 or 409 errors
+                raise
+    else:
+        account = profile.bp_account.fetch()
+        card = balanced.Card.find( card_uri )
+
+        # As of 12/2012, card.account doesn't even exist. I can see them making it exist
+        # later with 'None' as the value, though.
+        if not hasattr(card, 'account') or not card.account:
+            account.add_card( card_uri )
+        elif card.account.uri != account.uri:
+            raise KeyError("This card's account uri (%s) is already set, and does not match the "\
+                           "current user account uri (%s)!" % (card.account.uri, account.uri))
+
+    return account
+
+def get_merchant_account(request, profile=None):
+    # Configure balanced
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+    if not profile:
+        profile = get_profile_or_None(request)
+
+    # Get their account if they have one
+    if profile.bp_account:
+        account = profile.bp_account.fetch()
+    else:
+        # Create a new account and associate it with this profile
+        account = balanced.Account().save()
+        try:
+            account.email_address = request.user.email
+            account.save()
+        except balanced.exc.HTTPError as ex:
+            if ex.category_code == 'duplicate-email-address':
+                if not settings.IS_PRODUCTION:
+                    # only in non production will we take control. See similar
+                    # comments above in get_buyer_account
+                    account = balanced.Account.query.filter(email_address=request.user.email)[0]
+                    # TODO - invalidate existing things on this account?
+                else:
+                    raise KeyError("Duplicate email address %s... this should have been saved under " \
+                                   "profile.bp_account..." % email_address)
+        wrapper = BPAccount(uri=account.uri)
+        wrapper.save()
+        profile.bp_account = wrapper
+        profile.save()
+
+    return account
 
 ################################################################################
 # Bank Account stuff
@@ -29,6 +129,7 @@ def place_hold(job, album, user, cents, card_uri):
     """
     Do the actual 7 day hold associated with the album and user
     """
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
     email_address = user.email
     profile = user.get_profile()
 
@@ -55,9 +156,10 @@ def place_hold(job, album, user, cents, card_uri):
 ################################################################################
 def do_debit(request, profile, job):
     # get the balanced account wrapper
-    ipdb.set_trace()
-    acct = profile.bp_account_wrapper.fetch()
+    balanced.configure(settings.BALANCED_API_KEY_SECRET)
+    acct = profile.bp_account.fetch()
 
+    ipdb.set_trace()
     #acct.debit(
     #    appears_on_statement_as='PicDoctors',
     #    amount=job.,

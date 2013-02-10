@@ -559,7 +559,7 @@ class Job(DeleteMixin):
     bp_hold                 = models.ForeignKey(BPHold)
 
     # the actual debit associated with that hold
-    bp_debit_wrapper        = models.ForeignKey(BPDebit, blank=True, null=True)
+    bp_debit                = models.ForeignKey(BPDebit, blank=True, null=True)
     
     # max_length refers to the shorthand versions above
     status                  = models.CharField(max_length=15, 

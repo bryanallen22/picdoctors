@@ -9,7 +9,9 @@ from annoying.decorators import render_to
 from skaa.account_settings_views import settings_user
 from doctor.account_settings_views import settings_doc
 
-from common.functions import get_profile_or_None, get_merchant_account
+from common.functions import get_profile_or_None
+from common.balancedfunctions import get_merchant_account
+
 
 import logging
 

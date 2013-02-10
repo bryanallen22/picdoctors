@@ -7,7 +7,8 @@ from django.core.urlresolvers import reverse
 
 from annoying.decorators import render_to
 
-from common.functions import get_profile_or_None, get_merchant_account
+from common.functions import get_profile_or_None
+from common.balancedfunctions import get_merchant_account
 
 import balanced
 import settings
