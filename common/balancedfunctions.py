@@ -11,7 +11,7 @@ import balanced
 import settings
 
 import ipdb
-ipdb.set_trace()
+#ipdb.set_trace()
 #balanced.configure(settings.BALANCED_API_KEY_SECRET)
 
 ################################################################################
