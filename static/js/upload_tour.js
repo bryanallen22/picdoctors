@@ -11,19 +11,22 @@ $(function(){
   tour.addStep({
     element: ".fileupload-addbutton", 
     title: "Add Pictures", 
-    content: "Or click here to open a File Dialog and choose your pictures that way!" 
+    content: "Or click here to open a File Dialog and choose your pictures that way!",
+    placement:"bottom",
   });
 
   tour.addStep({
     element: "#group", 
     title: "Group Pictures", 
-    content: "Do you want the best part of multiple pictures combined? Click individual pictures, in the box on the left, to select them, and then click the Group Button."
+    content: "Do you want the best part of multiple pictures combined? Click individua$l pictures, in the box on the left, to select them, and then click the Group Button.",
+    placement:"bottom",
   });
 
   tour.addStep({
     element: "#next", 
-    title: "Finished Choosing Pictures", 
-    content: "If you are finished choosing pictures to be edited, click the Next Button."
+    title: "Finished Adding Pictures", 
+    content: "If you are finished choosing pictures to be edited, click the Next Button.",
+    placement:"bottom",
   });
 
 

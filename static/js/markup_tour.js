@@ -29,7 +29,8 @@ $(function(){
   tour.addStep({
     element: "#next", 
     title: "Finished", 
-    content: "If you are finished describing the changes you'd like done click next."
+    content: "If you are finished describing the changes you'd like done click next.",
+    placement:"bottom",
   });
 
 
