@@ -157,14 +157,19 @@ def place_hold(job, album, user, cents, card_uri):
 def do_debit(request, profile, job):
     # get the balanced account wrapper
     balanced.configure(settings.BALANCED_API_KEY_SECRET)
-    acct = profile.bp_account.fetch()
+    user_acct = profile.bp_account.fetch()
+    doc_acct = job.doctor.bp_account.fetch()
 
-    ipdb.set_trace()
-    #acct.debit(
-    #    appears_on_statement_as='PicDoctors',
-    #    amount=job.,
-    #    description='Some descriptive text for the debit in the dashboard',
-    #)
+    if 'merchant' not in doc_acct.roles:
+        raise KeyError("Doctors %s does not have a merchant balanced role" % job.doctor.user.email)
+
+    user_acct.debit(
+        amount                  = job.bp_hold.cents,
+        description             = 'Some descriptive text for the debit in the dashboard',
+        hold_uri                = job.bp_hold.uri,
+        merchant_uri            = doc_acct.uri,
+        appears_on_statement_as = 'PicDoctors',
+    )
 
 
 ################################################################################

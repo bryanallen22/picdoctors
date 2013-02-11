@@ -540,7 +540,7 @@ class Job(DeleteMixin):
 
     #Never blank, no album = no job. related_name since Album already has a FK
     album                   = models.ForeignKey(Album, 
-                                           db_index=True)
+                                                db_index=True)
     skaa                    = models.ForeignKey(UserProfile, 
                                                 related_name='job_owner', 
                                                 db_index=True)
