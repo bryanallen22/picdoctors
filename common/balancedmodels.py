@@ -38,7 +38,7 @@ class BPHold(DeleteMixin):
     """
     uri   = models.CharField(max_length=128, blank=True)
 
-    # Cached info:
+    ### Cached info:
     cents = models.IntegerField(blank=False)
 
     def fetch(self):
@@ -57,7 +57,8 @@ class BPCredit(DeleteMixin):
     """
     uri   = models.CharField(max_length=128, blank=True)
 
-    # Cached info:
+    ### Cached info:
+    # Amount of money given to the doctor
     cents = models.IntegerField(blank=False)
 
     def fetch(self):
@@ -74,11 +75,15 @@ class BPDebit(DeleteMixin):
     """
     Balanced Payment Debit - actual charge of a credit card
     """
-    uri   = models.CharField(max_length=128, blank=True)
+    uri = models.CharField(max_length=128, blank=True)
 
-    # Cached info:
-    cents             = models.IntegerField(blank=False)
+    ### Cached info:
+    
+    # How much was the debit? Check the associated_hold.cents
+    associated_hold   = models.ForeignKey(BPHold)
+
     # Many debits can be associated with a single credit (saves $ on ACH transfer fee)
+    # Note: if this is null, it the doctor hasn't been paid yet!
     associated_credit = models.ForeignKey(BPCredit, blank=True, null=True)
 
     def fetch(self):

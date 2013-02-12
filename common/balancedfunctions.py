@@ -114,6 +114,15 @@ def get_merchant_account(request, profile=None):
 
     return account
 
+def is_merchant(account):
+    """
+    Checks to see if this person is a merchant. 'account' is a fetched balanced
+    payment account
+    """
+    if 'merchant' in account.roles:
+        return True
+    return False
+
 ################################################################################
 # Bank Account stuff
 ################################################################################
@@ -160,10 +169,10 @@ def do_debit(request, profile, job):
     user_acct = profile.bp_account.fetch()
     doc_acct = job.doctor.bp_account.fetch()
 
-    if 'merchant' not in doc_acct.roles:
+    if not is_merchant(doc_acct):
         raise KeyError("Doctors %s does not have a merchant balanced role" % job.doctor.user.email)
 
-    user_acct.debit(
+    debit = user_acct.debit(
         amount                  = job.bp_hold.cents,
         description             = 'Some descriptive text for the debit in the dashboard',
         hold_uri                = job.bp_hold.uri,
@@ -171,8 +180,48 @@ def do_debit(request, profile, job):
         appears_on_statement_as = 'PicDoctors',
     )
 
+    # Create a wrapper in our local db
+    bp_debit = BPDebit(uri=debit.uri, associated_hold=job.bp_hold)
+    bp_debit.save()
+    job.bp_debit = bp_debit
+    job.save()
+
 
 ################################################################################
 # Credit stuff
 ################################################################################
+def get_withdraw_jobs(doc_profile):
+    """
+    Get jobs that are available for withdrawal for a given doctor.
+    """
+
+    # This could be slow some day if a doctor has a bajillion jobs, we'd hate
+    # to pull them all into memory just to find the unfinished ones, but I can't
+    # figure out a way to do both steps at once
+    jobs = Job.objects.filter(doctor=doc_profile, approved=True)
+
+    return [job for job in jobs if job.bp_debit.associated_credit is None]
+
+def credit_doctor(doc_profile):
+    """
+    Fully credit the doctor for all unpaid jobs
+    """
+    withdraw_jobs = get_withdraw_jobs(doc_profile)
+    account = doc_profile.bp_account.fetch()
+    bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
+    transfer_account = bank_accounts[0]
+
+    total = 0
+    for job in withdraw_jobs:
+        total += job.payout_price_cents
+
+    credit = transfer_account.credit( total )
+    bp_credit = BPCredit( uri=credit.uri, cents=total )
+    bp_credit.save()
+
+    for job in withdraw_jobs:
+        job.bp_debit.associated_credit = bp_credit
+        job.bp_debit.save()
+
+    return total
 

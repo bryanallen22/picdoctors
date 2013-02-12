@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from annoying.decorators import render_to
 
 from common.functions import get_profile_or_None
-from common.balancedfunctions import get_merchant_account
+from common.balancedfunctions import get_merchant_account, is_merchant
 
 import balanced
 import settings
@@ -118,14 +118,14 @@ def settings_doc(request, parent_params):
     if profile.bp_account:
         account = profile.bp_account.fetch()
         bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
-        is_merchant = 'merchant' in account.roles
+        merchant = is_merchant(account)
     else:
         bank_accounts = None
-        is_merchant = False
+        merchant = False
 
     my_params = {
         'bank_accounts'     : bank_accounts,
-        'is_merchant'       : is_merchant,
+        'is_merchant'       : merchant,
     }
 
     my_params.update(parent_params)

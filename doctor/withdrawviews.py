@@ -8,25 +8,72 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 
 from annoying.decorators import render_to
 
+from common.models import *
 from common.functions import get_profile_or_None
-from common.balancedfunctions import get_merchant_account
+from common.balancedfunctions import get_merchant_account, get_withdraw_jobs, is_merchant, credit_doctor
 
+from collections import namedtuple
 
 import balanced
 import settings
 
 #register = template.Library()
 
+minimum_withdraw = 5.00
+
+WithdrawRow = namedtuple('WithdrawRow', 'album_url, album_img_url, date, doc_earnings')
+
+def generate_rows(withdraw_jobs):
+    """
+    Generate rows for the withdraw page
+    """
+    ret = []
+    for wj in withdraw_jobs:
+        # Use the first pic of the job as thumbnail
+        pic_url = Pic.objects.get(album=wj.album, group__sequence__exact=1) \
+                            .get_thumb_url()
+
+        ret.append( WithdrawRow(
+            album_url=reverse('markup_album', args=[wj.album.id, 1]), 
+            album_img_url=pic_url,
+            date=wj.created,
+            doc_earnings=wj.payout_price_cents,
+        ))
+
+    return ret
+
 @login_required
 @render_to('withdraw.html')
 def withdraw(request):
     profile = get_profile_or_None(request)
-    account = get_merchant_account(request, profile)
-
     if request.method == "GET":
+        account = get_merchant_account(request, profile)
+        bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
+
+        if profile.is_doctor and len(bank_accounts) > 0 and is_merchant(account):
+            valid = True
+        else:
+            valid = False
+
+        withdraw_jobs = get_withdraw_jobs(profile)
+
+        total = 0
+        for job in withdraw_jobs:
+            total += job.payout_price_cents
+
+        rows = generate_rows(withdraw_jobs)
+
         return {
-            'balance' : 5.00,
+            'valid'            : valid,
+            'balance'          : float(total)/100,
+            'minimum_withdraw' : minimum_withdraw,
+            'rows'             : rows,
         }
+
     elif request.method == "POST":
-        return {}
+        amount = credit_doctor(profile)
+        return {
+            'transfer_complete' : True,
+            'amount'            : amount,
+        }
 

@@ -560,6 +560,11 @@ class Job(DeleteMixin):
 
     # the actual debit associated with that hold
     bp_debit                = models.ForeignKey(BPDebit, blank=True, null=True)
+
+    # You might think that there should be a bp_credit in here. You are wrong.
+    # We don't actually issue a credit at the end of every job (to save on ACH fees),
+    # so you'll have to look through the various BPDebits for ones with 
+    # associated_credit == None
     
     # max_length refers to the shorthand versions above
     status                  = models.CharField(max_length=15, 
