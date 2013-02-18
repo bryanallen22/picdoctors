@@ -55,6 +55,16 @@ def new_job_page(request, page=1):
     jobs = None
     profile = get_profile_or_None(request)
     if profile and profile.is_doctor:
+        if not DoctorInfo.can_view_jobs(request, profile):
+            doc_info = DoctorInfo.get_docinfo_or_None(profile)
+            if not doc_info.is_merchant:
+                return redirect( reverse('account_settings') + '#merchant_tab' )
+            elif not doc_info.has_bank_account:
+                return redirect( reverse('account_settings') + '#bank_tab' )
+            else:
+                # I don't know how we got here, there is only 2 reasons why
+                # they can't view a job, so why else would we reject them?
+                return redirect('/')
         # only show jobs where a hold has been placed in the last 6 days 23 hours 
         # (hold only lasts 7 days)
         # if a job hasn't been taken in 7 days inform user to up the price!

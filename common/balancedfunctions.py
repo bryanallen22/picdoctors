@@ -127,6 +127,16 @@ def is_merchant(account):
 # Bank Account stuff
 ################################################################################
 
+def has_bank_account(account):
+    """
+    Checks to see if this person(doctor) has a bank account associated with their account. 
+    'account' is a fetched balanced payment account
+    """
+    bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
+    if len(bank_accounts) > 0:
+        return True
+    return False
+
 ################################################################################
 # Credit Card stuff
 ################################################################################

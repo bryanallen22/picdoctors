@@ -230,3 +230,6 @@ EMAIL_USE_TLS = True
 # used by @login_required
 LOGIN_URL='/signin/'
 
+DEBUG_TOOLBAR_CONFIG = {
+   'INTERCEPT_REDIRECTS': True,
+}

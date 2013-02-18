@@ -18,7 +18,7 @@ $(function(){
   tour.addStep({
     element: "#group", 
     title: "Group Pictures", 
-    content: "Do you want the best part of multiple pictures combined? Click individua$l pictures, in the box on the left, to select them, and then click the Group Button.",
+    content: "Do you want the best part of multiple pictures combined? Click individual pictures, in the box on the left, to select them, and then click the Group Button.",
     placement:"bottom",
   });
 

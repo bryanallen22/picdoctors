@@ -7,8 +7,10 @@
         <h1>Earn Money with Photoshop</h1>
         <p>Edit pictures to earn money from your own home</p>
         <p>
-        <a class="btn btn-primary btn-large" href="/doc_signin/?next=/new_jobs/">Become a Doctor</a>
-          <a class="btn btn-large" href="#">Learn More &raquo;</a></p>
+          <a id="become_doc_btn" class="btn btn-primary btn-large"
+            href="/doc_signin/?next=/account_settings/#merchant_tab">Become a Doctor</a>
+          <a class="btn btn-large btn-info" onclick="begin_tour()">Learn More &raquo;</a>
+        </p>
       </div>
 
       <div class="row">
@@ -32,7 +34,8 @@
         <div class="span3">
           <img class="icon" src="{{ STATIC_URL }}images/money.png">
           <h2>4. Receive payment</h2>
-           <p>Once they've approved your work, you'll receive your payout within a few days.</p>
+           <p>Once the owner's approved your work, your PicDoctor's account will be credited.  You can
+           choose when to withdraw your funds.</p>
        </div>
       </div>
     </div>
@@ -40,4 +43,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ STATIC_URL }}js/settings_tour.js"></script>
+<script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
+<script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
 {% endblock %}

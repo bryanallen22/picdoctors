@@ -146,7 +146,7 @@ $(function(){
  */
 $(function(){
 
-  $('input:radio[name=merchant_type_radio]').click( function() {
+  $('input:radio[name=merchant_type]').click( function() {
     var checked = $(this).val();
     if( checked == "person" ) {
       // Individual person

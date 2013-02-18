@@ -61,7 +61,11 @@ class DoctorInfo(DeleteMixin):
 
     rating             = models.FloatField(default=0.0)
 
-    approval_count   = models.IntegerField(default=0)
+    approval_count     = models.IntegerField(default=0)
+    
+    is_merchant        = models.BooleanField(default=False)
+
+    has_bank_account   = models.BooleanField(default=False)
 
     @staticmethod
     def get_docinfo_or_None(profile):
@@ -74,6 +78,24 @@ class DoctorInfo(DeleteMixin):
         if self:
             self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
             self.save()
+
+    @staticmethod
+    def can_view_jobs(request, profile):
+        from common.balancedfunctions import has_bank_account, is_merchant, get_merchant_account
+        self = DoctorInfo.get_docinfo_or_None(profile)
+
+        if self:
+
+            # if they can't view, check to see the merchant/bankaccount status has changed
+            if not self.is_merchant or not self.has_bank_account:
+                merchant_account = get_merchant_account(request, profile)
+                self.is_merchant = is_merchant(merchant_account)
+                self.has_bank_account = has_bank_account(merchant_account)
+                self.save()
+            return self.is_merchant and self.has_bank_account
+        else:
+            return False
+
 
 def create_user_profile(sender, instance, created, **kwargs):
         if created:

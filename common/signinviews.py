@@ -12,7 +12,7 @@ from common.models import Album, UserProfile, DoctorInfo, SkaaInfo
 from doctor.jobsviews import doc_job_page
 from views import index
 
-import pdb
+import ipdb
 import logging
 import datetime
 
@@ -36,6 +36,7 @@ def auth(email, password):
         { } -- Everything good
         { 'bad_email_or_password' : True } -- Self explanatory
     """
+    email = email.lower()
     user = authenticate(username=email, password=password)
     if user is not None and user.is_active:
         return ( user, { } )
@@ -60,7 +61,10 @@ def create_user(email, password, confirm_password, usertype):
       ( None, { 'passwords_didnt_match' : True } )
           Self explanatory
     """
-
+    
+    # you shouldn't be able to create two different users with different emails
+    # just based on capitalization
+    email = email.lower()
     if password != confirm_password:
         return ( None, { 'passwords_didnt_match' : True } )
 
