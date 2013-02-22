@@ -526,10 +526,11 @@ def setup_packages():
     #
     # node stuff. Probably don't actually need this on the server, though
     #
-    sudo('apt-add-repository ppa:chris-lea/node.js -y')
-    sudo('apt-get update')
-    sudo('apt-get install nodejs npm -y')
-    sudo('npm install -g less jshint recess uglify-js -y')
+    sudo('apt-add-repository ppa:chris-lea/node.js -y') # Some node.js idiots broke the package that comes in 12.04
+    sudo('apt-get update -y -q')
+    sudo('apt-get install nodejs npm -y -q')
+    sudo('npm install -g less jshint recess uglify-js -y -q')
+
 
 @task
 def setup_db():
