@@ -526,7 +526,10 @@ def setup_packages():
     #
     # node stuff. Probably don't actually need this on the server, though
     #
-    sudo('npm install -g less jshint recess uglify-js')
+    sudo('apt-add-repository ppa:chris-lea/node.js -y')
+    sudo('apt-get update')
+    sudo('apt-get install nodejs npm -y')
+    sudo('npm install -g less jshint recess uglify-js -y')
 
 @task
 def setup_db():
