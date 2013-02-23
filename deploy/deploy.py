@@ -68,8 +68,12 @@ def set_sshconfig():
     fingerprint = 'picdoc_deploy_trigger'
     magic_line = '### %s ### DO NOT ADD ANYTHING BELOW THIS:' % fingerprint
 
-    # Get rid of old entries found below the fingerprint
     with hide('running', 'stdout', 'stderr'):
+        # Create ~/.ssh/config if needed
+        local('mkdir -p ~/.ssh')
+        local('touch ~/.ssh/config')
+
+        # Get rid of old entries found below the fingerprint
         local("sed -i -n '/%s/q;p' %s" % (fingerprint, local_ssh_config))
 
     running_instances = [inst for inst in get_all_instances() if (inst.state == "running" or
@@ -547,7 +551,7 @@ def setup_db():
 
     # TODO - probably shouldn't do case by case basis here. Figure out later
     # when I've thought about it more
-    if deploy_type == "sandbox":
+    if deploy_type == "sandbox" or deploy_type == "test":
         venv_run_user('echo no | python manage.py syncdb', cfg)
     else:
         abort("Not yet implemented!")
