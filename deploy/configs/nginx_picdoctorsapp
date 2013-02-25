@@ -1,6 +1,35 @@
+# Redirect http://picdoctors.com to https://www.picdoctors.com
 server {
     listen 80;
     server_name picdoctors.com;
+    rewrite ^(.*) https://www.picdoctors.com$1 permanent;
+}
+
+# Redirect http://www.picdoctors.com to https://www.picdoctors.com
+server {
+    listen 80;
+    server_name www.picdoctors.com;
+    rewrite ^(.*) https://www.picdoctors.com$1 permanent;
+}
+
+# Redirect https://picdoctors.com to https://www.picdoctors.com
+# TODO - I think I need to do this on a second IP address. Is that
+# true?
+#server {
+#    listen 443;
+#    server_name picdoctors.com;
+#    rewrite ^(.*) https://www.picdoctors.com$1 permanent; 
+#    ssl on;
+#    ssl_certificate /home/ubuntu/picdoctors_bundle.crt;
+#    ssl_certificate_key /home/ubuntu/picdoctors_nopassword.key;
+#}
+# Above is temporarily disabled while I figure out the cert problems
+
+server {
+    # To ensure you do not cause issues with certificates,
+	# explicitly bind the domain to its intended IP.
+    # listen 1.1.1.1:443;
+    listen 443;
     server_name www.picdoctors.com;
     root /code/picdoctors;
 
@@ -15,5 +44,9 @@ server {
         include uwsgi_params;
         uwsgi_pass unix:/tmp/picdoctorsapp.sock;
     }
+
+    ssl on;
+    ssl_certificate /code/picdoctors/deploy/configs/certs/picdoctors_bundle.crt;
+    ssl_certificate_key /code/picdoctors/deploy/configs/certs/picdoctors_nopassword.key;
 }
 

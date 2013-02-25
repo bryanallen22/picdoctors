@@ -1,0 +1,17 @@
+Here's a list of the files in here, and what they were:
+
+This is a bogus cert. It mostly follows http://wiki.nginx.org/HttpSslModule,
+but it has 2048 bits instead of 1024.
+  bogus.crt
+  bogus.csr
+  bogus.key -- does not require a password
+  bogus.key.orig -- does require password 'asdf'
+
+Then there's the real picdoctors ssl key:
+  picdoctors.csr
+  picdoctors.key -- requires key (key not given here)
+  picdoctors_nopassword.key
+  picdoctors_bundle.crt, which is the cat of these (in this order):
+    www_picdoctors_com.crt
+    PositiveSSLCA2.crt
+    AddTrustExternalCARoot.crt

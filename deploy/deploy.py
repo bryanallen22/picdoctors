@@ -137,7 +137,7 @@ def validate_can_deploy(inst, cfg):
 
 def webserver_config():
     """
-    Set up nginx and apache
+    Set up nginx and uwsgi
     """
     inst = get_instance()
     deploy_type = get_deploy_type(inst.tags['instance_name'])
@@ -535,6 +535,26 @@ def setup_packages():
     sudo('apt-get install nodejs npm -y -q')
     sudo('npm install -g less jshint recess uglify-js -y -q')
 
+@task
+def setup_local_mysql():
+    """
+    Set up mysql locally. This had better not be production
+    """
+    inst = get_instance()
+    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    cfg = get_config(deploy_type)
+
+    if deploy_type == "production":
+        abort("I don't think you want to do this on production.")
+
+    # Set up root password as 'asdf' (if you don't do this, it prompts you, and we want this scriptable)
+    sudo("debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password asdf'")
+    sudo("debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password asdf'")
+    # Actually install mysql
+    sudo("apt-get install mysql-server -y -q")
+
+    # Start (or restart) mysql
+    sudo("sudo service mysql restart")
 
 @task
 def setup_db():
@@ -551,8 +571,10 @@ def setup_db():
 
     # TODO - probably shouldn't do case by case basis here. Figure out later
     # when I've thought about it more
-    if deploy_type == "sandbox" or deploy_type == "test":
+    if deploy_type == "sandbox":
         venv_run_user('echo no | python manage.py syncdb', cfg)
+    if deploy_type == "test":
+        setup_local_mysql(inst, deploy_type, cfg)
     else:
         abort("Not yet implemented!")
 
