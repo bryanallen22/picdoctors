@@ -554,7 +554,9 @@ def setup_local_mysql():
     sudo("apt-get install mysql-server -y -q")
 
     # Start (or restart) mysql
-    sudo("sudo service mysql restart")
+    sudo("service mysql restart")
+
+    sudo("""mysql -u root --password=asdf <<< "CREATE DATABASE IF NOT EXISTS picdoctors; GRANT ALL PRIVILEGES ON picdoctors.* TO 'django'@'localhost' IDENTIFIED BY 'asdf';" """);
 
 @task
 def setup_db():
@@ -574,12 +576,12 @@ def setup_db():
     if deploy_type == "sandbox":
         venv_run_user('echo no | python manage.py syncdb', cfg)
     if deploy_type == "test":
-        setup_local_mysql(inst, deploy_type, cfg)
+        setup_local_mysql()
     else:
         abort("Not yet implemented!")
 
 @task
-def deploy(force_push=False, update=True):
+def deploy(force_push=False, update=True, fast=False):
     """
     Deploy HEAD to an ec2 machine. Install all necessary packages and updates.
 
@@ -603,7 +605,8 @@ def deploy(force_push=False, update=True):
     cfg = get_config(deploy_type)
 
     # Validate that it makes sense to actually do this deployment
-    validate_can_deploy(inst, cfg)
+    if not fast:
+        validate_can_deploy(inst, cfg)
 
     # TODO Take nginx down here
 
@@ -611,17 +614,19 @@ def deploy(force_push=False, update=True):
     getcode(force_push)
 
     # Update system packages, perform upgrades
-    if update:
+    if update and not fast:
         patch()
 
     # TODO uncomment this
     # apt-get/pip installs, config
-    setup_packages()
+    if not fast:
+        setup_packages()
 
     # nginx/uwsgi configurations
     webserver_config()
 
-    setup_db()
+    if not fast:
+        setup_db()
     
     print "Try it out: http://%s or http://%s" % (inst.ip_address or '---', inst.dns_name or '---')
 

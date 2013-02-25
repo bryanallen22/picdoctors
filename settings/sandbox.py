@@ -9,3 +9,10 @@ AWS_ACCESS_KEY_ID = 'AKIAIXCLPXQHNZTMBRXQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'picdoctors'
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': '%s/sqlite.db' % PROJECT_ROOT, # Or path to database file if using sqlite3.
+    }
+}
+
