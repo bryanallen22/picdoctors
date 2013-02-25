@@ -1,5 +1,6 @@
 Django==1.4.2
 Fabric==1.5.0
+MySQL-python==1.2.4
 Pillow==1.7.7
 amqplib==1.0.2
 anyjson==0.3.3
@@ -21,7 +22,7 @@ paramiko==1.9.0
 pycrypto==2.6
 python-dateutil==1.5
 pytz==2012g
-requests==0.11.2
+requests==0.13.2
 simplejson==2.3.2
 ssh==1.7.14
 virtualenv==1.6.4

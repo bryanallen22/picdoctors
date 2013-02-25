@@ -16,3 +16,7 @@ nginx
 uwsgi
 uwsgi-plugin-http
 uwsgi-plugin-python
+
+python-mysqldb
+libmysqlclient-dev
+
