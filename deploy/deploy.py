@@ -557,6 +557,8 @@ def setup_local_mysql():
     sudo("service mysql restart")
 
     sudo("""mysql -u root --password=asdf <<< "CREATE DATABASE IF NOT EXISTS picdoctors; GRANT ALL PRIVILEGES ON picdoctors.* TO 'django'@'localhost' IDENTIFIED BY 'asdf';" """);
+    
+    venv_run_user('echo no | python manage.py syncdb', cfg)
 
 @task
 def setup_db():
