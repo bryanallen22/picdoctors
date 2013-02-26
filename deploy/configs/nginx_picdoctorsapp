@@ -1,3 +1,8 @@
+
+# I got this from the optimizing SSL guide: http://nginx.org/en/docs/http/configuring_https_servers.html
+ssl_session_cache   shared:SSL:10m;
+ssl_session_timeout 10m;
+
 # Redirect http://picdoctors.com to https://www.picdoctors.com
 server {
     listen 80;
@@ -27,9 +32,9 @@ server {
 
 server {
     # To ensure you do not cause issues with certificates,
-	# explicitly bind the domain to its intended IP.
+    # explicitly bind the domain to its intended IP.
     # listen 1.1.1.1:443;
-    listen 443;
+    listen 443 default_server;
     server_name www.picdoctors.com;
     root /code/picdoctors;
 
@@ -39,14 +44,24 @@ server {
         expires 30d;
         access_log off;
     }
+    
+    location /favicon.ico {
+        alias /code/picdoctors/static/images/favicon.ico;
+    }
+
+    location /robots.txt {
+        alias /code/picdoctors/static/rootdir/robots.txt;
+    }
 
     location / {
         include uwsgi_params;
         uwsgi_pass unix:/tmp/picdoctorsapp.sock;
     }
 
+    # ssl stuff
     ssl on;
     ssl_certificate /code/picdoctors/deploy/configs/certs/picdoctors_bundle.crt;
     ssl_certificate_key /code/picdoctors/deploy/configs/certs/picdoctors_nopassword.key;
+
 }
 

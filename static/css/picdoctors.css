@@ -38,13 +38,16 @@
   margin-right: 20px;
   height: 40px;
 }
-.feedback {
-  color: black;
-  background-color: red;
+/*
+.feedback{
+  color:black;
+  background-color:red;
 }
+
 .feedback:hover {
-  background-color: pink;
+  background-color:pink;
 }
+*/
 /*****************************
   Index page
 ******************************/

@@ -577,10 +577,10 @@ def setup_db():
     # when I've thought about it more
     if deploy_type == "sandbox":
         venv_run_user('echo no | python manage.py syncdb', cfg)
-    if deploy_type == "test":
+    elif deploy_type == "test":
         setup_local_mysql()
     else:
-        abort("Not yet implemented!")
+        abort("Not yet implemented for %s!" % deploy_type)
 
 @task
 def deploy(force_push=False, update=True, fast=False):
@@ -630,7 +630,7 @@ def deploy(force_push=False, update=True, fast=False):
     if not fast:
         setup_db()
     
-    print "Try it out: http://%s or http://%s" % (inst.ip_address or '---', inst.dns_name or '---')
+    print "Try it out: https://%s or https://%s" % (inst.ip_address or '---', inst.dns_name or '---')
 
 @task(default=True)
 def print_help():
