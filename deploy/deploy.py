@@ -284,6 +284,7 @@ def getcode(force_push=False):
 
     # To know what settings to use, we create a blank <deploy_type>.cfg 
     # file in the settings directory 
+    sudo('rm -f %s/settings/*.cfg' % (cfg.code_dir))
     sudo('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), user=cfg.deploy_user)
 
 
