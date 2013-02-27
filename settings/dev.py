@@ -1,5 +1,6 @@
 from defaults import *
 
+DEPLOY_TYPE='DEV' # useful for logs, stack traces
 DEBUG = True
 IS_PRODUCTION = False # used to toggle things that don't go on the non-live site
 BALANCED_API_KEY_SECRET = '2726feb439f011e294b1026ba7f8ec28'

@@ -282,6 +282,10 @@ def getcode(force_push=False):
     local('echo %s > /tmp/sha.txt' % head_sha)
     put('/tmp/sha.txt', '%s/sha.txt' % cfg.code_dir, use_sudo=True )
 
+    # To know what settings to use, we create a blank <deploy_type>.cfg 
+    # file in the settings directory 
+    sudo('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), user=cfg.deploy_user)
+
 
 @task
 def create():
