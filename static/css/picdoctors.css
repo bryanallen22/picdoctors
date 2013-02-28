@@ -51,19 +51,38 @@
 /*****************************
   Index page
 ******************************/
-#indexapp .example {
+#indexapp .photo {
   position: relative;
+  width: 100%;
+  height: 615px;
+  background-size: 100%;
 }
-#indexapp .example p {
-  font-family: 'Architects Daughter', cursive;
+#indexapp .positioner {
   position: absolute;
-  color: #dddddd;
-  font-size: 28px;
-  line-height: 120%;
-  text-align: center;
 }
-#indexapp .example p.bordered {
-  text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
+#indexapp .hero-unit {
+  position: absolute;
+  padding: 20px;
+  width: 358px;
+  background-color: rgba(222, 222, 222, 0.72);
+}
+#indexapp #photo1 {
+  background: url('/static/images/sm_botanical_before.jpg');
+}
+#indexapp #photo2 {
+  background: url('/static/images/sm_botanical_after.jpg');
+}
+#indexapp #photo3 {
+  background: url('/static/images/sm_botanical_before.jpg');
+}
+#indexapp #photo4 {
+  background: url('/static/images/sm_botanical_after.jpg');
+}
+#indexapp #photo5 {
+  background: url('/static/images/sm_botanical_before.jpg');
+}
+#indexapp #photo6 {
+  background: url('/static/images/sm_botanical_after.jpg');
 }
 /*****************************
   Upload page

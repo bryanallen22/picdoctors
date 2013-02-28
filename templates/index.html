@@ -2,80 +2,67 @@
 
 {% block main %}
   <div id="indexapp" class="row">
-    <div class="span12">
-      <div class="hero-unit">
-        {#<img src="{{ STATIC_URL }}images/CindyKayleeGreg.jpg"/>#}
-        <h1>Custom Photoshopping</h1>
-        <p>Find someone to polish your memories.</p>
-        <p>
-          <a class="btn btn-primary btn-large" href="/upload/">Upload a Picture &raquo;</a>
-          <a class="btn btn-large" href="{% url howitworks %}">Learn More &raquo;</a>
-        </p>
 
-        <div class="row examplerow">
-          <div class="example span5" >
-            <h4>Before:</h4>
-            <img src="{{ STATIC_URL }}images/danfriend_before.jpg" >
-            <img src="{{ STATIC_URL }}images/arrow-white-sm.png"
-                 style="position:absolute; top:160px; left:80px;">
-            <p style="top: 100px; left: 60px; width:280px;">
-              The dumpster, hoop and court have got to go !
-            </p>
-          </div>
-          <div class="example span5 exampleafter" >
-            <h4>After:</h4>
-            <img src="{{ STATIC_URL }}images/danfriend_after.jpg" >
-          </div>
-        </div>
-
-        <div class="row examplerow" style="display:none;">
-          <div class="example span5" >
-            <h4>Before:</h4>
-            <img src="{{ STATIC_URL }}images/mom_before.jpg" >
-            <p style="top: 55px; left: 30px; width:320px;">
-              Could you clean up Mom's wedding shot?
-            </p>
-          </div>
-          <div class="example span5 exampleafter" >
-            <h4>After:</h4>
-            <img src="{{ STATIC_URL }}images/mom_after.jpg" >
-          </div>
-        </div>
-
-        <div class="row examplerow" style="display:none;">
-          <div class="example span5" >
-            <h4>Before:</h4>
-            <img src="{{ STATIC_URL }}images/dog_before.jpg" >
-            <p style="top: 360px; left: 30px; width:320px;">
-              Remove me from the background, please.
-            </p>
-          </div>
-          <div class="example span5 exampleafter" >
-            <h4>After:</h4>
-            <img src="{{ STATIC_URL }}images/dog_after.jpg" >
-          </div>
-        </div>
-
-      </div>
-
-      <div class="row">
-        <div class="span4">
-          <img class="icon" src="{{ STATIC_URL }}images/upload.png">
-          <h2>1. Upload your pics</h2>
-          <p>Then describe how you want the final image to look. We'll make it easy to mark up and desribe specific areas of your photo.</p>
-        </div>
-        <div class="span4">
-          <img class="icon" src="{{ STATIC_URL }}images/credit_card.png">
-          <h2>2. Set a price</h2>
-          <p>You choose how much. We'll hold the money, but you get 100% back if you aren't satisfied with your results.</p>
-        </div>
-        <div class="span4">
-          <img class="icon" src="{{ STATIC_URL }}images/approve.png">
-          <h2>3. Approve</h2>
-           <p>We'll let you know when your pictures are ready. If it isn't quite what you wanted, you can ask for modifications.</p>
-       </div>
+    <div id="photo1" class="photo" >
+      <div class="positioner" style="left: 30px; top: 40px;">
+        {% include "index-hero-unit.html" %}
       </div>
     </div>
+
+    <div id="photo2" class="photo" >
+      <div class="positioner" style="left: 30px; top: 20px;">
+        {% include "index-hero-unit.html" %}
+      </div>
+    </div>
+
+    <div id="photo3" class="photo" >
+      <div class="positioner" style="left: 30px; top: 40px;">
+        {% include "index-hero-unit.html" %}
+      </div>
+    </div>
+
+    <div id="photo4" class="photo" >
+      <div class="positioner" style="left: 30px; top: 20px;">
+        {% include "index-hero-unit.html" %}
+      </div>
+    </div>
+
+    <div id="photo5" class="photo" >
+      <div class="positioner" style="left: 30px; top: 40px;">
+        {% include "index-hero-unit.html" %}
+      </div>
+    </div>
+
+    <div id="photo6" class="photo" >
+      <div class="positioner" style="left: 30px; top: 20px;">
+        {% include "index-hero-unit.html" %}
+      </div>
+    </div>
+
+
+    {#<div style="background-image: url('/static/images/flower_eating.jpg'); width:960; height:636px;">#}
+    <div class="row">
+      &nbsp; {# spacing #}
+    </div>
+
+    <div class="row">
+      <div class="span4">
+        <img class="icon" src="{{ STATIC_URL }}images/upload.png">
+        <h2>1. Upload your pics</h2>
+        <p>Then describe how you want the final image to look. We'll make it easy to mark up and desribe specific areas of your photo.</p>
+      </div>
+      <div class="span4">
+        <img class="icon" src="{{ STATIC_URL }}images/credit_card.png">
+        <h2>2. Set a price</h2>
+        <p>You choose how much. We'll hold the money, but you get 100% back if you aren't satisfied with your results.</p>
+      </div>
+      <div class="span4">
+        <img class="icon" src="{{ STATIC_URL }}images/approve.png">
+        <h2>3. Approve</h2>
+         <p>We'll let you know when your pictures are ready. If it isn't quite what you wanted, you can ask for modifications.</p>
+     </div>
+    </div>
+
   </div>
 {% endblock %}
 
