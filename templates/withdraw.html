@@ -22,8 +22,8 @@
     {% else %} {% if not valid %}
       <div class="row">
         <p>You can't withdraw right now. Please ensure that you have a valid
-          <a href="{% url account_settings %}#bank_tab">bank account</a> and
-          <a href="{% url account_settings %}#merchant_tab">merchant information.</a>
+          <a href="{% url 'account_settings' %}#bank_tab">bank account</a> and
+          <a href="{% url 'account_settings' %}#merchant_tab">merchant information.</a>
         </p>
       </div>
     {% else %} {% if balance >= minimum_withdraw %}
@@ -62,7 +62,7 @@
       </div>
       <div class="row">
         <div class="span5">
-          <p>This will be tranferred to your <a href="{% url account_settings %}#bank_tab">bank account</a></p>
+          <p>This will be tranferred to your <a href="{% url 'account_settings' %}#bank_tab">bank account</a></p>
         </div>
       </div>
 

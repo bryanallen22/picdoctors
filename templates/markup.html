@@ -81,7 +81,7 @@
       <div class="btn btn-info btn-large" onclick="begin_tour()" style="display : block;margin-top:12px;">Help Me</div>
       {% if is_job_doctor  %}
 
-      <form action="{% url doc_upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+      <form action="{% url 'doc_upload_handler' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <div class="btn btn-success btn-large fileupload-addbutton" style='display: block; margin-top: 12px;'>
           Upload Finished Product
           <input id="doc_file" type="file" name="doc_file">

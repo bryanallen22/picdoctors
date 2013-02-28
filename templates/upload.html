@@ -40,7 +40,7 @@
   <div class="span2 fileupload-buttonbar">
     <div style="position:fixed; width:200px;">
 
-      <form action="{% url upload_handler %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+      <form action="{% url 'upload_handler' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <div class="btn btn-primary btn-large fileupload-addbutton">
           Add Pictures
           <input type="file" name="files[]" multiple >
