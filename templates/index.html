@@ -3,42 +3,68 @@
 {% block main %}
   <div id="indexapp" class="row">
 
-    <div id="photo1" class="photo" >
-      <div class="positioner" style="left: 30px; top: 40px;">
-        {% include "index-hero-unit.html" %}
+    <div id="myCarousel" class="carousel slide">
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+        <li data-target="#myCarousel" data-slide-to="3"></li>
+        <li data-target="#myCarousel" data-slide-to="4"></li>
+        <li data-target="#myCarousel" data-slide-to="5"></li>
+        <li data-target="#myCarousel" data-slide-to="6"></li>
+      </ol>
+      <!-- Carousel items -->
+      <div class="carousel-inner">
+        <div class="active item">
+          <div id="photo1" class="photo" >
+            <div class="positioner" style="left: 580px; top: 37px;">
+              {% include "index-hero-unit.html" %}
+            </div>
+            <div id="photo1_markup" class="positioner"></div>
+          </div>
+        </div>
+        <div class="item">
+          <div id="photo2" class="photo" >
+            <div class="positioner" style="left: 30px; top: 20px;">
+              {% include "index-hero-unit.html" %}
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div id="photo3" class="photo" >
+            <div class="positioner" style="left: 580px; top: 37px;">
+              {% include "index-hero-unit.html" %}
+            </div>
+            <div id="photo1_markup" class="positioner"></div>
+          </div>
+        </div>
+        <div class="item">
+          <div id="photo4" class="photo" >
+            <div class="positioner" style="left: 30px; top: 20px;">
+              {% include "index-hero-unit.html" %}
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div id="photo5" class="photo" >
+            <div class="positioner" style="left: 580px; top: 37px;">
+              {% include "index-hero-unit.html" %}
+            </div>
+            <div id="photo1_markup" class="positioner"></div>
+          </div>
+        </div>
+        <div class="item">
+          <div id="photo6" class="photo" >
+            <div class="positioner" style="left: 30px; top: 20px;">
+              {% include "index-hero-unit.html" %}
+            </div>
+          </div>
+        </div>
       </div>
+      <!-- Carousel nav -->
+      <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+      <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
     </div>
-
-    <div id="photo2" class="photo" >
-      <div class="positioner" style="left: 30px; top: 20px;">
-        {% include "index-hero-unit.html" %}
-      </div>
-    </div>
-
-    <div id="photo3" class="photo" >
-      <div class="positioner" style="left: 30px; top: 40px;">
-        {% include "index-hero-unit.html" %}
-      </div>
-    </div>
-
-    <div id="photo4" class="photo" >
-      <div class="positioner" style="left: 30px; top: 20px;">
-        {% include "index-hero-unit.html" %}
-      </div>
-    </div>
-
-    <div id="photo5" class="photo" >
-      <div class="positioner" style="left: 30px; top: 40px;">
-        {% include "index-hero-unit.html" %}
-      </div>
-    </div>
-
-    <div id="photo6" class="photo" >
-      <div class="positioner" style="left: 30px; top: 20px;">
-        {% include "index-hero-unit.html" %}
-      </div>
-    </div>
-
 
     {#<div style="background-image: url('/static/images/flower_eating.jpg'); width:960; height:636px;">#}
     <div class="row">

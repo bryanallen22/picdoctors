@@ -64,7 +64,7 @@
     position: relative;
 
     width: 100%;
-    height: 615px;
+    height: 635px;
     background-size: 100%;
   }
   .positioner {
@@ -72,16 +72,28 @@
   }
   .hero-unit {
     position: absolute;
-    padding: 20px;
-    width: 358px;
+    padding: 15px;
+    width: 330px;
     background-color: rgba(222, 222, 222, 0.72);
+    h3 {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
   }
   #photo1 {
     background: url('/static/images/sm_botanical_before.jpg');
   }
+  #photo1_markup {
+    left: 0px;
+    top: 0px;
+    height:100%;
+    width:100%;
+    background: url('/static/images/sm_botanical_before_markup.png');
+  }
   #photo2 {
     background: url('/static/images/sm_botanical_after.jpg');
   }
+  /* TODO - add new images here */
   #photo3 {
     background: url('/static/images/sm_botanical_before.jpg');
   }
@@ -94,6 +106,44 @@
   #photo6 {
     background: url('/static/images/sm_botanical_after.jpg');
   }
+
+  /* Make carousel transitions as fades (default is a slider) */
+  .carousel {
+    .item {
+      -webkit-transition : opacity 3s;
+      -moz-transition    : opacity 3s;
+      -ms-transition     : opacity 3s;
+      -o-transition      : opacity 3s;
+      transition         : opacity 3s;
+    }
+    .active.left {
+      left    : 0;
+      opacity : 0;
+      z-index : 2;
+    }
+    .next {
+      left    : 0;
+      opacity : 1;
+      z-index : 1;
+    }
+    .active.right {
+      left    : 0;
+      opacity : 0;
+      z-index : 2;
+    }
+    .prev {
+      left    : 0;
+      opacity : 1;
+      z-index : 1;
+    }
+
+  }
+
+  /* Move the buttons down a bit */
+  .carousel-control {
+    top: 60%;
+  }
+
 }
 
 
