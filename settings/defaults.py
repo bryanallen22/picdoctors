@@ -161,8 +161,17 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',
+    'south',
 ) + TESTABLE_APPS
 
+# Migrateable Apps
+AUTO_MIGRATION_APPS = (
+    'common',
+    'skaa',
+    'doctor',
+    'messaging',
+    'tasks',
+)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -224,7 +233,7 @@ EMAIL_USE_TLS = True
 LOGIN_URL='/signin/'
 
 DEBUG_TOOLBAR_CONFIG = {
-   'INTERCEPT_REDIRECTS': True,
+   'INTERCEPT_REDIRECTS': False,
 }
 
 # In nginx we should forward one of these to the other, but I'd rather be a bit permissive here and allow both
