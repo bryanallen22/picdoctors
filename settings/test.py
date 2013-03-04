@@ -21,3 +21,5 @@ DATABASES = {
     }
 }
 
+# I might throw some if not production just find out what host:port we're running on
+EMAIL_DOMAIN = 'localhost:8000'
