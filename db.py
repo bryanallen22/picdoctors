@@ -6,10 +6,10 @@ from colorama import init, Fore, Back, Style
 init()
 
 def entry_point():
-    ###
+    """
     This is the boring entry point, all of the fun stuff starts here...
     Honestly all it is is our arg splitter
-    ###
+    """
 
     force = False
     migrate = False
@@ -59,18 +59,18 @@ def entry_point():
 
 
 def do_list(force):
-    ###
+    """
     You are so lazy, you could have typed this out, or just modified your bashrc...
-    ###
+    """
     os.system("python manage.py migrate --list")
 
 
 def do_gen(force):
-    ###
+    """
     Generate the migration files for all of the apps located in AUTO_MIGRATION_APPS
     This is a diff based on the last migration in the south history and the current model
     If there is a diff, the migration will be made, if not, it will skip it
-    ###
+    """
     for app in settings.AUTO_MIGRATION_APPS:
         print Fore.GREEN + "generating migrations files for " + Fore.RED + "'" + app + "'" + Fore.WHITE
         os.system("python manage.py schemamigration " + app + " --auto")
@@ -81,18 +81,18 @@ def do_gen(force):
 
 
 def do_migrate(force):
-    ###
-    Run any available migration files that have not been run as of yet
-    ###
+    """
+    Run any available migration files that haven't been run as of yet
+    """
     os.system("python manage.py migrate")
 
 
 def do_alphadb(force):
-    ###
+    """
     Blast away everything in the world and pretend like this is the first time the db will be made.
     What does this really mean?  It means we blast away any migrations, any db and 
     creates a new db, starts the south history, formats your computer, and fakes the migrations (see init_db)
-    ###
+    """
     if settings.DEPLOY_TYPE == "TEST" or settings.DEPLOY_TYPE == "DEV":
         if confirm("Are you sure you want to delete your database and migrations and start anew", force):
             print Fore.GREEN + "deleting sqlite.db" + Fore.WHITE
@@ -117,17 +117,17 @@ def do_alphadb(force):
 
 
 def gen_new_db():
-    ###
+    """
     boring syncdb
-    ###
+    """
     print Fore.GREEN + "Syncing newdb" + Fore.WHITE
     os.system("echo no | python manage.py syncdb")
 
 
 def init_db():
-    ###
+    """
     This bad boy will migrate or initialize & fake each app
-    ###
+    """
     for app in settings.AUTO_MIGRATION_APPS:
         if os.path.isdir(app + "/migrations"):
             print Fore.GREEN + "'" + app + "' has a migrations folder, migrating!" + Fore.WHITE
@@ -144,7 +144,8 @@ def print_quitter():
 
 
 def confirm(prompt=None, force=False):
-    """prompts for yes or no response from the user. Returns True for yes and
+    """
+    prompts for yes or no response from the user. Returns True for yes and
     False for no.
     """
     
