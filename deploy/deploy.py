@@ -291,6 +291,9 @@ def getcode(force_push=False):
     sudo('echo "external_ip: %s" >> %s/settings/%s.cfg' %
            (inst.ip_address, cfg.code_dir, deploy_type))
 
+    # restart uwsgi
+    with settings(warn_only=True): # (might not actually exist yet)
+        sudo('touch /etc/uwsgi/apps-available/picdoctorsapp.ini')
 
 @task
 def create():
