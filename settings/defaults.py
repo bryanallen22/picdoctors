@@ -200,7 +200,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static', # needed for {{ STATIC_URL }} in my templates
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
-    'navigation.context_processor.get_nav_dictionary',
 )
 
 
