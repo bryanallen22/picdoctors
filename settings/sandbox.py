@@ -1,4 +1,6 @@
 from defaults import *
+from settings.functions import get_cfg_setting
+import os
 
 DEPLOY_TYPE='SANDBOX' # useful for logs, stack traces
 DEBUG = False
@@ -17,3 +19,12 @@ DATABASES = {
     }
 }
 
+# As of Django 1.5, we have to declare the allowed hosts for security reasons.
+# On a non production machine, that's annoying because we'd like to dial in
+# directly through the IP address, so we add it here. Unfortunately, it's kinda
+# clumsy because there's not a good way to figure out our external IP from
+# the machine itself, so we had to write it as part of the deployment process.
+path = os.path.join(PROJECT_ROOT, "settings/sandbox.cfg")
+external_ip = get_cfg_setting(path, "external_ip")
+if external_ip:
+    ALLOWED_HOSTS.append( external_ip )

@@ -227,3 +227,7 @@ LOGIN_URL='/signin/'
 DEBUG_TOOLBAR_CONFIG = {
    'INTERCEPT_REDIRECTS': True,
 }
+
+# In nginx we should forward one of these to the other, but I'd rather be a bit permissive here and allow both
+ALLOWED_HOSTS = [ 'picdoctors.com', 'www.picdoctors.com' ]
+

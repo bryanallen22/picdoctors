@@ -286,6 +286,10 @@ def getcode(force_push=False):
     # file in the settings directory 
     sudo('rm -f %s/settings/*.cfg' % (cfg.code_dir))
     sudo('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), user=cfg.deploy_user)
+    # Add the external IP to that settings file, used for Django's ALLOWED_HOSTS on
+    # non production machines.
+    sudo('echo "external_ip: %s" >> %s/settings/%s.cfg' %
+           (inst.ip_address, cfg.code_dir, deploy_type))
 
 
 @task
