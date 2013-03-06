@@ -93,10 +93,17 @@
   background: url('/static/images/sm_botanical_after.jpg');
 }
 #indexapp #photo3 {
-  background: url('/static/images/sm_botanical_before.jpg');
+  background: url('/static/images/restoration_before.jpg');
+}
+#indexapp #photo3_markup {
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  background: url('/static/images/restoration_before_markup.png');
 }
 #indexapp #photo4 {
-  background: url('/static/images/sm_botanical_after.jpg');
+  background: url('/static/images/restoration_after.jpg');
 }
 #indexapp #photo5 {
   background: url('/static/images/sm_botanical_before.jpg');
@@ -355,6 +362,7 @@
      */
 
   width: 762px;
+  font-size: 28px;
 }
 /*****************************
   Job page
