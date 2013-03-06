@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import settings
+iasdfasdfmport settings
 import sys
 import os
 from colorama import init, Fore, Back, Style
