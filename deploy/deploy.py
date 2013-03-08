@@ -596,7 +596,7 @@ def setup_db():
 
 
 @task
-def setup_local_conveniences():
+def setup_remote_conveniences():
     """
     Setup random helpful things on the remote machine
     """
@@ -605,6 +605,8 @@ def setup_local_conveniences():
     cfg = get_config(deploy_type)
 
     sudo("""echo "alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'" >> /etc/bash.bashrc""")
+    if deploy_type == "test" or deploy_type == "sandbox":
+        sudo("chmod 777 /code/picdoctors -R")
 
 
 @task
@@ -655,7 +657,7 @@ def deploy(force_push=False, update=True, fast=False):
     if not fast:
         setup_db()
 
-    setup_local_conveniences()
+    setup_remote_conveniences()
     
     print "Try it out: https://%s or https://%s" % (inst.ip_address or '---', inst.dns_name or '---')
 
