@@ -594,6 +594,19 @@ def setup_db():
     else:
         abort("Not yet implemented for %s!" % deploy_type)
 
+
+@task
+def setup_local_conveniences():
+    """
+    Setup random helpful things on the remote machine
+    """
+    inst = get_instance()
+    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    cfg = get_config(deploy_type)
+
+    sudo("""echo "alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'" >> /etc/bash.bashrc""")
+
+
 @task
 def deploy(force_push=False, update=True, fast=False):
     """
@@ -641,6 +654,8 @@ def deploy(force_push=False, update=True, fast=False):
 
     if not fast:
         setup_db()
+
+    setup_local_conveniences()
     
     print "Try it out: https://%s or https://%s" % (inst.ip_address or '---', inst.dns_name or '---')
 

@@ -93,15 +93,11 @@ def do_alphadb(force):
     What does this really mean?  It means we blast away any migrations, any db and 
     creates a new db, starts the south history, formats your computer, and fakes the migrations (see init_db)
     """
-    if settings.DEPLOY_TYPE == "TEST" or settings.DEPLOY_TYPE == "DEV":
+    if settings.DEPLOY_TYPE == "SANDBOX" or settings.DEPLOY_TYPE == "DEV":
         if confirm("Are you sure you want to delete your database and migrations and start anew", force):
             print Fore.GREEN + "deleting sqlite.db" + Fore.WHITE
             os.system("rm sqlite.db")
-            print Fore.GREEN + "deleting migrations" + Fore.WHITE
-            for app in settings.AUTO_MIGRATION_APPS:
-                if os.path.isdir(app + "/migrations"):
-                    print Fore.GREEN + "deleting '" + app + "/migrations'" + Fore.WHITE
-                    os.system("rm -rf " + app + "/migrations")
+            delete_migrations()
             gen_new_db()
             init_db()
             print Fore.GREEN + "Migrating djcelery, they were nice enough to include their migrations..." + Fore.WHITE
@@ -109,12 +105,28 @@ def do_alphadb(force):
         else:
             print_quitter()
 
-    elif settings.DEPLOY_TYPE == "SANDBOX":
-        print "do sandbox stuff"
+    elif settings.DEPLOY_TYPE == "TEST":
+
+        if confirm("Are you sure you want to delete your database and migrations and start anew", force):
+            print Fore.GREEN + "Blasting away and recreating your DB" + Fore.WHITE
+            os.system("mysql -h localhost -u root -pasdf picdoctors -e 'DROP DATABASE picdoctors;CREATE DATABASE picdoctors'")
+            delete_migrations()
+            gen_new_db()
+            init_db()
+            print Fore.GREEN + "Migrating djcelery, they were nice enough to include their migrations..." + Fore.WHITE
+            os.system("python manage.py migrate djcelery")
+        else:
+            print_quitter()
 
     elif settings.DEPLOY_TYPE == "PRODUCTION":
         print "piss off, I'm not creating you a new db from the script, do it by hand"
 
+def delete_migrations():
+    print Fore.GREEN + "deleting migrations" + Fore.WHITE
+    for app in settings.AUTO_MIGRATION_APPS:
+        if os.path.isdir(app + "/migrations"):
+            print Fore.GREEN + "deleting '" + app + "/migrations'" + Fore.WHITE
+            os.system("rm -rf " + app + "/migrations")
 
 def gen_new_db():
     """
