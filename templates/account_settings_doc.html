@@ -24,7 +24,8 @@
                 <dd>Routing Number: {{ ba.routing_number }}</dd>
               </dt>
               <p class="uri" style='display:none;'>{{ ba.uri }}</p>
-              <a class="btn btn-danger delete_bank_account" href="#"><i class="icon-trash icon-white"></i> Delete</a>
+              <br/>
+              <a class="btn btn-danger delete_bank_account" href="#"><i class="icon-trash icon-white"></i>Delete</a>
             </dl>
           {% endfor %}
         {% else %}
@@ -43,39 +44,65 @@
           <img src="{{ STATIC_URL }}images/check_image.png">
           <br/> <br/>
 
-          <form action="#" method="POST" id="bank-account-form">
+          <form action="#" method="POST" id="bank-account-form" class="form-horizontal">
             <fieldset>
               <legend>Bank Account Information</legend>
-              <label>Account Holder's Name
-                <input type="text"
-                autocomplete="off"
-                placeholder="Bank Account Holder's name"
-                class="ba-name">
-              </label>
-              <label>Routing Number
-                <input type="text"
-                autocomplete="off"
-                placeholder="Routing Number"
-                class="ba-rn">
-              </label>
-              <label>Account Number
-                <input type="text"
-                autocomplete="off"
-                placeholder="Account Number"
-                class="ba-an">
-              </label>
-              <label>Account Type
-                <select>
-                  <option value='' disabled selected style='display:none;'>
-                  Select Account Type
-                  </option>
-                  <option value="checking">CHECKING</option>
-                  <option value="savings">SAVINGS</option>
-                </select>
-              </label>
-              <button type="submit" class="btn btn-primary">
-                Create Account
-              </button>
+
+              <div class="control-group">
+                <label class="control-label" for="ba-name" >Account Holder's Name</label>
+                <div class="controls">
+                  <input type="text"
+                      autocomplete="off"
+                      placeholder="Bank Account Holder's name"
+                      id="ba-name"
+                      class="ba-name">
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label" for="ba-rn" >Routing Number</label>
+                <div class="controls">
+                  <input type="text"
+                      autocomplete="off"
+                      placeholder="Routing Number"
+                      id="ba-rn"
+                      class="ba-rn">
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label" for="ba-an" >Account Number</label>
+                <div class="controls">
+                  <input type="text"
+                      autocomplete="off"
+                      placeholder="Account Number"
+                      id="ba-an"
+                      class="ba-an">
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label" for="ba-acct-type" >Account Type</label>
+                <div class="controls">
+                  <select id="ba-acct-type">
+                    <option value='' disabled selected style='display:none;'>
+                    Select Account Type
+                    </option>
+                    <option value="checking">CHECKING</option>
+                    <option value="savings">SAVINGS</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label"></label>
+                <div class="controls">
+                  <button type="submit" class="btn btn-primary">
+                    Create Account
+                  </button>
+                </div>
+              </div>
+
             </fieldset>
           </form>
           <p id="error_bankaccount" class="label label-important balanced_error" style="display:none;">Invalid Bank Account Information, please try again.</p>
@@ -112,104 +139,179 @@
             <button class="close" data-dismiss="alert">×</button>
             We're legally required to collect some information to satisfy 'Know Your Customer' and Anti-Money Laundering laws.
           </div>
-          <form action="{% url 'merchant_info' %}" method="POST" id="bank-account-form">
+          <form action="{% url 'merchant_info' %}" method="POST" id="bank-account-form" class="form-horizontal">
             {% csrf_token %}
 
-            <label class="radio">
-              <input type="radio" name="merchant_type" id="person" value="person" checked>
-              Individual
-            </label>
-            <label class="radio">
-              <input type="radio" name="merchant_type" id="business" value="business">
-              Business
-            </label>
+            <div class="control-group">
+              <label class="control-label">Business Type</label>
+              <div class="controls">
+                <label class="radio">
+                  <input type="radio" name="merchant_type" id="person" value="person" checked>
+                  Individual
+                </label>
+                <label class="radio">
+                  <input type="radio" name="merchant_type" id="business" value="business">
+                  Business
+                </label>
+              </div>
+            </div>
 
             {########################}
             {# Business only fields #}
             {########################}
-            <label class="business_field" style="display:none;">Business Name
-              <input type="text"
-              placeholder="John's Photography"
-              name="business_name">
-            </label>
+            <div class="control-group business_field" style="display:none;">
+              <label class="control-label" for="business_name">
+                Business Name
+              </label>
+              <div class="controls">
+                <input type="text"
+                    placeholder="John's Photography"
+                    id="business_name"
+                    name="business_name">
+              </div>
+            </div>
 
-            <label class="business_field" style="display:none;">Business Street Address
-              <input type="text"
-              placeholder="222 Aperture Way"
-              name="business_street_address">
-            </label>
+            <div class="control-group business_field" style="display:none;">
+              <label class="control-label" for="business_street_address">
+                Business Street Address
+              </label>
+              <div class="controls">
+                <input type="text"
+                  placeholder="222 Aperture Way"
+                  id="business_street_address"
+                  name="business_street_address">
+              </div>
+            </div>
 
-            <label class="business_field" style="display:none;">Business Postal Code
-              <input type="text"
-              placeholder="12345"
-              name="business_postal_code">
-            </label>
+            <div class="control-group business_field" style="display:none;">
+              <label class="control-label" for="business_postal_code">
+                Business Postal Code
+              </label>
+              <div class="controls">
+                <input type="text"
+                    placeholder="12345"
+                    id="business_postal_code"
+                    name="business_postal_code">
+              </div>
+            </div>
 
-            <label class="business_field" style="display:none;">Business Phone Number
-              <input type="text"
-              class="phone_number"
-              placeholder="(987) 654-3210"
-              name="business_phone_number">
-            </label>
+            <div class="control-group business_field" style="display:none;">
+              <label class="control-label" for="business_phone_number">
+                Business Phone Number
+              </label>
+              <div class="controls">
+                <input type="text"
+                    class="phone_number"
+                    placeholder="(987) 654-3210"
+                    id="business_phone_number"
+                    name="business_phone_number">
+              </div>
+            </div>
 
-            <label class="business_field" style="display:none;">Federal Tax Id
-              <input type="text"
-              placeholder="211111111"
-              name="business_tax_id">
-            </label>
+            <div class="control-group business_field" style="display:none;">
+              <label class="control-label" for="business_tax_id">
+                Federal Tax Id
+              </label>
+              <div class="controls">
+                <input type="text"
+                    placeholder="211111111"
+                    id="business_tax_id"
+                    name="business_tax_id">
+              </div>
+            </div>
 
             {#########################################}
             {# Person fields (used for business too) #}
             {#########################################}
-            <label>Your Name
-              <input type="text"
-              placeholder="John Doe"
-              name="name">
-            </label>
+            <div class="control-group" >
+              <label class="control-label" for="name">
+                Your Name
+              </label>
+              <div class="controls">
+                <input type="text"
+                    placeholder="John Doe"
+                    id="name"
+                    name="name">
+              </div>
+            </div>
 
-            <label>Your Street Address
-              <input type="text"
-              placeholder="123 Cherry Lane"
-              name="street_address">
-            </label>
+            <div class="control-group" >
+              <label class="control-label" for="street_address">
+                Your Street Address
+              </label>
+              <div class="controls">
+                <input type="text"
+                    placeholder="123 Cherry Lane"
+                    id="street_address"
+                    name="street_address">
+              </div>
+            </div>
 
-            <label>Your Postal Code
-              <input type="text"
-              placeholder="12345"
-              name="postal_code">
-            </label>
+            <div class="control-group" >
+              <label class="control-label" for="postal_code">
+                Your Postal Code
+              </label>
+              <div class="controls">
+                <input type="text"
+                  placeholder="12345"
+                  id="postal_code"
+                  name="postal_code">
+              </div>
+            </div>
 
-            <label>Your Phone Number
-              <input type="text"
-              class="phone_number"
-              placeholder="(987) 654-3210"
-              name="phone_number">
-            </label>
+            <div class="control-group" >
+              <label class="control-label" for="phone_number">
+                Your Phone Number
+              </label>
+              <div class="controls">
+                <input type="text"
+                    class="phone_number"
+                    placeholder="(987) 654-3210"
+                    id="phone_number"
+                    name="phone_number">
+              </div>
+            </div>
 
-            <label>Your Birth Month
-              <select name="birth_month">
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-              </select>
-            </label>
+            <div class="control-group" >
+              <label class="control-label" for="birth_month">
+                Your Birth Month
+              </label>
+              <div class="controls">
+                <select id="birth_month" name="birth_month">
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+            </div>
 
-            <label>Your Birth Year
-              <input type="text"
-              placeholder="1980"
-              name="birth_year">
-            </label>
+            <div class="control-group" >
+              <label class="control-label" for="birth_year">
+                Your Birth Year
+              </label>
+              <div class="controls">
+                <input type="text"
+                    placeholder="1980"
+                    id="birth_year"
+                    name="birth_year">
+              </div>
+            </div>
 
-            <input type="submit" name="submit" class='btn btn-primary' value="Submit" >
+            <div class="control-group">
+              <label class="control-label"></label>
+              <div class="controls">
+                <input type="submit" name="submit" class='btn btn-primary' value="Submit" >
+              </div>
+            </div>
 
           </form>
 

@@ -29,10 +29,14 @@
 
       {# Profile tab #}
       <div class="tab-pane active in" id="home_pane">
-        <form id="email-form">
-          <label>Email
-            <input type="text" name="new_email" value="{{ email }}" class="span3">
-          </label>
+        <form id="email-form" class="form-horizontal">
+
+          <div class="control-group">
+            <label class="control-label" for="new_email" >Email</label>
+            <div class="controls">
+              <input type="text" id="new_email" name="new_email" value="{{ email }}" class="span3">
+            </div>
+          </div>
 
           <div id="email-success" class="alert alert-success email_alert" style="display:none;">
             <button class="close" data-dismiss="alert">×</button>
@@ -43,24 +47,39 @@
             Uh oh. Something went wrong, and your email address wasn't changed. Sorry!
           </div>
 
-          <div>
-            <button type="submit" class="btn btn-primary">Update</button>
+          <div class="control-group">
+            <label class="control-label"></label>
+            <div class="controls">
+              <button type="submit" class="btn btn-primary">Update</button>
+            </div>
           </div>
         </form>
       </div>
 
       {# Password tab #}
       <div class="tab-pane fade" id="password_pane">
-        <form id="password-form" action="#" method="POST">
-          <label>Old Password
-            <input name="old_password" type="password" class="span3">
-          </label>
-          <label>New Password
-            <input name="new_password" type="password" class="span3">
-          </label>
-          <label>Confirm New Password
-            <input name="confirm_password" type="password" class="span3">
-          </label>
+        <form id="password-form" action="#" method="POST" class="form-horizontal">
+
+          <div class="control-group">
+            <label class="control-label" for="old_password" >Old Password</label>
+            <div class="controls">
+              <input id="old_password" name="old_password" type="password" class="span3">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="new_password" >New Password</label>
+            <div class="controls">
+              <input id="new_password" name="new_password" type="password" class="span3">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="confirm_password" >Confirm New Password</label>
+            <div class="controls">
+              <input id="confirm_password" name="confirm_password" type="password" class="span3">
+            </div>
+          </div>
 
           <div id="password-success" class="alert alert-success password_alert" style="display:none;">
             <button class="close" data-dismiss="alert">×</button>
@@ -75,8 +94,11 @@
             Your new passwords didn't match.
           </div>
 
-          <div>
-            <button type="submit" class="btn btn-primary">Update</button>
+          <div class="control-group">
+            <label class="control-label"></label>
+            <div class="controls">
+              <button type="submit" class="btn btn-primary">Update</button>
+            </div>
           </div>
         </form>
       </div>
