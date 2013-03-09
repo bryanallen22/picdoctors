@@ -40,7 +40,7 @@ def prep_messages(base_messages, profile, job):
     messages = []
     for msg in base_messages:
         message = Message()
-        message.commentor = msg.commentor.user.username
+        message.commentor = msg.commentor.email
         message.message = msg.message
         message.created = get_time_string(msg.created)
         message.is_owner = msg.commentor == job.skaa
@@ -118,7 +118,7 @@ def generate_message_email(job, profile, message):
             to_email = get_doctor_emails(job, message)
         else:
             from_whom = 'Doctor'
-            to_email = [job.skaa.user.email]
+            to_email = [job.skaa.email]
 
         if len(to_email) == 0:
             return
@@ -147,14 +147,14 @@ def get_doctor_emails(job, message):
     ret = []
     # if there is a job doctor, only reply to him
     if job.doctor:
-        ret.append(job.doctor.user.email)
+        ret.append(job.doctor.email)
     # no job doctor yet, reply to all doctors who have commented
     else:
         jms = JobMessage.objects.filter(job=job)
         for jm in jms:
             # skip users, and only add unique doctors
-            if jm.commentor != job.skaa and jm.commentor.user.email not in ret:
-                ret.append(jm.commentor.user.email)
+            if jm.commentor != job.skaa and jm.commentor.email not in ret:
+                ret.append(jm.commentor.email)
 
     return ret
 

@@ -62,7 +62,7 @@ def merge_albums(request):
         # Okay, how did that happen!? Let's just barf, shall we?
         raise MultipleObjectsReturned(
             "So %s has managed to get %s unfinished albums at once. Impressive."
-            % (user_profile.user.username, len(albums)) );
+            % (user_profile.email, len(albums)) );
 
     if albums[0].created < albums[1].created:
         older_album = albums[0]

@@ -1,14 +1,13 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from common.models import Album, UserProfile, DoctorInfo, SkaaInfo
+from common.models import Album, Profile
 from doctor.jobsviews import doc_job_page
 from views import index
 
@@ -18,11 +17,9 @@ import datetime
 
 def create_skaa(user_profile):
     set_is_doctor(user_profile, False)
-    SkaaInfo.objects.create(user_profile=user_profile)
 
 def create_doctor(user_profile):
     set_is_doctor(user_profile, True)
-    DoctorInfo.objects.create(user_profile=user_profile)
 
 def set_is_doctor(user, val):
     user.is_doctor = val
@@ -68,7 +65,7 @@ def create_user(email, password, confirm_password, usertype):
     if password != confirm_password:
         return ( None, { 'passwords_didnt_match' : True } )
 
-    if User.objects.filter(email=email).count() > 0:
+    if Profile.objects.filter(email=email).count() > 0:
         # Username exists... Can we log in?
         user, tmp = auth(email, password)
         if not user:
@@ -78,13 +75,13 @@ def create_user(email, password, confirm_password, usertype):
             # We signed them in just fine
             return ( user, { } )
     else:
-        user = User.objects.create_user(username=email, email=email, password=password)
+        user = Profile.objects.create_user(email=email, password=password)
         #Now authenticate the user (it puts the backend into the User object)
         user, tmp = auth(email, password)
-        # The UserProfile for this person has already been automatically created
+        # The Profile for this person has already been automatically created
         # based on the post_save signal tied to the User class. See create_user_profile
         # in common/models.py
-        user_profile = user.get_profile()
+        user_profile = user
         if usertype == 'doc':
             create_doctor(user_profile)
         elif usertype == 'user':
@@ -168,7 +165,7 @@ def signout(request):
 
 def associate_album(request, album, user):
     if album is not None:
-        album.userprofile = user.get_profile()
+        album.userprofile = user
         album.save()
 
     # Once it has a user, clear the session back out

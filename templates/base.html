@@ -62,7 +62,7 @@
               {% if not user.is_authenticated %}
                 <li><a href="{% url 'skaa_signin' %}"><i class="icon-user"></i> Log In</a></li>
               {% else %}
-                {% if user.get_profile.is_doctor %}
+                {% if user.is_doctor %}
                 <li><a href="{% url 'new_job_page' %}"><i class="icon-star"></i> Available Jobs</a></li>
                 <li><a href="{% url 'doc_job_page' %}"><i class="icon-tasks"></i> My Jobs</a></li>
                 {% else%}
@@ -75,11 +75,11 @@
                   <a class="dropdown-toggle"
                      data-toggle="dropdown"
                      href="#">
-                      <i class="icon-user"></i> {{user.username }}
+                      <i class="icon-user"></i> {{user.email }}
                       <b class="caret"></b>
                     </a>
                   <ul class="dropdown-menu">
-                    {% if user.get_profile.is_doctor %}
+                    {% if user.is_doctor %}
                     <li><a href="{% url 'withdraw' %}"><i class="icon-shopping-cart"></i> Withdraw Earnings</a></li>
                     {% endif %}
                     <li><a href="{% url 'account_settings' %}"><i class="icon-cog"></i> Account Settings</a></li>
@@ -108,7 +108,7 @@
     <script type="text/template" id="feedback_form">
       <div>
         From:
-        <input type='text' id='feedback_from_textarea' value='{% if user.is_authenticated %}{{ user.username }}{% endif %}'>
+        <input type='text' id='feedback_from_textarea' value='{% if user.is_authenticated %}{{ user.email }}{% endif %}'>
       </input>
         Feedback:
         <textarea id='feedback_textarea' style='height:100px;'></textarea>

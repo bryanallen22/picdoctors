@@ -20,7 +20,7 @@ import os
 def get_profile_or_None(request):
     """ Get the request user profile if they are logged in """
     if request.user.is_authenticated():
-        return request.user.get_profile()
+        return request.user
     return None
 
 def get_time_string(prev_date):
@@ -135,7 +135,7 @@ def send_go_pro_email(request):
 
         user = request.user
 
-        which_user = user.username
+        which_user = user.email
         which_id = user.id
 
 

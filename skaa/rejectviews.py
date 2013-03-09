@@ -4,7 +4,7 @@ from common.models import Group
 from django.utils import simplejson
 from annoying.functions import get_object_or_None
 from common.functions import get_profile_or_None
-from common.models import Job, UserProfile
+from common.models import Job
 from common.jobs import send_job_status_change
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse

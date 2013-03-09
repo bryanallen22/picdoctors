@@ -27,7 +27,7 @@ def feedback(request):
     tmp_from = data['from_whom'].strip()
 
     if profile:
-        from_whom = profile.user.username
+        from_whom = profile.email
     elif tmp_from != '':
         from_whom = tmp_from
         

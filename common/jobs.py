@@ -100,7 +100,7 @@ def get_job_infos_json(cur_page_jobs, action_generator, request):
         return job_infos
 
     # assume this exists, if it doesn't, they shouldn't be here, crash, i don't care
-    profile = request.user.get_profile()
+    profile = request.user
     for job in cur_page_jobs:
         job_inf = fill_job_info(job, action_generator, profile)
 
@@ -152,9 +152,9 @@ def send_job_status_change(job, profile):
     try:
         to_email = ''
         if job.doctor and job.doctor == profile:
-            to_email = job.skaa.user.email
+            to_email = job.skaa.email
         else:
-            to_email = job.doctor.user.email
+            to_email = job.doctor.email
 
         subject = 'Job #' + str(job.id).rjust(8, '0') + ' status has changed.'
 

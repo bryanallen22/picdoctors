@@ -114,7 +114,6 @@ def change_email(request):
         account.email_address = new_email
         account.save()
 
-        request.user.username = new_email
         request.user.email = new_email
         request.user.save()
 
@@ -123,7 +122,6 @@ def change_email(request):
         # TODO - make sure our local db copy is okay
         logging.info("Error updating user email from %s to %s! Resetting our local copy, just in case."
                      % (request.user.email, new_email))
-        request.user.username = old_email
         request.user.email = old_email
         request.user.save()
         raise

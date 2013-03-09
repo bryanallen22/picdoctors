@@ -1,18 +1,17 @@
 import math
-from common.models import UserProfile, Job, DoctorInfo
+from common.models import Job
 import pdb
 import logging
 
 def calculate_job_payout(job, doc):
     ###  Calculate the payout in cents ### 
-    doc_info = DoctorInfo.get_docinfo_or_None(doc)
-    if not doc_info:
+    if not doc:
         logging.error('unable to get docinfo for %s' % doc)
         return 0
 
     doctors_cut = .5
     
-    cnt = doc_info.approval_count
+    cnt = doc.approval_count
     if cnt < 10:
         doctors_cut = .5
     elif cnt < 30:
@@ -35,7 +34,7 @@ def calculate_job_payout(job, doc):
         doctors_cut = .8
 
     if cnt >= 10:
-        doctors_cut += doc_info.rating
+        doctors_cut += doc.rating
     
     return int(math.floor(job.bp_hold.cents * doctors_cut))
 

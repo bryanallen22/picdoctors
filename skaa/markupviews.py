@@ -22,10 +22,10 @@ import logging
 
 def belongs_on_this_markup_page(request, album_id, sequence):
     album_id = int(album_id)
-    b = get_object_or_None(Album, id=album_id)
+    album = get_object_or_None(Album, id=album_id)
 
     #this album doesn't exist
-    if b is None:
+    if album is None:
         return False
 
     #if the user isn't logged in
@@ -39,10 +39,10 @@ def belongs_on_this_markup_page(request, album_id, sequence):
             return False
     
     #the user is logged in by this point
-    profile = request.user.get_profile()
+    profile = request.user
 
     #is album owner
-    if profile == b.userprofile:
+    if profile == album.userprofile:
         return True
 
     j = get_object_or_None(Job, album=album_id)

@@ -2,7 +2,7 @@ from celery import task
 from common.models import Pic
 from annoying.functions import get_object_or_None
 
-from common.models import Group, UserProfile, DoctorInfo
+from common.models import Group
 from skaa.picmask import generate_watermarked_image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
@@ -21,12 +21,8 @@ def savePic(pic_id, file):
 
 @task()
 def saveWatermark(profile_id, group_id, str_io_pic):
-    profile = get_object_or_None(UserProfile, id=profile_id)
+    profile = get_object_or_None(Profile, id=profile_id)
     if not profile:
-        return
-
-    doc_info = get_object_or_None(DoctorInfo, user_profile=profile)
-    if not doc_info:
         return
 
     group = get_object_or_None(Group, id=group_id)

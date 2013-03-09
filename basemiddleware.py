@@ -1,7 +1,9 @@
 from common.functions import get_profile_or_None
 from common.functions import get_unfinished_album
 from common.models import Album
-import pdb
+from django.core.exceptions import MultipleObjectsReturned
+
+import ipdb
 
 class BaseMiddleware(object):
     def process_request(self, request):

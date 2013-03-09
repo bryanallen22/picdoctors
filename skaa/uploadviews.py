@@ -74,7 +74,7 @@ def has_doc_upload_access(request):
     if not request.user.is_authenticated():
         return False
 
-    profile = request.user.get_profile()
+    profile = request.user
 
     #not a doctor
     if not profile.is_doctor:

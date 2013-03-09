@@ -29,7 +29,9 @@ EXAMPLE_DATABASES = {
 }
 
 # User Model
-AUTH_PROFILE_MODULE = 'common.UserProfile'
+#AUTH_PROFILE_MODULE = 'common.UserProfile'
+AUTH_USER_MODEL = 'common.Profile'
+#AUTH_PROFILE_MODULE = 'common.Profile'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

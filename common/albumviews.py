@@ -42,7 +42,7 @@ def album(request, album_id):
     if not job:
         return redirect('/')
 
-    moderator =  profile.user.has_perm('common.view_album')
+    moderator =  profile.has_perm('common.view_album')
     if job.skaa != profile and job.doctor != profile and not moderator:
         return redirect('/')
 
@@ -80,7 +80,7 @@ def approve_album(request):
     job_id = data['job_id']
     job = get_object_or_None(Job, id=data['job_id'])
 
-    moderator =  profile.user.has_perm('common.approve_album')
+    moderator =  profile.has_perm('common.approve_album')
 
     if job and job.album and profile and moderator: # and moderator
         # only necessary for doctors that aren't auto_approve

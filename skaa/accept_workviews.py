@@ -10,7 +10,7 @@ from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account
 from django.contrib.auth.decorators import login_required
 
-from common.models import Album, Group, Job, UserProfile, DocRating
+from common.models import Album, Group, Job, DocRating
 from common.jobs import send_job_status_change
 from common.balancedfunctions import *
 
@@ -34,7 +34,7 @@ def accept_work(request, job_id):
             job.save()
 
             # Update Doctor Approval Count (for use in figuring out how much $$/job)
-            DoctorInfo.update_approval_count(profile)
+            profile.update_approval_count()
             
             dr = DocRating()
             dr.doctor = job.doctor

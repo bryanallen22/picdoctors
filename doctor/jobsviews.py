@@ -3,13 +3,11 @@ from annoying.functions import get_object_or_None
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from common.models import Job 
 from common.models import Album
 from common.models import Group
-from common.models import UserProfile, DoctorInfo
 from common.models import Pic
 from common.models import DocBlock
 from common.models import PriceToLowContributor
@@ -55,11 +53,10 @@ def new_job_page(request, page=1):
     jobs = None
     profile = get_profile_or_None(request)
     if profile and profile.is_doctor:
-        if not DoctorInfo.can_view_jobs(request, profile):
-            doc_info = DoctorInfo.get_docinfo_or_None(profile)
-            if not doc_info.is_merchant:
+        if not profile.can_view_jobs(request, profile):
+            if not profile.is_merchant:
                 return redirect( reverse('account_settings') + '#merchant_tab' )
-            elif not doc_info.has_bank_account:
+            elif not profile.has_bank_account:
                 return redirect( reverse('account_settings') + '#bank_tab' )
             else:
                 # I don't know how we got here, there is only 2 reasons why
@@ -147,7 +144,6 @@ def apply_for_job(request):
     job = get_object_or_None(Job, id=data['job_id'])
     profile = get_profile_or_None(request)
     result = []
-    doc = request.user.get_profile()
 
     actions = Actions()
     actions.add('alert', 'This job is no longer available')
@@ -155,7 +151,7 @@ def apply_for_job(request):
     r = RedirectData(reverse("new_job_page"), 'available jobs')
     actions.add('delay_redirect', r)
     
-    if job is None or job.doctor is not None or doc is None:
+    if job is None or job.doctor is not None or profile is None:
         #result = ['actions': {'alert':'This job is no longer available', 'reload':''}]
         pass 
     else:
@@ -171,12 +167,10 @@ def apply_for_job(request):
                     actions.add('alert', 'Unfortunately you are unable to take this job, we apologize.')
                     actions.add('remove_job_row', data['job_id'])
                 else:
-                    docinfo = DoctorInfo.get_docinfo_or_None(doc)
-
                     # Update Job Info
-                    job.doctor = doc
-                    job.approved = docinfo.auto_approve
-                    job.payout_price_cents = calculate_job_payout(job, doc)
+                    job.doctor = profile
+                    job.approved = profile.auto_approve
+                    job.payout_price_cents = calculate_job_payout(job, profile)
                     job.status = Job.DOCTOR_ACCEPTED
                     job.save()
 
@@ -195,7 +189,7 @@ def apply_for_job(request):
                     job_inf = fill_job_info(job, generate_doctor_actions, profile)
                     actions.addJobInfo(job_inf)
                     
-                    db = DocBlock(job=job, doctor=doc)
+                    db = DocBlock(job=job, doctor=profile)
                     db.save()
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
@@ -271,10 +265,9 @@ def mark_job_completed(request):
 
         if unfinished_count==0:
             actions.add('alert', 'The job has been marked as complete')
-            docinfo = DoctorInfo.get_docinfo_or_None(profile)
 
             # elitest doctor is auto approved, skip to submitted state!
-            if docinfo.auto_approve:
+            if profile.auto_approve:
                 job.status = Job.DOCTOR_SUBMITTED
             else:
                 job.status = Job.MODERATOR_APPROVAL_NEEDED

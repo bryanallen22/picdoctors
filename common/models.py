@@ -7,7 +7,7 @@ import os
 import pdb
 import uuid
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib import admin
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.files.base import ContentFile
@@ -21,15 +21,60 @@ from common.balancedmodels import *
 
 from annoying.functions import get_object_or_None
 
-################################################################################
-# UserProfile
-#
-#  Information about the user goes here. This table goes in conjuction with
-#  the User table, which is managed by django
-################################################################################
-class UserProfile(DeleteMixin):
-    # This field is required.
-    user = models.OneToOneField(User)
+
+class ProfileUserManager(BaseUserManager):
+    def create_user(self, email, password=None):
+        """
+        Creates and saves a User with the given email, date of
+        birth and password.
+        """
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            email=ProfileUserManager.normalize_email(email),
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+class Profile(DeleteMixin, AbstractBaseUser):
+
+    objects = ProfileUserManager()
+
+    email = models.EmailField(
+        verbose_name='email address',
+        max_length=255,
+        unique=True,
+        db_index=True,
+    )
+
+    is_active = models.BooleanField(default=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def get_full_name(self):
+        # The user is identified by their email address
+        return self.email
+
+    def get_short_name(self):
+        # The user is identified by their email address
+        return self.email
+
+    def __unicode__(self):
+        return self.email
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    @property
+    def is_staff(self):
+        "Is the user a member of staff?"
+        return self.has_perm('admin')
 
     # Other fields here
     accepted_eula = models.BooleanField()
@@ -42,20 +87,10 @@ class UserProfile(DeleteMixin):
     def __unicode__(self):
         out = ""
         if self.is_doctor:
-            out = "Doctor: " + self.user.username
+            out = "Doctor: " + self.email
         else:
-            out = "Skaa: " + self.user.username
+            out = "Skaa: " + self.email
         return out
-            
-
-class SkaaInfo(DeleteMixin):
-    user_profile = models.ForeignKey(UserProfile, 
-                                        related_name='associated_skaa')
-
-
-class DoctorInfo(DeleteMixin):
-    user_profile       = models.ForeignKey(UserProfile, 
-                                          related_name='associated_doctor')
 
     auto_approve       = models.BooleanField(default=False)
 
@@ -67,41 +102,20 @@ class DoctorInfo(DeleteMixin):
 
     has_bank_account   = models.BooleanField(default=False)
 
-    @staticmethod
-    def get_docinfo_or_None(profile):
-        info = get_object_or_None(DoctorInfo, user_profile=profile)
-        return info
+    def update_approval_count(self):
+        self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
+        self.save()
 
-    @staticmethod
-    def update_approval_count(profile):
-        self = DoctorInfo.get_docinfo_or_None(profile)
-        if self:
-            self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
-            self.save()
-
-    @staticmethod
-    def can_view_jobs(request, profile):
+    def can_view_jobs(self, request, profile):
         from common.balancedfunctions import has_bank_account, is_merchant, get_merchant_account
-        self = DoctorInfo.get_docinfo_or_None(profile)
 
-        if self:
-
-            # if they can't view, check to see the merchant/bankaccount status has changed
-            if not self.is_merchant or not self.has_bank_account:
-                merchant_account = get_merchant_account(request, profile)
-                self.is_merchant = is_merchant(merchant_account)
-                self.has_bank_account = has_bank_account(merchant_account)
-                self.save()
-            return self.is_merchant and self.has_bank_account
-        else:
-            return False
-
-
-def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
+        # if they can't view, check to see the merchant/bankaccount status has changed
+        if not self.is_merchant or not self.has_bank_account:
+            merchant_account = get_merchant_account(request, profile)
+            self.is_merchant = is_merchant(merchant_account)
+            self.has_bank_account = has_bank_account(merchant_account)
+            self.save()
+        return self.is_merchant and self.has_bank_account
 
 ################################################################################
 # Pic
@@ -283,7 +297,7 @@ class Pic(DeleteMixin):
 ################################################################################
 class Album(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
-    userprofile          = models.ForeignKey(UserProfile, blank=True, 
+    userprofile          = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, 
                                              null=True, db_index=True)
     description          = models.TextField(blank=True)
     num_groups           = models.IntegerField(blank=True, null=True, default=0)
@@ -390,7 +404,7 @@ class Album(DeleteMixin):
 
         # Create a album associated with a user
         if request.user.is_authenticated():
-            album.userprofile = request.user.get_profile()
+            album.userprofile = request.user
             album.save()
 
         # Create a album and store it in the session
@@ -417,7 +431,7 @@ class Album(DeleteMixin):
         ret = None
 
         # If user is logged in, look for one associated with profile
-        user_profile = request.user.get_profile() if request.user.is_authenticated() else None
+        user_profile = request.user if request.user.is_authenticated() else None
         if user_profile:
             albums = Album.objects.filter(finished=False, userprofile=user_profile)
             empty_album = False
@@ -450,7 +464,7 @@ class Album(DeleteMixin):
 
     def __unicode__(self):
         if self.userprofile is not None:
-            return "Album # " + str(self.id) + " -- owned by: " + self.userprofile.user.username
+            return "Album # " + str(self.id) + " -- owned by: " + self.userprofile.email
         else:
             return "Album # " + str(self.id) + " -- owned by the internet"  
 
@@ -475,7 +489,7 @@ class Group(models.Model):
         if not job:
             return []
         
-        moderator =  profile.user.has_perm('common.view_album')
+        moderator =  profile.has_perm('common.view_album')
 
         if job.is_approved() or job.doctor == profile or moderator:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
@@ -487,7 +501,7 @@ class Group(models.Model):
         if not job:
             return []
 
-        moderator =  profile.user.has_perm('common.view_album')
+        moderator =  profile.has_perm('common.view_album')
 
         if job.is_approved() or job.doctor == profile or moderator:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
@@ -526,7 +540,7 @@ class DocPicGroup(DeleteMixin):
 
         # TODO I could get the job in here, but it'd hurt my db feelings
         # job = group.album.get_job_or_None()
-        moderator =  profile.user.has_perm('common.view_album')
+        moderator =  profile.has_perm('common.view_album')
 
         if not ( job.is_approved() or is_doctor or moderator ):
             return None
@@ -563,10 +577,10 @@ class Job(DeleteMixin):
     #Never blank, no album = no job. related_name since Album already has a FK
     album                   = models.ForeignKey(Album, 
                                                 db_index=True)
-    skaa                    = models.ForeignKey(UserProfile, 
+    skaa                    = models.ForeignKey(settings.AUTH_USER_MODEL, 
                                                 related_name='job_owner', 
                                                 db_index=True)
-    doctor                  = models.ForeignKey(UserProfile, 
+    doctor                  = models.ForeignKey(settings.AUTH_USER_MODEL, 
                                                 related_name='job_doctor',
                                                 blank=True, null=True)
 
@@ -598,7 +612,7 @@ class Job(DeleteMixin):
     approved                = models.BooleanField(default=False)
 
     # last communication user
-    last_communicator       = models.ForeignKey(UserProfile,
+    last_communicator       = models.ForeignKey(settings.AUTH_USER_MODEL,
                                                 related_name='last_communicator',
                                                 blank=True, null=True)
     
@@ -618,20 +632,19 @@ class Job(DeleteMixin):
     def is_approved(self):
         approved = self.approved
         if not approved and self.doctor:
-            doc_profile = DoctorInfo.get_docinfo_or_None(self.doctor)
-            approved = approved or doc_profile.auto_approve
+            approved = approved or self.auto_approve
         return approved
 
     def is_accepted(self):
         return self.status == Job.USER_ACCEPTED
 
     def __unicode__(self):
-        out = "Owner: " + self.skaa.user.username
+        out = "Owner: " + self.skaa.user.email
         out += " -- Doctor: "
         if self.doctor is None:
             out += "None"
         else:
-            out += self.doctor.user.username
+            out += self.doctor.user.email
 
         out += " -- price cents: " + str(self.bp_hold.cents)
         out += " -- status: " + self.status
@@ -641,16 +654,16 @@ class Job(DeleteMixin):
 # That way you don't have the same doctor say it 50 times
 class PriceToLowContributor(DeleteMixin):
     job     = models.ForeignKey(Job, db_index=True)
-    doctor  = models.ForeignKey(UserProfile, db_index=True)
+    doctor  = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
 
 # Post switching from a doctor we won't allow them to take that job again
 class DocBlock(DeleteMixin):
     job            = models.ForeignKey(Job, db_index=True)
-    doctor         = models.ForeignKey(UserProfile)
+    doctor         = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 # Individual Doctor Ratings
 class DocRating(DeleteMixin):
-    doctor         = models.ForeignKey(UserProfile, db_index=True)
+    doctor         = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
     job            = models.ForeignKey(Job)
     overall_rating = models.IntegerField()
     comments       = models.TextField()
@@ -664,10 +677,10 @@ def update_doctor_rating(sender, instance, created, **kwargs):
     if len(ratings) > 0:
         total /= len(ratings)
 
-    doc_info = DoctorInfo.get_docinfo_or_None(instance.doctor)
-    if doc_info:
-        doc_info.rating = total
-        doc_info.save()
+    doc = instance.doctor
+    if doc:
+        doc.rating = total
+        doc.save()
 
 post_save.connect(update_doctor_rating, sender=DocRating)
 

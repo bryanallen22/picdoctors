@@ -7,12 +7,10 @@ from django.utils import simplejson
 from common.models import Job
 from common.models import Album
 from common.models import Group
-from common.models import UserProfile
 from common.models import Pic
 from common.balancedmodels import BPHold
 from common.functions import get_profile_or_None
 from common.calculations import calculate_job_payout
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from decimal import *
 
@@ -33,7 +31,7 @@ import ipdb
 def job_page(request, page=1):
     ### get a list of the jobs by this user ###
     if request.user.is_authenticated():
-        jobs = Job.objects.filter(skaa=request.user.get_profile()).order_by('created').reverse()
+        jobs = Job.objects.filter(skaa=request.user).order_by('created').reverse()
     else:
         jobs = []
 
