@@ -50,7 +50,7 @@ def withdraw(request):
         account = get_merchant_account(request, profile)
         bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
 
-        if profile.is_doctor and len(bank_accounts) > 0 and is_merchant(account):
+        if profile.isa('doctor') and len(bank_accounts) > 0 and is_merchant(account):
             valid = True
         else:
             valid = False

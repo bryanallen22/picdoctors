@@ -17,7 +17,7 @@ import settings
 def create_bank_account(request):
     profile = get_profile_or_None(request)
     
-    if not profile or not profile.is_doctor:
+    if not profile or not profile.isa('doctor'):
         return HttpResponse('{ }', mimetype='application/json')
 
     account = get_merchant_account(request, profile)

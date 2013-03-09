@@ -7,7 +7,7 @@ import os
 import pdb
 import uuid
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib import admin
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.files.base import ContentFile
@@ -21,6 +21,8 @@ from common.balancedmodels import *
 
 from annoying.functions import get_object_or_None
 
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
 class ProfileUserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -39,7 +41,15 @@ class ProfileUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-class Profile(DeleteMixin, AbstractBaseUser):
+class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
+
+    class Meta:
+        permissions = (
+                ("admin", "Can do everything"),
+                ("skaa", "Can do user stuff"),
+                ("doctor", "Can do doctor stuff"),
+        )
+    
 
     objects = ProfileUserManager()
 
@@ -63,30 +73,36 @@ class Profile(DeleteMixin, AbstractBaseUser):
         # The user is identified by their email address
         return self.email
 
-    def __unicode__(self):
-        return self.email
+    def isa(self, permission):
+        return self.has_perm('common.' + permission)
 
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
+    def add_permission(self, permission):
+        content_type = ContentType.objects.get_for_model(Profile)
+        p = Permission.objects.get(content_type=content_type, codename=permission)
+        self.user_permissions.add(p)
+    #user.is_doctor = val
 
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        return self.has_perm('admin')
+    #def has_perm(self, perm, obj=None):
+    #    "Does the user have a specific permission?"
+    #    # Simplest possible answer: Yes, always
+    #    return True
+
+    #@property
+    #def is_staff(self):
+    #    "Is the user a member of staff?"
+    #    return self.has_perm('admin')
 
     # Other fields here
     accepted_eula = models.BooleanField()
 
     # Everyone is a User/Skaa, even if they don't know or care. Some are also doctors
-    is_doctor = models.BooleanField()
+    #is_doctor = models.BooleanField()
 
     bp_account = models.ForeignKey(BPAccount, blank=True, null=True)
 
     def __unicode__(self):
         out = ""
-        if self.is_doctor:
+        if self.isa('doctor'):
             out = "Doctor: " + self.email
         else:
             out = "Skaa: " + self.email
@@ -536,7 +552,7 @@ class DocPicGroup(DeleteMixin):
     #I can see me setting a value that flips this from watermark pic to pic
     def get_pic(self, profile, job):
         # if not ( any valid reason to stay ) 
-        is_doctor = False if not profile else profile.is_doctor
+        is_doctor = False if not profile else profile.isa('doctor')
 
         # TODO I could get the job in here, but it'd hurt my db feelings
         # job = group.album.get_job_or_None()

@@ -17,7 +17,9 @@ class BaseMiddleware(object):
         except MultipleObjectsReturned:
             invalid_album_state = True
 
-        if profile and not profile.is_doctor and not album:
+        is_doctor = False if not profile else profile.isa('doctor')
+
+        if profile and not is_doctor and not album:
             request.has_cart = True
 
             # multiple albums (throw up ?)
@@ -28,7 +30,7 @@ class BaseMiddleware(object):
 
             return None
 
-        elif not album or (profile and profile.is_doctor):
+        elif not album or (profile and is_doctor):
             request.has_cart = False
             return None
 

@@ -51,7 +51,7 @@ def album(request, album_id):
 
     # when querying for pictures you can query for approved pics, or
     # if your the doctor query for all pics they've uploaded
-    only_approved = not profile.is_doctor and not moderator
+    only_approved = not profile.isa('doctor') and not moderator
     user_acceptable = job.status == Job.DOCTOR_SUBMITTED and job.skaa == profile and job.is_approved()
 
     groups = Group.get_album_groups(job.album)

@@ -27,7 +27,7 @@ import ipdb
 def doc_job_page(request, page=1):
     jobs = None
     profile = get_profile_or_None(request)
-    if profile and profile.is_doctor:
+    if profile and profile.isa('doctor'):
 #        new_jobs = Job.objects.filter(doctor=None)
         jobs = Job.objects.filter(doctor=profile).order_by('created').reverse()
     else:
@@ -52,7 +52,7 @@ def doc_job_page(request, page=1):
 def new_job_page(request, page=1):
     jobs = None
     profile = get_profile_or_None(request)
-    if profile and profile.is_doctor:
+    if profile and profile.isa('doctor'):
         if not profile.can_view_jobs(request, profile):
             if not profile.is_merchant:
                 return redirect( reverse('account_settings') + '#merchant_tab' )

@@ -61,7 +61,7 @@ def contact(request, job_id):
         return redirect('/')
 
     if not (job.skaa == profile or job.doctor == profile or
-        ( profile.is_doctor and job.status == Job.IN_MARKET)):
+        ( profile.isa('doctor') and job.status == Job.IN_MARKET)):
         return redirect('/')
 
     #############################

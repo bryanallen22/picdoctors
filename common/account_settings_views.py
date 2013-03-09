@@ -43,7 +43,7 @@ def account_settings(request):
 
     parent_params = get_shared_params(request, profile)
 
-    if profile.is_doctor:
+    if profile.isa('doctor'):
         return settings_doc(request, parent_params)
     else:
         return settings_user(request, parent_params)

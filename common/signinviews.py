@@ -15,15 +15,11 @@ import ipdb
 import logging
 import datetime
 
-def create_skaa(user_profile):
-    set_is_doctor(user_profile, False)
+def create_skaa(user):
+    user.add_permission('skaa')
 
-def create_doctor(user_profile):
-    set_is_doctor(user_profile, True)
-
-def set_is_doctor(user, val):
-    user.is_doctor = val
-    user.save()
+def create_doctor(user):
+    user.add_permission('doctor')
 
 def auth(email, password):
     """
