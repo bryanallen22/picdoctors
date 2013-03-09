@@ -45,7 +45,7 @@ def account_settings(request):
 
     if profile.isa('doctor'):
         return settings_doc(request, parent_params)
-    else:
+    elif profile.isa('skaa'):
         return settings_user(request, parent_params)
 
     return {}

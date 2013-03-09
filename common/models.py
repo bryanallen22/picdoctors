@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 from PIL import Image
 from StringIO import StringIO
 from urlparse import urlparse
@@ -50,20 +51,44 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
                 ("doctor", "Can do doctor stuff"),
         )
     
-
+    # manager for creating the user
     objects = ProfileUserManager()
 
-    email = models.EmailField(
-        verbose_name='email address',
-        max_length=255,
-        unique=True,
-        db_index=True,
-    )
+    
+    email                       = models.EmailField( verbose_name='email address', max_length=255, unique=True, db_index=True)
 
-    is_active = models.BooleanField(default=True)
+    is_active                   = models.BooleanField(default=True)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    #Required fields for the custom Profile
+    USERNAME_FIELD              = 'email'
+    REQUIRED_FIELDS             = []
+
+    # Other fields here
+    accepted_eula               = models.BooleanField()
+
+
+    # Doctor Specific - more efficient than joining, allows for skaa/doctor/blah to have important profile fields here
+
+    # associated balanced payment account
+    bp_account                  = models.ForeignKey(BPAccount, blank=True, null=True)
+
+    # has this doctor proven they are worthy of being auto approved (no need to be moderated?)
+    auto_approve                = models.BooleanField(default=False)
+
+    # is this doctor any good?
+    rating                      = models.FloatField(default=0.0)
+
+    # how many pics have been approved in the last X days (currently 30)
+    approval_pic_count          = models.IntegerField(default=0)
+    approval_pic_last_update    = models.DateTimeField(blank=True, null=True)
+    
+    # is this person a merchant?  I'm contemplating ripping this out and adding as a permission 
+    is_merchant                 = models.BooleanField(default=False)
+
+    # does this person have a bank account?  I'm contemplating ripping this out and adding as a permission 
+    has_bank_account            = models.BooleanField(default=False)
+
+
 
     def get_full_name(self):
         # The user is identified by their email address
@@ -76,29 +101,13 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     def isa(self, permission):
         return self.has_perm('common.' + permission)
 
+    def has_common_perm(self, permission):
+        return self.isa(permission)
+
     def add_permission(self, permission):
         content_type = ContentType.objects.get_for_model(Profile)
         p = Permission.objects.get(content_type=content_type, codename=permission)
         self.user_permissions.add(p)
-    #user.is_doctor = val
-
-    #def has_perm(self, perm, obj=None):
-    #    "Does the user have a specific permission?"
-    #    # Simplest possible answer: Yes, always
-    #    return True
-
-    #@property
-    #def is_staff(self):
-    #    "Is the user a member of staff?"
-    #    return self.has_perm('admin')
-
-    # Other fields here
-    accepted_eula = models.BooleanField()
-
-    # Everyone is a User/Skaa, even if they don't know or care. Some are also doctors
-    #is_doctor = models.BooleanField()
-
-    bp_account = models.ForeignKey(BPAccount, blank=True, null=True)
 
     def __unicode__(self):
         perms = ""
@@ -109,16 +118,6 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
             perms = perms[:-1]
 
         return "Email: " + self.email + " - Permissions [" + perms + "]"
-
-    auto_approve       = models.BooleanField(default=False)
-
-    rating             = models.FloatField(default=0.0)
-
-    approval_count     = models.IntegerField(default=0)
-    
-    is_merchant        = models.BooleanField(default=False)
-
-    has_bank_account   = models.BooleanField(default=False)
 
     def update_approval_count(self):
         self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
@@ -134,6 +133,32 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
             self.has_bank_account = has_bank_account(merchant_account)
             self.save()
         return self.is_merchant and self.has_bank_account
+
+    def get_approval_count(self, invalidate=False):
+        now = datetime.utcnow().replace(tzinfo=pytz.UTC)
+        yesterday = now - timedelta(days=1)
+        thirty_ago = now - timedelta(days=30)
+        last_update = self.approval_pic_last_update
+
+        if last_update == None or last_update < yesterday or invalidate:
+            
+            jobs = Job.objects.filter(doctor=self) \
+                    .filter(status=Job.USER_ACCEPTED) \
+                    .filter(accepted_date__gte=thirty_ago)
+            
+            cnt = 0
+            
+            for j in jobs:
+                cnt = cnt + j.album.num_groups
+                
+            self.approval_pic_last_update = now
+            self.approval_pic_count = cnt
+            self.save()
+
+        return self.approval_pic_count
+
+
+
 
 ################################################################################
 # Pic
@@ -319,8 +344,10 @@ class Album(DeleteMixin):
                                              null=True, db_index=True)
     description          = models.TextField(blank=True)
     num_groups           = models.IntegerField(blank=True, null=True, default=0)
-    # This only becomes true after they've paid
+
+    # This only becomes true after they've paid (set a hold)
     finished             = models.BooleanField(default=False)
+
     # If sequences_last_set gets behind groups_last_modified, we know that we
     # need to reorder our sequences
     groups_last_modified = models.DateTimeField(auto_now_add=True)
@@ -507,9 +534,7 @@ class Group(models.Model):
         if not job:
             return []
         
-        moderator =  profile.has_perm('common.view_album')
-
-        if job.is_approved() or job.doctor == profile or moderator:
+        if job.is_approved() or job.doctor == profile or profile.has_common_perm('view_album'):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
             
         return []
@@ -519,9 +544,7 @@ class Group(models.Model):
         if not job:
             return []
 
-        moderator =  profile.has_perm('common.view_album')
-
-        if job.is_approved() or job.doctor == profile or moderator:
+        if job.is_approved() or job.doctor == profile or profile.has_common_perm('view_album'):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
             
         return []
@@ -558,9 +581,8 @@ class DocPicGroup(DeleteMixin):
 
         # TODO I could get the job in here, but it'd hurt my db feelings
         # job = group.album.get_job_or_None()
-        moderator =  profile.has_perm('common.view_album')
 
-        if not ( job.is_approved() or is_doctor or moderator ):
+        if not ( job.is_approved() or is_doctor or profile.has_common_perm('view_album') ):
             return None
 
         # I still don't have to return the full pic, just the watermark for now :)
@@ -633,6 +655,8 @@ class Job(DeleteMixin):
     last_communicator       = models.ForeignKey(settings.AUTH_USER_MODEL,
                                                 related_name='last_communicator',
                                                 blank=True, null=True)
+
+    accepted_date           = models.DateTimeField(blank=True, null=True)
     
     def is_part_of(self, profile):
         if not profile:

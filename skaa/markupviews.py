@@ -50,7 +50,7 @@ def belongs_on_this_markup_page(request, album_id, sequence):
     if not j:
         return False
 
-    #is a doctor and the job doesn't have a doctor (aka they can view it)
+    # the job doesn't have a doctor and the profile is a doctor (aka they can view it)
     if not j.doctor and profile.isa('doctor'):
         return True
 
@@ -97,9 +97,6 @@ def markup_page_album(request, album_id, sequence):
     # if that's not necessary)
     album.set_sequences()
 
-    # true if they have no profile, else not profile.is_doctor
-    only_approved = True if not profile else not profile.isa('doctor')
-
     logging.info('sequence=%d, album.id=%d, album_num=%d' % (sequence, album.id, album.num_groups))
 
     logging.info('len(pics)=%d' % len(pics))
@@ -126,7 +123,7 @@ def markup_page_album(request, album_id, sequence):
 
     is_job_user = False
     # AKA I am the user
-    if (profile and not profile.isa('doctor')) or not job:
+    if (profile and profile.isa('skaa')) or not job:
         is_job_user = True
 
     #previous next links

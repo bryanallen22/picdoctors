@@ -30,6 +30,6 @@ def currency_cents(value):
     return locale.currency(value, grouping=True)
 
 @register.filter
-def has_user_permission(user, value):
+def has_permission(user, value):
     """ find out if a user is a xyz permission """
     return user.isa(value)

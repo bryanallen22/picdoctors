@@ -166,6 +166,7 @@ def place_hold(job, album, user, cents, card_uri):
 
     album.finished = True
     album.save()
+
     logging.info("Album owned by %s has been finished with price at $%s (cents)" %
                      (album.userprofile.email, cents))
 

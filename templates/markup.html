@@ -11,8 +11,8 @@
 <div class='row'>
   <div id="markup_app" class='span10'>
     {% if doc_pics %}
-    <h2 class='markup_h2_header'>
-      Doctor Images 
+    <h2 class='markup_h2_header well'>
+      Doctor's Picture{{doc_pics|pluralize}}
     </h2>
     {% for pic in doc_pics %}
     <div class='doc_pics'>

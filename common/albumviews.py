@@ -42,16 +42,14 @@ def album(request, album_id):
     if not job:
         return redirect('/')
 
-    moderator =  profile.has_perm('common.view_album')
+    moderator = profile.has_common_perm('view_album')
+    # if you are not the owner and not the doctor and not the moderator why are you here?
     if job.skaa != profile and job.doctor != profile and not moderator:
         return redirect('/')
 
     #############################
     #############################
 
-    # when querying for pictures you can query for approved pics, or
-    # if your the doctor query for all pics they've uploaded
-    only_approved = not profile.isa('doctor') and not moderator
     user_acceptable = job.status == Job.DOCTOR_SUBMITTED and job.skaa == profile and job.is_approved()
 
     groups = Group.get_album_groups(job.album)

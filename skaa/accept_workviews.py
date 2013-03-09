@@ -16,7 +16,8 @@ from common.balancedfunctions import *
 
 import ipdb
 import logging
-import datetime
+from datetime import datetime
+import pytz
 
 @login_required
 @render_to('accept_work.html')
@@ -31,10 +32,11 @@ def accept_work(request, job_id):
             do_debit(request, profile, job)
 
             job.status = Job.USER_ACCEPTED
+            job.accepted_date = datetime.utcnow().replace(tzinfo=pytz.UTC)
             job.save()
 
             # Update Doctor Approval Count (for use in figuring out how much $$/job)
-            profile.update_approval_count()
+            job.doctor.get_approval_count(True)
             
             dr = DocRating()
             dr.doctor = job.doctor
