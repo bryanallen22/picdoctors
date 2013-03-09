@@ -77,7 +77,7 @@ def has_doc_upload_access(request):
     profile = request.user
 
     #not a doctor
-    if not profile.is_doctor:
+    if not profile.isa('doctor'):
         return False
 
     

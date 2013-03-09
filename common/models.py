@@ -648,19 +648,19 @@ class Job(DeleteMixin):
     def is_approved(self):
         approved = self.approved
         if not approved and self.doctor:
-            approved = approved or self.auto_approve
+            approved = approved or self.doctor.auto_approve
         return approved
 
     def is_accepted(self):
         return self.status == Job.USER_ACCEPTED
 
     def __unicode__(self):
-        out = "Owner: " + self.skaa.user.email
+        out = "Owner: " + self.skaa.email
         out += " -- Doctor: "
         if self.doctor is None:
             out += "None"
         else:
-            out += self.doctor.user.email
+            out += self.doctor.email
 
         out += " -- price cents: " + str(self.bp_hold.cents)
         out += " -- status: " + self.status

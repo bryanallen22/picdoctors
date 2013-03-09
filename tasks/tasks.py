@@ -1,5 +1,5 @@
 from celery import task
-from common.models import Pic
+from common.models import Pic, Profile
 from annoying.functions import get_object_or_None
 
 from common.models import Group
