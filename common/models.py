@@ -101,12 +101,14 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     bp_account = models.ForeignKey(BPAccount, blank=True, null=True)
 
     def __unicode__(self):
-        out = ""
-        if self.isa('doctor'):
-            out = "Doctor: " + self.email
-        else:
-            out = "Skaa: " + self.email
-        return out
+        perms = ""
+        for p in self.get_all_permissions():
+            perms = perms + p + ","
+
+        if len(perms) > 0:
+            perms = perms[:-1]
+
+        return "Email: " + self.email + " - Permissions [" + perms + "]"
 
     auto_approve       = models.BooleanField(default=False)
 
