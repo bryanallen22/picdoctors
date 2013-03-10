@@ -274,3 +274,47 @@ $(function(){
 
 });
 
+/*
+ * Become a Pic Doctor
+ */
+$(function(){
+
+  function postTo(url, obj, callback) {
+    var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
+
+    $.ajax({
+      headers: {
+        "X-CSRFToken":CSRF_TOKEN
+      },
+      type: "POST",
+      url: url,
+      data: obj,
+      success : callback,
+    });
+
+  }
+
+  $("#formBAD").find("button:submit").click( function(e) {
+    e.preventDefault();
+
+    // Disable the button
+    var $button = $(this);
+    $button.attr("disabled", "disabled");
+    obj = {  };
+
+    postTo('/become_a_pic_doctor/', obj, function(data) {
+      // enable the button again
+      $button.removeAttr("disabled");
+
+      if ( data.success ) {
+        if (data.redirect) {
+            window.location.href = data.redirect;
+        }
+      } else {
+        alert('There was an error!');
+      }
+      
+    });
+  });
+
+});

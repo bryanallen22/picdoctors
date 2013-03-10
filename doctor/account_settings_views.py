@@ -111,9 +111,7 @@ def merchant_info(request):
     # Bring them back to this page
     return redirect( reverse('account_settings') + '#merchant_tab' )
 
-@login_required
-@render_to('account_settings_doc.html')
-def settings_doc(request, parent_params):
+def get_settings_doc(request, parent_params):
     profile = get_profile_or_None(request)
     if profile.bp_account:
         account = profile.bp_account.fetch()
@@ -127,8 +125,6 @@ def settings_doc(request, parent_params):
         'bank_accounts'     : bank_accounts,
         'is_merchant'       : merchant,
     }
-
-    my_params.update(parent_params)
 
     return my_params
 

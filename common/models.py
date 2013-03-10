@@ -109,6 +109,10 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         p = Permission.objects.get(content_type=content_type, codename=permission)
         self.user_permissions.add(p)
 
+    def remove_permission(self, permission):
+        p = Permission.objects.get(codename=permission)
+        self.user_permissions.remove(p)
+
     def __unicode__(self):
         perms = ""
         for p in self.get_all_permissions():

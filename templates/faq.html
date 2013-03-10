@@ -34,6 +34,11 @@
       2. How am I protected as a Doctor? 
     </a>
     </li>
+    <li>
+    <a href="#d3">
+     3. What is a merchant account, and why do I need it? 
+    </a>
+    </li>
   </ul>
   <H2> Users </H2>
   <a name="u1"></a>
@@ -60,21 +65,40 @@
     <h4>
       How am I paid as a Doctor?
     </h4>
-    Doctor's are given a base pay of 50% with a possible maximum of 70%.  When you take a job your
-    possible payout is calculated.  The calculated value depends on the amount of accepted pictures
-    you've had in the last 30 days and your overall rating as a doctor. When the user accepts your
+    Doctor's are given a base pay of 50% with a possible maximum of 70%.  Your possible payout is
+    calculated when you take a job.  The calculated value depends on the amount of accepted pictures
+    you've had in the last 30 days and your overall rating as a doctor(Tier 2 and above). When the user accepts your
     work the possible payout is then credited to your merchant account. 
+    <br/>
+    <h5>
+      Payment Scenario (Tier 2 + 5 Star rating):
+    </h5>
+    <ul>
+      <li> User lists a simple job worth $2 on the market.</li>
+      <li> Your take: $ 1.2</li>
+      <li> Bank Fees: $ 0.36</li>
+      <li> PicDoctor Fees: $ 0.44</li>
+    </ul>
+    <h5>
+      Payment Scenario (Tier 4 + 5 Star rating):
+    </h5>
+    <ul>
+      <li> User lists a simple job worth $2 on the market.</li>
+      <li> Your take: $ 1.4</li>
+      <li> Bank Fees: $ 0.36</li>
+      <li> PicDoctor Fees: $ 0.24</li>
+    </ul>
     <h5> 
       <table class="table table-striped">
         <thead>
-          <tr><td>Images Accepted</td><td>Payout Percent</td><td>Plus Doctor Approval
+          <tr><td>Tier</td><td>Images Accepted</td><td>Payout Percent</td><td>Plus Doctor Approval
               Rating</td><td>Maximum Possible Payout</td></tr>
         </thead>
         <tbody>
-          <tr><td>0-19    </td><td>50%</td><td></td><td>50%</td></tr> 
-        <tr><td>20-39  </td><td>55%</td><td>0-5%</td><td>60%</td></tr>
-        <tr><td>40-69  </td><td>60%</td><td>0-5%</td><td>65%</td></tr>
-        <tr><td>70+  </td><td>65%</td><td>0-5%</td><td>70%</td></tr>
+          <tr><td>Tier 1</td><td>0-19    </td><td>50%</td><td></td><td>50%</td></tr> 
+          <tr><td>Tier 2</td><td>20-39  </td><td>55%</td><td>0-5%</td><td>60%</td></tr>
+          <tr><td>Tier 3</td><td>40-69  </td><td>60%</td><td>0-5%</td><td>65%</td></tr>
+          <tr><td>Tier 4</td><td>70+  </td><td>65%</td><td>0-5%</td><td>70%</td></tr>
         </tbody>
     </table>
     </h5>
@@ -87,6 +111,17 @@
     As a doctor we protect you by watermarking your images until a user has accepted your work as
     valid and complete.  Likewise we've put a hold on the user's account to verify that they can pay
     for the work.
+  </div>
+  <a name="d3"></a>
+  <div class="alert alert-info">
+    <h4>
+     What is a merchant account, and why do I need it? 
+   </h4>
+   For an in depth look at merchant accounts 
+   <u><a href='http://en.wikipedia.org/wiki/Merchant_account'>view the wikipedia page Here.</a></u>
+   Essentially a merchant account allows you to accept payment from a user.  This is how you as a
+   doctor will receive your payments.  It's fully integrated into our site so you don't have to
+   navigate between our site and our payment processing partner.
   </div>
 </div>
 {% endblock %}

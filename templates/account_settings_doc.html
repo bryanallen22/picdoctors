@@ -319,15 +319,4 @@
       </div>
 {% endblock %}
 {% block sub_scripts %}
-<script>
-  $(function(){
-  {% if not is_merchant %}
-  <!-- Calling showStep for some reason freezes the tour, so restart and next will have to do -->
-  tour.restart();
-  {% elif bank_accounts|length == 0 %}
-  tour.restart();
-  tour.next();
-  {% endif %}
-  })
-</script>
 {% endblock %}

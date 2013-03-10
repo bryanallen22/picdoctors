@@ -6,8 +6,8 @@ from django.http import HttpResponse
 
 from annoying.decorators import render_to
 
-from skaa.account_settings_views import settings_user
-from doctor.account_settings_views import settings_doc
+from skaa.account_settings_views import get_settings_user
+from doctor.account_settings_views import get_settings_doc
 
 from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account
@@ -17,6 +17,7 @@ import logging
 
 import settings
 import balanced
+import ipdb
 
 @login_required
 def get_shared_params(request, profile):
@@ -27,6 +28,7 @@ def get_shared_params(request, profile):
     }
 
 @login_required
+@render_to('account_settings.html')
 def account_settings(request):
     # if user, send them to settings_user
     # if doc, send them to settings_doc
@@ -42,13 +44,17 @@ def account_settings(request):
     # template things.
 
     parent_params = get_shared_params(request, profile)
-
+    
     if profile.isa('doctor'):
-        return settings_doc(request, parent_params)
-    elif profile.isa('skaa'):
-        return settings_user(request, parent_params)
+        child_params = get_settings_doc(request, parent_params)
+        child_params.update(parent_params)
+    
+    if profile.isa('skaa'):
+        child_params = get_settings_user(request, parent_params)
+        child_params.update(parent_params)
 
-    return {}
+    return parent_params
+
 
 @login_required
 def account_settings_delete_card(request):
