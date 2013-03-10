@@ -45,7 +45,7 @@ def doc_job_page(request, page=1, job_id=None):
             'cur_page'         : page, 
             'reverser'         : 'doc_job_page_with_page', 
             'doc_page'         : True, 
-            'title'            : 'My Jobs'
+            'title'            : 'Jobs To Do'
     }
 
 

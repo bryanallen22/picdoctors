@@ -17,31 +17,20 @@ class BaseMiddleware(object):
         except MultipleObjectsReturned:
             invalid_album_state = True
 
-        is_doctor = False if not profile else profile.isa('doctor')
-
-        if profile and not is_doctor and not album:
+        skaa = True if not profile else profile.isa('skaa')
+        
+        if not skaa:
+            request.has_cart = False
+        else:
             request.has_cart = True
 
             # multiple albums (throw up ?)
             if invalid_album_state:
                 request.pic_count = "?"
+            elif album:
+                request.pic_count = album.get_picture_count()
             else:
                 request.pic_count = 0
 
-            return None
-
-        elif not album or (profile and is_doctor):
-            request.has_cart = False
-            return None
-
-        else:
-            request.has_cart = True 
-            pic_count = 0
-
-            if album:
-                pic_count = album.get_picture_count()
-
-            request.pic_count = pic_count
-
-            return None
+        return None
 

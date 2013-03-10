@@ -29,7 +29,4 @@ def currency_cents(value):
     value = value / 100
     return locale.currency(value, grouping=True)
 
-@register.filter
-def has_permission(user, value):
-    """ find out if a user is a xyz permission """
-    return user.isa(value)
+# If you are trying to figure out someone's permissions in a tag in the tempalte just use if perms.PERMISSION (see base.html)
