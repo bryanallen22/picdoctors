@@ -28,10 +28,13 @@ import ipdb
 
 @login_required
 @render_to('jobs.html')
-def job_page(request, page=1):
+def job_page(request, page=1, job_id=None):
     ### get a list of the jobs by this user ###
     if request.user.is_authenticated():
-        jobs = Job.objects.filter(skaa=request.user).order_by('created').reverse()
+        if job_id:
+            jobs = Job.objects.filter(skaa=request.user).filter(id=job_id).order_by('created').reverse()
+        else:
+            jobs = Job.objects.filter(skaa=request.user).order_by('created').reverse()
     else:
         jobs = []
 
@@ -172,6 +175,7 @@ def set_groups_locks(album_to_lock, state):
         group.save()
 
 
+# DEPRECATED!!!!!
 @login_required
 def reject_doctors_work(request):
     profile = get_profile_or_None(request)

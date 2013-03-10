@@ -24,12 +24,14 @@ import ipdb
 
 @login_required
 @render_to('jobs.html')
-def doc_job_page(request, page=1):
+def doc_job_page(request, page=1, job_id=None):
     jobs = None
     profile = get_profile_or_None(request)
     if profile and profile.isa('doctor'):
-#        new_jobs = Job.objects.filter(doctor=None)
-        jobs = Job.objects.filter(doctor=profile).order_by('created').reverse()
+        if job_id:
+            jobs = Job.objects.filter(doctor=profile).filter(id=job_id).order_by('created').reverse()
+        else:
+            jobs = Job.objects.filter(doctor=profile).order_by('created').reverse()
     else:
         return redirect('/')
 
@@ -67,7 +69,8 @@ def new_job_page(request, page=1):
         # if a job hasn't been taken in 7 days inform user to up the price!
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
         seven_days_ago = now - timedelta(days=6, hours=23)
-        jobs = Job.objects.filter(doctor__isnull=True).filter(bp_hold__created__gte=seven_days_ago)
+
+        jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).filter(bp_hold__created__gte=seven_days_ago)
     else:
         return redirect('/')
 
@@ -126,10 +129,6 @@ def generate_doctor_actions(job):
 
     elif job.status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
-        pass
-
-    elif job.status == Job.USER_REJECTED:
-        #do nothing these are fordoctor
         pass
 
     else:

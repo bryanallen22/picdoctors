@@ -624,6 +624,10 @@ class Job(DeleteMixin):
                                                 related_name='job_doctor',
                                                 blank=True, null=True)
 
+    ignore_last_doctor      = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                                related_name='job_block_doctor',
+                                                blank=True, null=True)
+
     #this price is set when a doctor takes the job.  payout prices 
     #that appear on the job page, vary based on accepted job count
     payout_price_cents      = models.IntegerField(blank=True, null=True)

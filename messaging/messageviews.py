@@ -14,8 +14,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
+import settings
 
-import pdb
+import ipdb
 import logging
 import datetime
 
@@ -87,9 +88,11 @@ def message_handler(request):
             job_val = data['job_id'].strip()
 
             job = get_object_or_None(Job, id=int(job_val))
+            job_msg = False
 
             if group_val != '':
-                group = get_object_or_None(Group, id=int(group_val))
+                group_val = int(group_val)
+                group = get_object_or_None(Group, id=group_val)
                 msg = GroupMessage()
                 msg.group = group
             else:
@@ -113,6 +116,9 @@ def message_handler(request):
 
 def generate_message_email(job, profile, message):
     try:
+        job_message = isinstance(message, JobMessage)
+        group_message = isinstance(message, GroupMessage)
+
         if message.commentor == job.skaa:
             from_whom = 'User'
             to_email = get_doctor_emails(job, message)
@@ -123,9 +129,21 @@ def generate_message_email(job, profile, message):
         if len(to_email) == 0:
             return
 
-        subject = 'The ' + from_whom + ' commented on your job'
+        if job_message:
+            subject = 'The ' + from_whom + ' commented on your job'
+            site_path = reverse
+            site_path = reverse('contact', args=[job.id])
+        elif group_message:
+            subject = 'The ' + from_whom + ' commented on a picture'
+            site_path = reverse('album', args=[job.album.id])
+
         #Do I want to send the message to them, or make them go to the page?a
-        args = {'from_whom':from_whom, 'job_id':job.id} 
+        args = {
+                'from_whom'         : from_whom, 
+                'job_id'            : job.id, 
+                'site_url'          : settings.SITE_URL, 
+                'site_path'         : site_path,
+                } 
         html_content = render_to_string('contact_email.html', args)
                                         
         

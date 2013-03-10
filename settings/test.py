@@ -33,3 +33,5 @@ path = os.path.join(PROJECT_ROOT, "settings/test.cfg")
 external_ip = get_cfg_setting(path, "external_ip")
 if external_ip:
     ALLOWED_HOSTS.append( external_ip )
+
+SITE_URL = external_ip

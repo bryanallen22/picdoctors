@@ -241,3 +241,4 @@ DEBUG_TOOLBAR_CONFIG = {
 # In nginx we should forward one of these to the other, but I'd rather be a bit permissive here and allow both
 ALLOWED_HOSTS = [ 'picdoctors.com', 'www.picdoctors.com' ]
 
+SITE_URL = 'https://www.picdoctors.com'

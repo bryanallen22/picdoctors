@@ -19,7 +19,10 @@ def refund(request, job_id):
     if not reject_belongs(request, job_id):
         return redirect('/')
 
-    return {'job_id': job_id, 'is_refund':True}
+    return  {
+            'job_id'        : job_id, 
+            'is_refund'     : True,
+            }
 
 
 @login_required
@@ -29,7 +32,10 @@ def switch_doctor(request, job_id):
     if not reject_belongs(request, job_id):
         return redirect('/')
 
-    return {'job_id': job_id, 'is_refund':False}
+    return  {
+            'job_id'        : job_id, 
+            'is_refund'     : False,
+            }
 
 def reject_belongs(request, job_id):
     profile = get_profile_or_None(request)
@@ -69,6 +75,7 @@ def switch_doctor_endpoint(request):
 
     if job and profile and job.skaa == profile:
         job.status = Job.IN_MARKET
+        job.ignore_last_doctor = job.doctor     
         job.doctor = None
         job.approved = False
         job.payout_price_cents = 0
