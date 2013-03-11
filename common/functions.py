@@ -12,6 +12,7 @@ import urlparse
 
 from datetime import datetime, timedelta
 import pytz
+from django.utils.timezone import utc
 
 import re
 import os
@@ -23,6 +24,9 @@ def get_profile_or_None(request):
     if request.user.is_authenticated():
         return request.user
     return None
+
+def get_datetime():
+    return datetime.utcnow().replace(tzinfo=utc)
 
 def get_time_string(prev_date):
     """
@@ -41,7 +45,7 @@ def get_time_string(prev_date):
     # When comparing against db, we need tz aware utc time
     # I'm not sure what happened, this was working a week ago w/o it.
     # Did we change something?
-    now = datetime.utcnow().replace(tzinfo=pytz.UTC)
+    now = get_datetime()
     yesterday = now - timedelta(days=1)
     hour_ago = now - timedelta(hours=1)
 

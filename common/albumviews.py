@@ -24,6 +24,7 @@ class Combination():
     def __init__(self):
         self.user_pics = []
         self.max_height = -1
+        self.max_width = -1
         self.doc_pic = None
         self.messages = []
         self.group_id = -1
@@ -60,11 +61,16 @@ def album(request, album_id):
         picco.messages = prep_messages(GroupMessage.get_messages(group), profile, job)
         for x in picco.user_pics:
             picco.max_height = max(picco.max_height, x.preview_height)
+            picco.max_width = max(picco.max_width, x.preview_width)
         picco.group_id = group.id
         docPicGroup = group.get_latest_doctor_pic(job, profile)
         if len(docPicGroup) > 0:
             docPicGroup = docPicGroup[0]
             picco.doc_pic = docPicGroup.get_pic(profile, job)
+            picco.max_height = max(picco.max_height, picco.doc_pic.preview_height)
+            picco.max_width = max(picco.max_width, picco.doc_pic.preview_width)
+        picco.group_id = group.id
+            
         groupings.append(picco)
 
 

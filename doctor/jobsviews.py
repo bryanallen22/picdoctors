@@ -12,7 +12,7 @@ from common.models import Pic
 from common.models import DocBlock
 from common.models import PriceToLowContributor
 from common.calculations import calculate_job_payout
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_datetime
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
 from common.jobs import Actions, Action, RedirectData, DynamicAction 
@@ -67,7 +67,7 @@ def new_job_page(request, page=1):
         # only show jobs where a hold has been placed in the last 6 days 23 hours 
         # (hold only lasts 7 days)
         # if a job hasn't been taken in 7 days inform user to up the price!
-        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        now =  get_datetime()
         seven_days_ago = now - timedelta(days=6, hours=23)
 
         jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).filter(bp_hold__created__gte=seven_days_ago)

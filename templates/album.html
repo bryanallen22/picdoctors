@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block styles %}
-{# picdoctors.css already included by default #}
+    <link href="{{ STATIC_URL }}css/qbeforeafter.css" rel="stylesheet">
 {% endblock %}
 
 {% block topscripts %}
@@ -9,75 +9,88 @@
 
 {% block main %}
 <div class='row album_control' job_id='{{job_id}}'>
-  <div class='span5'>
-    <h1>Job # {{job_id|stringformat:"08d" }}</h1>
-  </div>
-  <div class='span4'>
-    {% if perms.common.approve_album %}
-    <button class="btn btn_approve_all btn-large btn-primary" type="button">Approve Album</button>
-    {% else %}
-    &nbsp;
-    {% endif %}
-  </div>
-  <div class='span3'>
-    {% if user_acceptable %}
-    <a class="btn btn_accept_job btn-large btn-primary" href="{% url 'accept_work' job_id %}">Accept Job</a>
-    {% endif %}
-  </div>
+<div class='span5'>
+  <h1>Job # {{job_id|stringformat:"08d" }}</h1>
+</div>
+<div class='span4'>
+  {% if perms.common.approve_album %}
+  <button class="btn btn_approve_all btn-large btn-primary" type="button">Approve Album</button>
+  {% else %}
+  &nbsp;
+  {% endif %}
+</div>
+<div class='span3'>
+  {% if user_acceptable %}
+  <a class="btn btn_accept_job btn-large btn-primary" href="{% url 'accept_work' job_id %}">Accept Job</a>
+  {% endif %}
+</div>
 </div>
 {% for group in groupings %}
 <div class='row hero-unit combination'>
-  <div class='row remote_control'>
-    <div class='span2'>
-      <button class="btn before_button btn-large" type="button">Before</button>
-    </div>
-    <div class='span1'>
-      &nbsp;
-    </div>
-    <div class='span4' style="text-align:center">
-      {% if group.doc_pic  %}
-      <div class='download_links'>
-        <a class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}'>Download Doctored Image</a>
-      </div>
-      {% endif %}
-    </div>
-    <div class='span1'>
-      &nbsp;
-    </div>
-    <div class='span2' style="text-align:right">
-      {% if group.doc_pic  %}
-      <button class="btn after_button btn-large btn-primary" type="button">After</button>
-      {% endif %}
-    </div>
+<div class='row remote_control'>
+  <div class='span2'>
+    <button class="btn before_button btn-large" type="button">(deprecated) Before</button>
   </div>
-  <br />
-  <div class='row'>
-    <div class='before span10'>
-      <div id="myCarousel" class="carousel slide">
-        <!-- Carousel items -->
-        <div class="carousel-inner">
-          {% for pic in group.user_pics %}
-          <div class="item" style="height:{{group.max_height}}px"> 
-            <img src="{{ pic.get_preview_url }}"  alt="">
-          </div>
-          {% endfor %}
-        </div>
-        {% if group.user_pics|length > 1 %}
-          <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-          <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-        {% endif %}
-      </div>
-    </div>
-    {% if group.doc_pic %}
-    <div class='after span10' style="display:none" >
-      <img src="{{ group.doc_pic.get_preview_url }}" alt="">
+  <div class='span1'>
+    &nbsp;
+  </div>
+  <div class='span4' style="text-align:center">
+    {% if group.doc_pic  %}
+    <div class='download_links'>
+      <a class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}'>Download Doctored Image</a>
     </div>
     {% endif %}
   </div>
-  <div class='span10 contact_arena'>
-    <script type='application/json' class='previous_messages'>
-      {{group.messages|safe}}
-    </script>
+  <div class='span1'>
+    &nbsp;
+  </div>
+  <div class='span2' style="text-align:right">
+    {% if group.doc_pic  %}
+    <button class="btn after_button btn-large btn-primary" type="button">(deprecated) After</button>
+    {% endif %}
+  </div>
+</div>
+<br />
+<div class='row'>
+  <div class='picbeforeafter span10' style="height:{{group.max_height}}px;width:{{group.max_width}}px;">
+  {% with group.user_pics.0 as before %}
+    <img src="{{ before.get_preview_url }}" width={{before.preview_width}} height={{before.preview_height}} >
+  {% endwith %}
+  {% if group.doc_pic %}
+    {% with group.doc_pic as after %}
+    <img src="{{ after.get_preview_url }}" width={{after.preview_width}} height={{after.preview_height}}>
+    {% endwith %}
+  {% endif %}
+  
+  </div>
+{% comment %}
+  <div class='before span10'>
+    <div id="myCarousel" class="carousel slide">
+      <!-- Carousel items -->
+      <div class="carousel-inner">
+        {% for pic in group.user_pics %}
+        <div class="item" style="height:{{group.max_height}}px"> 
+          <img src="{{ pic.get_preview_url }}"  alt="">
+        </div>
+        {% endfor %}
+      </div>
+      {% if group.user_pics|length > 1 %}
+        <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+        <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+      {% endif %}
+    </div>
+  </div>
+  {% if group.doc_pic %}
+  <div class='after span10' style="display:none" >
+    <img src="{{ group.doc_pic.get_preview_url }}" alt="">
+  </div>
+  {% endif %}
+{% endcomment %}
+</div>
+<div class='span10 contact_arena'>
+  <script type='application/json' class='previous_messages'>
+    {{group.messages|safe}}
+  </script>
     <div class='row'>
       <div class='message_arena'>
       </div>
@@ -100,6 +113,7 @@
   var is_owner = {{ is_owner|lower }};
 </script>
 <script src="{{ STATIC_URL }}js/contact.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.qbeforeafter.js"></script>
 <script src="{{ STATIC_URL }}js/shared.js"></script>
 <script type="text/template" id="message_template">
   <div class='message_message'><span ><%= message %></span></div>

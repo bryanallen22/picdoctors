@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_datetime
 from common.balancedfunctions import get_merchant_account
 from django.contrib.auth.decorators import login_required
 
@@ -32,7 +32,7 @@ def accept_work(request, job_id):
             do_debit(request, profile, job)
 
             job.status = Job.USER_ACCEPTED
-            job.accepted_date = datetime.utcnow().replace(tzinfo=pytz.UTC)
+            job.accepted_date = get_datetime()
             job.save()
 
             # Update Doctor Approval Count (for use in figuring out how much $$/job)

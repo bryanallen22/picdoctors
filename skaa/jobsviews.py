@@ -9,7 +9,7 @@ from common.models import Album
 from common.models import Group
 from common.models import Pic
 from common.balancedmodels import BPHold
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_datetime
 from common.calculations import calculate_job_payout
 from django.contrib.auth.decorators import login_required
 from decimal import *
@@ -61,7 +61,7 @@ def update_old_jobs(list_of_jobs):
     if not list_of_jobs or len(list_of_jobs)==0:
         return
 
-    now = datetime.datetime.utcnow().replace(tzinfo=utc)
+    now = get_datetime()
     # just to let future you know, there is an hour period where the job
     # has been removed, but won't get updated to out of market if
     # they hit this page, but I don't feel bad about that

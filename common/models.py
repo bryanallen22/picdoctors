@@ -5,7 +5,7 @@ from StringIO import StringIO
 from urlparse import urlparse
 import logging
 import os
-import pdb
+import ipdb
 import uuid
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -139,7 +139,8 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         return self.is_merchant and self.has_bank_account
 
     def get_approval_count(self, invalidate=False):
-        now = datetime.utcnow().replace(tzinfo=pytz.UTC)
+        from common.functions import get_datetime
+        now = get_datetime()
         yesterday = now - timedelta(days=1)
         thirty_ago = now - timedelta(days=30)
         last_update = self.approval_pic_last_update
@@ -371,15 +372,17 @@ class Album(DeleteMixin):
         return Pic.objects.filter(album=self).count()
     
     def kick_groups_modified(self):
+        from common.functions import get_datetime
         """
         Any time groupings are modified, call this. (Upload a new pic, delete a pic,
         create or delete a grouping). This allows us to do lazy group setting with
         set_sequences()
         """
-        self.groups_last_modified = datetime.now()
+        self.groups_last_modified = get_datetime()
         self.save()
 
-    def set_sequences(self):
+    def set_sequences(self, force=False):
+        from common.functions import get_datetime
         """
         Sets sequence for each picture in the album.
 
@@ -392,7 +395,7 @@ class Album(DeleteMixin):
         that was already set.
         """
 
-        if self.groups_last_modified < self.sequences_last_set:
+        if not force and self.groups_last_modified < self.sequences_last_set:
             logging.info("Album.set_sequences bailing out early - no groups have been modified")
             return
 
@@ -405,22 +408,26 @@ class Album(DeleteMixin):
         logging.info(browser_ids)
         next_sequence = 1
         for id in browser_ids:
+            logging.info('browser id: %d' % id)
+
             # Find all pics that match this id
             matches = pics.filter( browser_group_id__exact=id )
             if id != ungroupedId:
                 # All matching pics get next_sequence
-                logging.info('creating new group')
+                logging.info('id != ungroupedId - creating new group sequence %d' % next_sequence)
                 g = Group(album=self, sequence=next_sequence) 
                 g.save()
                 for pic in matches:
+                    logging.info('setting group to pic')
                     #pic.group_id = next_sequence
                     pic.group = g
                     pic.save()
                 next_sequence += 1
             else:
                 # All ungrouped pics get their own sequence
+                logging.info('id == ungroupedId - creating new group')
                 for pic in matches:
-                    logging.info('creating new group')
+                    logging.info('creating new group sequence %d' % next_sequence)
                     g = Group(album=self, sequence=next_sequence) 
                     g.save()
                     #pic.group_id = next_sequence
@@ -432,7 +439,7 @@ class Album(DeleteMixin):
         logging.info('Saving number of groups %d' % next_sequence)
 
         self.num_groups = next_sequence
-        self.sequences_last_set = datetime.now()
+        self.sequences_last_set = get_datetime()
         self.save()
 
     @staticmethod
