@@ -19,11 +19,7 @@ $(function(){
       this.remote_control = new RemoteControl({el: rc_el});
 
       this.before_after = this.$el.find('.picbeforeafter');
-      this.before_after.qbeforeafter({defaultgap:50, leftgap:0, rightgap:10, caption: false, reveal: 0.5});
-  //    this.remote_control.before = this.$el.find('.before');
-  //    this.remote_control.after = this.$el.find('.after');
-  //    this.remote_control.before_button = this.$el.find('.before_button');
-  //    this.remote_control.after_button = this.$el.find('.after_button');
+      this.before_after.qbeforeafter({defaultgap:50, leftgap:0, rightgap:0, caption: true, reveal: 0.5});
     },
 
   });

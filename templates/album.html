@@ -29,7 +29,7 @@
 <div class='row hero-unit combination'>
 <div class='row remote_control'>
   <div class='span2'>
-    <button class="btn before_button btn-large" type="button">(deprecated) Before</button>
+    &nbsp;
   </div>
   <div class='span1'>
     &nbsp;
@@ -45,20 +45,20 @@
     &nbsp;
   </div>
   <div class='span2' style="text-align:right">
-    {% if group.doc_pic  %}
-    <button class="btn after_button btn-large btn-primary" type="button">(deprecated) After</button>
-    {% endif %}
+    &nbsp;
   </div>
 </div>
 <br />
 <div class='row'>
   <div class='picbeforeafter span10' style="height:{{group.max_height}}px;width:{{group.max_width}}px;">
   {% with group.user_pics.0 as before %}
-    <img src="{{ before.get_preview_url }}" width={{before.preview_width}} height={{before.preview_height}} >
+    <img src="{{ before.get_preview_url }}" width={{before.preview_width}}
+    height={{before.preview_height}} alt="User's Picture">
   {% endwith %}
   {% if group.doc_pic %}
     {% with group.doc_pic as after %}
-    <img src="{{ after.get_preview_url }}" width={{after.preview_width}} height={{after.preview_height}}>
+    <img src="{{ after.get_preview_url }}" width={{after.preview_width}}
+    height={{after.preview_height}} alt="Doctor's Picture">
     {% endwith %}
   {% endif %}
   
