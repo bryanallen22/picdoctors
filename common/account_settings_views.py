@@ -46,12 +46,12 @@ def account_settings(request):
     parent_params = get_shared_params(request, profile)
     
     if profile.isa('doctor'):
-        child_params = get_settings_doc(request, parent_params)
-        child_params.update(parent_params)
+        child_params = get_settings_doc(request)
+        parent_params.update(child_params)
     
     if profile.isa('skaa'):
-        child_params = get_settings_user(request, parent_params)
-        child_params.update(parent_params)
+        child_params = get_settings_user(request)
+        parent_params.update(child_params)
 
     return parent_params
 

@@ -12,6 +12,7 @@ from common.balancedfunctions import get_merchant_account, is_merchant
 
 import balanced
 import settings
+import logging
 
 @login_required
 def create_bank_account(request):
@@ -111,7 +112,7 @@ def merchant_info(request):
     # Bring them back to this page
     return redirect( reverse('account_settings') + '#merchant_tab' )
 
-def get_settings_doc(request, parent_params):
+def get_settings_doc(request):
     profile = get_profile_or_None(request)
     if profile.bp_account:
         account = profile.bp_account.fetch()

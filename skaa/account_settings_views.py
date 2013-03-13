@@ -11,7 +11,7 @@ import settings
 
 import ipdb
 
-def get_settings_user(request, parent_params):
+def get_settings_user(request):
     profile = get_profile_or_None(request)
     
     if profile.bp_account:
@@ -24,8 +24,6 @@ def get_settings_user(request, parent_params):
     my_params = {
         'credit_cards':     user_credit_cards,
     }
-
-    my_params.update(parent_params)
 
     return my_params
 
