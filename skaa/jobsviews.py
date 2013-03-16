@@ -89,6 +89,7 @@ def generate_skaa_actions(job):
     refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), url_redirect)
     switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), url_redirect)
     increase_price = DynamicAction('Increase Price', reverse('increase_price', args=[job.id]), url_redirect)
+    place_back_in_market = DynamicAction('Return to Market', reverse('increase_price', args=[job.id]), url_redirect)
     
     if job.status == Job.IN_MARKET:
         ret.append(contact)
@@ -121,7 +122,8 @@ def generate_skaa_actions(job):
     elif job.status == Job.OUT_OF_MARKET:
         ret.append(increase_price)
 
-    elif job.status == Job.USER_REJECTED:
+    elif job.status == Job.REFUND:
+        ret.append(place_back_in_market)
         pass
 
     else:

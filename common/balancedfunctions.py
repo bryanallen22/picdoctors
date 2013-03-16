@@ -13,7 +13,7 @@ import settings
 import ipdb
 #ipdb.set_trace()
 
-from skaa.jobsviews import create_job
+from skaa.jobsviews import create_job, update_job_hold
 
 ################################################################################
 # Accounts stuff

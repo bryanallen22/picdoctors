@@ -72,23 +72,26 @@ def switch_doctor_endpoint(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
 
-
     if job and profile and job.skaa == profile:
-        job.status = Job.IN_MARKET
-        job.ignore_last_doctor = job.doctor     
-        job.doctor = None
-        job.approved = False
-        job.payout_price_cents = 0
-        job.save()
-        
-        groups = Group.get_job_groups(job)
-
-        for group in groups:
-            group.delete_doctor_pics()
-
-        send_job_status_change(job, profile)
+        remove_previous_doctor(job)
+    send_job_status_change(job, profile)
 
     result = { 'relocate' : reverse('job_page') }
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
+def remove_previous_doctor(job):
+    job.status = Job.IN_MARKET
+    if job.doctor:
+        job.ignore_last_doctor = job.doctor     
+    job.doctor = None
+    job.approved = False
+    job.payout_price_cents = 0
+    job.save()
+       
+    groups = Group.get_job_groups(job)
+
+    for group in groups:
+        group.delete_doctor_pics()
+
+    
