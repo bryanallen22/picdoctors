@@ -149,6 +149,8 @@ def update_roles(request):
         role = 'doctor'
     elif prole == 'userswitch':
         role = 'skaa'
+    elif prole == 'approvalswitch' and not settings.IS_PRODUCTION:
+        role = 'approve_album'
     else:
         return # break on them, I don't care
 

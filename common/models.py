@@ -105,8 +105,10 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         return self.isa(permission)
 
     def add_permission(self, permission):
-        content_type = ContentType.objects.get_for_model(Profile)
-        p = Permission.objects.get(content_type=content_type, codename=permission)
+        # So I'm not filtering by the module, since these are our explicitly created permissions
+        # Someday when it matters maybe we'll implement this
+        #content_type = ContentType.objects.get_for_model(Profile)
+        p = Permission.objects.get(codename=permission)
         self.user_permissions.add(p)
 
     def remove_permission(self, permission):
