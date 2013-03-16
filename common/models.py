@@ -709,7 +709,7 @@ class Job(DeleteMixin):
 
 # Keep track of who said the job was too low
 # That way you don't have the same doctor say it 50 times
-class PriceToLowContributor(DeleteMixin):
+class PriceTooLowContributor(DeleteMixin):
     job     = models.ForeignKey(Job, db_index=True)
     doctor  = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
     price   = models.IntegerField(default=0)

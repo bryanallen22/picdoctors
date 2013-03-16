@@ -10,7 +10,7 @@ from common.models import Album
 from common.models import Group
 from common.models import Pic
 from common.models import DocBlock
-from common.models import PriceToLowContributor
+from common.models import PriceTooLowContributor
 from common.calculations import calculate_job_payout
 from common.functions import get_profile_or_None, get_datetime
 

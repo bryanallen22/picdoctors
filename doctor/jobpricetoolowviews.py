@@ -40,12 +40,12 @@ def job_price_too_low_action(request, job):
     # if the job exists and doesn't have a doctor yet
     if job:
         if not job.doctor:
-            too_low_contributor = PriceToLowContributor.objects.filter(job=job.id).filter(doctor=doc.id)
+            too_low_contributor = PriceTooLowContributor.objects.filter(job=job.id).filter(doctor=doc.id)
             if len(too_low_contributor) == 0:
                 job_qs = Job.objects.select_for_update().filter(pk=job.id)
                 for job in job_qs:
                     job.price_too_low_count += 1
                     job.save()
                     price = max(job.bp_hold.cents, int(float(request.POST['price'])*100))
-                    contrib=PriceToLowContributor(job=job, doctor=doc, price=price)
+                    contrib=PriceTooLowContributor(job=job, doctor=doc, price=price)
                     contrib.save()
