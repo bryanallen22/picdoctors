@@ -25,9 +25,7 @@
       {% if perms.common.skaa %}
         <li><a id="cc_tab" href="#credit_cards" data-toggle="tab">Credit Cards</a></li>
       {% endif %}
-      {% if not perms.common.doctor %}
-        <li><a id="bad_tab" href="#become_a_doctor" data-toggle="tab">Become A Pic Doctor</a></li>
-      {% endif %}
+      <li><a id="roles_tab" href="#roles" data-toggle="tab">Roles</a></li>
       {% if perms.common.doctor %}
         <li><a id="bank_tab" href="#bank_pane" data-toggle="tab">Bank Transfer</a></li>
         <li><a id="merchant_tab" href="#merchant_pane" data-toggle="tab">Merchant Info</a></li>
@@ -181,26 +179,50 @@
 
         </form>
       </div>
-        {% if not perms.common.doctor %}
-
-        <div class="tab-pane fade" id="become_a_doctor">
-          <form id="formBAD" class="form-horizontal">
-            <h4>
-            If you have the skills to use software such as Adobe Photoshop and work magic on
-            people's pictures, you might want to be a Pic Doctor.  Click the button below to begin
-            the simple process of becoming a Pic Doctor.
-            </h4>
-            <div class="control-group">
-              <label class="control-label"></label>
-              <div class="controls">
-                <button type="submit" class="btn btn-primary">Become A Pic Doctor</button>
-              </div>
-            </div>
-          </form>
-        </div>
-        {% endif %} {# not a doctor, do you want to become one?#}
-
       {% endif %} {# if perms.common.skaa #}
+
+      <div class="tab-pane fade" id="roles">
+        <form id="formRoles" class="form-horizontal">
+          <h4>
+            Control what type of Roles you'd like to have while at PicDoctors.<br />
+            <h5>
+              Doctor: Ability to take User Jobs and work on them <br />
+              User: Ability to create Jobs to be taken by Doctors <br />
+            </h5>
+          </h4>
+          <div class="row">
+            <div class="span2 control-label">
+              Doctor Role: <br/>
+            </div>
+            <div class="span2">
+              <div class="onoffswitch">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide"
+                id="doctorswitch" {% if perms.common.doctor %} checked {% endif %} >
+                <label class="onoffswitch-label" for="doctorswitch">
+                  <div class="onoffswitch-inner"></div>
+                  <div class="onoffswitch-switch"></div>
+                </label>
+              </div>
+            </div>  <!-- span2 switches -->
+          </div>
+          <div class="row">
+            <div class="span2 control-label">
+              User Role: <br/>
+            </div>
+            <div class="span2">
+              <div class="onoffswitch">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide" 
+                id="userswitch" {% if perms.common.skaa %} checked {% endif %} >
+                <label class="onoffswitch-label" for="userswitch">
+                  <div class="onoffswitch-inner"></div>
+                  <div class="onoffswitch-switch"></div>
+                </label>
+              </div>
+            </div>  <!-- span2 switches -->
+          </div>
+        </form>
+      </div>
+
 
       {% if perms.common.doctor %}
       {#####################################################}

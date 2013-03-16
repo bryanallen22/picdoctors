@@ -7,7 +7,6 @@ from skaa.setpriceviews import set_price, increase_price, create_hold_handler
 from skaa.mergealbumsviews import merge_albums
 from skaa.accept_workviews import accept_work
 from skaa.rejectviews import refund, switch_doctor, switch_doctor_endpoint, refund_user_endpoint
-from skaa.account_settings_views import become_a_pic_doctor
 
 # Uncomment the next two lines to enable the admin:
 # Uncomment the next two lines to enable the admin:
@@ -41,6 +40,5 @@ urlpatterns = patterns('',
     url(r'^switch_doctor/(?P<job_id>\d+)$',                switch_doctor,            name='switch_doctor'),
     url(r'^refund_user/$',                                 refund_user_endpoint,     name='refund_user_endpoint'),
     url(r'^switch_doctor/$',                               switch_doctor_endpoint,   name='switch_doctor_endpoint'),
-    url(r'^become_a_pic_doctor/$',                         become_a_pic_doctor,      name='become_a_pic_doctor'),
 )
 

@@ -294,21 +294,20 @@ $(function(){
 
   }
 
-  $("#formBAD").find("button:submit").click( function(e) {
-    e.preventDefault();
+  $("#formRoles").find(".onoffswitch-checkbox").click( function() {
 
-    // Disable the button
-    var $button = $(this);
-    $button.attr("disabled", "disabled");
-    obj = {  };
+    var on = $(this).is(':checked');
 
-    postTo('/become_a_pic_doctor/', obj, function(data) {
-      // enable the button again
-      $button.removeAttr("disabled");
+    obj = {
+      'role'    : this.id,
+      'state'   : on,
+    };
+
+    postTo('/update_roles/', obj, function(data) {
 
       if ( data.success ) {
         if (data.redirect) {
-            window.location.href = data.redirect;
+            window.location.reload(data.redirect);
         }
       } else {
         alert('There was an error!');

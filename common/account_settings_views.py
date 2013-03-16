@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.utils import simplejson
 from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 
 from annoying.decorators import render_to
 
@@ -133,4 +134,39 @@ def change_email(request):
         raise
     
     response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
+
+@login_required
+def update_roles(request):
+    profile = get_profile_or_None(request)
+    success = False
+    redirect = ''
+
+    prole = request.POST['role']
+    role = '' # hah, no way we set whatever role they want here
+
+    if prole == 'doctorswitch':
+        role = 'doctor'
+    elif prole == 'userswitch':
+        role = 'skaa'
+    else:
+        return # break on them, I don't care
+
+    state = request.POST['state'] == 'true'
+    
+    if profile:
+        if state:
+            profile.add_permission(role)
+        else:
+            profile.remove_permission(role)
+        
+        success = True
+        redirect =  reverse('account_settings') + '#roles_tab' 
+
+    ret = { 
+            "success" : True,
+            "redirect"  : redirect,
+            }
+
+    response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')

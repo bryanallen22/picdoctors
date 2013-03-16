@@ -27,21 +27,3 @@ def get_settings_user(request):
 
     return my_params
 
-@login_required
-def become_a_pic_doctor(request):
-    profile = get_profile_or_None(request)
-    success = False
-    redirect = ''
-    if profile:
-        if not profile.isa('doctor'):
-            profile.add_permission('doctor')
-            success = True
-            redirect =  reverse('account_settings') + '#merchant_tab' 
-
-    ret = { 
-            "success" : True,
-            "redirect"  : redirect,
-            }
-
-    response_data = simplejson.dumps(ret)
-    return HttpResponse(response_data, mimetype='application/json')

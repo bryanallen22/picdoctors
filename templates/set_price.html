@@ -9,9 +9,7 @@
 
 {% block main %}
 <div class='row'>
-  {# Uhh, there's a space here because without it, the div collapses. Whatever. #}
-  <div class='span2'>&nbsp;</div>
-  <div class='span8'>
+  <div class='offset2 span8'>
 
     <div class="container">
       <div class="row">
@@ -31,7 +29,7 @@
             {% endif %}
 
             {% if increase_price %}
-              &nbsp;( Original price: ${{ original_price }} )
+            <br />Original price: ${{ original_price }} 
             {% endif %}
 
             </h3>
