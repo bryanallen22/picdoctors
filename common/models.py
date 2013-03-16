@@ -712,6 +712,7 @@ class Job(DeleteMixin):
 class PriceToLowContributor(DeleteMixin):
     job     = models.ForeignKey(Job, db_index=True)
     doctor  = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
+    price   = models.IntegerField(default=0)
 
 # Post switching from a doctor we won't allow them to take that job again
 class DocBlock(DeleteMixin):

@@ -105,13 +105,14 @@ def generate_doctor_actions(job):
     view_markup_url = reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Job', view_markup_url, True)
     view_album = DynamicAction('Before & After Album', reverse('album', args=[job.album.id]), True)
+    job_price_too_low = DynamicAction('Job Price Too Low', reverse('job_price_too_low', args=[job.id]), True)
     
 
     if job.status == Job.IN_MARKET:
         ret.append(view_markup)
         ret.append(contact)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
-        ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
+        ret.append(job_price_too_low)
 
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(work_job)
@@ -203,41 +204,6 @@ def has_rights_to_act(profile, job):
             return True
 
     return False
-
-@login_required
-def job_price_too_low(request):
-    data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
-    result = []
-    doc = get_profile_or_None(request)
-    actions = Actions()
-    actions.add('alert', 'There was an error processing your request.')
-
-    # if the job exists and doesn't have a doctor yet
-    if job:
-        if job.doctor:
-            actions.clear()
-            actions.add('alert', 'This Job has been taken by another doctor.')
-            actions.add('remove_job_row', job.id)
-        else:
-            too_low_contributor = PriceToLowContributor.objects.filter(job=job.id).filter(doctor=doc.id)
-            if len(too_low_contributor) == 0:
-                job_qs = Job.objects.select_for_update().filter(pk=job.id)
-                for job in job_qs:
-                    job.price_too_low_count += 1
-                    job.save()
-                    contrib=PriceToLowContributor(job=job, doctor=doc)
-                    contrib.save()
-
-                actions.clear()
-                actions.add('alert', 'Thank you for your input.')
-            else:
-                actions.clear()
-                actions.add('alert', 'Thanks, but you\'ve already marked this too low.')
-
-
-
-    return HttpResponse(actions.to_json(), mimetype='application/json')
 
 
 @login_required

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block styles %}
+{# picdoctors.css already included by default #}
+{% endblock %}
+
+{% block topscripts %}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+  <div class='offset2 span7'>
+
+    <div >
+      <legend>
+        <h3>
+          Job Price of ${{ job_price|floatformat:2|intcomma }} is too low for {{ pic_count}}
+          picture{{pic_count|pluralize}}
+        </h3>
+      </legend>
+      <div class="row">
+
+        <div class="span5"> 
+
+          <form id="price_too_low" method="post">
+            {% csrf_token %}
+
+            <label>How much would a fair price for this job be? 
+              <br/>This will help the user know what a fair price is.</label>
+
+            <div class="input-prepend">
+              <div style="font-size:14px;width:90px">
+                <div id="price_tour_anchor"></div>
+              </div>
+              <span class="add-on">$</span>
+              <input id="price" type="text" size="20" autocomplete="off"
+              class="span1" value="" name="price" />
+              <!-- if I don't clear the input-prepend ruins the popup -->
+              <br/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+
+        <div class="span6"> {# we need nested divs for css to not go riley on us #}
+          <button id="submit_payment" type="submit" class="submit-button btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
