@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.humanize',
     'south',
+    'seleniumtests', # TODO - move this to TESTABLE_APPS once I think it's in better shape
 ) + TESTABLE_APPS
 
 # Migrateable Apps

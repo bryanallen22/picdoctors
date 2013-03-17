@@ -12,7 +12,7 @@ def get_cfg_setting(path, setting):
         for line in f:
             line = line.strip()
             if line[0] != '#': # ignore comments
-                splits = [ s.strip() for s in line.split(':') ]
+                splits = [ s.strip() for s in line.split(':', 1) ]
                 if len(splits) >= 2 and splits[0] == setting:
                     return splits[1]
         f.close()

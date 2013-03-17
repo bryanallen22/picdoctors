@@ -1,0 +1,10 @@
+To get selenium, do this somewhere:
+
+wget http://selenium.googlecode.com/files/selenium-server-standalone-2.31.0.jar
+java -jar selenium-server-standalone-2.31.0.jar
+
+You should create localsettings.cfg, and add in stuff like this:
+skaa_email: bryan+user@picdoctors.com
+doc_email: bryan+doc@picdoctors.com
+domain: http://localhost:8000
+
