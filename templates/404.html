@@ -2,7 +2,7 @@
 
 {% block main %}
 <h1>Oh no! Something has gone terribly wrong! We're sorry!</h1>
-{% if IS_PRODUCTION %}
+{% if not IS_PRODUCTION %}
 {#{% comment %}#}
       Traceback: {{ printout }} <br />
 {#{% endcomment %}#}
