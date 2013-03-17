@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
-import pdb
+import ipdb
 
 @login_required
 @render_to("reject.html")
@@ -70,7 +70,7 @@ def refund_user_endpoint(request):
 def switch_doctor_endpoint(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
+    job = get_object_or_None(Job, id=int(data['job_id']))
 
     if job and profile and job.skaa == profile:
         remove_previous_doctor(job)
@@ -81,6 +81,9 @@ def switch_doctor_endpoint(request):
     return HttpResponse(response_data, mimetype='application/json')
 
 def remove_previous_doctor(job):
+    if not job:
+        return
+
     job.status = Job.IN_MARKET
     if job.doctor:
         job.ignore_last_doctor = job.doctor     

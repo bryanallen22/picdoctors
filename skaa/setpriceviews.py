@@ -103,6 +103,9 @@ def create_hold_handler(request):
        if cents >= min_price * 100:
 
            place_hold(job, album, request.user, cents, request.POST['card_uri'])
+
+           # Remove any previous doctor information, this essentially happens when they go from
+           # refund to back in market
            remove_previous_doctor(job)
 
            ret['status'] = 200
