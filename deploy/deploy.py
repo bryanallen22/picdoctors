@@ -544,7 +544,7 @@ def setup_packages():
     #
     sudo('apt-add-repository ppa:chris-lea/node.js -y') # Some node.js idiots broke the package that comes in 12.04
     sudo('apt-get update -y -q')
-    sudo('apt-get install nodejs npm -y -q')
+    sudo('apt-get install nodejs -y -q')
     sudo('npm install -g less jshint recess uglify-js -y -q')
 
 @task
