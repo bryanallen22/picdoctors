@@ -1,0 +1,10 @@
+{% extends 'base_email.html' %}
+
+{% block main %}
+<h2> 
+  Your job #{{ job_id|stringformat:"08d" }} might have a price too low. <br/>
+  {{ number_of_doctors }} doctors have reported that a more appropriate price would be ${{ avg_price}}.<br/>
+  You can view your job by clicking <a href='{{ site_url }}{{site_path}}'>here</a>
+</h2>
+{% endblock %}
+
