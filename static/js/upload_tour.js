@@ -5,13 +5,13 @@ $(function(){
   tour.addStep({
     element: "#isocontainer", /* html element next to which the step popover should be shown */
     title: "Add Pictures", /* title of the popover */
-    content: "The first thing you need to do is add some pictures.  Drag from your desktop/folder to the box." /* content of the popover */
+    content: "First we need to add some pictures.  Drag from your desktop or a folder to this box." /* content of the popover */
   });
 
   tour.addStep({
     element: ".fileupload-addbutton", 
     title: "Add Pictures", 
-    content: "Or click here to open a File Dialog and choose your pictures that way!",
+    content: "Or click here to choose your files using a File Dialog.",
     placement:"bottom",
   });
 
@@ -25,7 +25,7 @@ $(function(){
   tour.addStep({
     element: "#next", 
     title: "Finished Adding Pictures", 
-    content: "If you are finished choosing pictures to be edited, click the Next Button.",
+    content: "When you are finished choosing pictures to be edited, click the Next Button.",
     placement:"bottom",
   });
 
