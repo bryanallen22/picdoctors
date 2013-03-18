@@ -1,5 +1,5 @@
 from common.permissionfunctions import get_or_define_group, add_permission
-import pdb
+import ipdb
 
 # we will crash on newdb, because Group doesn't exist to populate etc
 # it's all cool, when you start the app it will run this code again

@@ -7,7 +7,7 @@ from skaa.picmask import generate_watermarked_image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
 from StringIO import StringIO
-import pdb
+import ipdb
 
 @task(ignore_result=True)
 def sendAsyncEmail(msg):

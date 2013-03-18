@@ -49,43 +49,24 @@
   </div>
 </div>
 <br />
-<div class='row'>
-  <div class='picbeforeafter span10' style="height:{{group.max_height}}px;width:{{group.max_width}}px;">
-  {% with group.user_pics.0 as before %}
-    <img src="{{ before.get_preview_url }}" width={{before.preview_width}}
-    height={{before.preview_height}} alt="User's Picture">
-  {% endwith %}
-  {% if group.doc_pic %}
-    {% with group.doc_pic as after %}
-    <img src="{{ after.get_preview_url }}" width={{after.preview_width}}
-    height={{after.preview_height}} alt="Doctor's Picture">
+<div class='row center'>
+  {% if not group.doc_pic %}
+    {% with group.user_pics.0 as before %}
+    <div class='span10' style="background:url({{ before.get_preview_url }}) no-repeat center center;height:{{before.preview_height}}px" ></div>
     {% endwith %}
-  {% endif %}
-  
-  </div>
-{% comment %}
-  <div class='before span10'>
-    <div id="myCarousel" class="carousel slide">
-      <!-- Carousel items -->
-      <div class="carousel-inner">
-        {% for pic in group.user_pics %}
-        <div class="item" style="height:{{group.max_height}}px"> 
-          <img src="{{ pic.get_preview_url }}"  alt="">
-        </div>
-        {% endfor %}
-      </div>
-      {% if group.user_pics|length > 1 %}
-        <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-        <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-      {% endif %}
-    </div>
-  </div>
-  {% if group.doc_pic %}
-  <div class='after span10' style="display:none" >
-    <img src="{{ group.doc_pic.get_preview_url }}" alt="">
+
+  {% else %}
+  <div class='picbeforeafter span10' style="height:{{group.max_height}}px;width:{{group.max_width}}px;">
+    {% with group.user_pics.0 as before %}
+    <img src="{{ before.get_preview_url }}" width={{before.preview_width}} height={{before.preview_height}} alt="User's Picture">
+    {% endwith %}
+
+    {% with group.doc_pic as after %}
+    <img src="{{ after.get_preview_url }}" width={{after.preview_width}} height={{after.preview_height}} alt="Doctor's Picture">
+    {% endwith %}
+
   </div>
   {% endif %}
-{% endcomment %}
 </div>
 <div class='span10 contact_arena'>
   <script type='application/json' class='previous_messages'>
@@ -95,8 +76,8 @@
       <div class='message_arena'>
       </div>
       <br />
-      <div class='message_input_arena'>
-        <textarea class='message_input autosize-textarea' username='{{ request.email }}' group_id='{{ group.group_id }}' job_id='{{job_id}}' >Write your message here</textarea>
+      <div class='message_input_arena span10'>
+        <textarea class='message_input autosize-textarea span9 center' style="margin-left:auto" username='{{ request.email }}' group_id='{{ group.group_id }}' job_id='{{job_id}}' >Write your message here</textarea>
       </div>
     </div>
   </div>

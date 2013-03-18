@@ -7,7 +7,7 @@ from annoying.functions import get_object_or_None
 
 from tasks.tasks import sendAsyncEmail
 
-import pdb
+import ipdb
 import logging
 import random
 import string

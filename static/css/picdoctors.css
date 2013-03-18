@@ -662,3 +662,7 @@
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
   right: 0px;
 }
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}

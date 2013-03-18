@@ -11,7 +11,7 @@ from django.core.mail import EmailMultiAlternatives
 from tasks.tasks import sendAsyncEmail
 import settings
 
-import pdb
+import ipdb
 from copy import deepcopy
 
 # info for a job row

@@ -17,7 +17,7 @@ from deploy_config import LocalConfig, RemoteConfig, get_deploy_type, get_config
 
 import inspect
 import os
-import pdb
+import ipdb
 import time
 
 ######################
@@ -484,7 +484,7 @@ def ls():
         print "No instances"
         print "------------"
 
-    #pdb.set_trace()
+    #ipdb.set_trace()
 
 @task
 def setup_packages():

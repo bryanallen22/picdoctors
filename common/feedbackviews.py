@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
 
-import pdb
+import ipdb
 import logging
 import datetime
 
