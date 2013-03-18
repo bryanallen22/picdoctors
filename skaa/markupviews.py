@@ -117,9 +117,10 @@ def markup_page_album(request, album_id, sequence):
     is_job_doctor = False
 
     if profile and profile.isa('doctor'):
-        job_page = 'doc_job_page'
+        job_page = 'new_job_page'
         if job and job.doctor == profile:
             is_job_doctor = True
+            job_page = 'doc_job_page'
 
     is_job_user = False
     # AKA I am the user
