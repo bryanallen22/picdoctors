@@ -92,3 +92,14 @@ $(function(){
 
 
 });
+
+function replace_fancy_user_pic(el){
+
+}
+
+function replace_normal_user_pic(el, id){
+  el = $(el);
+  var rep = $('#' + id);
+  rep.css('background-image', 'url(' + el.attr('data-pic') + ')');
+
+}

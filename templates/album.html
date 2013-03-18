@@ -52,7 +52,7 @@
 <div class='row center'>
   {% if not group.doc_pic %}
     {% with group.user_pics.0 as before %}
-    <div class='span10' style="background:url({{ before.get_preview_url }}) no-repeat center center;height:{{before.preview_height}}px" ></div>
+    <div id="userpic{{group.group_id}}" class='span10' style="background:url({{ before.get_preview_url }}) no-repeat center center;height:{{before.preview_height}}px" ></div>
     {% endwith %}
 
   {% else %}
@@ -68,6 +68,24 @@
   </div>
   {% endif %}
 </div>
+{% if group.user_pics|length > 1 %}
+<div class='row'>
+    {% for pic in group.user_pics %}
+      {% if pic.preview_height > pic.preview_width %}
+      <div style="background:url({{ pic.get_preview_url }}) no-repeat center center;background-size: {% widthratio pic.preview_width pic.preview_height 90 %}px 90px;height:90px;width:90px;float:left;border:1px solid black;margin:1px;cursor:pointer" 
+      {% else %}
+      <div style="background:url({{ pic.get_preview_url }}) no-repeat center center;background-size: 90px {% widthratio pic.preview_height pic.preview_width 90 %}px;height:90px;width:90px;float:left;border:1px solid black;margin:1px;cursor:pointer;"
+      {% endif %}
+      {% if not group.doc_pic %}
+      onmouseover="replace_normal_user_pic(this, 'userpic{{ group.group_id}}')"
+      {% else %}
+      onmouseover="replace_fancy_user_pic(this, 'userpic{{ group.group_id}}')"
+      {% endif %}
+      data-height="pic.preview_height" data-pic="{{pic.get_preview_url }}" > </div>
+
+    {% endfor %}
+</div>
+{% endif %}
 <div class='span10 contact_arena'>
   <script type='application/json' class='previous_messages'>
     {{group.messages|safe}}

@@ -68,7 +68,7 @@ def update_old_jobs(list_of_jobs):
     seven_days_ago = now - timedelta(days=7)
 
     for job in list_of_jobs:
-        if job.bp_hold.created < seven_days_ago:
+        if job.bp_hold.created < seven_days_ago and job.status == Job.IN_MARKET:
             job.status=Job.OUT_OF_MARKET
             job.save()
             # TODO we may need to do other things in the future
