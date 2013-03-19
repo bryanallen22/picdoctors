@@ -555,6 +555,7 @@ def setup_packages():
     sudo('npm install -g less -y -q')
     sudo('npm install -g recess -y -q')
     sudo('npm install -g uglify-js -y -q')
+    sudo('npm cache clean')
     sudo('npm install -g jshint -y -q')
 
 @task
