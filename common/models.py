@@ -691,7 +691,7 @@ class Job(DeleteMixin):
     def is_approved(self):
         approved = self.approved
         if not approved and self.doctor:
-            approved = approved or self.doctor.auto_approve
+            approved = self.doctor.auto_approve
         return approved
 
     def is_accepted(self):

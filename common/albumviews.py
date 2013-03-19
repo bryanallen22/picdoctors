@@ -84,6 +84,7 @@ def approve_album(request):
     job_id = data['job_id']
     job = get_object_or_None(Job, id=data['job_id'])
 
+    # you also could say profile.isa('approve_album') but that doesn't make sense to me when I read it
     moderator =  profile.has_perm('common.approve_album')
 
     if job and job.album and profile and moderator: # and moderator
@@ -91,6 +92,15 @@ def approve_album(request):
         job.approved = True
         job.status = Job.DOCTOR_SUBMITTED
         job.save()
+
+        update_doc_auto_approve(job)
     
     resp = simplejson.dumps({'redirect':reverse('album_approval_page')})
     return HttpResponse(resp, mimetype='application/json')
+
+def update_doc_auto_approve(job):
+    accepted_count = Job.objects.filter(doctor=job.doctor).filter(status=Job.USER_ACCEPTED).count()
+    if accepted_count > 5:
+        doc = job.doctor
+        doc.auto_approve = True
+        doc.save()
