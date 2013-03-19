@@ -47,6 +47,9 @@ def get_instance(required=True):
     Get an actual ec2 for the current task
     """
     for inst in get_all_instances():
+        if env.host_string == 'empty_host' and len(inst.tags) == 0:
+            return inst
+
         if 'instance_name' in inst.tags and \
                     inst.tags['instance_name'] == env.host_string:
             return inst
@@ -364,11 +367,15 @@ def terminate():
     Terminate an instance
     """
     inst = get_instance()
-    instance_name = inst.tags['instance_name']
-    deploy_type = inst.tags['deploy_type']
+
+    instance_name = "I don't know what it's name is!?!?!"
+    # sometimes a bad instance is generated! No tags are associated, so this crashes
+    if len(inst.tags) != 0:
+        instance_name = inst.tags['instance_name']
+        deploy_type = inst.tags['deploy_type']
     
-    if deploy_type == "production" and not confirm("You are killing a production server!!! Continue anyway?"):
-        abort("Good riddance, evil production server killer.")
+        if deploy_type == "production" and not confirm("You are killing a production server!!! Continue anyway?"):
+            abort("Good riddance, evil production server killer.")
 
     inst.terminate()
     print "Terminating %s..." % instance_name
