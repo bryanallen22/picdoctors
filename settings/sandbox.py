@@ -27,6 +27,6 @@ DATABASES = {
 path = os.path.join(PROJECT_ROOT, "settings/sandbox.cfg")
 external_ip = get_cfg_setting(path, "external_ip")
 if external_ip:
-    ALLOWED_HOSTS.append( external_ip )
+    ALLOWED_HOSTS.insert(0, external_ip )
 
-SITE_URL = external_ip
+SITE_URL = 'https://' + external_ip

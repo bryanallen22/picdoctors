@@ -6,6 +6,7 @@ ssl_session_timeout 10m;
 # Redirect http://picdoctors.com to https://www.picdoctors.com
 server {
     listen 80;
+    client_max_body_size 50m;
     server_name picdoctors.com;
     rewrite ^(.*) https://www.picdoctors.com$1 permanent;
 }
@@ -13,6 +14,7 @@ server {
 # Redirect http://www.picdoctors.com to https://www.picdoctors.com
 server {
     listen 80;
+    client_max_body_size 50m;
     server_name www.picdoctors.com;
     rewrite ^(.*) https://www.picdoctors.com$1 permanent;
 }
