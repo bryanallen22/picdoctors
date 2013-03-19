@@ -93,7 +93,12 @@ $(function(){
 
 });
 
-function replace_fancy_user_pic(el){
+function replace_fancy_user_pic(el, id){
+  el = $(el);
+  var par = $('#' + id);
+  var child = par.find('.ba-mask');
+
+  child.css('background-image', 'url(' + el.attr('data-pic') + ')');
 
 }
 
