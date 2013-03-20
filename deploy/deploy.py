@@ -160,9 +160,9 @@ def webserver_config():
     put(LocalConfig.remote_nginx_picdocconf, remote_picapp, use_sudo=True)
 
     # update the redirect for http paths for sandbox and test
-    if deploy_config == 'test' or deploy_config =='sandbox':
+    if deploy_type == 'test' or deploy_type =='sandbox':
         sudo("sed -i 's/rewrite_redirect_host/" + inst.ip_address.replace(".",r"\.") + "/g' " + remote_picapp)
-    elif deploy_config == 'production':
+    elif deploy_type == 'production':
         sudo("sed -i 's/rewrite_redirect_host/www\.picdoctors\.com/g' " + remote_picapp)
 
     # Tell uwsgi to start with the appropriate settings file
@@ -562,7 +562,7 @@ def setup_packages():
     sudo('npm install -g recess -y -q')
     sudo('npm install -g uglify-js -y -q')
     sudo('npm cache clean')
-    sudo('npm install -g jshint -y -q -ddd')
+    sudo('npm install -g jshint -y -q')
 
 @task
 def setup_local_mysql():
@@ -588,6 +588,7 @@ def setup_local_mysql():
     sudo("""mysql -u root --password=asdf <<< "CREATE DATABASE IF NOT EXISTS picdoctors; GRANT ALL PRIVILEGES ON picdoctors.* TO 'django'@'localhost' IDENTIFIED BY 'asdf';" """);
     
     venv_run_user('echo no | python manage.py syncdb', cfg)
+    venv_run_user('python manage.py migrate', cfg)
 
 @task
 def setup_db():
