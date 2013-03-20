@@ -30,3 +30,5 @@ if external_ip:
     ALLOWED_HOSTS.insert(0, external_ip )
 
 SITE_URL = 'https://' + external_ip
+# apparently DJANGO isn't smart enough to figure out https if you are using a proxy to fake https
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')

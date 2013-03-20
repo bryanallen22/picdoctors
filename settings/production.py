@@ -10,3 +10,6 @@ DATABASES = {
 
     }
 }
+
+# apparently DJANGO isn't smart enough to figure out https if you are using a proxy to fake https
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
