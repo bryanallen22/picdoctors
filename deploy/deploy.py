@@ -156,8 +156,14 @@ def webserver_config():
          '/etc/init/uwsgi.conf', use_sudo=True)
     put(LocalConfig.remote_uwsgi_picdocini,
          '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
-    put(LocalConfig.remote_nginx_picdocconf,
-                       '/etc/nginx/sites-available/picdoctorsapp', use_sudo=True)
+    remote_picapp = '/etc/nginx/sites-available/picdoctorsapp' 
+    put(LocalConfig.remote_nginx_picdocconf, remote_picapp, use_sudo=True)
+
+    # update the redirect for http paths for sandbox and test
+    if deploy_config == 'test' or deploy_config =='sandbox':
+        sudo("sed -i 's/rewrite_redirect_host/" + inst.ip_address.replace(".",r"\.") + "/g' " + remote_picapp)
+    elif deploy_config == 'production':
+        sudo("sed -i 's/rewrite_redirect_host/www\.picdoctors\.com/g' " + remote_picapp)
 
     # Tell uwsgi to start with the appropriate settings file
     sudo('echo "env = DJANGO_SETTINGS_MODULE=settings.%s" >> '\
