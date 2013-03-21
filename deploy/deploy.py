@@ -558,10 +558,12 @@ def setup_packages():
     sudo('apt-add-repository ppa:chris-lea/node.js -y') # Some node.js idiots broke the package that comes in 12.04
     sudo('apt-get update -y -q')
     sudo('apt-get install nodejs -y -q')
+
+    # some idiot decided to break npm/node so we need to update npm before we can install other packages
+    sudo('npm update npm -g')
     sudo('npm install -g less -y -q')
     sudo('npm install -g recess -y -q')
     sudo('npm install -g uglify-js -y -q')
-    sudo('npm cache clean')
     sudo('npm install -g jshint -y -q')
 
 @task
@@ -607,6 +609,7 @@ def setup_db():
     # when I've thought about it more
     if deploy_type == "sandbox":
         venv_run_user('echo no | python manage.py syncdb', cfg)
+        venv_run_user('python manage.py migrate', cfg)
     elif deploy_type == "test":
         setup_local_mysql()
     else:
