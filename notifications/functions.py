@@ -6,17 +6,30 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
+import logging
 
 
-def notify(notification_type, notification, recipient, url):
-    n = Notification()
-    n.notification_type = notification_type
-    n.notification = notification
-    n.recipient = recipient
-    n.url = url
-    n.save()
+def notify(notification_type, description, notification, recipients, url):
+    # who am I supposed to notify if recipients is None????
+    if recipients is None:
+        logging.error("attempted to send notification '%s' without recipient" % notification)
+        return
+    
+    # don't feel like sending [profile] be lazy and send profile
+    if not isinstance(recipients, list):
+        recipients = [recipients]
 
-    send_email(n)
+    # go through each recipient and notify them!
+    for recipient in recipients:
+        n = Notification()
+        n.notification_type = notification_type
+        n.description = description
+        n.notification = notification
+        n.recipient = recipient
+        n.url = url
+        n.save()
+
+        send_email(n)
 
 def send_email(notification):
     if not i_want_this_email(notification.recipient, notification.notification_type):
@@ -25,14 +38,13 @@ def send_email(notification):
     try:
         to_email = notification.recipient.email
 
-        subject = notification.get_notification_type_display()
+        subject = notification.description
 
         message = notification.notification
 
         url = reverse('notification_redirecter', args=[notification.id])
         
         args = {
-                'type'              : subject,
                 'message'           : message,
                 'site_url'          : settings.SITE_URL,
                 'site_path'         : url,

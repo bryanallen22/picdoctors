@@ -43,7 +43,7 @@
           </div>
           <div style="float:right; display:inline;">
             <ul class="nav nav-pills">
-              <li><a href="{% url 'howitworks' %}"><i class="icon-picture"></i> How It Works</a></li>
+              <!-- <li><a href="{% url 'howitworks' %}"><i class="icon-picture"></i> How It Works</a></li>-->
               <li><a href="{% url 'faq' %}"><i class="icon-info-sign"></i> FAQ</a></li>
               <li><a id='feedback_link'
                      class="feedback" 
@@ -55,9 +55,6 @@
               </li>
               {% if not user.is_authenticated %}
               <li><a href="{% url 'doc_home' %}"><i class="icon-edit"></i> Become a Pic Doctor</a></li>
-              {% endif %}
-              {% if request.has_cart %}
-              <li><a href="{% url 'upload' %}"><i class="icon-shopping-cart"></i> Cart ({{ request.pic_count }})</a></li>
               {% endif %}
               {% if not user.is_authenticated %}
                 <li><a href="{% url 'skaa_signin' %}"><i class="icon-user"></i> Log In</a></li>
@@ -86,20 +83,18 @@
                     </ul>
                   </li>
                 {% endif %}
+                {% if request.has_cart %}
+                <li><a href="{% url 'upload' %}"><i class="icon-shopping-cart"></i> ({{ request.pic_count }})</a></li>
+                {% endif %}
                 {% if request.notifications|length > 0 %}
                 <li class="dropdown">
-                  <a class="dropdown-toggle"
-                     data-toggle="dropdown"
-                     href="#">
-                      <i class="icon-envelope"></i>
-                      <b class="caret"></b>
-                    </a>
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-envelope"></i><b class="caret"></b></a>
                   <ul class="dropdown-menu">
                 {% for n in request.notifications %}
                 {% if n.viewed %}
-                <li><a href="{% url 'notification_redirecter' n.id %}">{{n.notification}}</a></li>
+                <li><a href="{% url 'notification_redirecter' n.id %}">{{n.description}}</a></li>
                 {% else %}
-                <li><a style="background-color:aqua" href="{% url 'notification_redirecter' n.id %}">{{n.notification}}</a></li>
+                <li><a style="background-color:lightcyan" href="{% url 'notification_redirecter' n.id %}">{{n.description}}</a></li>
                 {% endif %}
                 {% endfor %}
                   </ul>

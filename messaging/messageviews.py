@@ -15,6 +15,8 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
 import settings
+from notifications.functions import notify
+from notifications.models import Notification
 
 import ipdb
 import logging
@@ -115,64 +117,45 @@ def message_handler(request):
 
 
 def generate_message_email(job, profile, message):
-    try:
-        job_message = isinstance(message, JobMessage)
-        group_message = isinstance(message, GroupMessage)
+    job_message = isinstance(message, JobMessage)
+    group_message = isinstance(message, GroupMessage)
+    to_peeps = None
 
-        if message.commentor == job.skaa:
-            from_whom = 'User'
-            to_email = get_doctor_emails(job, message)
-        else:
-            from_whom = 'Doctor'
-            to_email = [job.skaa.email]
+    if message.commentor == job.skaa:
+        from_whom = 'User'
+        to_peeps = get_doctors(job, message)
+    else:
+        from_whom = 'Doctor'
+        to_peeps = [job.skaa]
 
-        if len(to_email) == 0:
-            return
+    if len(to_peeps) == 0:
+        return
 
-        if job_message:
-            subject = 'The ' + from_whom + ' commented on your job'
-            site_path = reverse
-            site_path = reverse('contact', args=[job.id])
-        elif group_message:
-            subject = 'The ' + from_whom + ' commented on a picture'
-            site_path = reverse('album', args=[job.album.id])
+    job_no = str(job.id).rjust(8, '0') 
 
-        #Do I want to send the message to them, or make them go to the page?a
-        args = {
-                'from_whom'         : from_whom, 
-                'job_id'            : job.id, 
-                'site_url'          : settings.SITE_URL, 
-                'site_path'         : site_path,
-                } 
-        html_content = render_to_string('contact_email.html', args)
-                                        
-        
-        # this strips the html, so people will have the text
-        text_content = strip_tags(html_content) 
-        # create the email, and attach the HTML version as well.
-        msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', to_email)
-        msg.attach_alternative(html_content, "text/html")
-        #TODO if you want to switch to using the workers
-        # sendAsyncEmail.apply_async(args=[msg])
-        sendAsyncEmail(msg)
+    if job_message:
+        subject = 'Comment on job #' + job_no
+        site_path = reverse('contact', args=[job.id])
+    elif group_message:
+        subject = 'Comment on a picture in job #' + job_no
+        site_path = reverse('album', args=[job.album.id])
 
-#        send_mail(subject, message , 'donotreply@picdoctors.com', [other_user_email], fail_silently=False)
-    except Exception as ex:
-        #raise ex
-        pass
+    the_message = "The " + from_whom + " said '" + message.message + "'"
 
-def get_doctor_emails(job, message):
+    notify(Notification.JOB_MESSAGE, subject,  the_message, to_peeps, site_path) 
+
+def get_doctors(job, message):
     ret = []
     # if there is a job doctor, only reply to him
     if job.doctor:
-        ret.append(job.doctor.email)
+        ret.append(job.doctor)
     # no job doctor yet, reply to all doctors who have commented
     else:
         jms = JobMessage.objects.filter(job=job)
         for jm in jms:
             # skip users, and only add unique doctors
-            if jm.commentor != job.skaa and jm.commentor.email not in ret:
-                ret.append(jm.commentor.email)
+            if jm.commentor != job.skaa and jm.commentor not in ret:
+                ret.append(jm.commentor)
 
     return ret
 

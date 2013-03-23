@@ -15,12 +15,14 @@ class Notification(DeleteMixin):
     JOBS_AVAILABLE = 'jb_ava' # jobs are available (for spamming doctors)
     JOBS_NEED_APPROVAL = 'jb_need_app' # jobs need approval (for spamming moderators)
     JOB_REMINDER = 'jb_remind' # If a job is waiting on you, remind the user/doctor
+    JOB_MESSAGE = 'jb_msg' # A message from a doc/user to user/doc about a job
 
     NOTIFICATION_TYPES = (
         (JOB_STATUS_CHANGE, 'Job Status has changed'),
         (JOBS_AVAILABLE, 'Jobs are available'),
         (JOBS_NEED_APPROVAL, 'Jobs need approval'),
         (JOB_REMINDER, 'Job is awaiting you'),
+        (JOB_MESSAGE, 'You have received a message about your job'),
     )
 
     # max_length refers to the shorthand versions above
@@ -30,6 +32,9 @@ class Notification(DeleteMixin):
     
     # the notification to send to the recipient
     notification        = models.CharField(max_length=256, blank=True)
+
+    # a short description of this notification (useful for email subjects, and notification drop downs)
+    description         = models.CharField(max_length=32, blank=True)
 
     # the recipient of the notification
     recipient           = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)

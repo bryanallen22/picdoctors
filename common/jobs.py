@@ -5,11 +5,6 @@ from django.utils import simplejson
 from common.models import Pic
 from common.calculations import calculate_job_payout
 from messaging.models import JobMessage, GroupMessage
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.core.mail import EmailMultiAlternatives
-from tasks.tasks import sendAsyncEmail
-import settings
 
 import ipdb
 from copy import deepcopy
@@ -165,7 +160,10 @@ def send_job_status_change(job, profile):
 
     to_email = to_person.email
 
-    subject = 'Job #' + str(job.id).rjust(8, '0') + ' status has changed.'
+    job_no = str(job.id).rjust(8, '0') 
+    subject = 'Job #' + job_no + ' status has changed.'
+
+    message = 'The current status of job #' + job_no + ' is: ' + job.get_status_display()
         
-    notify(Notification.JOB_STATUS_CHANGE, subject, to_person, site_path)
+    notify(Notification.JOB_STATUS_CHANGE, subject, message, to_person, site_path)
 
