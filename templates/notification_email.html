@@ -1,0 +1,10 @@
+{% extends 'base_email.html' %}
+
+{% block main %}
+<h3> 
+  Notification Type: {{ type }}<br/>
+  Notification: {{ message }} <br/>
+  You can view the page by clicking <a href='{{ site_url }}{{site_path}}'>here</a>
+</h3>
+{% endblock %}
+
