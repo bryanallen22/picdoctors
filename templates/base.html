@@ -96,7 +96,11 @@
                     </a>
                   <ul class="dropdown-menu">
                 {% for n in request.notifications %}
-                <li><a href="{% url 'notification_redirecter' n.id %}"><i class="icon-tasks"></i>{{n.notification}}</a></li>
+                {% if n.viewed %}
+                <li><a href="{% url 'notification_redirecter' n.id %}">{{n.notification}}</a></li>
+                {% else %}
+                <li><a style="background-color:aqua" href="{% url 'notification_redirecter' n.id %}">{{n.notification}}</a></li>
+                {% endif %}
                 {% endfor %}
                   </ul>
                 </li>
