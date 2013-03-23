@@ -12,13 +12,19 @@ from doctor.account_settings_views import get_settings_doc
 
 from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account
-
+from notifications.models import Notification, NotificationToIgnore
 
 import logging
 
 import settings
 import balanced
 import ipdb
+
+class NotificationInfo:
+    def __init__(self):
+        self.type = 'moo'
+        self.description = 'cow'
+        self.enabled = False
 
 @login_required
 def get_shared_params(request, profile):
@@ -54,7 +60,30 @@ def account_settings(request):
         child_params = get_settings_user(request)
         parent_params.update(child_params)
 
+    notification_json = get_notification_list(profile)
+    parent_params['notification_json'] = notification_json
+
     return parent_params
+
+def get_notification_list(profile):
+    nts = []
+    ignore_list = NotificationToIgnore.objects.filter(profile=profile).filter(ignore=True)
+    for tup in Notification.NOTIFICATION_TYPES:
+        if tup[0]==Notification.JOBS_AVAILABLE and not profile.isa('doctor'):
+            continue
+
+        if tup[0]==Notification.JOBS_NEED_APPROVAL and not profile.has_perm('common.approve_album'):
+            continue
+            
+        enabled = len([s for s in ignore_list if s.notification_type == tup[0]]) == 0
+        n = NotificationInfo()
+        n.type = tup[0]
+        n.description = tup[1]
+        n.enabled = enabled
+        
+        nts.append(n.__dict__)
+
+    return simplejson.dumps(nts)
 
 
 @login_required

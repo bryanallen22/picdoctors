@@ -21,7 +21,7 @@ class Notification(DeleteMixin):
         (JOB_STATUS_CHANGE, 'Job Status has changed'),
         (JOBS_AVAILABLE, 'Jobs are available'),
         (JOBS_NEED_APPROVAL, 'Jobs need approval'),
-        (JOB_REMINDER, 'Job is awaiting you'),
+        (JOB_REMINDER, 'Job waiting on you'),
         (JOB_MESSAGE, 'You have received a message about your job'),
     )
 

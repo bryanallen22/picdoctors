@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from notifications.views import notification_redirecter
+from notifications.views import notification_redirecter, notification_handler
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -8,5 +8,6 @@ from notifications.views import notification_redirecter
 
 urlpatterns = patterns('',
     url(r'^notification/(?P<notification_id>\d+)$',   notification_redirecter,    name='notification_redirecter'),
+    url(r'^notification_handler/$',                   notification_handler,       name='notification_handler'),
 )
 

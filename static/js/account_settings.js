@@ -317,3 +317,111 @@ $(function(){
   });
 
 });
+
+
+
+/***************************************************************
+ * Notification Settings
+ * ************************************************************/
+// Load the application once the DOM is ready, using `jQuery.ready`:
+$(function(){
+
+  var true_sync_func = Backbone.sync;
+  var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
+  Backbone.sync = function(method, model, options){
+    options.beforeSend = function(xhr){
+      xhr.setRequestHeader('X-CSRFToken', CSRF_TOKEN);
+    };
+    return true_sync_func( method, model, options);
+  };
+
+  var NotificationInfo = Backbone.Model.extend({
+    defaults: function() {
+      return {
+        type                 : '',
+        description          : '',
+        enabled              : false,
+      };
+    },
+    
+    initialize : function() {
+    },
+
+    clear: function() {
+      this.destroy();
+    },
+
+  });
+
+  // A collection of JobInfo elements
+  var NotificationList = Backbone.Collection.extend({
+
+    // Reference to this collection's model.
+    model: NotificationInfo,
+
+    url: '/notification_handler/',
+
+    initialize: function() {
+      this.container = null; 
+      this.bind('reset', this.setup, this);
+    },
+
+
+    newNotificationRow: function (n_info){
+      var view = new NotificationView( { model: n_info} );
+      this.container.append(view.el);
+    },
+
+    setup: function(){
+      var that = this;
+      this.each( function(el) {
+        that.newNotificationRow.call(that, el);
+      });
+
+    },
+
+  });
+
+  var NotificationView = Backbone.View.extend({
+    
+    className: 'row',
+
+    template:  '',
+
+    initialize: function(){
+      //this is set in the job.html page
+      this.template = _.template($('#notification_template').html().trim());
+      this.model.bind('change',  this.render,       this);
+      this.render();
+    },
+
+    events: {
+      "click       .onoffemailswitch-checkbox" : "changeNotification",
+    },
+
+    render: function(){
+      // Compile the template using underscore
+      
+      this.$el.html(this.template(
+        {
+          type                : this.model.get('type'),
+          description         : this.model.get('description'),
+          enabled             : this.model.get('enabled'),
+        }
+      ));
+    },
+
+    changeNotification: function(something){
+      var checked = this.$el.find('.onoffemailswitch-checkbox').is(':checked');
+      this.model.save({'enabled' : checked }, { wait : true});
+    },
+
+
+  });
+
+  var list = new NotificationList();
+  list.container = $("#notifications-form");
+  var notification_infos =  jQuery.parseJSON( $('.notification_infos').html());
+  list.reset(notification_infos);
+});
+

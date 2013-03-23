@@ -22,6 +22,7 @@
     <ul class="nav nav-tabs">
       <li class="active"><a id="home_tab" href="#home_pane" data-toggle="tab">Profile</a></li>
       <li><a id="password_tab" href="#password_pane" data-toggle="tab">Password</a></li>
+      <li><a id="notifications_tab" href="#notifications_pane" data-toggle="tab">Notifications</a></li>
       {% if perms.common.skaa %}
         <li><a id="cc_tab" href="#credit_cards" data-toggle="tab">Credit Cards</a></li>
       {% endif %}
@@ -106,6 +107,16 @@
               <button type="submit" class="btn btn-primary">Update</button>
             </div>
           </div>
+        </form>
+      </div>
+
+
+      {# Notifications tab #}
+      <div class="tab-pane fade" id="notifications_pane">
+        <script type='application/json' class='notification_infos'>{{notification_json|safe}}</script>
+        <form id="notifications-form" action="#" method="POST" class="form-horizontal">
+
+
         </form>
       </div>
 
@@ -572,9 +583,28 @@
   {# see it. Even if someone found it, these cards won't work in production #}
   <script src="{{STATIC_URL}}js/set_price_debugbank.js"></script>
   {% endif %}
+  
   <script src="{{ STATIC_URL }}js/settings_tour.js"></script>
   <script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
   <script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
+
+  <script src="{{ STATIC_URL }}js/json2.js"></script>
+  <script src="{{ STATIC_URL }}js/underscore.js"></script>
+  <script src="{{ STATIC_URL }}js/backbone.js"></script>
+  <script type="text/template" id="notification_template">
+      <div class="span4">
+        <%=description%> <br/>
+      </div>
+      <div class="span2">
+        <div class="onoffemailswitch">
+          <input type="checkbox" name="<%=type%>_switch" class="onoffemailswitch-checkbox hide" id="<%=type%>_switch" <% if (enabled){ %> checked <%}%>  >
+          <label class="onoffemailswitch-label" for="<%=type%>_switch">
+            <div class="onoffemailswitch-inner"></div>
+            <div class="onoffemailswitch-switch"></div>
+          </label>
+        </div>
+      </div>  <!-- span2 switches -->
+  </script>
   {% if perms.common.doctor %}
   <script>
   $(function(){
