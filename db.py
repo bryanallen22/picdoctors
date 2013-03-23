@@ -62,18 +62,19 @@ def do_list(force):
     """
     You are so lazy, you could have typed this out, or just modified your bashrc...
     """
-    os.system("python manage.py migrate --list")
+    do_cmd("python manage.py migrate --list")
 
 
 def do_gen(force):
     """
-    Generate the migration files for all of the apps located in AUTO_MIGRATION_APPS
+    Generate the migration files for all of the apps located in PD_APPS
     This is a diff based on the last migration in the south history and the current model
     If there is a diff, the migration will be made, if not, it will skip it
     """
-    for app in settings.AUTO_MIGRATION_APPS:
+    for app in settings.PD_APPS:
+        
         print Fore.GREEN + "generating migrations files for " + Fore.RED + "'" + app + "'" + Fore.WHITE
-        os.system("python manage.py schemamigration " + app + " --auto")
+        do_cmd("python manage.py schemamigration " + app + " --auto")
     
     print Fore.BLUE + "If there were any changes, we've made the migration files!"
     print "To see available migrations type 'python manage.py migrate --list' or './db.py -list'"
@@ -84,7 +85,7 @@ def do_migrate(force):
     """
     Run any available migration files that haven't been run as of yet
     """
-    os.system("python manage.py migrate")
+    do_cmd("python manage.py migrate")
 
 
 def do_alphadb(force):
@@ -96,12 +97,12 @@ def do_alphadb(force):
     if settings.DEPLOY_TYPE == "SANDBOX" or settings.DEPLOY_TYPE == "DEV":
         if confirm("Are you sure you want to delete your database and migrations and start anew", force):
             print Fore.GREEN + "deleting sqlite.db" + Fore.WHITE
-            os.system("rm sqlite.db")
+            do_cmd("rm sqlite.db")
             delete_migrations()
             gen_new_db()
             init_db()
             print Fore.GREEN + "Migrating djcelery, they were nice enough to include their migrations..." + Fore.WHITE
-            os.system("python manage.py migrate djcelery")
+            do_cmd("python manage.py migrate djcelery")
         else:
             print_quitter()
 
@@ -109,12 +110,12 @@ def do_alphadb(force):
 
         if confirm("Are you sure you want to delete your database and migrations and start anew", force):
             print Fore.GREEN + "Blasting away and recreating your DB" + Fore.WHITE
-            os.system("mysql -h localhost -u root -pasdf picdoctors -e 'DROP DATABASE picdoctors;CREATE DATABASE picdoctors'")
+            do_cmd("mysql -h localhost -u root -pasdf picdoctors -e 'DROP DATABASE picdoctors;CREATE DATABASE picdoctors'")
             delete_migrations()
             gen_new_db()
             init_db()
             print Fore.GREEN + "Migrating djcelery, they were nice enough to include their migrations..." + Fore.WHITE
-            os.system("python manage.py migrate djcelery")
+            do_cmd("python manage.py migrate djcelery")
         else:
             print_quitter()
 
@@ -123,32 +124,32 @@ def do_alphadb(force):
 
 def delete_migrations():
     print Fore.GREEN + "deleting migrations" + Fore.WHITE
-    for app in settings.AUTO_MIGRATION_APPS:
+    for app in settings.PD_APPS:
         if os.path.isdir(app + "/migrations"):
             print Fore.GREEN + "deleting '" + app + "/migrations'" + Fore.WHITE
-            os.system("rm -rf " + app + "/migrations")
+            do_cmd("rm -rf " + app + "/migrations")
 
 def gen_new_db():
     """
     boring syncdb
     """
     print Fore.GREEN + "Syncing newdb" + Fore.WHITE
-    os.system("echo no | python manage.py syncdb")
+    do_cmd("echo no | python manage.py syncdb")
 
 
 def init_db():
     """
     This bad boy will migrate or initialize & fake each app
     """
-    for app in settings.AUTO_MIGRATION_APPS:
+    for app in settings.PD_APPS:
         if os.path.isdir(app + "/migrations"):
             print Fore.GREEN + "'" + app + "' has a migrations folder, migrating!" + Fore.WHITE
-            os.system("python manage.py migrate " + app )
+            do_cmd("python manage.py migrate " + app )
         else:
             print Fore.GREEN + "Initializing " + Fore.RED + "'" + app + "'" +  Fore.GREEN + " for South Migration" + Fore.WHITE
-            os.system("python manage.py schemamigration " + app + " --initial")
+            do_cmd("python manage.py schemamigration " + app + " --initial")
             print Fore.GREEN + "Faking " + Fore.RED + "'" + app + "'" +  Fore.GREEN + " migration" + Fore.WHITE
-            os.system("python manage.py migrate " + app + " --fake")
+            do_cmd("python manage.py migrate " + app + " --fake")
     
 
 def print_quitter():
@@ -179,6 +180,9 @@ def confirm(prompt=None, force=False):
         if ans == 'n' or ans == 'N':
             return False
 
+def do_cmd(cmd):
+    print Fore.BLUE + "Executing: " + cmd + Fore.WHITE
+    os.system(cmd)
 
 def print_help():
     """
@@ -187,16 +191,16 @@ def print_help():
     base = " ./db.py "
     print Fore.GREEN + ""
     print "It's important to note, I only migrate the apps I care about."
-    print "The apps I currently care about are located in AUTO_MIGRATION_APPS (DJANGO Settings) and they are: "
-    for app in settings.AUTO_MIGRATION_APPS:
+    print "The apps I currently care about are located in PD_APPS (DJANGO Settings) and they are: "
+    for app in settings.PD_APPS:
         print "   " + app
 
     print "\nTry one of these:"
     print base + " -alpha        -- delete old db and migrations and create and init anew"
     print base + " -alpha -f     -- delete old db and migrations and create and init anew (ignoring nagging)"
     print base + " -gen          -- generate migration files (use this in the future, post go live, adding real migrations to code!)"
-    print base + " -migrate      -- migrate all of the apps from AUTO_MIGRATION_APPS (settings file)"
-    print base + " -migrate -f   -- migrate all of the apps from AUTO_MIGRATION_APPS (settings file) without question (if possible)!"
+    print base + " -migrate      -- migrate all of the apps from PD_APPS (settings file)"
+    print base + " -migrate -f   -- migrate all of the apps from PD_APPS (settings file) without question (if possible)!"
 
 
 entry_point()

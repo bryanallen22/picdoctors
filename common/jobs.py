@@ -14,6 +14,9 @@ import settings
 import ipdb
 from copy import deepcopy
 
+from notifications.functions import notify
+from notifications.models import Notification
+
 # info for a job row
 class JobInfo:
     def __init__(self):
@@ -150,38 +153,19 @@ def generate_pic_thumbs(filter_album):
 
 
 def send_job_status_change(job, profile):
-    try:
-        to_email = ''
-        site_path = ''
-        if job.doctor and job.doctor == profile:
-            to_email = job.skaa.email
-            site_path = reverse('job_page_with_page_and_id', args=[1, job.id])
-        else:
-            to_email = job.doctor.email
-            site_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
+    to_person = None
+    to_email = ''
+    site_path = ''
+    if job.doctor and job.doctor == profile:
+        to_person = job.skaa
+        site_path = reverse('job_page_with_page_and_id', args=[1, job.id])
+    else:
+        to_person = job.doctor
+        site_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
 
-        subject = 'Job #' + str(job.id).rjust(8, '0') + ' status has changed.'
+    to_email = to_person.email
 
-        args = {
-                'job_status'        : job.get_status_display(), 
-                'job_id'            : job.id,
-                'site_url'          : settings.SITE_URL,
-                'site_path'         : site_path,
-                } 
-        html_content = render_to_string('job_status_change_email.html', args)
-                                        
+    subject = 'Job #' + str(job.id).rjust(8, '0') + ' status has changed.'
         
-        # this strips the html, so people will have the text
-        text_content = strip_tags(html_content) 
-        # create the email, and attach the HTML version as well.
-        msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', [to_email])
-        msg.attach_alternative(html_content, "text/html")
-        #TODO if you want to switch to using the workers
-        # sendAsyncEmail.apply_async(args=[msg])
-        sendAsyncEmail(msg)
-
-    except Exception as ex:
-        # later I'd like to ignore this, but for now, let's see errors happen
-        # raise ex
-        pass
+    notify(Notification.JOB_STATUS_CHANGE, subject, to_person, site_path)
 

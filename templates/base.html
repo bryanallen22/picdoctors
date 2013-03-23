@@ -86,6 +86,21 @@
                     </ul>
                   </li>
                 {% endif %}
+                {% if request.notifications|length > 0 %}
+                <li class="dropdown">
+                  <a class="dropdown-toggle"
+                     data-toggle="dropdown"
+                     href="#">
+                      <i class="icon-envelope"></i>
+                      <b class="caret"></b>
+                    </a>
+                  <ul class="dropdown-menu">
+                {% for n in request.notifications %}
+                <li><a href="{% url 'notification_redirecter' n.id %}"><i class="icon-tasks"></i>{{n.notification}}</a></li>
+                {% endfor %}
+                  </ul>
+                </li>
+                {% endif %}
                 <li class="dropdown">
                   <a class="dropdown-toggle"
                      data-toggle="dropdown"

@@ -161,8 +161,8 @@ def apply_for_job(request):
             # if the job has no doctor
             if job.doctor is None:
                 # find out if this job has had this doctor before
-                db = get_object_or_None(DocBlock, job=job)
-                if db:
+                db_cnt = DocBlock.objects.filter(job=job).filter(doctor=profile).count()
+                if db_cnt > 0:
                     actions = Actions()
                     actions.add('alert', 'Unfortunately you are unable to take this job, we apologize.')
                     actions.add('remove_job_row', data['job_id'])

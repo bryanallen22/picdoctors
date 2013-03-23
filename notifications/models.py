@@ -1,5 +1,9 @@
 from django.db import models
-from common.models import DeleteMixin, UserProfile
+from common.models import DeleteMixin, Profile
+import settings
+
+from django.db import models
+from common.basemodels import *
 
 ################################################################################
 # Markup
@@ -28,7 +32,7 @@ class Notification(DeleteMixin):
     notification        = models.CharField(max_length=256, blank=True)
 
     # the recipient of the notification
-    recipient           = models.ForeignKey(UserProfile, db_index=True)
+    recipient           = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
 
     # the url where they need to go (I think we're going to do a redirect,
     # like all urls are notification/12313, then we redirect to this url
@@ -39,8 +43,23 @@ class Notification(DeleteMixin):
     viewed              = models.BooleanField(default=False)
     
 
-    @static
+    @staticmethod
     def GetRecentNotifications(recipient, cnt):
+        if not recipient:
+            return []
         return Notification.objects.filter(recipient=recipient).order_by('created').reverse()[:cnt]
 
 
+class NotificationToIgnore(DeleteMixin):
+    # max_length refers to the shorthand versions above
+    notification_type   = models.CharField(max_length=15, 
+                                               choices=Notification.NOTIFICATION_TYPES, 
+                                               db_index=True)
+
+    profile             = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, 
+                                             null=True, db_index=True)
+
+    # by default we send a notification, unless they've said nayyyyyyy
+    ignore              = models.BooleanField(default=True)
+    
+    

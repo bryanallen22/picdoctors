@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     (r'', include('doctor.urls')),
     (r'', include('common.urls')),
     (r'', include('messaging.urls')),
+    (r'', include('notifications.urls')),
     
 
     url(r'^500/$',    oh_sob_500,     name='error500'),

@@ -1,6 +1,7 @@
 from common.functions import get_profile_or_None
 from common.functions import get_unfinished_album
 from common.models import Album
+from notifications.models import Notification
 from django.core.exceptions import MultipleObjectsReturned
 
 import ipdb
@@ -31,6 +32,8 @@ class BaseMiddleware(object):
                 request.pic_count = album.get_picture_count()
             else:
                 request.pic_count = 0
+
+        request.notifications = Notification.GetRecentNotifications(profile, 5)
 
         return None
 

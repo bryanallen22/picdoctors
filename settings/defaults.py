@@ -29,9 +29,7 @@ EXAMPLE_DATABASES = {
 }
 
 # User Model
-#AUTH_PROFILE_MODULE = 'common.UserProfile'
 AUTH_USER_MODEL = 'common.Profile'
-#AUTH_PROFILE_MODULE = 'common.Profile'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -140,18 +138,23 @@ BROKER_VHOST = 'carrot'
 BROKER_USER = 'weliketoeat'
 BROKER_PASSWORD = 'rabbitsfordinner'
 
-# These are apps whose tests must pass before we can deploy.
-# They are added to INSTALLED_APPS
-TESTABLE_APPS = (
-    'storages',
-    'debug_toolbar',
+# Migrateable Apps
+PD_APPS = (
     'common',
     'skaa',
     'doctor',
     'messaging',
     'tasks',
-    'djcelery',
+    'notifications',
 )
+
+# These are apps whose tests must pass before we can deploy.
+# They are added to INSTALLED_APPS
+TESTABLE_APPS = (
+    'storages',
+    'debug_toolbar',
+    'djcelery',
+) + PD_APPS
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -167,14 +170,6 @@ INSTALLED_APPS = (
     'seleniumtests', # TODO - move this to TESTABLE_APPS once I think it's in better shape
 ) + TESTABLE_APPS
 
-# Migrateable Apps
-AUTO_MIGRATION_APPS = (
-    'common',
-    'skaa',
-    'doctor',
-    'messaging',
-    'tasks',
-)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
