@@ -7,20 +7,26 @@ from annoying.functions import get_object_or_None
 from common.models import Album
 
 import logging
-from datetime import datetime, timedelta
 import urllib
 import urlparse
 
-import pdb
+from datetime import datetime, timedelta
 import pytz
+from django.utils.timezone import utc
 
 import re
+import os
+
+import ipdb
 
 def get_profile_or_None(request):
     """ Get the request user profile if they are logged in """
     if request.user.is_authenticated():
-        return request.user.get_profile()
+        return request.user
     return None
+
+def get_datetime():
+    return datetime.utcnow().replace(tzinfo=utc)
 
 def get_time_string(prev_date):
     """
@@ -39,7 +45,7 @@ def get_time_string(prev_date):
     # When comparing against db, we need tz aware utc time
     # I'm not sure what happened, this was working a week ago w/o it.
     # Did we change something?
-    now = datetime.utcnow().replace(tzinfo=pytz.UTC)
+    now = get_datetime()
     yesterday = now - timedelta(days=1)
     hour_ago = now - timedelta(hours=1)
 
@@ -106,53 +112,3 @@ def get_referer_view_and_id(request, default=None):
         return referer[1], referer[2]
 
     return default
-
-from django.contrib.auth.models import Group
-from annoying.decorators import render_to
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.core.mail import EmailMultiAlternatives
-from tasks.tasks import sendAsyncEmail
-
-
-#TODO Remove this
-@csrf_exempt
-@render_to("gopro.html")
-def go_pro(request):
-    user = request.user
-    moderator = get_object_or_None(Group, name='Album Moderators')
-    user.groups.add(moderator)
-
-    send_go_pro_email(request)
-
-    return {}
-
-
-def send_go_pro_email(request):
-    try:
-        to_email = 'feedback@picdoctors.com'
-
-        user = request.user
-
-        which_user = user.username
-        which_id = user.id
-
-
-        args = {'which_user':which_user, 'which_id':which_id} 
-        html_content = render_to_string('gopro_email.html', args)
-                                        
-        
-        # this strips the html, so people will have the text
-        text_content = strip_tags(html_content) 
-        # create the email, and attach the HTML version as well.
-        msg = EmailMultiAlternatives('user went pro', text_content, 'donotreply@picdoctors.com', [to_email])
-        msg.attach_alternative(html_content, "text/html")
-        #TODO if you want to switch to using the workers
-        # sendAsyncEmail.apply_async(args=[msg])
-        sendAsyncEmail(msg)
-
-    except Exception as ex:
-        # later I'd like to ignore this, but for now, let's see errors happen
-        # raise ex
-        pass
-

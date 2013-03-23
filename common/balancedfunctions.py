@@ -13,7 +13,7 @@ import settings
 import ipdb
 #ipdb.set_trace()
 
-from skaa.jobsviews import create_job
+from skaa.jobsviews import create_job, update_job_hold
 
 ################################################################################
 # Accounts stuff
@@ -95,14 +95,14 @@ def get_merchant_account(request, profile=None):
         # Create a new account and associate it with this profile
         account = balanced.Account().save()
         try:
-            account.email_address = request.user.email
+            account.email_address = profile.email
             account.save()
         except balanced.exc.HTTPError as ex:
             if ex.category_code == 'duplicate-email-address':
                 if not settings.IS_PRODUCTION:
                     # only in non production will we take control. See similar
                     # comments above in get_buyer_account
-                    account = balanced.Account.query.filter(email_address=request.user.email)[0]
+                    account = balanced.Account.query.filter(email_address=profile.email)[0]
                     # TODO - invalidate existing things on this account?
                 else:
                     raise KeyError("Duplicate email address %s... this should have been saved under " \
@@ -148,9 +148,9 @@ def place_hold(job, album, user, cents, card_uri):
     """
     Do the actual 7 day hold associated with the album and user
     """
+    profile = user
     balanced.configure(settings.BALANCED_API_KEY_SECRET)
-    email_address = user.email
-    profile = user.get_profile()
+    email_address = profile.email
 
     account = get_buyer_account(profile, email_address, card_uri)
 
@@ -166,8 +166,9 @@ def place_hold(job, album, user, cents, card_uri):
 
     album.finished = True
     album.save()
+
     logging.info("Album owned by %s has been finished with price at $%s (cents)" %
-                     (album.userprofile.user.username, cents))
+                     (album.userprofile.email, cents))
 
 
 ################################################################################
@@ -180,7 +181,7 @@ def do_debit(request, profile, job):
     doc_acct = job.doctor.bp_account.fetch()
 
     if not is_merchant(doc_acct):
-        raise KeyError("Doctors %s does not have a merchant balanced role" % job.doctor.user.email)
+        raise KeyError("Doctors %s does not have a merchant balanced role" % job.doctor.email)
 
     debit = user_acct.debit(
         amount                  = job.bp_hold.cents,

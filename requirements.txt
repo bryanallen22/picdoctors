@@ -27,3 +27,5 @@ simplejson==2.3.2
 ssh==1.7.14
 virtualenv==1.6.4
 wsgiref==0.1.2
+South==0.7.6
+colorama==0.2.5

@@ -27,6 +27,20 @@ $(function(){
   });
 
   tour.addStep({
+    element: "#bad_tab", 
+    onShow: function (tour) { $("#bad_tab").click(); },
+    title: "Become A Pic Doctor", 
+    content: "Are you interested in making the jump to Pic Doctor?",
+  });
+
+  tour.addStep({
+    element: "#cc_tab", 
+    onShow: function (tour) { $("#cc_tab").click(); },
+    title: "Credit Cards", 
+    content: "Manage your previously entered Credit Cards here.",
+  });
+
+  tour.addStep({
     element: "#password_tab", 
     onShow: function (tour) { $("#password_tab").click(); },
     title: "Password", 

@@ -3,14 +3,15 @@ from django.contrib.auth.decorators import login_required
 
 from annoying.decorators import render_to
 from common.functions import get_profile_or_None
+from django.core.urlresolvers import reverse
+from django.utils import simplejson
+from django.http import HttpResponse
 
 import settings
 
 import ipdb
 
-@login_required
-@render_to('account_settings_user.html')
-def settings_user(request, parent_params):
+def get_settings_user(request):
     profile = get_profile_or_None(request)
     
     if profile.bp_account:
@@ -23,8 +24,6 @@ def settings_user(request, parent_params):
     my_params = {
         'credit_cards':     user_credit_cards,
     }
-
-    my_params.update(parent_params)
 
     return my_params
 

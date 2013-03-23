@@ -14,8 +14,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
+import settings
 
-import pdb
+import ipdb
 import logging
 import datetime
 
@@ -40,7 +41,7 @@ def prep_messages(base_messages, profile, job):
     messages = []
     for msg in base_messages:
         message = Message()
-        message.commentor = msg.commentor.user.username
+        message.commentor = msg.commentor.email
         message.message = msg.message
         message.created = get_time_string(msg.created)
         message.is_owner = msg.commentor == job.skaa
@@ -61,7 +62,7 @@ def contact(request, job_id):
         return redirect('/')
 
     if not (job.skaa == profile or job.doctor == profile or
-        ( profile.is_doctor and job.status == Job.IN_MARKET)):
+        ( profile.isa('doctor') and job.status == Job.IN_MARKET)):
         return redirect('/')
 
     #############################
@@ -87,9 +88,11 @@ def message_handler(request):
             job_val = data['job_id'].strip()
 
             job = get_object_or_None(Job, id=int(job_val))
+            job_msg = False
 
             if group_val != '':
-                group = get_object_or_None(Group, id=int(group_val))
+                group_val = int(group_val)
+                group = get_object_or_None(Group, id=group_val)
                 msg = GroupMessage()
                 msg.group = group
             else:
@@ -113,19 +116,34 @@ def message_handler(request):
 
 def generate_message_email(job, profile, message):
     try:
+        job_message = isinstance(message, JobMessage)
+        group_message = isinstance(message, GroupMessage)
+
         if message.commentor == job.skaa:
             from_whom = 'User'
             to_email = get_doctor_emails(job, message)
         else:
             from_whom = 'Doctor'
-            to_email = [job.skaa.user.email]
+            to_email = [job.skaa.email]
 
         if len(to_email) == 0:
             return
 
-        subject = 'The ' + from_whom + ' commented on your job'
+        if job_message:
+            subject = 'The ' + from_whom + ' commented on your job'
+            site_path = reverse
+            site_path = reverse('contact', args=[job.id])
+        elif group_message:
+            subject = 'The ' + from_whom + ' commented on a picture'
+            site_path = reverse('album', args=[job.album.id])
+
         #Do I want to send the message to them, or make them go to the page?a
-        args = {'from_whom':from_whom, 'job_id':job.id} 
+        args = {
+                'from_whom'         : from_whom, 
+                'job_id'            : job.id, 
+                'site_url'          : settings.SITE_URL, 
+                'site_path'         : site_path,
+                } 
         html_content = render_to_string('contact_email.html', args)
                                         
         
@@ -147,14 +165,14 @@ def get_doctor_emails(job, message):
     ret = []
     # if there is a job doctor, only reply to him
     if job.doctor:
-        ret.append(job.doctor.user.email)
+        ret.append(job.doctor.email)
     # no job doctor yet, reply to all doctors who have commented
     else:
         jms = JobMessage.objects.filter(job=job)
         for jm in jms:
             # skip users, and only add unique doctors
-            if jm.commentor != job.skaa and jm.commentor.user.email not in ret:
-                ret.append(jm.commentor.user.email)
+            if jm.commentor != job.skaa and jm.commentor.email not in ret:
+                ret.append(jm.commentor.email)
 
     return ret
 

@@ -28,3 +28,5 @@ def currency_cents(value):
     value = float(value)
     value = value / 100
     return locale.currency(value, grouping=True)
+
+# If you are trying to figure out someone's permissions in a tag in the tempalte just use if perms.PERMISSION (see base.html)

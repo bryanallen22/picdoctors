@@ -5,6 +5,7 @@ from annoying.decorators import render_to
 
 from common.models import Album
 from common.models import Pic
+from common.models import Group 
 from common.functions import get_profile_or_None
 from common.functions import get_time_string
 from django.core.urlresolvers import reverse
@@ -62,7 +63,7 @@ def merge_albums(request):
         # Okay, how did that happen!? Let's just barf, shall we?
         raise MultipleObjectsReturned(
             "So %s has managed to get %s unfinished albums at once. Impressive."
-            % (user_profile.user.username, len(albums)) );
+            % (user_profile.email, len(albums)) );
 
     if albums[0].created < albums[1].created:
         older_album = albums[0]
@@ -86,7 +87,11 @@ def merge_albums(request):
                 pic.album = newer_album
                 pic.save()
             older_album.delete()
-            newer_album.kick_groups_modified()
+            # delete all the current sequences, or it'll hose us (why not delete the old ones while we're at it)
+            Group.objects.filter(album=older_album).delete()
+            Group.objects.filter(album=newer_album).delete()
+            # Kicking doesn't guarantee set_sequences is called
+            newer_album.set_sequences(True)
         else:
             # Treat this 'POST' like a 'GET'
             bad_post_value = True

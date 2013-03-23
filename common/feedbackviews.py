@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
 
-import pdb
+import ipdb
 import logging
 import datetime
 
@@ -27,7 +27,7 @@ def feedback(request):
     tmp_from = data['from_whom'].strip()
 
     if profile:
-        from_whom = profile.user.username
+        from_whom = profile.email
     elif tmp_from != '':
         from_whom = tmp_from
         

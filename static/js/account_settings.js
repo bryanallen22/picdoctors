@@ -274,3 +274,46 @@ $(function(){
 
 });
 
+/*
+ * Become a Pic Doctor
+ */
+$(function(){
+
+  function postTo(url, obj, callback) {
+    var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
+
+    $.ajax({
+      headers: {
+        "X-CSRFToken":CSRF_TOKEN
+      },
+      type: "POST",
+      url: url,
+      data: obj,
+      success : callback,
+    });
+
+  }
+
+  $("#formRoles").find(".onoffswitch-checkbox").click( function() {
+
+    var on = $(this).is(':checked');
+
+    obj = {
+      'role'    : this.id,
+      'state'   : on,
+    };
+
+    postTo('/update_roles/', obj, function(data) {
+
+      if ( data.success ) {
+        if (data.redirect) {
+            window.location.reload(data.redirect);
+        }
+      } else {
+        alert('There was an error!');
+      }
+      
+    });
+  });
+
+});

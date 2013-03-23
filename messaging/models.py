@@ -1,11 +1,11 @@
 from django.db import models
-from common.models import DeleteMixin, UserProfile, Job, Group
-
+from common.models import DeleteMixin, Job, Group
+import settings
 
 # Create your models here.
 
 class BaseMessage(DeleteMixin):
-    commentor         = models.ForeignKey(UserProfile)
+    commentor         = models.ForeignKey(settings.AUTH_USER_MODEL)
     #Actual Message
     message           = models.TextField(blank=True)
     job               = models.ForeignKey(Job,

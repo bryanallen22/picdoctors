@@ -20,6 +20,7 @@ from common.models import ungroupedId
 from common.balancedfunctions import *
 from models import Markup
 from skaa.jobsviews import update_job_hold
+from skaa.rejectviews import remove_previous_doctor
 
 import ipdb
 import logging
@@ -82,7 +83,8 @@ def create_hold_handler(request):
         profile = get_profile_or_None(request)
 
         # check permissions and state
-        if job and job.skaa == profile and (job.status == Job.IN_MARKET or job.state == Job.OUT_OF_MARKET):
+        if job and job.skaa == profile and \
+                (job.status == Job.IN_MARKET or job.status == Job.OUT_OF_MARKET or job.status == Job.REFUND ):
             album = job.album
 
     else:
@@ -101,6 +103,10 @@ def create_hold_handler(request):
        if cents >= min_price * 100:
 
            place_hold(job, album, request.user, cents, request.POST['card_uri'])
+
+           # Remove any previous doctor information, this essentially happens when they go from
+           # refund to back in market
+           remove_previous_doctor(job)
 
            ret['status'] = 200
            ret['next'] = reverse('job_page')

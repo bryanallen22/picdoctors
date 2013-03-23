@@ -17,7 +17,7 @@ from deploy_config import LocalConfig, RemoteConfig, get_deploy_type, get_config
 
 import inspect
 import os
-import pdb
+import ipdb
 import time
 
 ######################
@@ -47,6 +47,9 @@ def get_instance(required=True):
     Get an actual ec2 for the current task
     """
     for inst in get_all_instances():
+        if env.host_string == 'empty_host' and len(inst.tags) == 0:
+            return inst
+
         if 'instance_name' in inst.tags and \
                     inst.tags['instance_name'] == env.host_string:
             return inst
@@ -153,8 +156,14 @@ def webserver_config():
          '/etc/init/uwsgi.conf', use_sudo=True)
     put(LocalConfig.remote_uwsgi_picdocini,
          '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
-    put(LocalConfig.remote_nginx_picdocconf,
-                       '/etc/nginx/sites-available/picdoctorsapp', use_sudo=True)
+    remote_picapp = '/etc/nginx/sites-available/picdoctorsapp' 
+    put(LocalConfig.remote_nginx_picdocconf, remote_picapp, use_sudo=True)
+
+    # update the redirect for http paths for sandbox and test
+    if deploy_type == 'test' or deploy_type =='sandbox':
+        sudo("sed -i 's/rewrite_redirect_host/" + inst.ip_address.replace(".",r"\.") + "/g' " + remote_picapp)
+    elif deploy_type == 'production':
+        sudo("sed -i 's/rewrite_redirect_host/www\.picdoctors\.com/g' " + remote_picapp)
 
     # Tell uwsgi to start with the appropriate settings file
     sudo('echo "env = DJANGO_SETTINGS_MODULE=settings.%s" >> '\
@@ -286,7 +295,14 @@ def getcode(force_push=False):
     # file in the settings directory 
     sudo('rm -f %s/settings/*.cfg' % (cfg.code_dir))
     sudo('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), user=cfg.deploy_user)
+    # Add the external IP to that settings file, used for Django's ALLOWED_HOSTS on
+    # non production machines.
+    sudo('echo "external_ip: %s" >> %s/settings/%s.cfg' %
+           (inst.ip_address, cfg.code_dir, deploy_type))
 
+    # restart uwsgi
+    with settings(warn_only=True): # (might not actually exist yet)
+        sudo('touch /etc/uwsgi/apps-available/picdoctorsapp.ini')
 
 @task
 def create():
@@ -357,11 +373,15 @@ def terminate():
     Terminate an instance
     """
     inst = get_instance()
-    instance_name = inst.tags['instance_name']
-    deploy_type = inst.tags['deploy_type']
+
+    instance_name = "I don't know what it's name is!?!?!"
+    # sometimes a bad instance is generated! No tags are associated, so this crashes
+    if len(inst.tags) != 0:
+        instance_name = inst.tags['instance_name']
+        deploy_type = inst.tags['deploy_type']
     
-    if deploy_type == "production" and not confirm("You are killing a production server!!! Continue anyway?"):
-        abort("Good riddance, evil production server killer.")
+        if deploy_type == "production" and not confirm("You are killing a production server!!! Continue anyway?"):
+            abort("Good riddance, evil production server killer.")
 
     inst.terminate()
     print "Terminating %s..." % instance_name
@@ -477,7 +497,7 @@ def ls():
         print "No instances"
         print "------------"
 
-    #pdb.set_trace()
+    #ipdb.set_trace()
 
 @task
 def setup_packages():
@@ -537,8 +557,14 @@ def setup_packages():
     #
     sudo('apt-add-repository ppa:chris-lea/node.js -y') # Some node.js idiots broke the package that comes in 12.04
     sudo('apt-get update -y -q')
-    sudo('apt-get install nodejs npm -y -q')
-    sudo('npm install -g less jshint recess uglify-js -y -q')
+    sudo('apt-get install nodejs -y -q')
+
+    # some idiot decided to break npm/node so we need to update npm before we can install other packages
+    sudo('npm update npm -g')
+    sudo('npm install -g less -y -q')
+    sudo('npm install -g recess -y -q')
+    sudo('npm install -g uglify-js -y -q')
+    sudo('npm install -g jshint -y -q')
 
 @task
 def setup_local_mysql():
@@ -564,6 +590,7 @@ def setup_local_mysql():
     sudo("""mysql -u root --password=asdf <<< "CREATE DATABASE IF NOT EXISTS picdoctors; GRANT ALL PRIVILEGES ON picdoctors.* TO 'django'@'localhost' IDENTIFIED BY 'asdf';" """);
     
     venv_run_user('echo no | python manage.py syncdb', cfg)
+    venv_run_user('python manage.py migrate', cfg)
 
 @task
 def setup_db():
@@ -582,10 +609,26 @@ def setup_db():
     # when I've thought about it more
     if deploy_type == "sandbox":
         venv_run_user('echo no | python manage.py syncdb', cfg)
+        venv_run_user('python manage.py migrate', cfg)
     elif deploy_type == "test":
         setup_local_mysql()
     else:
         abort("Not yet implemented for %s!" % deploy_type)
+
+
+@task
+def setup_remote_conveniences():
+    """
+    Setup random helpful things on the remote machine
+    """
+    inst = get_instance()
+    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    cfg = get_config(deploy_type)
+
+    sudo("""echo "alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'" >> /etc/bash.bashrc""")
+    if deploy_type == "test" or deploy_type == "sandbox":
+        sudo("chmod 777 /code/picdoctors -R")
+
 
 @task
 def deploy(force_push=False, update=True, fast=False):
@@ -634,6 +677,8 @@ def deploy(force_push=False, update=True, fast=False):
 
     if not fast:
         setup_db()
+
+    setup_remote_conveniences()
     
     print "Try it out: https://%s or https://%s" % (inst.ip_address or '---', inst.dns_name or '---')
 

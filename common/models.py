@@ -1,13 +1,14 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 from PIL import Image
 from StringIO import StringIO
 from urlparse import urlparse
 import logging
 import os
-import pdb
+import ipdb
 import uuid
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib import admin
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.files.base import ContentFile
@@ -21,87 +22,150 @@ from common.balancedmodels import *
 
 from annoying.functions import get_object_or_None
 
-################################################################################
-# UserProfile
-#
-#  Information about the user goes here. This table goes in conjuction with
-#  the User table, which is managed by django
-################################################################################
-class UserProfile(DeleteMixin):
-    # This field is required.
-    user = models.OneToOneField(User)
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+
+class ProfileUserManager(BaseUserManager):
+    def create_user(self, email, password=None):
+        """
+        Creates and saves a User with the given email, date of
+        birth and password.
+        """
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            email=ProfileUserManager.normalize_email(email),
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
+
+    class Meta:
+        permissions = (
+                ("admin", "Can do everything"),
+                ("skaa", "Can do user stuff"),
+                ("doctor", "Can do doctor stuff"),
+        )
+    
+    # manager for creating the user
+    objects = ProfileUserManager()
+
+    
+    email                       = models.EmailField( verbose_name='email address', max_length=255, unique=True, db_index=True)
+
+    is_active                   = models.BooleanField(default=True)
+
+    #Required fields for the custom Profile
+    USERNAME_FIELD              = 'email'
+    REQUIRED_FIELDS             = []
 
     # Other fields here
-    accepted_eula = models.BooleanField()
+    accepted_eula               = models.BooleanField()
 
-    # Everyone is a User/Skaa, even if they don't know or care. Some are also doctors
-    is_doctor = models.BooleanField()
 
-    bp_account = models.ForeignKey(BPAccount, blank=True, null=True)
+    # Doctor Specific - more efficient than joining, allows for skaa/doctor/blah to have important profile fields here
+
+    # associated balanced payment account
+    bp_account                  = models.ForeignKey(BPAccount, blank=True, null=True)
+
+    # has this doctor proven they are worthy of being auto approved (no need to be moderated?)
+    auto_approve                = models.BooleanField(default=False)
+
+    # is this doctor any good?
+    rating                      = models.FloatField(default=0.0)
+
+    # how many pics have been approved in the last X days (currently 30)
+    approval_pic_count          = models.IntegerField(default=0)
+    approval_pic_last_update    = models.DateTimeField(blank=True, null=True)
+    
+    # is this person a merchant?  I'm contemplating ripping this out and adding as a permission 
+    is_merchant                 = models.BooleanField(default=False)
+
+    # does this person have a bank account?  I'm contemplating ripping this out and adding as a permission 
+    has_bank_account            = models.BooleanField(default=False)
+
+
+
+    def get_full_name(self):
+        # The user is identified by their email address
+        return self.email
+
+    def get_short_name(self):
+        # The user is identified by their email address
+        return self.email
+
+    def isa(self, permission):
+        return self.has_perm('common.' + permission)
+
+    def has_common_perm(self, permission):
+        return self.isa(permission)
+
+    def add_permission(self, permission):
+        # So I'm not filtering by the module, since these are our explicitly created permissions
+        # Someday when it matters maybe we'll implement this
+        #content_type = ContentType.objects.get_for_model(Profile)
+        p = Permission.objects.get(codename=permission)
+        self.user_permissions.add(p)
+
+    def remove_permission(self, permission):
+        p = Permission.objects.get(codename=permission)
+        self.user_permissions.remove(p)
 
     def __unicode__(self):
-        out = ""
-        if self.is_doctor:
-            out = "Doctor: " + self.user.username
-        else:
-            out = "Skaa: " + self.user.username
-        return out
+        perms = ""
+        for p in self.get_all_permissions():
+            perms = perms + p + ","
+
+        if len(perms) > 0:
+            perms = perms[:-1]
+
+        return "Email: " + self.email + " - Permissions [" + perms + "]"
+
+    def update_approval_count(self):
+        self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
+        self.save()
+
+    def can_view_jobs(self, request, profile):
+        from common.balancedfunctions import has_bank_account, is_merchant, get_merchant_account
+
+        # if they can't view, check to see the merchant/bankaccount status has changed
+        if not self.is_merchant or not self.has_bank_account:
+            merchant_account = get_merchant_account(request, profile)
+            self.is_merchant = is_merchant(merchant_account)
+            self.has_bank_account = has_bank_account(merchant_account)
+            self.save()
+        return self.is_merchant and self.has_bank_account
+
+    def get_approval_count(self, invalidate=False):
+        from common.functions import get_datetime
+        now = get_datetime()
+        yesterday = now - timedelta(days=1)
+        thirty_ago = now - timedelta(days=30)
+        last_update = self.approval_pic_last_update
+
+        if last_update == None or last_update < yesterday or invalidate:
             
-
-class SkaaInfo(DeleteMixin):
-    user_profile = models.ForeignKey(UserProfile, 
-                                        related_name='associated_skaa')
-
-
-class DoctorInfo(DeleteMixin):
-    user_profile       = models.ForeignKey(UserProfile, 
-                                          related_name='associated_doctor')
-
-    auto_approve       = models.BooleanField(default=False)
-
-    rating             = models.FloatField(default=0.0)
-
-    approval_count     = models.IntegerField(default=0)
-    
-    is_merchant        = models.BooleanField(default=False)
-
-    has_bank_account   = models.BooleanField(default=False)
-
-    @staticmethod
-    def get_docinfo_or_None(profile):
-        info = get_object_or_None(DoctorInfo, user_profile=profile)
-        return info
-
-    @staticmethod
-    def update_approval_count(profile):
-        self = DoctorInfo.get_docinfo_or_None(profile)
-        if self:
-            self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
+            jobs = Job.objects.filter(doctor=self) \
+                    .filter(status=Job.USER_ACCEPTED) \
+                    .filter(accepted_date__gte=thirty_ago)
+            
+            cnt = 0
+            
+            for j in jobs:
+                cnt = cnt + j.album.num_groups
+                
+            self.approval_pic_last_update = now
+            self.approval_pic_count = cnt
             self.save()
 
-    @staticmethod
-    def can_view_jobs(request, profile):
-        from common.balancedfunctions import has_bank_account, is_merchant, get_merchant_account
-        self = DoctorInfo.get_docinfo_or_None(profile)
-
-        if self:
-
-            # if they can't view, check to see the merchant/bankaccount status has changed
-            if not self.is_merchant or not self.has_bank_account:
-                merchant_account = get_merchant_account(request, profile)
-                self.is_merchant = is_merchant(merchant_account)
-                self.has_bank_account = has_bank_account(merchant_account)
-                self.save()
-            return self.is_merchant and self.has_bank_account
-        else:
-            return False
+        return self.approval_pic_count
 
 
-def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            UserProfile.objects.create(user=instance)
 
-post_save.connect(create_user_profile, sender=User)
 
 ################################################################################
 # Pic
@@ -283,12 +347,14 @@ class Pic(DeleteMixin):
 ################################################################################
 class Album(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
-    userprofile          = models.ForeignKey(UserProfile, blank=True, 
+    userprofile          = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, 
                                              null=True, db_index=True)
     description          = models.TextField(blank=True)
     num_groups           = models.IntegerField(blank=True, null=True, default=0)
-    # This only becomes true after they've paid
+
+    # This only becomes true after they've paid (set a hold)
     finished             = models.BooleanField(default=False)
+
     # If sequences_last_set gets behind groups_last_modified, we know that we
     # need to reorder our sequences
     groups_last_modified = models.DateTimeField(auto_now_add=True)
@@ -308,15 +374,17 @@ class Album(DeleteMixin):
         return Pic.objects.filter(album=self).count()
     
     def kick_groups_modified(self):
+        from common.functions import get_datetime
         """
         Any time groupings are modified, call this. (Upload a new pic, delete a pic,
         create or delete a grouping). This allows us to do lazy group setting with
         set_sequences()
         """
-        self.groups_last_modified = datetime.now()
+        self.groups_last_modified = get_datetime()
         self.save()
 
-    def set_sequences(self):
+    def set_sequences(self, force=False):
+        from common.functions import get_datetime
         """
         Sets sequence for each picture in the album.
 
@@ -329,7 +397,7 @@ class Album(DeleteMixin):
         that was already set.
         """
 
-        if self.groups_last_modified < self.sequences_last_set:
+        if not force and self.groups_last_modified < self.sequences_last_set:
             logging.info("Album.set_sequences bailing out early - no groups have been modified")
             return
 
@@ -342,22 +410,26 @@ class Album(DeleteMixin):
         logging.info(browser_ids)
         next_sequence = 1
         for id in browser_ids:
+            logging.info('browser id: %d' % id)
+
             # Find all pics that match this id
             matches = pics.filter( browser_group_id__exact=id )
             if id != ungroupedId:
                 # All matching pics get next_sequence
-                logging.info('creating new group')
+                logging.info('id != ungroupedId - creating new group sequence %d' % next_sequence)
                 g = Group(album=self, sequence=next_sequence) 
                 g.save()
                 for pic in matches:
+                    logging.info('setting group to pic')
                     #pic.group_id = next_sequence
                     pic.group = g
                     pic.save()
                 next_sequence += 1
             else:
                 # All ungrouped pics get their own sequence
+                logging.info('id == ungroupedId - creating new group')
                 for pic in matches:
-                    logging.info('creating new group')
+                    logging.info('creating new group sequence %d' % next_sequence)
                     g = Group(album=self, sequence=next_sequence) 
                     g.save()
                     #pic.group_id = next_sequence
@@ -369,7 +441,7 @@ class Album(DeleteMixin):
         logging.info('Saving number of groups %d' % next_sequence)
 
         self.num_groups = next_sequence
-        self.sequences_last_set = datetime.now()
+        self.sequences_last_set = get_datetime()
         self.save()
 
     @staticmethod
@@ -390,7 +462,7 @@ class Album(DeleteMixin):
 
         # Create a album associated with a user
         if request.user.is_authenticated():
-            album.userprofile = request.user.get_profile()
+            album.userprofile = request.user
             album.save()
 
         # Create a album and store it in the session
@@ -417,7 +489,7 @@ class Album(DeleteMixin):
         ret = None
 
         # If user is logged in, look for one associated with profile
-        user_profile = request.user.get_profile() if request.user.is_authenticated() else None
+        user_profile = request.user if request.user.is_authenticated() else None
         if user_profile:
             albums = Album.objects.filter(finished=False, userprofile=user_profile)
             empty_album = False
@@ -450,7 +522,7 @@ class Album(DeleteMixin):
 
     def __unicode__(self):
         if self.userprofile is not None:
-            return "Album # " + str(self.id) + " -- owned by: " + self.userprofile.user.username
+            return "Album # " + str(self.id) + " -- owned by: " + self.userprofile.email
         else:
             return "Album # " + str(self.id) + " -- owned by the internet"  
 
@@ -475,9 +547,7 @@ class Group(models.Model):
         if not job:
             return []
         
-        moderator =  profile.user.has_perm('common.view_album')
-
-        if job.is_approved() or job.doctor == profile or moderator:
+        if job.is_approved() or job.doctor == profile or profile.has_common_perm('view_album'):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
             
         return []
@@ -487,9 +557,7 @@ class Group(models.Model):
         if not job:
             return []
 
-        moderator =  profile.user.has_perm('common.view_album')
-
-        if job.is_approved() or job.doctor == profile or moderator:
+        if job.is_approved() or job.doctor == profile or profile.has_common_perm('view_album'):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
             
         return []
@@ -522,13 +590,12 @@ class DocPicGroup(DeleteMixin):
     #I can see me setting a value that flips this from watermark pic to pic
     def get_pic(self, profile, job):
         # if not ( any valid reason to stay ) 
-        is_doctor = False if not profile else profile.is_doctor
+        is_doctor = False if not profile else profile.isa('doctor')
 
         # TODO I could get the job in here, but it'd hurt my db feelings
         # job = group.album.get_job_or_None()
-        moderator =  profile.user.has_perm('common.view_album')
 
-        if not ( job.is_approved() or is_doctor or moderator ):
+        if not ( job.is_approved() or is_doctor or profile.has_common_perm('view_album') ):
             return None
 
         # I still don't have to return the full pic, just the watermark for now :)
@@ -563,11 +630,15 @@ class Job(DeleteMixin):
     #Never blank, no album = no job. related_name since Album already has a FK
     album                   = models.ForeignKey(Album, 
                                                 db_index=True)
-    skaa                    = models.ForeignKey(UserProfile, 
+    skaa                    = models.ForeignKey(settings.AUTH_USER_MODEL, 
                                                 related_name='job_owner', 
                                                 db_index=True)
-    doctor                  = models.ForeignKey(UserProfile, 
+    doctor                  = models.ForeignKey(settings.AUTH_USER_MODEL, 
                                                 related_name='job_doctor',
+                                                blank=True, null=True)
+
+    ignore_last_doctor      = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                                related_name='job_block_doctor',
                                                 blank=True, null=True)
 
     #this price is set when a doctor takes the job.  payout prices 
@@ -598,9 +669,11 @@ class Job(DeleteMixin):
     approved                = models.BooleanField(default=False)
 
     # last communication user
-    last_communicator       = models.ForeignKey(UserProfile,
+    last_communicator       = models.ForeignKey(settings.AUTH_USER_MODEL,
                                                 related_name='last_communicator',
                                                 blank=True, null=True)
+
+    accepted_date           = models.DateTimeField(blank=True, null=True)
     
     def is_part_of(self, profile):
         if not profile:
@@ -618,20 +691,19 @@ class Job(DeleteMixin):
     def is_approved(self):
         approved = self.approved
         if not approved and self.doctor:
-            doc_profile = DoctorInfo.get_docinfo_or_None(self.doctor)
-            approved = approved or doc_profile.auto_approve
+            approved = self.doctor.auto_approve
         return approved
 
     def is_accepted(self):
         return self.status == Job.USER_ACCEPTED
 
     def __unicode__(self):
-        out = "Owner: " + self.skaa.user.username
+        out = "Owner: " + self.skaa.email
         out += " -- Doctor: "
         if self.doctor is None:
             out += "None"
         else:
-            out += self.doctor.user.username
+            out += self.doctor.email
 
         out += " -- price cents: " + str(self.bp_hold.cents)
         out += " -- status: " + self.status
@@ -639,18 +711,19 @@ class Job(DeleteMixin):
 
 # Keep track of who said the job was too low
 # That way you don't have the same doctor say it 50 times
-class PriceToLowContributor(DeleteMixin):
+class PriceTooLowContributor(DeleteMixin):
     job     = models.ForeignKey(Job, db_index=True)
-    doctor  = models.ForeignKey(UserProfile, db_index=True)
+    doctor  = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
+    price   = models.IntegerField(default=0)
 
 # Post switching from a doctor we won't allow them to take that job again
 class DocBlock(DeleteMixin):
     job            = models.ForeignKey(Job, db_index=True)
-    doctor         = models.ForeignKey(UserProfile)
+    doctor         = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 # Individual Doctor Ratings
 class DocRating(DeleteMixin):
-    doctor         = models.ForeignKey(UserProfile, db_index=True)
+    doctor         = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
     job            = models.ForeignKey(Job)
     overall_rating = models.IntegerField()
     comments       = models.TextField()
@@ -664,10 +737,10 @@ def update_doctor_rating(sender, instance, created, **kwargs):
     if len(ratings) > 0:
         total /= len(ratings)
 
-    doc_info = DoctorInfo.get_docinfo_or_None(instance.doctor)
-    if doc_info:
-        doc_info.rating = total
-        doc_info.save()
+    doc = instance.doctor
+    if doc:
+        doc.rating = total
+        doc.save()
 
 post_save.connect(update_doctor_rating, sender=DocRating)
 

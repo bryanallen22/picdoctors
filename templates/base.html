@@ -62,24 +62,39 @@
               {% if not user.is_authenticated %}
                 <li><a href="{% url 'skaa_signin' %}"><i class="icon-user"></i> Log In</a></li>
               {% else %}
-                {% if user.get_profile.is_doctor %}
-                <li><a href="{% url 'new_job_page' %}"><i class="icon-star"></i> Available Jobs</a></li>
-                <li><a href="{% url 'doc_job_page' %}"><i class="icon-tasks"></i> My Jobs</a></li>
-                {% else%}
-                <li><a href="{% url 'job_page' %}"><i class="icon-tasks"></i> My Jobs</a></li>
-                {% endif %}
-                {% if perms.common.approve_album %}
-                <li><a href="{% url 'album_approval_page' %}"> Jobs Needing Approval</a></li>
+                {% if not perms.common.doctor and not perms.common.approve_album and perms.common.skaa %}
+                  <li><a href="{% url 'job_page' %}"><i class="icon-tasks"></i> My Jobs</a></li>
+                {% else %}
+                  <li class="dropdown">
+                    <a class="dropdown-toggle"
+                       data-toggle="dropdown"
+                       href="#">
+                        <i class="icon-tasks"></i>Jobs
+                        <b class="caret"></b>
+                      </a>
+                    <ul class="dropdown-menu">
+                      {% if perms.common.doctor %}
+                        <li><a href="{% url 'new_job_page' %}"><i class="icon-star"></i> Available Jobs</a></li>
+                        <li><a href="{% url 'doc_job_page' %}"><i class="icon-tasks"></i> Jobs To Do</a></li>
+                      {% endif %} 
+                      {% if perms.common.skaa %}
+                        <li><a href="{% url 'job_page' %}"><i class="icon-tasks"></i> My Jobs</a></li>
+                      {% endif %} 
+                      {% if perms.common.approve_album %}
+                        <li><a href="{% url 'album_approval_page' %}"><i class="icon-lock"></i>  Jobs Needing Approval</a></li>
+                      {% endif %}
+                    </ul>
+                  </li>
                 {% endif %}
                 <li class="dropdown">
                   <a class="dropdown-toggle"
                      data-toggle="dropdown"
                      href="#">
-                      <i class="icon-user"></i> {{user.username }}
+                      <i class="icon-user"></i> {{user.email }}
                       <b class="caret"></b>
                     </a>
                   <ul class="dropdown-menu">
-                    {% if user.get_profile.is_doctor %}
+                    {% if perms.common.doctor %}
                     <li><a href="{% url 'withdraw' %}"><i class="icon-shopping-cart"></i> Withdraw Earnings</a></li>
                     {% endif %}
                     <li><a href="{% url 'account_settings' %}"><i class="icon-cog"></i> Account Settings</a></li>
@@ -108,7 +123,7 @@
     <script type="text/template" id="feedback_form">
       <div>
         From:
-        <input type='text' id='feedback_from_textarea' value='{% if user.is_authenticated %}{{ user.username }}{% endif %}'>
+        <input type='text' id='feedback_from_textarea' value='{% if user.is_authenticated %}{{ user.email }}{% endif %}'>
       </input>
         Feedback:
         <textarea id='feedback_textarea' style='height:100px;'></textarea>

@@ -9,8 +9,9 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 from tasks.tasks import sendAsyncEmail
+import settings
 
-import pdb
+import ipdb
 from copy import deepcopy
 
 # info for a job row
@@ -100,7 +101,7 @@ def get_job_infos_json(cur_page_jobs, action_generator, request):
         return job_infos
 
     # assume this exists, if it doesn't, they shouldn't be here, crash, i don't care
-    profile = request.user.get_profile()
+    profile = request.user
     for job in cur_page_jobs:
         job_inf = fill_job_info(job, action_generator, profile)
 
@@ -151,14 +152,22 @@ def generate_pic_thumbs(filter_album):
 def send_job_status_change(job, profile):
     try:
         to_email = ''
+        site_path = ''
         if job.doctor and job.doctor == profile:
-            to_email = job.skaa.user.email
+            to_email = job.skaa.email
+            site_path = reverse('job_page_with_page_and_id', args=[1, job.id])
         else:
-            to_email = job.doctor.user.email
+            to_email = job.doctor.email
+            site_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
 
         subject = 'Job #' + str(job.id).rjust(8, '0') + ' status has changed.'
 
-        args = {'job_status':job.get_status_display(), 'job_id':job.id} 
+        args = {
+                'job_status'        : job.get_status_display(), 
+                'job_id'            : job.id,
+                'site_url'          : settings.SITE_URL,
+                'site_path'         : site_path,
+                } 
         html_content = render_to_string('job_status_change_email.html', args)
                                         
         

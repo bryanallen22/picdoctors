@@ -16,7 +16,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
 
-import pdb
+import ipdb
 import logging
 import datetime
 
@@ -24,6 +24,7 @@ class Combination():
     def __init__(self):
         self.user_pics = []
         self.max_height = -1
+        self.max_width = -1
         self.doc_pic = None
         self.messages = []
         self.group_id = -1
@@ -42,16 +43,14 @@ def album(request, album_id):
     if not job:
         return redirect('/')
 
-    moderator =  profile.user.has_perm('common.view_album')
+    moderator = profile.has_common_perm('view_album')
+    # if you are not the owner and not the doctor and not the moderator why are you here?
     if job.skaa != profile and job.doctor != profile and not moderator:
         return redirect('/')
 
     #############################
     #############################
 
-    # when querying for pictures you can query for approved pics, or
-    # if your the doctor query for all pics they've uploaded
-    only_approved = not profile.is_doctor and not moderator
     user_acceptable = job.status == Job.DOCTOR_SUBMITTED and job.skaa == profile and job.is_approved()
 
     groups = Group.get_album_groups(job.album)
@@ -62,11 +61,16 @@ def album(request, album_id):
         picco.messages = prep_messages(GroupMessage.get_messages(group), profile, job)
         for x in picco.user_pics:
             picco.max_height = max(picco.max_height, x.preview_height)
+            picco.max_width = max(picco.max_width, x.preview_width)
         picco.group_id = group.id
         docPicGroup = group.get_latest_doctor_pic(job, profile)
         if len(docPicGroup) > 0:
             docPicGroup = docPicGroup[0]
             picco.doc_pic = docPicGroup.get_pic(profile, job)
+            picco.max_height = max(picco.max_height, picco.doc_pic.preview_height)
+            picco.max_width = max(picco.max_width, picco.doc_pic.preview_width)
+        picco.group_id = group.id
+            
         groupings.append(picco)
 
 
@@ -80,13 +84,23 @@ def approve_album(request):
     job_id = data['job_id']
     job = get_object_or_None(Job, id=data['job_id'])
 
-    moderator =  profile.user.has_perm('common.approve_album')
+    # you also could say profile.isa('approve_album') but that doesn't make sense to me when I read it
+    moderator =  profile.has_perm('common.approve_album')
 
     if job and job.album and profile and moderator: # and moderator
         # only necessary for doctors that aren't auto_approve
         job.approved = True
         job.status = Job.DOCTOR_SUBMITTED
         job.save()
+
+        update_doc_auto_approve(job)
     
     resp = simplejson.dumps({'redirect':reverse('album_approval_page')})
     return HttpResponse(resp, mimetype='application/json')
+
+def update_doc_auto_approve(job):
+    accepted_count = Job.objects.filter(doctor=job.doctor).filter(status=Job.USER_ACCEPTED).count()
+    if accepted_count > 5:
+        doc = job.doctor
+        doc.auto_approve = True
+        doc.save()

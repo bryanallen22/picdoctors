@@ -4,25 +4,11 @@ $(function(){
   
   var RemoteControl = Backbone.View.extend({
     events: {
-      'click       .before_button': 'before_click',
-      'click       .after_button':  'after_click',
+ //     'click       .before_button': 'before_click',
+ //     'click       .after_button':  'after_click',
     },
 
     initialize: function() {
-    },
-
-    before_click: function() {
-      this.before.css('display', 'inherit');
-      this.after.css('display', 'none');
-      this.before_button.removeClass('btn-primary');
-      this.after_button.addClass('btn-primary');
-    },
-
-    after_click: function() {
-      this.before.css('display', 'none');
-      this.after.css('display', 'inherit');
-      this.before_button.addClass('btn-primary');
-      this.after_button.removeClass('btn-primary');
     },
 
   });
@@ -31,10 +17,9 @@ $(function(){
     initialize: function() {
       var rc_el = this.$el.find('.remote_control');
       this.remote_control = new RemoteControl({el: rc_el});
-      this.remote_control.before = this.$el.find('.before');
-      this.remote_control.after = this.$el.find('.after');
-      this.remote_control.before_button = this.$el.find('.before_button');
-      this.remote_control.after_button = this.$el.find('.after_button');
+
+      this.before_after = this.$el.find('.picbeforeafter');
+      this.before_after.qbeforeafter({defaultgap:50, leftgap:0, rightgap:0, caption: true, reveal: 0.5});
     },
 
   });
@@ -107,3 +92,19 @@ $(function(){
 
 
 });
+
+function replace_fancy_user_pic(el, id){
+  el = $(el);
+  var par = $('#' + id);
+  var child = par.find('.ba-mask');
+
+  child.css('background-image', 'url(' + el.attr('data-pic') + ')');
+
+}
+
+function replace_normal_user_pic(el, id){
+  el = $(el);
+  var rep = $('#' + id);
+  rep.css('background-image', 'url(' + el.attr('data-pic') + ')');
+
+}

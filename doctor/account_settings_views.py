@@ -12,12 +12,13 @@ from common.balancedfunctions import get_merchant_account, is_merchant
 
 import balanced
 import settings
+import logging
 
 @login_required
 def create_bank_account(request):
     profile = get_profile_or_None(request)
     
-    if not profile or not profile.is_doctor:
+    if not profile or not profile.isa('doctor'):
         return HttpResponse('{ }', mimetype='application/json')
 
     account = get_merchant_account(request, profile)
@@ -111,9 +112,7 @@ def merchant_info(request):
     # Bring them back to this page
     return redirect( reverse('account_settings') + '#merchant_tab' )
 
-@login_required
-@render_to('account_settings_doc.html')
-def settings_doc(request, parent_params):
+def get_settings_doc(request):
     profile = get_profile_or_None(request)
     if profile.bp_account:
         account = profile.bp_account.fetch()
@@ -127,8 +126,6 @@ def settings_doc(request, parent_params):
         'bank_accounts'     : bank_accounts,
         'is_merchant'       : merchant,
     }
-
-    my_params.update(parent_params)
 
     return my_params
 

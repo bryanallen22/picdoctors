@@ -10,8 +10,8 @@ TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
-    ('Bryan', 'bryan@picdoctors.com'),
-    ('Daniel', 'daniel@picdoctors.com'),
+#    ('Bryan', 'bryan@picdoctors.com'),
+ #   ('Daniel', 'daniel@picdoctors.com'),
 )
 
 MANAGERS = ADMINS
@@ -29,7 +29,9 @@ EXAMPLE_DATABASES = {
 }
 
 # User Model
-AUTH_PROFILE_MODULE = 'common.UserProfile'
+#AUTH_PROFILE_MODULE = 'common.UserProfile'
+AUTH_USER_MODEL = 'common.Profile'
+#AUTH_PROFILE_MODULE = 'common.Profile'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -161,8 +163,18 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.humanize',
+    'south',
+    'seleniumtests', # TODO - move this to TESTABLE_APPS once I think it's in better shape
 ) + TESTABLE_APPS
 
+# Migrateable Apps
+AUTO_MIGRATION_APPS = (
+    'common',
+    'skaa',
+    'doctor',
+    'messaging',
+    'tasks',
+)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -198,9 +210,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.static', # needed for {{ STATIC_URL }} in my templates
+    'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
-    'navigation.context_processor.get_nav_dictionary',
 )
 
 
@@ -225,5 +237,10 @@ EMAIL_USE_TLS = True
 LOGIN_URL='/signin/'
 
 DEBUG_TOOLBAR_CONFIG = {
-   'INTERCEPT_REDIRECTS': True,
+   'INTERCEPT_REDIRECTS': False,
 }
+
+# In nginx we should forward one of these to the other, but I'd rather be a bit permissive here and allow both
+ALLOWED_HOSTS = [ 'picdoctors.com', 'www.picdoctors.com' ]
+
+SITE_URL = 'https://www.picdoctors.com'

@@ -1,14 +1,13 @@
-from django.contrib.auth.models import User
+from common.models import Profile
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from common.models import UserProfile
 from tasks.tasks import sendAsyncEmail
 
-import pdb
+import ipdb
 import logging
 import random
 import string
@@ -29,7 +28,7 @@ def reset_password(request):
         if 'email' in request.POST:
             new_password = gen_password()
 
-            user = get_object_or_None(User, email=request.POST['email'])
+            user = get_object_or_None(Profile, email=request.POST['email'])
             if user:
                 user.set_password(new_password)
                 user.save()

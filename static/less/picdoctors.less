@@ -73,7 +73,7 @@
   .hero-unit {
     position: absolute;
     padding: 15px;
-    width: 330px;
+    width: 340px;
     background-color: rgba(222, 222, 222, 0.72);
     h3 {
       margin-top: 0px;
@@ -94,13 +94,20 @@
   #photo2 {
     background: url('/static/images/sm_botanical_after.jpg');
   }
-  /* TODO - add new images here */
   #photo3 {
-    background: url('/static/images/sm_botanical_before.jpg');
+    background: url('/static/images/restoration_before.jpg');
+  }
+  #photo3_markup {
+    left: 0px;
+    top: 0px;
+    height:100%;
+    width:100%;
+    background: url('/static/images/restoration_before_markup.png');
   }
   #photo4 {
-    background: url('/static/images/sm_botanical_after.jpg');
+    background: url('/static/images/restoration_after.jpg');
   }
+  /* TODO - add new images here */
   #photo5 {
     background: url('/static/images/sm_botanical_before.jpg');
   }
@@ -390,6 +397,7 @@
        762 + 19*2 = 800
      */
     width:762px;
+    font-size: 28px; // This makes it fit on one line
   }
 }
 
@@ -634,4 +642,60 @@
 }
 
 
+/********************************
+    Toggle Buttons
+    Made with Internet 4.1 
+    http://proto.io/freebies/onoff/
+********************************/
 
+.onoffswitch {
+    position: relative; width: 101px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 8px;
+}
+.onoffswitch-inner {
+    width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    float: left; width: 50%; height: 34px; padding: 0; line-height: 34px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "Active";
+    padding-left: 10px;
+    background-color: #2FFF59; color: #000000;
+}
+.onoffswitch-inner:after {
+    content: "Inactive";
+    padding-right: 10px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.onoffswitch-switch {
+    width: 17px; margin: 8.5px;
+    background: #FFFFFF;
+    border: 2px solid #999999; border-radius: 8px;
+    position: absolute; top: 0; bottom: 0; right: 63px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px; 
+}
+
+.center {
+    margin-left:auto;
+    margin-right:auto;
+}

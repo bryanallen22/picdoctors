@@ -22,10 +22,10 @@ import logging
 
 def belongs_on_this_markup_page(request, album_id, sequence):
     album_id = int(album_id)
-    b = get_object_or_None(Album, id=album_id)
+    album = get_object_or_None(Album, id=album_id)
 
     #this album doesn't exist
-    if b is None:
+    if album is None:
         return False
 
     #if the user isn't logged in
@@ -39,10 +39,10 @@ def belongs_on_this_markup_page(request, album_id, sequence):
             return False
     
     #the user is logged in by this point
-    profile = request.user.get_profile()
+    profile = request.user
 
     #is album owner
-    if profile == b.userprofile:
+    if profile == album.userprofile:
         return True
 
     j = get_object_or_None(Job, album=album_id)
@@ -50,12 +50,12 @@ def belongs_on_this_markup_page(request, album_id, sequence):
     if not j:
         return False
 
-    #is a doctor and the job doesn't have a doctor (aka they can view it)
-    if not j.doctor and profile.is_doctor:
+    # the job doesn't have a doctor and the profile is a doctor (aka they can view it)
+    if not j.doctor and profile.isa('doctor'):
         return True
 
-    #is doctor of job
-    if j.doctor and j.doctor == profile:
+    # is doctor of job and the job isn't finished!
+    if j.doctor and j.doctor == profile and j.status != Job.USER_ACCEPTED :
         return True
 
     #assume false
@@ -97,9 +97,6 @@ def markup_page_album(request, album_id, sequence):
     # if that's not necessary)
     album.set_sequences()
 
-    # true if they have no profile, else not profile.is_doctor
-    only_approved = True if not profile else not profile.is_doctor
-
     logging.info('sequence=%d, album.id=%d, album_num=%d' % (sequence, album.id, album.num_groups))
 
     logging.info('len(pics)=%d' % len(pics))
@@ -119,14 +116,15 @@ def markup_page_album(request, album_id, sequence):
     job_page = 'job_page'
     is_job_doctor = False
 
-    if profile and profile.is_doctor:
-        job_page = 'doc_job_page'
+    if profile and profile.isa('doctor'):
+        job_page = 'new_job_page'
         if job and job.doctor == profile:
             is_job_doctor = True
+            job_page = 'doc_job_page'
 
     is_job_user = False
     # AKA I am the user
-    if (profile and not profile.is_doctor) or not job:
+    if (profile and profile.isa('skaa')) or not job:
         is_job_user = True
 
     #previous next links
@@ -182,7 +180,7 @@ def apply_markup_whitelist(markup, data):
     for attr in get_markup_whitelist():
         setattr(markup, attr, data[attr])
 
-    #pdb.set_trace()
+    #ipdb.set_trace()
     pic = Pic.objects.get(uuid__exact=data['pic_uuid'])
     markup.pic = pic
 
@@ -287,7 +285,7 @@ def can_modify_pic(request, pic):
 
 # TODO return error when it doesn't save
 def pic_instruction_handler(request):
-    #pdb.set_trace()
+    #ipdb.set_trace()
     data = simplejson.loads(request.body)
     pic = Pic.objects.get(uuid=data['uuid'])
     if can_modify_pic(request, pic):

@@ -3,18 +3,16 @@ from annoying.functions import get_object_or_None
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from common.models import Job 
 from common.models import Album
 from common.models import Group
-from common.models import UserProfile, DoctorInfo
 from common.models import Pic
 from common.models import DocBlock
-from common.models import PriceToLowContributor
+from common.models import PriceTooLowContributor
 from common.calculations import calculate_job_payout
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_datetime
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
 from common.jobs import Actions, Action, RedirectData, DynamicAction 
@@ -26,12 +24,14 @@ import ipdb
 
 @login_required
 @render_to('jobs.html')
-def doc_job_page(request, page=1):
+def doc_job_page(request, page=1, job_id=None):
     jobs = None
     profile = get_profile_or_None(request)
-    if profile and profile.is_doctor:
-#        new_jobs = Job.objects.filter(doctor=None)
-        jobs = Job.objects.filter(doctor=profile).order_by('created').reverse()
+    if profile and profile.isa('doctor'):
+        if job_id:
+            jobs = Job.objects.filter(doctor=profile).filter(id=job_id).order_by('created').reverse()
+        else:
+            jobs = Job.objects.filter(doctor=profile).order_by('created').reverse()
     else:
         return redirect('/')
 
@@ -45,7 +45,7 @@ def doc_job_page(request, page=1):
             'cur_page'         : page, 
             'reverser'         : 'doc_job_page_with_page', 
             'doc_page'         : True, 
-            'title'            : 'My Jobs'
+            'title'            : 'Jobs To Do'
     }
 
 
@@ -54,12 +54,11 @@ def doc_job_page(request, page=1):
 def new_job_page(request, page=1):
     jobs = None
     profile = get_profile_or_None(request)
-    if profile and profile.is_doctor:
-        if not DoctorInfo.can_view_jobs(request, profile):
-            doc_info = DoctorInfo.get_docinfo_or_None(profile)
-            if not doc_info.is_merchant:
+    if profile and profile.isa('doctor'):
+        if not profile.can_view_jobs(request, profile):
+            if not profile.is_merchant:
                 return redirect( reverse('account_settings') + '#merchant_tab' )
-            elif not doc_info.has_bank_account:
+            elif not profile.has_bank_account:
                 return redirect( reverse('account_settings') + '#bank_tab' )
             else:
                 # I don't know how we got here, there is only 2 reasons why
@@ -68,9 +67,10 @@ def new_job_page(request, page=1):
         # only show jobs where a hold has been placed in the last 6 days 23 hours 
         # (hold only lasts 7 days)
         # if a job hasn't been taken in 7 days inform user to up the price!
-        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        now =  get_datetime()
         seven_days_ago = now - timedelta(days=6, hours=23)
-        jobs = Job.objects.filter(doctor__isnull=True).filter(bp_hold__created__gte=seven_days_ago)
+
+        jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).filter(bp_hold__created__gte=seven_days_ago)
     else:
         return redirect('/')
 
@@ -105,13 +105,14 @@ def generate_doctor_actions(job):
     view_markup_url = reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Job', view_markup_url, True)
     view_album = DynamicAction('Before & After Album', reverse('album', args=[job.album.id]), True)
+    job_price_too_low = DynamicAction('Job Price Too Low', reverse('job_price_too_low', args=[job.id]), True)
     
 
     if job.status == Job.IN_MARKET:
         ret.append(view_markup)
         ret.append(contact)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
-        ret.append(DynamicAction('Job price too Low', '/job_price_too_low/'))
+        ret.append(job_price_too_low)
 
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(work_job)
@@ -131,10 +132,6 @@ def generate_doctor_actions(job):
         #do nothing these are for doctor
         pass
 
-    elif job.status == Job.USER_REJECTED:
-        #do nothing these are fordoctor
-        pass
-
     else:
         #How did we get here???
         pass
@@ -147,7 +144,6 @@ def apply_for_job(request):
     job = get_object_or_None(Job, id=data['job_id'])
     profile = get_profile_or_None(request)
     result = []
-    doc = request.user.get_profile()
 
     actions = Actions()
     actions.add('alert', 'This job is no longer available')
@@ -155,7 +151,7 @@ def apply_for_job(request):
     r = RedirectData(reverse("new_job_page"), 'available jobs')
     actions.add('delay_redirect', r)
     
-    if job is None or job.doctor is not None or doc is None:
+    if job is None or job.doctor is not None or profile is None:
         #result = ['actions': {'alert':'This job is no longer available', 'reload':''}]
         pass 
     else:
@@ -171,12 +167,10 @@ def apply_for_job(request):
                     actions.add('alert', 'Unfortunately you are unable to take this job, we apologize.')
                     actions.add('remove_job_row', data['job_id'])
                 else:
-                    docinfo = DoctorInfo.get_docinfo_or_None(doc)
-
                     # Update Job Info
-                    job.doctor = doc
-                    job.approved = docinfo.auto_approve
-                    job.payout_price_cents = calculate_job_payout(job, doc)
+                    job.doctor = profile
+                    job.approved = profile.auto_approve
+                    job.payout_price_cents = calculate_job_payout(job, profile)
                     job.status = Job.DOCTOR_ACCEPTED
                     job.save()
 
@@ -195,7 +189,7 @@ def apply_for_job(request):
                     job_inf = fill_job_info(job, generate_doctor_actions, profile)
                     actions.addJobInfo(job_inf)
                     
-                    db = DocBlock(job=job, doctor=doc)
+                    db = DocBlock(job=job, doctor=profile)
                     db.save()
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
@@ -210,41 +204,6 @@ def has_rights_to_act(profile, job):
             return True
 
     return False
-
-@login_required
-def job_price_too_low(request):
-    data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
-    result = []
-    doc = get_profile_or_None(request)
-    actions = Actions()
-    actions.add('alert', 'There was an error processing your request.')
-
-    # if the job exists and doesn't have a doctor yet
-    if job:
-        if job.doctor:
-            actions.clear()
-            actions.add('alert', 'This Job has been taken by another doctor.')
-            actions.add('remove_job_row', job.id)
-        else:
-            too_low_contributor = PriceToLowContributor.objects.filter(job=job.id).filter(doctor=doc.id)
-            if len(too_low_contributor) == 0:
-                job_qs = Job.objects.select_for_update().filter(pk=job.id)
-                for job in job_qs:
-                    job.price_too_low_count += 1
-                    job.save()
-                    contrib=PriceToLowContributor(job=job, doctor=doc)
-                    contrib.save()
-
-                actions.clear()
-                actions.add('alert', 'Thank you for your input.')
-            else:
-                actions.clear()
-                actions.add('alert', 'Thanks, but you\'ve already marked this too low.')
-
-
-
-    return HttpResponse(actions.to_json(), mimetype='application/json')
 
 
 @login_required
@@ -271,10 +230,9 @@ def mark_job_completed(request):
 
         if unfinished_count==0:
             actions.add('alert', 'The job has been marked as complete')
-            docinfo = DoctorInfo.get_docinfo_or_None(profile)
 
             # elitest doctor is auto approved, skip to submitted state!
-            if docinfo.auto_approve:
+            if profile.auto_approve:
                 job.status = Job.DOCTOR_SUBMITTED
             else:
                 job.status = Job.MODERATOR_APPROVAL_NEEDED

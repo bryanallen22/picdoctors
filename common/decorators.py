@@ -27,7 +27,9 @@ def user_passes_test(test_fcn, redirect_name):
     """
     def decorator(func):
         def inner_decorator(request, *args, **kwargs):
-            if request.user.is_authenticated() and test_fcn(request, *args, **kwargs):
+            if request.user.is_authenticated() \
+                    and request.user.isa('skaa') \
+                    and test_fcn(request, *args, **kwargs):
                 return func(request, *args, **kwargs)
             else:
                 return redirect(redirect_name)
@@ -44,7 +46,7 @@ def doc_passes_test(test_fcn, redirect_name):
     def decorator(func):
         def inner_decorator(request, *args, **kwargs):
             if request.user.is_authenticated() \
-                and request.user.get_profile().is_doctor \
+                and request.user.isa('doctor') \
                 and test_fcn(request, *args, **kwargs):
 
                 return func(request, *args, **kwargs)

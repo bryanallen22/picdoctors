@@ -6,17 +6,18 @@ from django.contrib.auth.models import User
 
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_datetime
 from common.balancedfunctions import get_merchant_account
 from django.contrib.auth.decorators import login_required
 
-from common.models import Album, Group, Job, UserProfile, DocRating
+from common.models import Album, Group, Job, DocRating
 from common.jobs import send_job_status_change
 from common.balancedfunctions import *
 
 import ipdb
 import logging
-import datetime
+from datetime import datetime
+import pytz
 
 @login_required
 @render_to('accept_work.html')
@@ -31,10 +32,11 @@ def accept_work(request, job_id):
             do_debit(request, profile, job)
 
             job.status = Job.USER_ACCEPTED
+            job.accepted_date = get_datetime()
             job.save()
 
             # Update Doctor Approval Count (for use in figuring out how much $$/job)
-            DoctorInfo.update_approval_count(profile)
+            job.doctor.get_approval_count(True)
             
             dr = DocRating()
             dr.doctor = job.doctor

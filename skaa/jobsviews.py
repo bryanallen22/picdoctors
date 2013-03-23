@@ -7,12 +7,10 @@ from django.utils import simplejson
 from common.models import Job
 from common.models import Album
 from common.models import Group
-from common.models import UserProfile
 from common.models import Pic
 from common.balancedmodels import BPHold
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_datetime
 from common.calculations import calculate_job_payout
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from decimal import *
 
@@ -30,10 +28,13 @@ import ipdb
 
 @login_required
 @render_to('jobs.html')
-def job_page(request, page=1):
+def job_page(request, page=1, job_id=None):
     ### get a list of the jobs by this user ###
     if request.user.is_authenticated():
-        jobs = Job.objects.filter(skaa=request.user.get_profile()).order_by('created').reverse()
+        if job_id:
+            jobs = Job.objects.filter(skaa=request.user).filter(id=job_id).order_by('created').reverse()
+        else:
+            jobs = Job.objects.filter(skaa=request.user).order_by('created').reverse()
     else:
         jobs = []
 
@@ -60,14 +61,14 @@ def update_old_jobs(list_of_jobs):
     if not list_of_jobs or len(list_of_jobs)==0:
         return
 
-    now = datetime.datetime.utcnow().replace(tzinfo=utc)
+    now = get_datetime()
     # just to let future you know, there is an hour period where the job
     # has been removed, but won't get updated to out of market if
     # they hit this page, but I don't feel bad about that
     seven_days_ago = now - timedelta(days=7)
 
     for job in list_of_jobs:
-        if job.bp_hold.created < seven_days_ago:
+        if job.bp_hold.created < seven_days_ago and job.status == Job.IN_MARKET:
             job.status=Job.OUT_OF_MARKET
             job.save()
             # TODO we may need to do other things in the future
@@ -88,6 +89,7 @@ def generate_skaa_actions(job):
     refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), url_redirect)
     switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), url_redirect)
     increase_price = DynamicAction('Increase Price', reverse('increase_price', args=[job.id]), url_redirect)
+    place_back_in_market = DynamicAction('Return to Market', reverse('increase_price', args=[job.id]), url_redirect)
     
     if job.status == Job.IN_MARKET:
         ret.append(contact)
@@ -120,7 +122,8 @@ def generate_skaa_actions(job):
     elif job.status == Job.OUT_OF_MARKET:
         ret.append(increase_price)
 
-    elif job.status == Job.USER_REJECTED:
+    elif job.status == Job.REFUND:
+        ret.append(place_back_in_market)
         pass
 
     else:
@@ -174,6 +177,7 @@ def set_groups_locks(album_to_lock, state):
         group.save()
 
 
+# DEPRECATED!!!!!
 @login_required
 def reject_doctors_work(request):
     profile = get_profile_or_None(request)

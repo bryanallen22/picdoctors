@@ -1,6 +1,6 @@
 from annoying.decorators import render_to
 
-import pdb
+import ipdb
 import logging
 import datetime
 

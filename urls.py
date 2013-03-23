@@ -1,12 +1,17 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls.defaults import patterns, include, url, handler404, handler500
 from views import *
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+#from common.errors import wheres_waldo_404
 
 import settings
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
+
+
+handler404 = 'views.wheres_waldo_404'
+handler500 = 'views.oh_sob_500'
 
 urlpatterns = patterns('',
     # Examples:
@@ -23,9 +28,10 @@ urlpatterns = patterns('',
     (r'', include('doctor.urls')),
     (r'', include('common.urls')),
     (r'', include('messaging.urls')),
+    
 
-    # Site wide views
-    url(r'^500/$',    error500,     name='error500'),
+    url(r'^500/$',    oh_sob_500,     name='error500'),
+    url(r'^404/$',    wheres_waldo_404,     name='error404'),
 )
 
 if settings.DEBUG:
