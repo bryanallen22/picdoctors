@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url, handler404, handler500
+from django.conf.urls import patterns, include, url, handler404, handler500
 from views import *
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 #from common.errors import wheres_waldo_404

@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 
 from doctor.account_settings_views import create_bank_account, delete_bank_account, merchant_info
 from doctor.homeviews import doc_home

@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 
 from common.signinviews import skaa_signin, doc_signin, signout
 from common.resetpasswordviews import reset_password
