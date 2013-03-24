@@ -88,7 +88,7 @@
                 {% endif %}
                 {% if request.notifications|length > 0 %}
                 <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-envelope"></i><b class="caret"></b></a>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-envelope"></i> ({{ request.new_notification_cnt}})<b class="caret"></b></a>
                   <ul class="dropdown-menu">
                 {% for n in request.notifications %}
                 {% if n.viewed %}

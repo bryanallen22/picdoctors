@@ -33,7 +33,9 @@ class BaseMiddleware(object):
             else:
                 request.pic_count = 0
 
-        request.notifications = Notification.GetRecentNotifications(profile, 5)
+        request.notifications = Notification.GetRecentNotifications(profile, 8)
+        request.new_notification_cnt = len([n for n in request.notifications if n.viewed == False])
+
 
         return None
 
