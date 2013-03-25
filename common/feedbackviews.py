@@ -18,6 +18,7 @@ from tasks.tasks import sendAsyncEmail
 import ipdb
 import logging
 import datetime
+import settings
 
 def feedback(request):
     data = simplejson.loads(request.body)

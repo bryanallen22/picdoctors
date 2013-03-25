@@ -11,6 +11,7 @@ import ipdb
 import logging
 import random
 import string
+import settings
 
 def gen_password(length=12):
     """
