@@ -538,26 +538,6 @@ def setup_packages():
         sudo('rabbitmqctl add_vhost carrot')
     sudo('rabbitmqctl set_permissions -p carrot weliketoeat ".*" ".*" ".*"')
 
-    #
-    # djcelery service and config
-    #
-    print "Copying celery service and config."
-    put(LocalConfig.celery_service,
-         '/etc/init.d/celery', use_sudo=True)
-
-    put(LocalConfig.celery_config,
-         '/etc/default/celeryd', use_sudo=True)
-
-    print "setting up celery log and pid home"
-    sudo('mkdir -p %s' % cfg.celery_log)
-    sudo('mkdir -p %s' % cfg.celery_pid)
-
-    #I'm not sure if I need to chown these guys, we'll have to play with this
-    sudo("chown %s:%s %s" % (cfg.deploy_user, cfg.deploy_user, cfg.celery_log))
-    sudo("chown %s:%s %s" % (cfg.deploy_user, cfg.deploy_user, cfg.celery_pid))
-
-    # TODO how do I know this service is always running?
-    sudo('service celery start')
 
     #
     # venv / pip
@@ -572,6 +552,29 @@ def setup_packages():
     if not exists( os.path.join(cfg.venv_dir, cfg.venv_proj) ):
         run_user("virtualenv %s/%s" % (cfg.venv_dir, cfg.venv_proj), cfg)
     venv_run_user('pip install -r requirements.txt -q', cfg)
+
+
+    #
+    # djcelery service and config must go after venv
+    #
+    print "Copying celery service and config."
+    put(LocalConfig.celery_service,
+         '/etc/init.d/celeryd', use_sudo=True)
+    sudo('chmod 777 /etc/init.d/celeryd')
+
+    put(LocalConfig.celery_config,
+         '/etc/default/celeryd', use_sudo=True)
+
+    print "setting up celery log and pid home"
+    sudo('mkdir -p %s' % LocalConfig.celery_log)
+    sudo('mkdir -p %s' % LocalConfig.celery_pid)
+
+    #I'm not sure if I need to chown these guys, we'll have to play with this
+    sudo("chmod 777 %s" % LocalConfig.celery_log)
+    sudo("chmod 777 %s" % LocalConfig.celery_pid)
+
+    # TODO how do I know this service is always running?
+    sudo('service celeryd restart')
 
     #
     # node stuff. Probably don't actually need this on the server, though

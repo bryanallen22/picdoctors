@@ -46,7 +46,7 @@ class LocalConfig():
 
     # celery service
     celery_service = os.path.join(pd_settings.PROJECT_ROOT,
-                                   'deploy/services/celery')
+                                   'deploy/services/celeryd')
 
     # celery config
     celery_config = os.path.join(pd_settings.PROJECT_ROOT,
