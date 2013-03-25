@@ -56,3 +56,23 @@ def saveWatermark(profile_id, group_id, str_io_pic):
 
     #create a new entry in the DocPicGroup
     group.add_doctor_pic(pic, wm_pic)
+    
+from celery.task.schedules import crontab
+from celery.task import periodic_task
+from notifications.models import NotificationToIgnore
+import datetime
+
+# A cool task would be to send an email every hour while a test/sandbox is on! mwahahaha
+
+# example task  you can use cron style as well!!!
+# @periodic_task(run_every=datetime.timedelta(minutes=1))
+# def send_every_email_annoying_job():
+#     nti = NotificationToIgnore.objects.all()
+#     for n in nti:
+#         n.ignore = False
+#         n.save()
+
+
+# @periodic_task(run_every=crontab(hour=7, minute=30, day_of_week=1))
+# def every_monday_morning():
+#     print("Execute every Monday at 7:30AM.")

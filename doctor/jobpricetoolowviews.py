@@ -89,9 +89,10 @@ def send_user_email(job):
         # create the email, and attach the HTML version as well.
         msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', to_email)
         msg.attach_alternative(html_content, "text/html")
-        #TODO if you want to switch to using the workers
-        # sendAsyncEmail.apply_async(args=[msg])
-        sendAsyncEmail(msg)
+        if settings.IS_PRODUCTION:
+            sendAsyncEmail.apply_async(args=[msg])
+        else:
+            sendAsyncEmail(msg)
 
         return True
     except Exception as ex:

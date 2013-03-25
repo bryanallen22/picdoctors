@@ -71,14 +71,14 @@
                       </a>
                     <ul class="dropdown-menu">
                       {% if perms.common.doctor %}
-                        <li><a href="{% url 'new_job_page' %}"><i class="icon-star"></i> Available Jobs</a></li>
-                        <li><a href="{% url 'doc_job_page' %}"><i class="icon-tasks"></i> Jobs To Do</a></li>
+                        <li><a href="{% url 'new_job_page' %}"><i class="icon-star"></i>Available (Market)</a></li>
+                        <li><a href="{% url 'doc_job_page' %}"><i class="icon-tasks"></i>To Do (Doctor)</a></li>
                       {% endif %} 
                       {% if perms.common.skaa %}
-                        <li><a href="{% url 'job_page' %}"><i class="icon-tasks"></i> My Jobs</a></li>
+                        <li><a href="{% url 'job_page' %}"><i class="icon-tasks"></i>Mine (End User)</a></li>
                       {% endif %} 
                       {% if perms.common.approve_album %}
-                        <li><a href="{% url 'album_approval_page' %}"><i class="icon-lock"></i>  Jobs Needing Approval</a></li>
+                        <li><a href="{% url 'album_approval_page' %}"><i class="icon-lock"></i>Needing Approval</a></li>
                       {% endif %}
                     </ul>
                   </li>

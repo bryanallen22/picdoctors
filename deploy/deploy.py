@@ -539,6 +539,27 @@ def setup_packages():
     sudo('rabbitmqctl set_permissions -p carrot weliketoeat ".*" ".*" ".*"')
 
     #
+    # djcelery service and config
+    #
+    print "Copying celery service and config."
+    put(LocalConfig.celery_service,
+         '/etc/init.d/celery', use_sudo=True)
+
+    put(LocalConfig.celery_config,
+         '/etc/default/celeryd', use_sudo=True)
+
+    print "setting up celery log and pid home"
+    sudo('mkdir -p %s' % cfg.celery_log)
+    sudo('mkdir -p %s' % cfg.celery_pid)
+
+    #I'm not sure if I need to chown these guys, we'll have to play with this
+    sudo("chown %s:%s %s" % (cfg.deploy_user, cfg.deploy_user, cfg.celery_log))
+    sudo("chown %s:%s %s" % (cfg.deploy_user, cfg.deploy_user, cfg.celery_pid))
+
+    # TODO how do I know this service is always running?
+    sudo('service celery start')
+
+    #
     # venv / pip
     #
     print "Going to install all pip packages quietly. This takes a while. Grab a snickers."

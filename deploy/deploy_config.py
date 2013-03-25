@@ -44,6 +44,18 @@ class LocalConfig():
     remote_nginx_picdocconf = os.path.join(pd_settings.PROJECT_ROOT,
                                    'deploy/configs/nginx_picdoctorsapp')
 
+    # celery service
+    celery_service = os.path.join(pd_settings.PROJECT_ROOT,
+                                   'deploy/services/celery')
+
+    # celery config
+    celery_config = os.path.join(pd_settings.PROJECT_ROOT,
+                                   'deploy/configs/celeryd')
+
+    celery_log = '/var/log/celery'
+
+    celery_pid = '/var/run/celery'
+
     # Locally, what do we call bitbucket in our git commands?
     #git_remote = 'https'
     git_remote = 'origin'

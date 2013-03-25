@@ -43,7 +43,11 @@ def reset_password(request):
                                               [request.POST['email']] )
                 msg.attach_alternative(html_content, "text/html")
 
-                sendAsyncEmail(msg)
+                if settings.IS_PRODUCTION:
+                    sendAsyncEmail.apply_async(args=[msg])
+                else:
+                    sendAsyncEmail(msg)
+
         else:
             pass
 
