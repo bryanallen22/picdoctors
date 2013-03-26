@@ -565,16 +565,16 @@ def setup_packages():
     put(LocalConfig.celery_config,
          '/etc/default/celeryd', use_sudo=True)
 
-    sudo("service celeryd create-paths")
-
     # TODO how do I know this service is always running?
     with settings(warn_only=True): 
         sudo("useradd celery")
 
+    sudo("service celeryd create-paths")
+
     sudo("service celeryd restart")
 
-    sudo("echo 'service celeryd create-paths' >> \\etc\\rc.local")
-    sudo("echo 'service celeryd restart' >> \\etc\\rc.local")
+    sudo("echo 'service celeryd create-paths' >> /etc/rc.local")
+    sudo("echo 'service celeryd restart' >> /etc/rc.local")
 
     #
     # node stuff. Probably don't actually need this on the server, though
