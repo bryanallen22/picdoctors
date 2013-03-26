@@ -569,12 +569,15 @@ def setup_packages():
     sudo('mkdir -p %s' % LocalConfig.celery_log)
     sudo('mkdir -p %s' % LocalConfig.celery_pid)
 
-    #I'm not sure if I need to chown these guys, we'll have to play with this
+    #I'm not sure what these permissions should be, bryan fix these
     sudo("chmod 777 %s" % LocalConfig.celery_log)
     sudo("chmod 777 %s" % LocalConfig.celery_pid)
 
     # TODO how do I know this service is always running?
-    sudo('service celeryd restart')
+    with settings(warn_only=True): 
+        sudo("useradd celery")
+
+    sudo("service celeryd restart")
 
     #
     # node stuff. Probably don't actually need this on the server, though
