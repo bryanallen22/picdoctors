@@ -565,19 +565,16 @@ def setup_packages():
     put(LocalConfig.celery_config,
          '/etc/default/celeryd', use_sudo=True)
 
-    print "setting up celery log and pid home"
-    sudo('mkdir -p %s' % LocalConfig.celery_log)
-    sudo('mkdir -p %s' % LocalConfig.celery_pid)
-
-    #I'm not sure what these permissions should be, bryan fix these
-    sudo("chmod 777 %s" % LocalConfig.celery_log)
-    sudo("chmod 777 %s" % LocalConfig.celery_pid)
+    sudo("service celeryd create-paths")
 
     # TODO how do I know this service is always running?
     with settings(warn_only=True): 
         sudo("useradd celery")
 
     sudo("service celeryd restart")
+
+    sudo("echo 'service celeryd create-paths' >> \\etc\\rc.local")
+    sudo("echo 'service celeryd restart' >> \\etc\\rc.local")
 
     #
     # node stuff. Probably don't actually need this on the server, though
