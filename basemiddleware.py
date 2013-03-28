@@ -3,6 +3,7 @@ from common.functions import get_unfinished_album
 from common.models import Album
 from notifications.models import Notification
 from django.core.exceptions import MultipleObjectsReturned
+import settings
 
 import ipdb
 
@@ -36,6 +37,8 @@ class BaseMiddleware(object):
         request.notifications = Notification.GetRecentNotifications(profile, 8)
         request.new_notification_cnt = len([n for n in request.notifications if n.viewed == False])
 
+        request.IS_PRODUCTION = settings.IS_PRODUCTION
+        request.deploy_type = settings.DEPLOY_TYPE
 
         return None
 

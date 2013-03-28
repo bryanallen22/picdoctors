@@ -231,7 +231,7 @@
               </div>
             </div>  <!-- span2 switches -->
           </div>
-          {% if not IS_PRODUCTION %}
+          {% if not request.IS_PRODUCTION %}
           <div class="row">
             <div class="span2 control-label">
               Approval Role (only available in debug): <br/>
@@ -353,7 +353,7 @@
           </form>
           <p id="error_bankaccount" class="label label-important balanced_error" style="display:none;">Invalid Bank Account Information, please try again.</p>
 
-          {% if not IS_PRODUCTION %}
+          {% if not request.IS_PRODUCTION %}
             {# Include some debug accounts #}
             <div class="row">
               <div class="span7">
@@ -560,7 +560,7 @@
             </div>
 
           </form>
-          {% if not IS_PRODUCTION %}
+          {% if not request.IS_PRODUCTION %}
             {# Include some debug accounts #}
             <div class="row">
               <div class="span7">
@@ -588,7 +588,7 @@
   </script>
   <script src="{{ STATIC_URL }}js/account_settings.js"></script>
   <script type="text/javascript" src="https://js.balancedpayments.com/v1/balanced.js"></script>
-  {% if not IS_PRODUCTION %}
+  {% if not request.IS_PRODUCTION %}
   {# This file will be in the directory in production, but nobody should #}
   {# see it. Even if someone found it, these cards won't work in production #}
   <script src="{{STATIC_URL}}js/set_price_debugbank.js"></script>

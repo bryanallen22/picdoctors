@@ -153,7 +153,6 @@ def increase_price(request, job_id):
 
     return { 
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
-        'IS_PRODUCTION'     : settings.IS_PRODUCTION,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
         'num_pics'          : str_num_pics,
@@ -199,7 +198,6 @@ def set_price(request):
 
     return { 
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
-        'IS_PRODUCTION'     : settings.IS_PRODUCTION,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
         'num_pics'          : str_num_pics,
