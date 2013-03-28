@@ -10,5 +10,9 @@ DATABASES = {
     }
 }
 
+AWS_ACCESS_KEY_ID = 'AKIAJ5JN3Q5MTH5LX6QQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'picdoctors_media'
+
 # apparently DJANGO isn't smart enough to figure out https if you are using a proxy to fake https
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
