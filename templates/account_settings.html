@@ -560,6 +560,16 @@
             </div>
 
           </form>
+          {% if not IS_PRODUCTION %}
+            {# Include some debug accounts #}
+            <div class="row">
+              <div class="span7">
+                Test Merchant Info:<br/>
+                <button id="btn-testmerchantinfo" type="submit" class="btn btn-info">Fill in Test Info</button>
+              </div>
+            </div>
+
+          {% endif %}
 
         {% endif %}
       </div>

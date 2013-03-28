@@ -34,4 +34,12 @@ $(function(){
     $("select option[value='checking']").attr('selected', 'selected');
   });
 
+  $("#btn-testmerchantinfo").click( function() {
+    $("input#name").val("John Jinglehimer");
+    $("input#street_address").val("123 Fake St");
+    $("input#postal_code").val("12345");
+    $("input#phone_number").val("1234567890");
+    $("input#birth_year").val("1999");
+  });
+
 });
