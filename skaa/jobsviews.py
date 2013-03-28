@@ -100,13 +100,13 @@ def generate_skaa_actions(job):
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(contact)
         ret.append(view_album)
-        ret.append(switch_doc)
+        #ret.append(switch_doc) -- bryan removed: they haven't seen his work yet, let's not let them reject this guy yet
         ret.append(refund)
 
     elif job.status == Job.MODERATOR_APPROVAL_NEEDED:
         ret.append(contact)
         ret.append(view_album)
-        ret.append(switch_doc)
+        #ret.append(switch_doc) -- bryan removed: they haven't seen his work yet, let's not let them reject this guy yet
         ret.append(refund)
 
     elif job.status == Job.DOCTOR_SUBMITTED:
