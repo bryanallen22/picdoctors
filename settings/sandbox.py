@@ -5,8 +5,8 @@ import os
 DEPLOY_TYPE='SANDBOX' # useful for logs, stack traces
 DEBUG = False
 IS_PRODUCTION = False # used to toggle things that don't go on the non-live site
-BALANCED_API_KEY_SECRET = '2726feb439f011e294b1026ba7f8ec28'
-BALANCED_MARKETPLACE_URI = '/v1/marketplaces/TEST-MP1c0n2GjbjUEgctn32jYQE0'
+BALANCED_API_KEY_SECRET = '959cf402989b11e29955026ba7c1aba6'
+BALANCED_MARKETPLACE_URI = '/v1/marketplaces/TEST-MP4yysJEaaWktNOnJGlPwHnc'
 
 AWS_ACCESS_KEY_ID = 'AKIAJYVA2NHBM5YJ3WWQ'
 AWS_SECRET_ACCESS_KEY = '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'
