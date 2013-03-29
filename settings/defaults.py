@@ -223,8 +223,8 @@ AWS_HEADERS = {
 INTERNAL_IPS = ('127.0.0.1',)
 
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'kingpin2ktest'
-EMAIL_HOST_PASSWORD = 'DJ#2dgDNE3Dg!@'
+EMAIL_HOST_USER = 'picdoctors'
+EMAIL_HOST_PASSWORD = 'USW6euCiIbUSxnqi'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
