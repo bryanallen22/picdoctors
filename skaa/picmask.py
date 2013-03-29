@@ -1,4 +1,5 @@
 from PIL import Image, ImageEnhance, ImageFont, ImageDraw 
+import ipdb
 
 def reduceOpacity(im, opacity):
     """Returns an image with reduced opacity."""
@@ -12,20 +13,21 @@ def reduceOpacity(im, opacity):
     im.putalpha(alpha)
     return im
 
-def addOverlayText(im, overlay_text, font):
+def addOverlayText(im, overlay_text, font, font_size):
     colour = 'white'
+    pixel_height_guess = font_size * 1.2
     draw = ImageDraw.Draw(im)
     top = overlay_text[0]
     bottom = overlay_text[1]
     draw.text((10,10), top, colour, font=font)
-    draw.text((10,im.size[1]-30), bottom, colour, font=font)
+    draw.text((10,im.size[1]-pixel_height_guess), bottom, colour, font=font)
 
-def watermark(im, mark, position, overlay_text, font, opacity):
+def watermark(im, mark, position, overlay_text, font, font_size, opacity):
     """Adds a watermark to an image."""
     if opacity < 1:
         mark = reduceOpacity(mark, opacity)
     
-    addOverlayText(mark, overlay_text, font)
+    addOverlayText(mark, overlay_text, font, font_size)
     
     if im.mode != 'RGBA':
         im = im.convert('RGBA')
@@ -36,20 +38,23 @@ def watermark(im, mark, position, overlay_text, font, opacity):
     # composite the watermark with the layer
     return Image.composite(layer, im, layer)
 
+mask_ratio = .37
+
 def generate_watermarked_image(im, specific_text):
-    font = ImageFont.truetype("skaa/HelveticaNeueLight.ttf", 28)
     im_width = im.size[0]
     im_height = im.size[1]
-    mask_width = int(im_width * .37)
-    mask_height = int(im_height * .37)
+    mask_width = int(im_width * mask_ratio)
+    mask_height = int(im_height * mask_ratio)
     mask_size = (mask_width, mask_height)
     mark = Image.new('RGB', mask_size)
     draw = ImageDraw.Draw(mark) # Create a draw object
     draw.rectangle((0, 0, mask_width-1, mask_height-1), fill="black", outline="red")
     position = (im_width-mask_width, int(im_height/2))
-    text = (specific_text, "PicDoctors.com")
+    text = (specific_text, "www.PicDoctors.com")
     opacity = 0.5
-    watermarked_image = watermark(im, mark, position, text, font, opacity)
+    font_size = int(im_height * .033)
+    font = ImageFont.truetype("skaa/HelveticaNeueLight.ttf", font_size)
+    watermarked_image = watermark(im, mark, position, text, font, font_size, opacity)
 #    watermarked_image.show()
     return watermarked_image
 
