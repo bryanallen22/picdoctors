@@ -361,6 +361,9 @@ class Album(DeleteMixin):
     groups_last_modified = models.DateTimeField(auto_now_add=True)
     sequences_last_set   = models.DateTimeField(auto_now_add=True)
 
+    # Can we show this album publicly?
+    allow_publicly       = models.BooleanField(default=False)
+
     class Meta:
         permissions = (
                 ("view_album", "Can view all albums"),

@@ -29,6 +29,14 @@ def accept_work(request, job_id):
 
     if request.method == 'POST':
         if job and profile and job.skaa == profile:
+            if 'allow_publicly' in request.POST:
+                if request.POST['allow_publicly'] == 'allow':
+                    job.album.allow_publicly = True
+                    job.album.save()
+            else:
+                # Return some kind of error
+                return { 'job_id':job_id, 'allowpublic_error':True }
+
             do_debit(request, profile, job)
 
             job.status = Job.USER_ACCEPTED

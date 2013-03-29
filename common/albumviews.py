@@ -43,9 +43,9 @@ def album(request, album_id):
     if not job:
         return redirect('/')
 
-    moderator = profile.has_common_perm('view_album')
-    # if you are not the owner and not the doctor and not the moderator why are you here?
-    if job.skaa != profile and job.doctor != profile and not moderator:
+    moderator = profile.has_common_perm('approve_album')
+    # if you are not the owner and not the doctor and not the moderator why are you here? (And it's not public, of course)
+    if job.skaa != profile and job.doctor != profile and not moderator and not album.allow_publicly:
         return redirect('/')
 
     #############################

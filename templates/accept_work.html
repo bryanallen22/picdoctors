@@ -9,7 +9,7 @@
 
 {% block main %}
 <div class='row'>
-  <form method='post' id='accept_job' onsubmit='return get_rating()'>
+  <form method='post' id='accept_job' >
     {% csrf_token %}
     <div class="span8 accept_view offset2 well" job_id={{job_id}}>
 
@@ -26,30 +26,43 @@
         </ul>
       </div>
       <br />
+
+      <p>Your doctor would like to show this job on his profile page as an example of his work. Can we allow him to show it on his page? (Don't worry. It won't contain any personal information.)<p>
+      <div id="allow_publicly" class="alert alert-error password_alert" {% if not allowpublic_error %} style="display:none;" {% endif %} >
+        <button class="close" data-dismiss="alert">×</button>
+        Please select a choice.
+      </div>
+      <label class="radio">
+        <input type="radio" name="allow_publicly" id="radio_allow" value="allow">
+        Allow
+      </label>
+      <label class="radio">
+        <input type="radio" name="allow_publicly" id="radio_disallow" value="disallow">
+        Do not allow
+      </label>
+
       <br />
 
-      <legend>
-        Rate the Doctor's Work:
-      </legend>
-      <h4>Overall Rating</h4>
+      <h5>Doctor Rating</h5>
       <div style="clear:both">
         <select class="rating">
-           <option value="1">Terrible</option>  
-           <option value="2">Poor</option>  
-           <option value="3" selected="selected">Good</option>  
-           <option value="4">Great!</option>  
-           <option value="5">Excellent!</option>  
-      </select>
+          <option value="1">Terrible</option>  
+          <option value="2">Poor</option>  
+          <option value="3" selected="selected">Good</option>  
+          <option value="4">Great!</option>  
+          <option value="5">Excellent!</option>  
+        </select>
       </div>
       <br />
       <br />
-      <h4>Additional Feedback:</h4>
+      <h5>Additional Feedback:</h5>
       <input class="span8" name="comment" value="{{ comment }}"/>
       <input type="hidden" name="job_id" value="{{ job_id }}"/>
       <input type="hidden" name="rating_val" id="rating_val"  value=""/>
       <br />
       <br />
-      <button class="btn btn_accept_job btn-large btn-primary" type="submit">Accept Job</button>
+
+      <button id="btn_accept" class="btn btn_accept_job btn-large btn-primary" type="submit">Accept Job</button>
 
     </div>
   </form>
