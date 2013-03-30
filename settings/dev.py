@@ -23,11 +23,11 @@ ALLOWED_HOSTS.append( 'localhost' )
 ALLOWED_HOSTS.append( '127.0.0.1' )
 
 #ignore the following error when using ipython:
-#/django/db/backends/sqlite3/base.py:51: RuntimeWarning:
+#/django/db/backends/sqlite3/base.py:53: RuntimeWarning:
 #"SQLite received a naive datetime (2012-11-02 11:20:15.156506) while time zone support is active."
 #(This is only a problem on local dev, and it's only annoying, not a real problem.)
 #See: http://stackoverflow.com/questions/14616805/why-wont-django-use-ipython
 import warnings
 import exceptions
-warnings.filterwarnings("ignore", category=exceptions.RuntimeWarning, module='django.db.backends.sqlite3', lineno=50)
+warnings.filterwarnings("ignore", category=exceptions.RuntimeWarning, module='django.db.backends.sqlite3', lineno=53)
 
