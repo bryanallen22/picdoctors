@@ -10,12 +10,10 @@
 
 {% block main %}
   <div id='job_app' class="row job_page">
-    <div id="alert_section" class="row alert_section">
-      <div class="span12 alert_row lead">
-      </div>
-      <div class="span10 redirect_row">
-      </div>
-      <div class="span2 redirect_row_buttons">
+    <div id="alert_section" class="alert_section alert alert-success">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <h4 class="alert_words alert-heading">words</h4>
+      <div class="redirect_row_buttons">
       </div>
     </div>
     <div class="page-header row" style="text-align: left;">
@@ -109,7 +107,6 @@
   <script src="{{ STATIC_URL }}js/underscore.js"></script>
   <script src="{{ STATIC_URL }}js/backbone.js"></script>
   <script src="{{ STATIC_URL }}js/jobs.js"></script>
-  <script src="{{ STATIC_URL }}js/animatedcollapse.js"></script>
   <script src="{{ STATIC_URL }}js/shared.js"></script>
 {% if doc_page %}
   <script src="{{ STATIC_URL }}js/job_doc_tour.js"></script>
@@ -124,17 +121,13 @@
     $(function() {
       $('.carousel').carousel('next');
       $('.carousel').carousel();
-      animatedcollapse.addDiv('alert_section', 'hide=1,fade=1,height=70px');
-      animatedcollapse.init();
     });
   </script>
   <script type="text/template" id="redirect_template">
     You will be automatically redirected to <%=view%> in <%=time_left%> second(s).  
   </script>
   <script type="text/template" id="redirect_buttons_template">
-    <a href='#' class='btn-primary btn-mini' onclick='javascript:redirect_now=true;'> Go Now</a>
-
-    <a href='#' class='btn-primary btn-mini' onclick='javascript:continue_redirect=false;'> Don't Go</a>
+        <a class="btn action_button" id="action_button" href="<%= href %>"><%= text %></a>
   </script>
   <script type="text/template" id="user_row_template">
       <div class="job_id" job_id="<%= job_id %>"></div>

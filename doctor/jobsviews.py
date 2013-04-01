@@ -15,7 +15,7 @@ from common.calculations import calculate_job_payout
 from common.functions import get_profile_or_None, get_datetime
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
-from common.jobs import Actions, Action, RedirectData, DynamicAction 
+from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction 
 from common.jobs import send_job_status_change, fill_job_info
 from datetime import timedelta
 import datetime
@@ -146,13 +146,12 @@ def apply_for_job(request):
     result = []
 
     actions = Actions()
-    actions.add('alert', 'This job is no longer available')
+    actions.add('alert', AlertData('This job is no longer available', 'error'))
     actions.add('remove_job_row', data['job_id'])
     r = RedirectData(reverse("new_job_page"), 'available jobs')
-    actions.add('delay_redirect', r)
+    actions.add('action_button', r)
     
     if job is None or job.doctor is not None or profile is None:
-        #result = ['actions': {'alert':'This job is no longer available', 'reload':''}]
         pass 
     else:
         # Get exclusive access to the job
@@ -164,8 +163,10 @@ def apply_for_job(request):
                 db_cnt = DocBlock.objects.filter(job=job).filter(doctor=profile).count()
                 if db_cnt > 0:
                     actions = Actions()
-                    actions.add('alert', 'Unfortunately you are unable to take this job, we apologize.')
+                    actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
                     actions.add('remove_job_row', data['job_id'])
+                    r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
+                    actions.add('action_button', r)
                 else:
                     # Update Job Info
                     job.doctor = profile
@@ -182,10 +183,8 @@ def apply_for_job(request):
                     
                     # Response
                     actions = Actions()
-                    actions.add('alert', 'Congrats the job is yours!')
-                    #actions.add('remove_job_row', data['job_id'])
-                    r = RedirectData(reverse("doc_job_page"), 'your jobs')
-                    actions.add('delay_redirect', r)
+                    actions.add('alert', AlertData('Congrats the job is yours!', 'success'))
+
                     job_inf = fill_job_info(job, generate_doctor_actions, profile)
                     actions.addJobInfo(job_inf)
                     
@@ -213,7 +212,7 @@ def mark_job_completed(request):
     job = get_object_or_None(Job, id=data['job_id'])
 
     actions = Actions()
-    actions.add('alert', 'There was an error processing your request.')
+    actions.add('alert', AlertData('There was an error processing your request.', 'error'))
     if has_rights_to_act(profile, job):
         groups = Group.get_job_groups(job)
         unfinished_count = 0
@@ -229,7 +228,7 @@ def mark_job_completed(request):
         actions.clear()
 
         if unfinished_count==0:
-            actions.add('alert', 'The job has been marked as complete')
+            actions.add('alert', AlertData('The job has been marked as complete', 'success'))
 
             # elitest doctor is auto approved, skip to submitted state!
             if profile.auto_approve:
@@ -245,9 +244,9 @@ def mark_job_completed(request):
             plural = unfinished_count > 1
             plural_to_be = 'are' if plural else 'is'
             plural_s = 's' if plural else ''
-            actions.add('alert', str(unfinished_count) + ' group' + plural_s + ' ' + plural_to_be + ' missing a doctored picture.')
+            actions.add('alert', AlertData(str(unfinished_count) + ' group' + plural_s + ' ' + plural_to_be + ' missing a doctored picture.', 'error'))
             redir_url = reverse('markup_album', args=[job.album.id, missing_group.sequence])
-            r =  RedirectData(redir_url,'the first missing picture')
-            actions.add('delay_redirect', r)
+            r =  RedirectData(redir_url,'Go to the first missing picture')
+            actions.add('action_button', r)
     return HttpResponse(actions.to_json(), mimetype='application/json')
 

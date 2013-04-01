@@ -77,9 +77,15 @@ class Action:
 
 # special data for the Action class
 class RedirectData:
-    def __init__(self, href, view):
+    def __init__(self, href, text):
         self.href = href
-        self.view = view
+        self.text = text
+
+# special data for the Action class
+class AlertData:
+    def __init__(self, text, alert_class):
+        self.text = text
+        self.alert_class = alert_class
 
 #I should do error checking
 def get_pagination_info(jobs, page):

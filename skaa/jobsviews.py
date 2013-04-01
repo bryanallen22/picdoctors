@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from decimal import *
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
-from common.jobs import Actions, Action, RedirectData, DynamicAction
+from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction
 from common.jobs import send_job_status_change, fill_job_info
 from datetime import timedelta
 import datetime
@@ -185,11 +185,11 @@ def reject_doctors_work(request):
     job = get_object_or_None(Job, id=data['job_id'])
 
     actions = Actions()
-    actions.add('alert', 'There was an error processing your request.')
+    actions.add('alert', AlertDate('There was an error processing your request.', 'error'))
     if job and profile and job.skaa == profile:
         #TODO Put money into Doctors account 
         actions.clear()
-        actions.add('alert', 'The job was rejected')
+        actions.add('alert', AlertData('The job was rejected', 'success'))
         job.status = Job.USER_REJECTED
         job.save()
 
@@ -208,13 +208,13 @@ def request_modification(request):
     job = get_object_or_None(Job, id=data['job_id'])
 
     actions = Actions()
-    actions.add('alert', 'There was an error processing your request.')
+    actions.add('alert', AlertDate('There was an error processing your request.', 'error'))
     if job and profile and job.skaa == profile:
         actions.clear()
-        actions.add('alert', 'The user has requested modification')
+        actions.add('alert', AlertData('The user has requested modification', 'success'))
         redir_url = reverse('contact', args=[job.id])
-        r =  RedirectData(redir_url,'the communication page')
-        actions.add('delay_redirect', r)
+        r =  RedirectData(redir_url,'The Communication Page')
+        actions.add('action_button', r)
         job.status = Job.USER_REQUESTS_MODIFICATION
         job.save()
         send_job_status_change(job, profile)

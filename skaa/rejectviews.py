@@ -74,7 +74,8 @@ def switch_doctor_endpoint(request):
 
     if job and profile and job.skaa == profile:
         remove_previous_doctor(job)
-    send_job_status_change(job, profile)
+    # TODO do we send the doctor an email saying they are out????    
+    #send_job_status_change(job, profile)
 
     result = { 'relocate' : reverse('job_page') }
     response_data = simplejson.dumps(result)
