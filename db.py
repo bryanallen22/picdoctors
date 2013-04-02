@@ -16,6 +16,8 @@ def entry_point():
     alphadb = False
     gen = False
     listem = False
+    deploy = False
+
     for arg in sys.argv[1:]:
 
         arg = arg.lower()
@@ -29,6 +31,8 @@ def entry_point():
             migrate = True
         elif arg == '-list':
             listem = True
+        elif arg == '-deploy':
+            deploy = True
 
     if migrate and alphadb:
         print Fore.RED + "It makes no sense to do an Alpha DB and a migration, Keep it Simple Stupid"
@@ -40,7 +44,7 @@ def entry_point():
         print_help()
         return
 
-    if not migrate and not alphadb and not gen and not listem:
+    if not migrate and not alphadb and not gen and not listem and not deploy:
         print Fore.RED + "Make a choice, what do you want from me?"
         print_help()
         return
@@ -53,9 +57,14 @@ def entry_point():
         do_gen(force)
     elif listem:
         do_list(force)
+    elif deploy:
+        do_deploy(force)
     else:
         print "how did you get here?"
         print_help()
+
+def do_deploy(force):
+    do_alphadb(force, False)
 
 
 def do_list(force):
@@ -88,7 +97,7 @@ def do_migrate(force):
     do_cmd("python manage.py migrate")
 
 
-def do_alphadb(force):
+def do_alphadb(force, delete_migration=True):
     """
     Blast away everything in the world and pretend like this is the first time the db will be made.
     What does this really mean?  It means we blast away any migrations, any db and 
@@ -98,7 +107,8 @@ def do_alphadb(force):
         if confirm("Are you sure you want to delete your database and migrations and start anew", force):
             print Fore.GREEN + "deleting sqlite.db" + Fore.WHITE
             do_cmd("rm sqlite.db")
-            delete_migrations()
+            if delete_migration:
+                delete_migrations()
             gen_new_db()
             init_db()
             print Fore.GREEN + "Migrating djcelery, they were nice enough to include their migrations..." + Fore.WHITE
@@ -111,7 +121,8 @@ def do_alphadb(force):
         if confirm("Are you sure you want to delete your database and migrations and start anew", force):
             print Fore.GREEN + "Blasting away and recreating your DB" + Fore.WHITE
             do_cmd("mysql -h localhost -u root -pasdf picdoctors -e 'DROP DATABASE picdoctors;CREATE DATABASE picdoctors'")
-            delete_migrations()
+            if delete_migration:
+                delete_migrations()
             gen_new_db()
             init_db()
             print Fore.GREEN + "Migrating djcelery, they were nice enough to include their migrations..." + Fore.WHITE

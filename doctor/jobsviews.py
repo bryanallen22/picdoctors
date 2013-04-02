@@ -175,15 +175,12 @@ def apply_for_job(request):
                     job.status = Job.DOCTOR_ACCEPTED
                     job.save()
 
-                    # Debit Card
-                    debit_job(job, profile)
-
                     # Email
                     send_job_status_change(job, profile)
                     
                     # Response
                     actions = Actions()
-                    actions.add('alert', AlertData('Congrats the job is yours!', 'success'))
+                    actions.add('alert', AlertData('Congratulations, the job is yours!', 'success'))
 
                     job_inf = fill_job_info(job, generate_doctor_actions, profile)
                     actions.addJobInfo(job_inf)
@@ -192,10 +189,6 @@ def apply_for_job(request):
                     db.save()
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
-
-def debit_job(job, profile):
-    # TODO debit the card already!!! 
-    return
 
 def has_rights_to_act(profile, job):
     if profile and job:

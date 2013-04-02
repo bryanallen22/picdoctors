@@ -613,8 +613,7 @@ def setup_local_mysql():
 
     sudo("""mysql -u root --password=asdf <<< "CREATE DATABASE IF NOT EXISTS picdoctors; GRANT ALL PRIVILEGES ON picdoctors.* TO 'django'@'localhost' IDENTIFIED BY 'asdf';" """);
     
-    venv_run_user('echo no | python manage.py syncdb', cfg)
-    venv_run_user('python manage.py migrate', cfg)
+    venv_run_user('./db.py -deploy -f', cfg)
 
 @task
 def setup_db():
@@ -632,8 +631,7 @@ def setup_db():
     # TODO - probably shouldn't do case by case basis here. Figure out later
     # when I've thought about it more
     if deploy_type == "sandbox":
-        venv_run_user('echo no | python manage.py syncdb', cfg)
-        venv_run_user('python manage.py migrate', cfg)
+        venv_run_user('./db.py -deploy -f', cfg)
     elif deploy_type == "test":
         setup_local_mysql()
     else:
