@@ -29,7 +29,7 @@ class Combination():
         self.messages = []
         self.group_id = -1
 
-@login_required
+#@login_required
 @render_to('album.html')
 def album(request, album_id):
     #SECURITY (Move to Decorator)
@@ -43,7 +43,11 @@ def album(request, album_id):
     if not job:
         return redirect('/')
 
-    moderator = profile.has_common_perm('approve_album')
+    if not profile and not album.allow_publicly:
+        return redirect('/')
+
+    moderator = False if not profile else profile.has_common_perm('approve_album')
+
     # if you are not the owner and not the doctor and not the moderator why are you here? (And it's not public, of course)
     if job.skaa != profile and job.doctor != profile and not moderator and not album.allow_publicly:
         return redirect('/')
@@ -58,7 +62,7 @@ def album(request, album_id):
     for group in groups:
         picco = Combination()
         picco.user_pics = Pic.get_group_pics(group)
-        picco.messages = prep_messages(GroupMessage.get_messages(group), profile, job)
+        picco.messages = prep_messages(GroupMessage.get_messages(group), job)
         for x in picco.user_pics:
             picco.max_height = max(picco.max_height, x.preview_height)
             picco.max_width = max(picco.max_width, x.preview_width)
@@ -74,7 +78,13 @@ def album(request, album_id):
         groupings.append(picco)
 
 
-    return {'job_id': job.id, 'user_acceptable': user_acceptable, 'is_owner': (profile == job.skaa), 'groupings' : groupings}
+    return  {
+            'job_id'            : job.id, 
+            'user_acceptable'   : user_acceptable, 
+            'is_owner'          : (profile == job.skaa), 
+            'groupings'         : groupings,
+            'is_public'         : album.allow_publicly,
+    }
 
 #This is for a moderator to approve an album
 @login_required

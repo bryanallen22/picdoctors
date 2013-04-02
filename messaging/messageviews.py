@@ -38,7 +38,7 @@ class PicComment():
         self.group_id = -1
         self.sequence = 0
 
-def prep_messages(base_messages, profile, job):
+def prep_messages(base_messages, job):
     """ get the information from either the job or the group message  """
     messages = []
     for msg in base_messages:
@@ -70,7 +70,7 @@ def contact(request, job_id):
     #############################
     #############################
 
-    job_messages = prep_messages(JobMessage.get_messages(job), profile, job)
+    job_messages = prep_messages(JobMessage.get_messages(job), job)
 
     return {'job_id': job.id, 'is_owner': (profile == job.skaa), 'job_messages' : job_messages}
 

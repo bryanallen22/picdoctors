@@ -55,7 +55,7 @@ def belongs_on_this_markup_page(request, album_id, sequence):
         return True
 
     # is doctor of job and the job isn't finished!
-    if j.doctor and j.doctor == profile and j.status != Job.USER_ACCEPTED :
+    if j.doctor and j.doctor == profile and j.status != Job.USER_ACCEPTED:
         return True
 
     #assume false

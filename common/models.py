@@ -561,7 +561,7 @@ class Group(models.Model):
         if not job:
             return []
 
-        if job.is_approved() or job.doctor == profile or profile.has_common_perm('view_album'):
+        if job.is_approved() or job.doctor == profile or ( profile and profile.has_common_perm('view_album') ):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
             
         return []
@@ -599,7 +599,7 @@ class DocPicGroup(DeleteMixin):
         # TODO I could get the job in here, but it'd hurt my db feelings
         # job = group.album.get_job_or_None()
 
-        if not ( job.is_approved() or is_doctor or profile.has_common_perm('view_album') ):
+        if not ( job.is_approved() or is_doctor or ( profile and profile.has_common_perm('view_album') ) ):
             return None
 
         # I still don't have to return the full pic, just the watermark for now :)

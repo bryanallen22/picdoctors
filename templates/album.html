@@ -96,12 +96,25 @@
       </div>
     </div>
   </div>
-
+  <div style="float:right;padding-top:20px;">
+    {% if not is_public %}
+    <span class='gallery_public'>In order to share this album, it must be Public</span>
+    {% endif %}
+    <span class='st_facebook_large' displayText='Facebook'></span>
+    <span class='st_twitter_large' displayText='Tweet'></span>
+    <span class='st_linkedin_large' displayText='LinkedIn'></span>
+    <span class='st_pinterest_large' displayText='Pinterest'></span>
+    <span class='st_instagram_large' displayText='Instagram Badge' st_username='picdoctors'></span>
+    <span class='st_googleplus_large' displayText='Google +'></span>
+  </div>
 </div>
 {% endfor %}
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "834ab02a-7243-4360-ba55-32744c1956c1", doNotHash: true, doNotCopy: true, hashAddressBar: false});</script>
+
 <script src="{{ STATIC_URL }}js/json2.js"></script>
 <script src="{{ STATIC_URL }}js/underscore.js"></script>
 <script src="{{ STATIC_URL }}js/backbone.js"></script>
