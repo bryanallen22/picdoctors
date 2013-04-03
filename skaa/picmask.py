@@ -52,7 +52,7 @@ def generate_watermarked_image(im, specific_text):
     position = (im_width-mask_width, int(im_height/2))
     text = (specific_text, "www.PicDoctors.com")
     opacity = 0.5
-    font_size = int(im_height * .033)
+    font_size = int(im_height * .023)
     font = ImageFont.truetype("skaa/HelveticaNeueLight.ttf", font_size)
     watermarked_image = watermark(im, mark, position, text, font, font_size, opacity)
 #    watermarked_image.show()

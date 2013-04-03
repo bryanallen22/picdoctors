@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 
 from common.signinviews import skaa_signin, doc_signin, signout
 from common.resetpasswordviews import reset_password
-from common.albumviews import album, approve_album
+from common.albumviews import album, approve_album, make_album_shareable
 from common.feedbackviews import feedback
 from common.album_approvalviews import album_approval_page
 from common.faqviews import faq
@@ -32,5 +32,6 @@ urlpatterns = patterns('',
     url(r'^change_password/$',                  change_password,              name='change_password'),
     url(r'^change_email/$',                     change_email,                 name='change_email'),
     url(r'^update_roles/$',                     update_roles,                 name='update_roles'),
+    url(r'^make_album_shareable/$',             make_album_shareable,         name='make_album_shareable'),
 )
 

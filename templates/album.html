@@ -21,7 +21,7 @@
   </div>
   <div class='span3'>
     {% if user_acceptable %}
-    <a class="btn btn_accept_job btn-large btn-primary" href="{% url 'accept_work' job_id %}">Accept Job</a>
+    <a class="btn btn-large btn-primary" href="{% url 'accept_work' job_id %}">Accept Job</a>
     {% endif %}
   </div>
 </div>
@@ -96,9 +96,12 @@
       </div>
     </div>
   </div>
+
+  {% if shareable %}
   <div style="float:right;padding-top:20px;">
     {% if not is_public %}
-    <span class='gallery_public'>In order to share this album, it must be Public</span>
+    <a class='gallery_not_public' style="cursor:pointer" onclick="make_album_shareable(this, {{ job_id }})">Click here to make album public (for sharing)</a>
+    <span id="gallery_now_public"></span>
     {% endif %}
     <span class='st_facebook_large' displayText='Facebook'></span>
     <span class='st_twitter_large' displayText='Tweet'></span>
@@ -107,6 +110,8 @@
     <span class='st_instagram_large' displayText='Instagram Badge' st_username='picdoctors'></span>
     <span class='st_googleplus_large' displayText='Google +'></span>
   </div>
+  {% endif %}
+
 </div>
 {% endfor %}
 {% endblock %}

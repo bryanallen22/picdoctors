@@ -35,7 +35,6 @@ $(function(){
 
     events: {
       'click       .btn_approve_all': 'approve_all',
-      'click       .btn_accept_job':  'accept_job',
     },
 
     approve_all: function(){
@@ -60,31 +59,6 @@ $(function(){
         }
       });
     },
-
-    accept_job: function(){
-
-      var json_data = JSON.stringify(
-        {
-          "job_id" : this.$el.attr('job_id'),
-        }
-      );
-      
-      $.ajax({
-        headers: {
-          "X-CSRFToken":CSRF_TOKEN
-        },
-        type: 'POST',
-        url:  '/accept_doctors_work/',
-        data: json_data,
-        success : function(data, textStatus) {
-          console.log(data);
-          console.log(textStatus);
-          location.href = location.href;
-        }
-
-      });
-    },
-
   });
 
   var av_el = $(".album_control");
@@ -107,4 +81,30 @@ function replace_normal_user_pic(el, id){
   var rep = $('#' + id);
   rep.css('background-image', 'url(' + el.attr('data-pic') + ')');
 
+}
+
+function make_album_shareable(el, id){
+  var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
+
+  var json_data = JSON.stringify(
+    {
+       "job_id" : id,
+    }
+  );
+      
+  $.ajax({
+     headers: {
+       "X-CSRFToken":CSRF_TOKEN
+     },
+     type: 'POST',
+     url:  '/make_album_shareable/',
+     data: json_data,
+     success : function(data, textStatus) {
+       $(".gallery_not_public").hide();
+       $("#gallery_now_public").html(data.status);
+       console.log(data);
+       console.log(textStatus);
+     }
+
+  });
 }
