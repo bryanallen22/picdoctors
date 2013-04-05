@@ -3,6 +3,8 @@ from views import *
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 #from common.errors import wheres_waldo_404
 
+from common.functions import raise_error
+
 import settings
 
 # Uncomment the next two lines to enable the admin:
@@ -31,8 +33,9 @@ urlpatterns = patterns('',
     (r'', include('notifications.urls')),
     
 
-    url(r'^500/$',    oh_sob_500,     name='error500'),
-    url(r'^404/$',    wheres_waldo_404,     name='error404'),
+    url(r'^500/$',   oh_sob_500,        name='error500'),
+    url(r'^404/$',   wheres_waldo_404,  name='error404'),
+    url(r'^raise/$', raise_error,       name="raise_error"),
 )
 
 if settings.DEBUG:

@@ -112,3 +112,10 @@ def get_referer_view_and_id(request, default=None):
         return referer[1], referer[2]
 
     return default
+
+def raise_error(request):
+    """
+    Raise an error immediately. Useful for debugging production environment.
+    """
+    raise Exception("You asked for it.")
+
