@@ -680,8 +680,6 @@ def deploy(force_push=False, update=True, fast=False):
     if not fast:
         validate_can_deploy(inst, cfg)
 
-    # TODO Take nginx down here
-
     # Get our full project code over there
     getcode(force_push)
 
@@ -689,8 +687,6 @@ def deploy(force_push=False, update=True, fast=False):
     if update and not fast:
         patch()
 
-    # TODO uncomment this
-    # apt-get/pip installs, config
     if not fast:
         setup_packages()
 
@@ -701,6 +697,11 @@ def deploy(force_push=False, update=True, fast=False):
         setup_db()
 
     setup_remote_conveniences()
+
+    # TODO - fix this. It shouldn't be necessary here, but it is. Also,
+    # we don't want the (brief) downtime imposed by these.
+    sudo('service uwsgi restart')
+    sudo('service nginx restart')
     
     print "Try it out: https://%s or https://%s" % (inst.ip_address or '---', inst.dns_name or '---')
 
