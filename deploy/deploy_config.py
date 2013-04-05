@@ -65,6 +65,8 @@ class LocalConfig():
         # So, you want to ssh into an ec2 machine, but you gotta go through a proxy, huh?
         # Bummer. Let's let people set their own proxy
 
+        # example: ProxyCommand ssh china -W %h:22
+
         default = None # if we make a standard jumpbox in the cloud later, add it here
         proxy_cfg = os.path.join(pd_settings.PROJECT_ROOT, "deploy/proxy.cfg")
         if os.path.isfile(proxy_cfg):

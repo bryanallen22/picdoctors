@@ -61,7 +61,7 @@ server {
         uwsgi_pass unix:/tmp/picdoctorsapp.sock;
     # add https to the header to make django treat us like a https
     #   proxy_set_header   X-Forwarded-Protocol ssl;
-        proxy_set_header   X-Forwarded-Protocol https;
+        proxy_set_header   X-Forwarded-Protocol $scheme;
                 
     }
 
