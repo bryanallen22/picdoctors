@@ -58,11 +58,9 @@ server {
 
     location / {
         include uwsgi_params;
+        # django looks for this to make sure it's an ssl site so it doesn't break redirects
+        uwsgi_param UWSGI_SCHEME https;
         uwsgi_pass unix:/tmp/picdoctorsapp.sock;
-    # add https to the header to make django treat us like a https
-    #   proxy_set_header   X-Forwarded-Protocol ssl;
-        proxy_set_header   X-Forwarded-Protocol $scheme;
-                
     }
 
     # ssl stuff
