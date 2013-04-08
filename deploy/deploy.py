@@ -224,8 +224,7 @@ def getcode(force_push=False):
         '%s/.ssh/config' % cfg.deploy_user_home_dir, use_sudo=True)
     sudo('chown -R %s:%s %s' % 
          (cfg.deploy_user, cfg.deploy_user, cfg.deploy_user_home_dir))
-    sudo('chmod 600 %s/.ssh/id_rsa' % cfg.deploy_user_home_dir)
-    sudo('chmod 600 %s/.ssh/id_rsa.pub' % cfg.deploy_user_home_dir)
+    sudo('chmod 600 %s/.ssh/*' % cfg.deploy_user_home_dir)
 
     # allow our default ssh user to have pretty git logs, etc
     put(LocalConfig.remote_gitconfig, '~/.gitconfig') # make git logs pretty on remote, etc
@@ -290,6 +289,7 @@ def getcode(force_push=False):
     # Save the sha to an easily accessible file
     local('echo %s > /tmp/sha.txt' % head_sha)
     put('/tmp/sha.txt', '%s/sha.txt' % cfg.code_dir, use_sudo=True )
+    sudo('chown %s:%s %s/sha.txt' % (cfg.deploy_user, cfg.deploy_user, cfg.code_dir) );
 
     # To know what settings to use, we create a blank <deploy_type>.cfg 
     # file in the settings directory 
