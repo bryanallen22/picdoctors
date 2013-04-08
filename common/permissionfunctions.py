@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from annoying.functions import get_object_or_None
+from annoying.decorators import render_to
 
 def get_or_define_group(name):
     try:
@@ -18,3 +19,10 @@ def add_permission(group, name):
         group.permissions.add(p)
     except:
         pass
+
+# So, this is a view, but I'm putting it in here cause it seems
+# way to small to put in it's own file. Sue me.
+@render_to('permission_denied.html')
+def permission_denied(request):
+    return {}
+

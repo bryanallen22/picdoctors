@@ -8,7 +8,6 @@ from django.utils import simplejson
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from common.decorators import user_passes_test
 from common.functions import get_unfinished_album
 from common.functions import get_profile_or_None
 from common.functions import get_referer_view_and_id

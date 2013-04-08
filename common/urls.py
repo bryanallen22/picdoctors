@@ -10,6 +10,7 @@ from common.howitworksviews import howitworks
 from common.account_settings_views import account_settings, account_settings_delete_card
 from common.account_settings_views import change_password, change_email
 from common.account_settings_views import update_roles
+from common.permissionfunctions import permission_denied
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -33,5 +34,6 @@ urlpatterns = patterns('',
     url(r'^change_email/$',                     change_email,                 name='change_email'),
     url(r'^update_roles/$',                     update_roles,                 name='update_roles'),
     url(r'^make_album_shareable/$',             make_album_shareable,         name='make_album_shareable'),
+    url(r'^permission_denied/$',                permission_denied,            name='permission_denied'),
 )
 
