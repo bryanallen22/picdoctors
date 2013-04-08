@@ -24,7 +24,7 @@ import time
 # Helper functions
 ######################
 def run_user(str, cfg):
-    sudo(str, user=cfg.deploy_user)
+    sudo('umask 002; ' + str, user=cfg.deploy_user)
 
 def venv_run_user(str, cfg):
     with cd(cfg.code_dir):
@@ -246,7 +246,7 @@ def getcode(force_push=False):
         
         # Clean out anything exist in our spot
         sudo(  'rm -rf %s' % cfg.code_dir ) # with root, just in case
-        sudo( 'mkdir -p %s' % cfg.code_dir, user=cfg.deploy_user ) # recreate destination
+        run_user( 'mkdir -p %s' % cfg.code_dir, cfg ) # recreate destination
 
         # We can copy directly over ssh, thanks to set_sshconfig() setting
         # everything up for us. This seems to be the easiest way to push a
@@ -255,7 +255,7 @@ def getcode(force_push=False):
         #
         # The string is triple quoted, becuase the command itself nests single and double quotes.
         # What a mess.
-        push_str = (""" git archive HEAD | ssh -C %s "sudo -u %s /bin/bash -l -c 'tar xf - -C %s'" """
+        push_str = (""" git archive HEAD | ssh -C %s "sudo -u %s /bin/bash -l -c 'umask 002; tar xf - -C %s'" """
                     % ( instance_name, cfg.deploy_user, cfg.code_dir ) )
 
         print "--------"
@@ -269,22 +269,22 @@ def getcode(force_push=False):
             print "Performing 'git fetch' in existing repo..."
             print "--------"
             with cd(cfg.code_dir):
-                sudo('git fetch %s' % cfg.git_remote, user=cfg.deploy_user)
+                run_user('git fetch %s' % cfg.git_remote, cfg)
 
                 # delete any extra files, just in case
-                sudo('git clean -f', user=cfg.deploy_user)
+                run_user('git clean -f', cfg)
         else:
             print "--------"
             print "Cloning new repo..."
             print "--------"
             # Clean out anything exist in our spot
             sudo('rm -rf %s' % cfg.code_dir) # with root, just in case
-            sudo('git clone %s %s' % (cfg.repo_url, cfg.code_dir), user=cfg.deploy_user)
+            run_user('git clone %s %s' % (cfg.repo_url, cfg.code_dir), cfg)
 
         with cd(cfg.code_dir):
             # Prevent hypothetical race condition by using head_sha in case
             # origin/master has moved
-            sudo('git checkout %s' % head_sha, user=cfg.deploy_user)
+            run_user('git checkout %s' % head_sha, cfg)
 
     # Save the sha to an easily accessible file
     local('echo %s > /tmp/sha.txt' % head_sha)
@@ -294,7 +294,7 @@ def getcode(force_push=False):
     # To know what settings to use, we create a blank <deploy_type>.cfg 
     # file in the settings directory 
     sudo('rm -f %s/settings/*.cfg' % (cfg.code_dir))
-    sudo('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), user=cfg.deploy_user)
+    run_user('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), cfg)
     # Add the external IP to that settings file, used for Django's ALLOWED_HOSTS on
     # non production machines.
     sudo('echo "external_ip: %s" >> %s/settings/%s.cfg' %
@@ -648,8 +648,9 @@ def setup_remote_conveniences():
     cfg = get_config(deploy_type)
 
     sudo("""echo "alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'" >> /etc/bash.bashrc""")
-    if deploy_type == "test" or deploy_type == "sandbox":
-        sudo("chmod 777 /code/picdoctors -R")
+
+    # This lets us edit /code/pidoctors files without changing permissions.
+    sudo("usermod -a -G www-data ubuntu")
 
 
 @task
