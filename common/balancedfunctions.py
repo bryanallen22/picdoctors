@@ -2,6 +2,7 @@
 
 from common.basemodels import *
 from common.models import *
+from common.functions import get_datetime
 
 from django.db import models
 
@@ -9,6 +10,7 @@ import logging
 
 import balanced
 import settings
+import datetime
 
 import ipdb
 #ipdb.set_trace()
@@ -170,6 +172,23 @@ def place_hold(job, album, user, cents, card_uri):
     logging.info("Album owned by %s has been finished with price at $%s (cents)" %
                      (album.userprofile.email, cents))
 
+def rehold_if_necessary(job):
+    """
+    we check to see if it's expired, seven days in the future (well almost 7 days)
+    if so, let's create a new hold!
+    In the future we should probably push them to the set_price page if we see the hold has expired
+    that would be the easiest way of making sure the card isn't expired and recharging etc
+    """
+
+    guessed_expire = job.bp_hold.created + timedelta(days=6, hours=23, minutes=55)
+    now = get_datetime()
+
+    if now < guessed_expire:
+        hold = job.bp_hold.fetch()
+        place_hold(job, job.album, job.skaa, job.bp_hold.cents, hold.source.uri)
+        job = get_object_or_None(Job, id=job.id)
+
+    return job
 
 ################################################################################
 # Debit stuff
@@ -179,6 +198,8 @@ def do_debit(request, profile, job):
     balanced.configure(settings.BALANCED_API_KEY_SECRET)
     user_acct = profile.bp_account.fetch()
     doc_acct = job.doctor.bp_account.fetch()
+
+    job = rehold_if_necessary(job)
 
     if not is_merchant(doc_acct):
         raise KeyError("Doctors %s does not have a merchant balanced role" % job.doctor.email)

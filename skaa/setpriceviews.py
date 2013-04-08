@@ -101,6 +101,7 @@ def create_hold_handler(request):
        cents = currency_to_cents( request.POST['price'] )
 
        if cents >= min_price * 100:
+           # job can be None here, it'd be totally cool, we don't build anything based on the job, unless updating
 
            place_hold(job, album, request.user, cents, request.POST['card_uri'])
 

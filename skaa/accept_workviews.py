@@ -22,8 +22,10 @@ import pytz
 @login_required
 @render_to('accept_work.html')
 def accept_work(request, job_id):
+
     profile = get_profile_or_None(request)
     job = get_object_or_None(Job, id=job_id)
+
     if job.skaa != profile or job.status != Job.DOCTOR_SUBMITTED:
         return redirect('/')
 
@@ -58,11 +60,6 @@ def accept_work(request, job_id):
             return redirect(reverse('album', args=[job.album.id]))
 
     return {'job_id':job_id}
-
-
-
-    response_data = simplejson.dumps(result)
-    return HttpResponse(response_data, mimetype='application/json')
 
 def get_rating(request):
     rating = 1
