@@ -1,5 +1,6 @@
 from PIL import Image, ImageEnhance, ImageFont, ImageDraw 
-import ipdb
+import settings
+import ipdb, os
 
 def reduceOpacity(im, opacity):
     """Returns an image with reduced opacity."""
@@ -53,7 +54,9 @@ def generate_watermarked_image(im, specific_text):
     text = (specific_text, "www.PicDoctors.com")
     opacity = 0.5
     font_size = int(im_height * .023)
-    font = ImageFont.truetype("skaa/HelveticaNeueLight.ttf", font_size)
+    font = ImageFont.truetype(
+        os.path.join(settings.PROJECT_ROOT, "skaa/HelveticaNeueLight.ttf"),
+        font_size)
     watermarked_image = watermark(im, mark, position, text, font, font_size, opacity)
 #    watermarked_image.show()
     return watermarked_image
