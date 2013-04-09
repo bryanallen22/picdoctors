@@ -596,9 +596,6 @@ class DocPicGroup(DeleteMixin):
         # if not ( any valid reason to stay ) 
         is_doctor = False if not profile else profile.isa('doctor')
 
-        # TODO I could get the job in here, but it'd hurt my db feelings
-        # job = group.album.get_job_or_None()
-
         if not ( job.is_approved() or is_doctor or ( profile and profile.has_common_perm('view_album') ) ):
             return None
 

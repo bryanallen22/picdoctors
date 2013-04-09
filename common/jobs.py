@@ -27,7 +27,7 @@ class JobInfo:
         self.doctor_payout = ''
         self.job_worth = ''
 
-# TODO remove the dup stuff, I'm just doing it so I don't break the current functionality
+# dictify everything for jsoning
     def to_dict(self):
         dup = deepcopy(self)
         arr = []

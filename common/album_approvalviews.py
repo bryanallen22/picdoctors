@@ -1,5 +1,6 @@
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
+from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
@@ -24,11 +25,10 @@ import ipdb
 @login_required
 @render_to('jobs.html')
 def album_approval_page(request, page=1):
-    if request.user.is_authenticated():
-        jobs = Job.objects.filter(status=Job.MODERATOR_APPROVAL_NEEDED).order_by('created').reverse()
-    else:
-        #TODO they shouldn't ever get here based on future permissions
-        jobs = []
+    if not request.user.has_common_perm('approve_album'):
+        return redirect('/')
+
+    jobs = Job.objects.filter(status=Job.MODERATOR_APPROVAL_NEEDED).order_by('created').reverse()
 
     pager, cur_page = get_pagination_info(jobs, page)    
 

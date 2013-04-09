@@ -74,22 +74,38 @@ def contact(request, job_id):
 
     return {'job_id': job.id, 'is_owner': (profile == job.skaa), 'job_messages' : job_messages}
 
-#TODO  fix this so that it actually checks
-def can_add_message(request):
-    return True
+def can_add_message(request, job):
+    if not job:
+        return False
 
+    profile = get_profile_or_None(request)
+    
+    if job.skaa == profile:
+        return True
+
+    if job.doctor == profile:
+        return True
+
+    if job.doctor == None and profile.isa('doctor'):
+        return True
+
+    return False
+
+@login_required
 def message_handler(request):
     result = {}
     if request.method == 'POST':
         data = simplejson.loads(request.body)
         message = data['message'].strip()
-        if can_add_message(request) and message != '':
+
+        job_val = data['job_id'].strip()
+        job = get_object_or_None(Job, id=int(job_val))
+
+        if can_add_message(request, job) and message != '':
             profile = get_profile_or_None(request)
             msg = None
             group_val = data['group_id'].strip()
-            job_val = data['job_id'].strip()
 
-            job = get_object_or_None(Job, id=int(job_val))
             job_msg = False
 
             if group_val != '':
