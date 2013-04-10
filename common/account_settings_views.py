@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 from django.utils import simplejson
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 
 from annoying.decorators import render_to
 
@@ -35,7 +36,7 @@ def get_shared_params(request, profile):
         'marketplace_uri' : settings.BALANCED_MARKETPLACE_URI,
     }
 
-@require_login_as(['skaa']) #, 'doctor'])
+@require_login_as(['skaa', 'doctor'])
 @render_to('account_settings.html')
 def account_settings(request):
     # if user, send them to settings_user

@@ -3,8 +3,12 @@ from functools import wraps
 
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
+from django.utils.encoding import force_str
+from django.shortcuts import resolve_url
 
-from django.contrib.auth.decorators import user_passes_test
+from urlparse import urlparse
+
+import settings
 
 def passes_test(test_fcn, redirect_name):
     """
@@ -80,12 +84,22 @@ def require_login_as(view_func, *myargs, **mykwargs):
 
     Examples:
         @require_login_as(['skaa', 'doctor'])
-        @require_login_as(['skaa', 'doctor'], '/someloginurl/')
     """
     roles = myargs[0]
     def wrapper(request):
         if not request.user.is_authenticated():
-            return redirect( reverse('skaa_signin') ) # doctors can sign in there too
+            path = request.build_absolute_uri()
+            # urlparse chokes on lazy objects in Python 3, force to str
+            resolved_login_url = force_str( settings.LOGIN_URL )
+            # If the login url is the same scheme and net location then just
+            # use the path as the "next" url.
+            login_scheme, login_netloc = urlparse(resolved_login_url)[:2]
+            current_scheme, current_netloc = urlparse(path)[:2]
+            if ((not login_scheme or login_scheme == current_scheme) and
+                (not login_netloc or login_netloc == current_netloc)):
+                path = request.get_full_path()
+            from django.contrib.auth.views import redirect_to_login
+            return redirect_to_login(path, resolved_login_url, 'next')
         for role in roles:
             if request.user.isa(role):
                 return view_func(request)
