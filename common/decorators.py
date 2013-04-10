@@ -101,7 +101,7 @@ def require_login_as(view_func, *myargs, **mykwargs):
             from django.contrib.auth.views import redirect_to_login
             return redirect_to_login(path, resolved_login_url, 'next')
         for role in roles:
-            if request.user.isa(role):
+            if request.user.isa(role) or role == 'admin':
                 return view_func(request)
 
         # They are signed in, but don't have permission
