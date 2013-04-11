@@ -86,7 +86,7 @@ def require_login_as(view_func, *myargs, **mykwargs):
         @require_login_as(['skaa', 'doctor'])
     """
     roles = myargs[0]
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated():
             path = request.build_absolute_uri()
             # urlparse chokes on lazy objects in Python 3, force to str
@@ -102,7 +102,7 @@ def require_login_as(view_func, *myargs, **mykwargs):
             return redirect_to_login(path, resolved_login_url, 'next')
         for role in roles:
             if request.user.isa(role) or role == 'admin':
-                return view_func(request)
+                return view_func(request, *args, **kwargs)
 
         # They are signed in, but don't have permission
         return redirect( reverse('permission_denied') )

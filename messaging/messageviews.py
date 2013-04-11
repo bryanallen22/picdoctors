@@ -1,7 +1,6 @@
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 
 from annoying.decorators import render_to
@@ -17,6 +16,7 @@ from tasks.tasks import sendAsyncEmail
 import settings
 from notifications.functions import notify
 from notifications.models import Notification
+from common.decorators import require_login_as
 
 import ipdb
 import logging
@@ -51,7 +51,7 @@ def prep_messages(base_messages, job):
 
     return simplejson.dumps(messages)
 
-@login_required
+@require_login_as(['skaa', 'doctor'])
 @render_to('contact.html')
 def contact(request, job_id):
     #SECURITY (Move to Decorator)
@@ -91,7 +91,7 @@ def can_add_message(request, job):
 
     return False
 
-@login_required
+@require_login_as(['skaa', 'doctor'])
 def message_handler(request):
     result = {}
     if request.method == 'POST':

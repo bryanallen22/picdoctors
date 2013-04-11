@@ -1,5 +1,4 @@
 # Create your views here.
-from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -9,12 +8,13 @@ from annoying.decorators import render_to
 
 from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account, is_merchant
+from common.decorators import require_login_as
 
 import balanced
 import settings
 import logging
 
-@login_required
+@require_login_as(['doctor'])
 def create_bank_account(request):
     profile = get_profile_or_None(request)
     
@@ -31,7 +31,7 @@ def create_bank_account(request):
     response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')
 
-@login_required
+@require_login_as(['doctor'])
 def delete_bank_account(request):
     # TODO - don't delete the uri unless it's associated with
     # the logged in user. Just to be sure.
@@ -55,7 +55,7 @@ def delete_bank_account(request):
     response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')
 
-@login_required
+@require_login_as(['doctor'])
 def merchant_info(request):
     """
     POST should contain info to underwrite a doctor

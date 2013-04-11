@@ -1,5 +1,4 @@
 # Create your views here.
-from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -20,6 +19,7 @@ from common.balancedfunctions import *
 from models import Markup
 from skaa.jobsviews import update_job_hold
 from skaa.rejectviews import remove_previous_doctor
+from common.decorators import require_login_as
 
 import ipdb
 import logging
@@ -122,7 +122,7 @@ def create_hold_handler(request):
     response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')
 
-@login_required
+@require_login_as(['skaa'])
 @render_to('set_price.html')
 def increase_price(request, job_id):
 
@@ -161,7 +161,7 @@ def increase_price(request, job_id):
         'original_price'    : str_original_price,
     }
 
-@login_required
+@require_login_as(['skaa'])
 @render_to('set_price.html')
 def set_price(request):
     album, redirect_url = get_unfinished_album(request)

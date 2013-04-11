@@ -1,7 +1,6 @@
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 
 from annoying.decorators import render_to
@@ -15,6 +14,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
+from common.decorators import require_login_as
 
 import ipdb
 import logging
@@ -29,7 +29,6 @@ class Combination():
         self.messages = []
         self.group_id = -1
 
-#@login_required
 @render_to('album.html')
 def album(request, album_id):
     #SECURITY (Move to Decorator)
@@ -41,10 +40,10 @@ def album(request, album_id):
     job = album.get_job_or_None()
 
     if not job:
-        return redirect('/')
+        return redirect( reverse('permission_denied') )
 
     if not profile and not album.allow_publicly:
-        return redirect('/')
+        return redirect( reverse('permission_denied') )
 
     moderator = False if not profile else profile.has_common_perm('approve_album')
 
@@ -88,7 +87,7 @@ def album(request, album_id):
     }
 
 #This is for a moderator to approve an album
-@login_required
+@require_login_as(['admin'])
 def approve_album(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
@@ -116,7 +115,7 @@ def update_doc_auto_approve(job):
         doc.auto_approve = True
         doc.save()
 
-@login_required
+@require_login_as(['skaa'])
 def make_album_shareable(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)

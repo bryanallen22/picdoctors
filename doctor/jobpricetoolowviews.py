@@ -1,5 +1,4 @@
 # Create your views here.
-from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -14,11 +13,12 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
+from common.decorators import require_login_as
 
 import settings
 import ipdb
 
-@login_required
+@require_login_as(['doctor'])
 @render_to('too_low.html')
 def job_price_too_low(request, job_id=None):
     job_id = int(job_id)

@@ -3,15 +3,15 @@
 from common.functions import get_profile_or_None
 from annoying.functions import get_object_or_None
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
 from notifications.models import Notification, NotificationToIgnore
 from django.utils import simplejson
 from django.http import HttpResponse
+from common.decorators import require_login_as
 
 import ipdb
 
 #markup page when we don't specify a album_id (get it from request)
-@login_required
+@require_login_as(['skaa', 'doctor'])
 def notification_redirecter(request, notification_id):
     notification = get_object_or_None(Notification, id=notification_id)
     profile = get_profile_or_None(request)
@@ -26,7 +26,7 @@ def notification_redirecter(request, notification_id):
     return redirect('/')
 
 
-@login_required
+@require_login_as(['skaa', 'doctor'])
 def notification_handler(request):
     profile = get_profile_or_None(request)
     if request.method == 'POST' and profile:

@@ -1,5 +1,4 @@
 # Create your views here.
-from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -11,6 +10,7 @@ from annoying.decorators import render_to
 from common.models import *
 from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account, get_withdraw_jobs, is_merchant, credit_doctor
+from common.decorators import require_login_as
 
 from collections import namedtuple
 
@@ -42,7 +42,7 @@ def generate_rows(withdraw_jobs):
 
     return ret
 
-@login_required
+@require_login_as(['doctor'])
 @render_to('withdraw.html')
 def withdraw(request):
     profile = get_profile_or_None(request)

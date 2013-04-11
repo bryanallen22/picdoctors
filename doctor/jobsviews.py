@@ -3,7 +3,6 @@ from annoying.functions import get_object_or_None
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from common.models import Job 
 from common.models import Album
@@ -17,12 +16,13 @@ from common.functions import get_profile_or_None, get_datetime
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
 from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction 
 from common.jobs import send_job_status_change, fill_job_info
+from common.decorators import require_login_as
 from datetime import timedelta
 import datetime
 from django.utils.timezone import utc
 import ipdb
 
-@login_required
+@require_login_as(['doctor'])
 @render_to('jobs.html')
 def doc_job_page(request, page=1, job_id=None):
     jobs = None
@@ -49,7 +49,7 @@ def doc_job_page(request, page=1, job_id=None):
     }
 
 
-@login_required
+@require_login_as(['doctor'])
 @render_to('jobs.html')
 def new_job_page(request, page=1):
     jobs = None
@@ -72,7 +72,7 @@ def new_job_page(request, page=1):
 
         jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).filter(bp_hold__created__gte=seven_days_ago)
     else:
-        return redirect('/')
+        return redirect( reverse('permission_denied') )
 
     pager, cur_page = get_pagination_info(jobs, page)    
 
@@ -138,7 +138,7 @@ def generate_doctor_actions(job):
 
     return ret
 
-@login_required
+@require_login_as(['doctor'])
 def apply_for_job(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=data['job_id'])
@@ -198,7 +198,7 @@ def has_rights_to_act(profile, job):
     return False
 
 
-@login_required
+@require_login_as(['doctor'])
 def mark_job_completed(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)

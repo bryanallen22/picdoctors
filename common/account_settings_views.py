@@ -1,5 +1,4 @@
 # Create your views here.
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.utils import simplejson
 from django.http import HttpResponse
@@ -28,7 +27,6 @@ class NotificationInfo:
         self.description = 'cow'
         self.enabled = False
 
-@login_required
 def get_shared_params(request, profile):
 
     return {
@@ -88,7 +86,7 @@ def get_notification_list(profile):
     return simplejson.dumps(nts)
 
 
-@login_required
+@require_login_as(['skaa'])
 def account_settings_delete_card(request):
     """
     Asynchronous call done to delete the card associated with request.POST['card_uri']
@@ -113,7 +111,7 @@ def account_settings_delete_card(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-@login_required
+@require_login_as(['skaa', 'doctor'])
 def change_password(request):
     # Send them back to their current page
 
@@ -134,7 +132,7 @@ def change_password(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-@login_required
+@require_login_as(['skaa', 'doctor'])
 def change_email(request):
 
     profile = get_profile_or_None(request)
@@ -167,7 +165,7 @@ def change_email(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-@login_required
+@require_login_as(['skaa', 'doctor'])
 def update_roles(request):
     profile = get_profile_or_None(request)
     success = False

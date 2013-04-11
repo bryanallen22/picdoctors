@@ -11,18 +11,18 @@ from common.models import Group
 from common.models import Pic
 from common.functions import get_profile_or_None
 from common.calculations import calculate_job_payout
-from django.contrib.auth.decorators import login_required
 from decimal import *
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
 from common.jobs import Actions, Action, RedirectData, DynamicAction
 from common.jobs import send_job_status_change, fill_job_info
+from common.decorators import require_login_as
 
 import math
 import ipdb
 
 
-@login_required
+@require_login_as(['skaa', 'doctor'])
 @render_to('jobs.html')
 def album_approval_page(request, page=1):
     if not request.user.has_common_perm('approve_album'):

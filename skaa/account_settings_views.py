@@ -1,5 +1,4 @@
 # Create your views here.
-from django.contrib.auth.decorators import login_required
 
 from annoying.decorators import render_to
 from common.functions import get_profile_or_None

@@ -11,12 +11,12 @@ from common.models import Pic
 from common.balancedmodels import BPHold
 from common.functions import get_profile_or_None, get_datetime
 from common.calculations import calculate_job_payout
-from django.contrib.auth.decorators import login_required
 from decimal import *
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
 from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction
 from common.jobs import send_job_status_change, fill_job_info
+from common.decorators import require_login_as
 from datetime import timedelta
 import datetime
 from django.utils.timezone import utc
@@ -26,7 +26,7 @@ import ipdb
 
 
 
-@login_required
+@require_login_as(['skaa', 'doctor'])
 @render_to('jobs.html')
 def job_page(request, page=1, job_id=None):
     ### get a list of the jobs by this user ###
@@ -176,32 +176,7 @@ def set_groups_locks(album_to_lock, state):
         group.is_locked = state
         group.save()
 
-
-# DEPRECATED!!!!!
-@login_required
-def reject_doctors_work(request):
-    profile = get_profile_or_None(request)
-    data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
-
-    actions = Actions()
-    actions.add('alert', AlertDate('There was an error processing your request.', 'error'))
-    if job and profile and job.skaa == profile:
-        #TODO Put money into Doctors account 
-        actions.clear()
-        actions.add('alert', AlertData('The job was rejected', 'success'))
-        job.status = Job.USER_REJECTED
-        job.save()
-
-        job_info = fill_job_info(job, generate_skaa_actions, profile)
-        actions.addJobInfo(job_info)
-        
-        send_job_status_change(job, profile)
-
-    return HttpResponse(actions.to_json(), mimetype='application/json')
-
-
-@login_required
+@require_login_as(['skaa'])
 def request_modification(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)

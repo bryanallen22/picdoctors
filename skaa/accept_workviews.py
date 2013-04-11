@@ -8,18 +8,18 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 from common.functions import get_profile_or_None, get_datetime
 from common.balancedfunctions import get_merchant_account
-from django.contrib.auth.decorators import login_required
 
 from common.models import Album, Group, Job, DocRating
 from common.jobs import send_job_status_change
 from common.balancedfunctions import *
+from common.decorators import require_login_as
 
 import ipdb
 import logging
 from datetime import datetime
 import pytz
 
-@login_required
+@require_login_as(['skaa'])
 @render_to('accept_work.html')
 def accept_work(request, job_id):
 

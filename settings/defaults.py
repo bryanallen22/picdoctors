@@ -228,7 +228,7 @@ EMAIL_HOST_PASSWORD = 'USW6euCiIbUSxnqi'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-# used by @login_required and @require_login_as
+# used by @require_login_as
 LOGIN_URL='/signin/'
 
 DEBUG_TOOLBAR_CONFIG = {

@@ -1,7 +1,6 @@
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 
 from annoying.decorators import render_to

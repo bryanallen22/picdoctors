@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from annoying.decorators import render_to
 from common.models import Group
 from django.utils import simplejson
@@ -9,10 +8,11 @@ from common.jobs import send_job_status_change
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from common.decorators import require_login_as
 
 import ipdb
 
-@login_required
+@require_login_as(['skaa'])
 @render_to("reject.html")
 def refund(request, job_id):
 
@@ -25,7 +25,7 @@ def refund(request, job_id):
             }
 
 
-@login_required
+@require_login_as(['skaa'])
 @render_to("reject.html")
 def switch_doctor(request, job_id):
 
@@ -49,7 +49,7 @@ def reject_belongs(request, job_id):
 
     return True
 
-@login_required
+@require_login_as(['skaa'])
 def refund_user_endpoint(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
@@ -66,7 +66,7 @@ def refund_user_endpoint(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-@login_required
+@require_login_as(['skaa'])
 def switch_doctor_endpoint(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)

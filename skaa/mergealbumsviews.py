@@ -1,6 +1,4 @@
 # Create your views here.
-from django.contrib.auth.decorators import login_required
-
 from annoying.decorators import render_to
 
 from common.models import Album
@@ -16,6 +14,7 @@ from collections import namedtuple
 import ipdb
 import logging
 from datetime import datetime
+from common.decorators import require_login_as
 
 CarouselPic = namedtuple('CarouselPic', 'pic_url markup_url')
 
@@ -43,7 +42,7 @@ def generate_carousel_imgs(filter_album):
 #
 # Anyway. so now we gotta resolve these two albums into a single
 # album.
-@login_required
+@require_login_as(['skaa'])
 @render_to('merge_albums.html')
 def merge_albums(request):
     # Where do we send people who don't belong here?
