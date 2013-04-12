@@ -58,6 +58,12 @@ def create_user(email, password, confirm_password, usertype):
     # you shouldn't be able to create two different users with different emails
     # just based on capitalization
     email = email.lower()
+    at_idx = email.find("@")
+    if at_idx != -1:
+        nickname = email[:at_idx]
+    else:
+        nickname = email
+
     if password != confirm_password:
         return ( None, { 'passwords_didnt_match' : True } )
 
@@ -77,11 +83,13 @@ def create_user(email, password, confirm_password, usertype):
         # The Profile for this person has already been automatically created
         # based on the post_save signal tied to the User class. See create_user_profile
         # in common/models.py
-        user_profile = user
+        user.nickname = nickname
+        user.save()
+        
         if usertype == 'doc':
-            create_doctor(user_profile)
+            create_doctor(user)
         elif usertype == 'user':
-            create_skaa(user_profile)
+            create_skaa(user)
         else:
             raise ValueError('Bad usertype: %s' % usertype)
 

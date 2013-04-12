@@ -8,7 +8,7 @@ from common.album_approvalviews import album_approval_page
 from common.faqviews import faq
 from common.howitworksviews import howitworks
 from common.account_settings_views import account_settings, account_settings_delete_card
-from common.account_settings_views import change_password, change_email
+from common.account_settings_views import change_password, change_profile_settings, check_unique_nickname
 from common.account_settings_views import update_roles
 from common.permissionfunctions import permission_denied
 
@@ -31,7 +31,8 @@ urlpatterns = patterns('',
     url(r'^faq/$',                              faq,                          name='faq'),
     url(r'^howitworks/$',                       howitworks,                   name='howitworks'),
     url(r'^change_password/$',                  change_password,              name='change_password'),
-    url(r'^change_email/$',                     change_email,                 name='change_email'),
+    url(r'^change_profile_settings/$',          change_profile_settings,      name='change_profile_settings'),
+    url(r'^check_unique_nickname/$',            check_unique_nickname,        name='check_unique_nickname'),
     url(r'^update_roles/$',                     update_roles,                 name='update_roles'),
     url(r'^make_album_shareable/$',             make_album_shareable,         name='make_album_shareable'),
     url(r'^permission_denied/$',                permission_denied,            name='permission_denied'),

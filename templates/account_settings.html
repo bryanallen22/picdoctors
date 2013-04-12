@@ -36,28 +36,34 @@
 
       {# Profile tab #}
       <div class="tab-pane active in" id="home_pane">
-        <form id="email-form" class="form-horizontal">
+        <form id="profile-form" class="form-horizontal">
 
+          <div class="control-group">
+            <label class="control-label" for="nickname" >Nickname</label>
+            <div class="controls">
+              <input type="text" id="new_nickname" name="new_nickname" value="{{ request.user.nickname }}" class="span3">
+            </div>
+          </div>
           <div class="control-group">
             <label class="control-label" for="new_email" >Email</label>
             <div class="controls">
-              <input type="text" id="new_email" name="new_email" value="{{ email }}" class="span3">
+              <input type="text" id="new_email" name="new_email" value="{{ request.user.email }}" class="span3">
             </div>
           </div>
 
-          <div id="email-success" class="alert alert-success email_alert" style="display:none;">
+          <div id="profile_error" class="alert alert-error" style="display:none;">
             <button class="close" data-dismiss="alert">×</button>
-            Your password has been changed successfully.
+            <div id="profile_error_text"> words </div>
           </div>
-          <div id="email-fail" class="alert alert-error email_alert" style="display:none;">
+          <div id="profile_success" class="alert alert-success" style="display:none;">
             <button class="close" data-dismiss="alert">×</button>
-            Uh oh. Something went wrong, and your email address wasn't changed. Sorry!
+            <div id="profile_success_text"> words </div>
           </div>
 
           <div class="control-group">
             <label class="control-label"></label>
             <div class="controls">
-              <button type="submit" class="btn btn-primary">Update</button>
+              <button id="profile_submit" type="submit" class="btn btn-primary">Update</button>
             </div>
           </div>
         </form>

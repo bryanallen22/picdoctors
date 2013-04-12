@@ -56,7 +56,7 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
 
     
     email                       = models.EmailField( verbose_name='email address', max_length=255, unique=True, db_index=True)
-    nickname                    = models.CharField(max_length=32, blank=True)
+    nickname                    = models.CharField(max_length=32, blank=True, unique=True, db_index=True)
 
     is_active                   = models.BooleanField(default=True)
 

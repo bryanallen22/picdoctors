@@ -196,9 +196,9 @@ $(function(){
  * Password/email stuff
  */
 $(function(){
+  var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
 
   function postTo(url, obj, callback) {
-    var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
 
     $.ajax({
       headers: {
@@ -244,55 +244,6 @@ $(function(){
     });
   });
 
-  $("#email-form").find("button:submit").click( function(e) {
-    e.preventDefault();
-
-    // Disable the button
-    var $button = $(this);
-    $button.attr("disabled", "disabled");
-
-    // if there is already an alert showing, hide it
-    $(".email_alert").hide();
-
-    obj = {
-      'new_email' : $('input[name="new_email"]').val(),
-    };
-
-    postTo('/change_email/', obj, function(data) {
-      // enable the button again
-      $button.removeAttr("disabled");
-
-      if ( data.success ) {
-        $("#email-success").show();
-      }
-      else {
-        $("#email-fail").show();
-      }
-    });
-
-  });
-
-});
-
-/*
- * Become a Pic Doctor
- */
-$(function(){
-
-  function postTo(url, obj, callback) {
-    var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
-
-    $.ajax({
-      headers: {
-        "X-CSRFToken":CSRF_TOKEN
-      },
-      type: "POST",
-      url: url,
-      data: obj,
-      success : callback,
-    });
-
-  }
 
   $("#formRoles").find(".onoffswitch-checkbox").click( function() {
 
@@ -316,24 +267,18 @@ $(function(){
     });
   });
 
-});
-
-
-
-/***************************************************************
- * Notification Settings
- * ************************************************************/
-// Load the application once the DOM is ready, using `jQuery.ready`:
-$(function(){
-
   var true_sync_func = Backbone.sync;
-  var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
   Backbone.sync = function(method, model, options){
     options.beforeSend = function(xhr){
       xhr.setRequestHeader('X-CSRFToken', CSRF_TOKEN);
     };
     return true_sync_func( method, model, options);
   };
+
+/***************************************************************
+ * Notification Settings
+ * ************************************************************/
+// Load the application once the DOM is ready, using `jQuery.ready`:
 
   var NotificationInfo = Backbone.Model.extend({
     defaults: function() {
@@ -418,6 +363,82 @@ $(function(){
 
 
   });
+
+
+  var ProfileView = Backbone.View.extend({
+    
+    el: $('#profile-form'),
+
+    template:  '',
+
+    // Delegated events for creating new items, and clearing completed ones.
+    events: {
+      //"keypress #new-todo":  "createOnEnter",
+      "blur      #new_nickname"         : "check_unique_nickname",
+      "click     #profile_submit"       : "profile_submit",
+    },
+
+    initialize: function(){
+      //this is set in the job.html page
+    //  this.model.bind('change',  this.render,       this);
+    },
+
+    hide_messages: function(){
+       this.$el.find("#profile_error").hide();
+       this.$el.find("#profile_success").hide();
+    },
+
+    handle_response: function(data){
+        if (  data.success ) {
+          this.$el.find("#profile_success").show();
+          this.$el.find("#profile_success_text").text( data.text );
+        } else {
+          this.$el.find("#profile_error").show();
+          this.$el.find("#profile_error_text").text( data.text );
+        }
+
+    },
+
+    check_unique_nickname: function(){
+      this.hide_messages();
+
+      var obj = {
+        'nickname'    : this.$el.find("#new_nickname").val(),
+      };
+
+      var this_view = this;
+
+      postTo('/check_unique_nickname/', obj, function(data) {
+        this_view.handle_response(data);
+      });
+
+    },
+
+    profile_submit: function(){
+      this.hide_messages();
+
+      var obj = {
+        'nickname'    : this.$el.find("#new_nickname").val(),
+        'email'    : this.$el.find("#new_email").val(),
+      };
+
+      var button = this.$el.find("#profile_submit");
+      var this_view = this;
+
+      // disable button
+      button.attr("disabled", "disabled");
+
+      postTo('/change_profile_settings/', obj, function(data) {
+        this_view.handle_response(data);
+        // enable the button again
+        button.removeAttr("disabled");
+
+        });
+    },
+
+  });
+
+  var pf = new ProfileView;
 
   var list = new NotificationList();
   list.container = $("#notifications-form");

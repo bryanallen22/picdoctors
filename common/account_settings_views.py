@@ -14,6 +14,8 @@ from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account
 from notifications.models import Notification, NotificationToIgnore
 from common.decorators import require_login_as
+from common.models import Profile
+import re
 
 import logging
 
@@ -30,7 +32,6 @@ class NotificationInfo:
 def get_shared_params(request, profile):
 
     return {
-        'email'           : request.user.email,
         'marketplace_uri' : settings.BALANCED_MARKETPLACE_URI,
     }
 
@@ -132,15 +133,65 @@ def change_password(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-@require_login_as(['skaa', 'doctor'])
-def change_email(request):
+def valid_nick(nickname):
+    if nickname.strip() == "":
+        result = {
+            'success'   : False,
+            'text'      : "You're nickname can't be blank",
+            }
+    elif len(nickname) > 32:
+        result = {
+            'success'   : False,
+            'text'      : "You're nickname can't be greater then 32 characters long",
+            }
+    elif not re.match('^[a-zA-Z0-9_]+$', nickname):
+        result = {
+            'success'   : False,
+            'text'      : "You're nickname can only contain letters, numbers and underscores",
+            }
+    else:
+        result= {'success':True}
 
+    return result
+
+
+@require_login_as(['skaa', 'doctor'])
+def check_unique_nickname(request):
     profile = get_profile_or_None(request)
-    new_email = request.POST['new_email']
+    try:
+        nickname = request.POST['nickname'] 
+        result = valid_nick(nickname)
+        if result.get('success'):
+            nick_count = Profile.objects.filter(nickname=nickname).exclude(id=profile.id).count()
+            if nick_count == 0:
+
+                result = {
+                       'success' : True,
+                       'text'    : 'That nickname is available!',
+                         }
+            else:
+                result = {
+                        'success' :False,
+                        'text' : "That nickname is already in use!",
+                        }
+    except:
+        result = {
+                'success' : False,
+                'text' : "There was an unexpected error, we may be unable to save your nickname"
+                 }
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
+
+@require_login_as(['skaa', 'doctor'])
+def change_profile_settings(request):
+    profile = get_profile_or_None(request)
+    nickname = request.POST['nickname']
+    new_email = request.POST['email']
     old_email = request.user.email
 
     # Initialize to fail
-    result = { 'success' : False }
+    result = { 'success' : False, 'text': 'Oh no, something bad has happened!' }
 
     logging.info("Changing user email %s to %s" % (request.user.email, new_email))
 
@@ -151,9 +202,10 @@ def change_email(request):
         account.save()
 
         request.user.email = new_email
+        request.user.nickname = nickname
         request.user.save()
 
-        result = { 'success' : True }
+        result = { 'success' : True , 'text': 'We successfully updated your account settings!'}
     except:
         # TODO - make sure our local db copy is okay
         logging.info("Error updating user email from %s to %s! Resetting our local copy, just in case."
