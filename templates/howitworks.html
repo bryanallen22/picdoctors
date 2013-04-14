@@ -8,37 +8,136 @@
 {% endblock %}
 
 {% block main %}
-<h4>
-<div class='row'>
-  <div class='span3 how_it_works_box'>Go to PicDoctors.Com</div>
-</div>
-<div class='row' style='margin:20px;text-align:center;'>
-  <div class='span2'> <img class='rotate_90' style='height:60px'  src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
-</div>
-<div class='row'>
-  <div class='span3 how_it_works_box'>Upload Pictures</div>
-  <div class='span1'> <img src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
-  <div class='span3 how_it_works_box'>Mark up pictures</div>
-  <div class='span1'> <img src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
-  <div class='span3 how_it_works_box'>Pay</div>
-</div>
-<div class='row' style='margin:20px;text-align:center;'>
-  <div class='offset8 span2'> <img class='rotate_90' style='height:60px;'  src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
-</div>
-<div class='row'>
-  <div class='span3 how_it_works_box'>Download Pictures</div>
-  <div class='span1'> <img class='rotate_180' src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
-  <div class='span3 how_it_works_box'>Accept Work</div>
-  <div class='span1'> <img class='rotate_180' src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
-  <div class='span3 how_it_works_box'>Doctor takes and does job</div>
-</div>
-<div class='row' style='margin:20px;text-align:center;'>
-  <div class='span2'> <img class='rotate_90' style='height:60px'  src='{{ STATIC_URL }}images/arrow-right.jpg'></img></div>
-</div>
-<div class='row'>
-  <div class='span3 how_it_works_box'>Enjoy Your Pictures!</div>
-</div>
-</h4>
+
+<div id="howitworks">
+
+  <div id="upload_desc" class="row">
+    <div class="span5">
+      <h3> Upload your pictures </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      </p>
+    </div>
+    <div class="span1"> &nbsp; </div>
+    <div class="span5">
+      {# TODO: Make my own similar image #}
+      <img src="https://stripe.com/img/frontpage/stripe-photo.png" alt="Upload pictures">
+    </div>
+  </div>
+
+  <div id="markup_desc" class="row">
+    <div class="span5">
+      {# TODO: Create an animated gif that shows the markup #}
+      <img src="http://i.istockimg.com/file_thumbview_approve/571992/2/stock-photo-571992-working-with-documents.jpg" alt="Describe retouch"
+           height="253px" >
+    </div>
+    <div class="span1"> &nbsp; </div>
+    <div class="span5">
+      <h3> Describe the job </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      </p>
+    </div>
+  </div>
+
+  <div id="setprice_desc" class="row">
+    <div class="span5">
+      <h3> Set a price </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      </p>
+    </div>
+    <div class="span1"> &nbsp; </div>
+    <div class="span5">
+      {# TODO: Picture of a credit card #}
+      <img src="http://www.pageonce.com/blog/wp-content/uploads/2013/03/credit-cards.jpg" alt="Credit card picture"
+           height="253px" >
+    </div>
+  </div>
+
+  <div id="doctakesjob_desc" class="row">
+    <div class="span5">
+      {# TODO: Picture of a credit card #}
+      <img src="http://i.istockimg.com/file_thumbview_approve/634532/2/stock-photo-634532-woman-working-at-home-4.jpg" alt="Credit card picture"
+           height="253px" >
+    </div>
+    <div class="span1"> &nbsp; </div>
+    <div class="span5">
+      <h3> A pic doctor accepts the job </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      </p>
+    </div>
+  </div>
+
+  <div id="communicate_desc" class="row">
+    <div class="span5">
+      <h3> Communicate </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      </p>
+    </div>
+    <div class="span1"> &nbsp; </div>
+    <div class="span5">
+      {# TODO: Picture of a credit card #}
+      <img src="http://i.istockimg.com/file_thumbview_approve/14233656/2/stock-photo-14233656-email-button.jpg" alt="email picture"
+           height="253px" >
+    </div>
+  </div>
+
+  <div id="approve_desc" class="row">
+    <div class="span5">
+      {# TODO: Picture of a credit card #}
+      <img src="http://i.istockimg.com/file_thumbview_approve/5680829/2/stock-photo-5680829-handshake.jpg" alt="accept work"
+           height="253px" >
+    </div>
+    <div class="span1"> &nbsp; </div>
+    <div class="span5">
+      <h3> Approve the work </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      </p>
+    </div>
+  </div>
+
+  <div id="enjoy_desc" class="row">
+    <div class="span5">
+      <h3> Enjoy your pictures </h3>
+      <p>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      </p>
+    </div>
+    <div class="span1"> &nbsp; </div>
+    <div class="span5">
+      {# TODO: Picture of a credit card #}
+      <img src="http://i.istockimg.com/file_thumbview_approve/12164076/2/stock-photo-12164076-collection.jpg" alt="enjoy your pictures"
+           height="253px" >
+    </div>
+  </div>
+
+</div> {# '#howitworks' #}
+
 {% endblock %}
 
 {% block scripts %}
