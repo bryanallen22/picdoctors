@@ -15,33 +15,32 @@
     <div class="span5">
       <h3> Upload your pictures </h3>
       <p>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        Upload a single picture or a full album by dragging and dropping the files into place. If
+        you'd like two or more pictures combined into a single picture, group them together.
       </p>
     </div>
     <div class="span1"> &nbsp; </div>
     <div class="span5">
       {# TODO: Make my own similar image #}
-      <img src="https://stripe.com/img/frontpage/stripe-photo.png" alt="Upload pictures">
+      <img src="{{ STATIC_URL }}images/upload_trio.png" alt="Upload pictures">
     </div>
   </div>
 
   <div id="markup_desc" class="row">
-    <div class="span5">
+    <div class="span5" style="position: relative;">
       {# TODO: Create an animated gif that shows the markup #}
-      <img src="http://i.istockimg.com/file_thumbview_approve/571992/2/stock-photo-571992-working-with-documents.jpg" alt="Describe retouch"
+      <img src="{{ STATIC_URL }}images/gazebohug.jpg" alt="Describe retouch"
            height="253px" >
+      <div id="example_markup">
+
+      </div>
     </div>
     <div class="span1"> &nbsp; </div>
     <div class="span5">
       <h3> Describe the job </h3>
       <p>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        Give the Pic Doctor a description of what you'd like done to your photos. You can
+        highlight particular areas with their own descriptions.
       </p>
     </div>
   </div>
@@ -50,16 +49,15 @@
     <div class="span5">
       <h3> Set a price </h3>
       <p>
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-        vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-        no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        You choose how much you are willing to pay for the job. By offering more, you're more
+        likely to get an experienced, trusted Pic Doctor. If nobody is willing to do the work
+        for the amount you offer, we'll let you know.
       </p>
     </div>
     <div class="span1"> &nbsp; </div>
     <div class="span5">
       {# TODO: Picture of a credit card #}
-      <img src="http://www.pageonce.com/blog/wp-content/uploads/2013/03/credit-cards.jpg" alt="Credit card picture"
+      <img src="http://i.istockimg.com/file_thumbview_approve/80596/2/stock-photo-80596-credit-card-2.jpg" alt="Credit card picture"
            height="253px" >
     </div>
   </div>
@@ -141,5 +139,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ STATIC_URL }}js/howitworks.js"></script>
 {% endblock %}
 
