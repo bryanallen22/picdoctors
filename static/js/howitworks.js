@@ -1,13 +1,11 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
 
+  var example_markup = $("#example_markup");
+  var init_example_width  = example_markup.css("width");
+  var init_example_height = example_markup.css("height");
   var animate_markup = function() {
-    var example_markup = $("#example_markup");
-    //
-    // Reset to defaults (if you change these, be sure to change it in picdoctors.less
-    example_markup.css( { "width" : "40px", "height" : "40px" } );
-    example_markup.show()
-
+    example_markup.css( { "width" : init_example_width, "height" : init_example_height } );
     example_markup.delay(1000).animate( { "width" : 175, "height" : 120 } )
   }
 

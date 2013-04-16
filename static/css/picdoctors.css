@@ -144,6 +144,9 @@
 /*****************************
   How It Works page
 ******************************/
+#howitworks {
+  margin-left: 40px;
+}
 #howitworks p {
   color: #777;
 }
