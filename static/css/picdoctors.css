@@ -147,6 +147,12 @@
 #howitworks p {
   color: #777;
 }
+#howitworks .row {
+  margin-top: 50px;
+}
+#howitworks .desc {
+  margin-top: 20px;
+}
 #howitworks #example_markup {
   position: absolute;
   left: 100px;
