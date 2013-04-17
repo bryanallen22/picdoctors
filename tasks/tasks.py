@@ -45,7 +45,7 @@ def saveWatermark(profile_id, group_id, str_io_pic):
     if len(name) == 0:
         name = profile.email
 
-    wm_file = generate_watermarked_image(opened_image, "Done By: " + name)
+    wm_file = generate_watermarked_image(opened_image, "Done by: " + name)
     wm_stream = StringIO()
     wm_file.save(wm_stream, format='JPEG')
 

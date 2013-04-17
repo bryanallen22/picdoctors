@@ -20,7 +20,6 @@ from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
-from skaa.picmask import generate_watermarked_image
 from PIL import Image
 from StringIO import StringIO
 import ipdb
