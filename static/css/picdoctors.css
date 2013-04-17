@@ -150,6 +150,9 @@
 #howitworks p {
   color: #777;
 }
+#howitworks p strong {
+  color: #555;
+}
 #howitworks .row {
   margin-top: 50px;
 }
