@@ -106,10 +106,14 @@
   background: url('/static/images/restoration_after.jpg');
 }
 #indexapp #photo5 {
-  background: url('/static/images/sm_botanical_before.jpg');
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  background: url('/static/images/gr_before.jpg');
 }
 #indexapp #photo6 {
-  background: url('/static/images/sm_botanical_after.jpg');
+  background: url('/static/images/gr_after.jpg');
 }
 #indexapp .carousel .item {
   -webkit-transition: opacity 3s;
