@@ -210,43 +210,33 @@ def make_album_shareable(request, job_id):
     profile = get_profile_or_None(request)
     job = get_object_or_None(Job, id=job_id)
 
-    actions = Actions()
-    actions.add('alert', AlertData('There was an error processing your request.', 'error'))
-
-    if job and job.album and profile and job.skaa == profile: 
-        alb = job.album
-        alb.allow_publicly = True
-        alb.save()
-
-        actions.clear()
-        actions.add('alert', AlertData('The album is now public and can be shared!', 'success'))
-
-        job_info = fill_job_info(job, generate_skaa_actions, profile)
-        actions.addJobInfo(job_info)
-    
-    return HttpResponse(actions.to_json(), mimetype='application/json')
+    return make_album_public(True, 'The album is now public and can be shared!', job, profile)
 
 @require_login_as(['skaa'])
 def make_album_unshareable(request, job_id):
     profile = get_profile_or_None(request)
     job = get_object_or_None(Job, id=job_id)
 
+    return make_album_public(False, 'The album is now private and cannot be shared', job, profile)
+
+
+def make_album_public(to_public, success_message, job, profile):
+
     actions = Actions()
-    actions.add('alert', AlertData('There was an error processing your request.', 'error'))
 
-    if job and job.album and profile and job.skaa == profile: 
-        alb = job.album
-        alb.allow_publicly = False
-        alb.save()
-        status = "Album is now private and cannot be shared."
-        actions.clear()
-        actions.add('alert', AlertData('The album is now private and cannot be shared', 'success'))
-
-        job_info = fill_job_info(job, generate_skaa_actions, profile)
-        actions.addJobInfo(job_info)
+    try:
+        if job and job.album and profile and job.skaa == profile: 
+            alb = job.album
+            alb.allow_publicly = to_public
+            alb.save()
+            status = success_message
+            actions.clear()
+            actions.add('alert', AlertData(success_message, 'success'))
     
+            job_info = fill_job_info(job, generate_skaa_actions, profile)
+            actions.addJobInfo(job_info)
+    except:
+        actions.clear()
+        actions.add('alert', AlertData('There was an error processing your request.', 'error'))
+        
     return HttpResponse(actions.to_json(), mimetype='application/json')
-
-
-
-
