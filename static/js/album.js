@@ -86,24 +86,18 @@ function replace_normal_user_pic(el, id){
 function make_album_shareable(el, id){
   var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
 
-  var json_data = JSON.stringify(
-    {
-       "job_id" : id,
-    }
-  );
+  var json_data = JSON.stringify( { } );
       
   $.ajax({
      headers: {
        "X-CSRFToken":CSRF_TOKEN
      },
-     type: 'POST',
-     url:  '/make_album_shareable/',
+     type: 'GET',
+     url:  '/make_album_shareable/' + id,
      data: json_data,
      success : function(data, textStatus) {
        $(".gallery_not_public").hide();
-       $("#gallery_now_public").html(data.status);
-       console.log(data);
-       console.log(textStatus);
+       $("#gallery_now_public").html("The album is now public and shareable!");
      }
 
   });

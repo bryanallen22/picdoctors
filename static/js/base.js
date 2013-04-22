@@ -1,15 +1,17 @@
 var user_feedback = "";
 var from_feedback = "";
 //for use if they start to add feedback again while we are showing off our thank you
-var show_user_result = false;
+var current_popup_state = 1;
 
-function feedback(el){
-  show_user_result = false;
+var users_entered_data = true;
+
+function feedback_link_click(el){
+  current_popup_state += 1;
 
   console.log('feedback');
   el = $(el);
-  var set = el.attr('data-set');
-  set = Boolean(set); //anything that isn't blank is true to me!
+  var data_set = el.attr('data-set');
+  data_set = Boolean(data_set); //anything that isn't blank is true to me!
 
 
   var cur_input = $('#feedback_textarea');
@@ -24,10 +26,10 @@ function feedback(el){
     }
   }
 
-  if(!set){
+  if(!data_set){
     el.popover({ html : true });
     var template = $('#feedback_form').html().trim();
-    el.attr('data-set', 'moo');
+    el.attr('data-set', users_entered_data);
     el.attr('data-content', template);
     el.attr('data-original-title','We appreciate your feedback!');
   }
@@ -65,7 +67,8 @@ function submit_feedback(){
       }
     );
       
-    show_user_result=true;
+    current_popup_state += 1;
+    var popup_state_when_posted = current_popup_state;
     $.ajax({
       headers: {
         "X-CSRFToken":CSRF_TOKEN
@@ -76,12 +79,10 @@ function submit_feedback(){
       success : function(data, textStatus) {
         console.log(data);
         console.log(textStatus);
-        if(!show_user_result)
-          return;
         if(data.success){
-          show_result('feedback_thanks', 'Feedback Submitted');
+          show_result('feedback_thanks', 'Feedback Submitted', popup_state_when_posted);
         } else {
-          show_result('feedback_thanks_but', 'Feedback Not Submitted');
+          show_result('feedback_thanks_but', 'Feedback Not Submitted', popup_state_when_posted);
         }
       },
     });
@@ -91,23 +92,40 @@ function submit_feedback(){
   }
 }
 
-function show_result(template, title){
+function show_result(template, title, popup_state_when_posted){
+  if(!validPopupState(popup_state_when_posted)) return;
+
   console.log('show_result');
   var el = $('#feedback_link');
   var template = $('#' + template).html().trim();
+  el.removeAttr('data-set');
   el.attr('data-content', template);
   el.attr('data-original-title',title);
-  el.popover('show');
-  el.removeAttr('data-set');
-  setTimeout('delayedHide()',3000);
+  // For some reason this damn popover is hiding randomly, look into it when I have interwebs
+  setTimeout('delayed_show(' + popup_state_when_posted + ')',150);
+  setTimeout('delayed_hide(' + popup_state_when_posted + ')',6000);
 }
 
-function delayedHide(){
-  if(!show_user_result)
-    return;
+function delayed_show(popup_state_when_posted){
+  if(!validPopupState(popup_state_when_posted)) return;
+  console.log('delayed_show');
+  var el = $('#feedback_link');
+  el.popover('show');
+}
+
+function delayed_hide(popup_state_when_posted){
+  if(!validPopupState(popup_state_when_posted)) return;
 
   console.log('delayed_hide');
   var el = $('#feedback_link');
   el.popover('hide');
+
+}
+
+function validPopupState(popup_state_when_posted){
+  // If they've started to send another message or something, we don't interrupt
+  var goodState = popup_state_when_posted == current_popup_state;
+  if(!goodState) console.log('Popup state no longer valid, current: ' + current_popup_state + ' posted state: ' + popup_state_when_posted );
+  return goodState;
 
 }

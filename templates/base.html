@@ -56,7 +56,7 @@
                      rel="popover"
                      data-placement="bottom"
                      data-trigger="manual"
-                     onclick="feedback(this)" href="#" ><i class="icon-comment"></i> Feedback</a>
+                     onclick="feedback_link_click(this)" href="#" ><i class="icon-comment"></i> Feedback</a>
               </li>
               {% if not user.is_authenticated %}
               <li><a href="{% url 'doc_home' %}"><i class="icon-edit"></i> Become a Pic Doctor</a></li>
@@ -146,22 +146,24 @@
     <script type="text/template" id="feedback_form">
       <div>
         From:
-        <input type='text' id='feedback_from_textarea' value='{% if user.is_authenticated %}{{ user.email }}{% endif %}'>
+        <input class="feedback_from" type='text' id='feedback_from_textarea' value='{% if user.is_authenticated %}{{ user.email }}{% endif %}'>
       </input>
         Feedback:
-        <textarea id='feedback_textarea' style='height:100px;'></textarea>
+        <textarea id='feedback_textarea' class="feedback_textarea" ></textarea>
         <br />
-        <button class='btn btn-primary' onclick='submit_feedback()'>Submit Feedback</button>
+        <div class='feedback_buttonarea'>
+          <button class='btn btn-primary' onclick='submit_feedback()'>Submit Feedback</button>
+        </div>
       </div>
     </script>
     <script type="text/template" id="feedback_thanks">
       <div>
-        <H3>Thank You</H3>
+        <H3 class='text-success'>Thank You</H3>
       </div>
     </script>
     <script type="text/template" id="feedback_thanks_but">
       <div>
-        <H3>We encountered an error!</H3>
+        <H4 class='text-error'>We suffered an error.</H4>
       </div>
     </script>
     {% block scripts %}

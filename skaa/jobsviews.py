@@ -90,6 +90,8 @@ def generate_skaa_actions(job):
     switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), url_redirect)
     increase_price = DynamicAction('Increase Price', reverse('increase_price', args=[job.id]), url_redirect)
     place_back_in_market = DynamicAction('Return to Market', reverse('increase_price', args=[job.id]), url_redirect)
+    share_album = DynamicAction('Share Album', reverse('make_album_shareable', args=[job.id]))
+    unshare_album = DynamicAction('Unshare Album', reverse('make_album_unshareable', args=[job.id]))
     
     if job.status == Job.IN_MARKET:
         ret.append(contact)
@@ -118,6 +120,10 @@ def generate_skaa_actions(job):
 
     elif job.status == Job.USER_ACCEPTED:
         ret.append(view_album)
+        if job.album.allow_publicly:
+            ret.append(unshare_album)
+        else:
+            ret.append(share_album)
 
     elif job.status == Job.OUT_OF_MARKET:
         ret.append(increase_price)
@@ -183,7 +189,7 @@ def request_modification(request):
     job = get_object_or_None(Job, id=data['job_id'])
 
     actions = Actions()
-    actions.add('alert', AlertDate('There was an error processing your request.', 'error'))
+    actions.add('alert', AlertData('There was an error processing your request.', 'error'))
     if job and profile and job.skaa == profile:
         actions.clear()
         actions.add('alert', AlertData('The user has requested modification', 'success'))
@@ -199,6 +205,47 @@ def request_modification(request):
     return HttpResponse(actions.to_json(), mimetype='application/json')
 
 
+@require_login_as(['skaa'])
+def make_album_shareable(request, job_id):
+    profile = get_profile_or_None(request)
+    job = get_object_or_None(Job, id=job_id)
+
+    actions = Actions()
+    actions.add('alert', AlertData('There was an error processing your request.', 'error'))
+
+    if job and job.album and profile and job.skaa == profile: 
+        alb = job.album
+        alb.allow_publicly = True
+        alb.save()
+
+        actions.clear()
+        actions.add('alert', AlertData('The album is now public and can be shared!', 'success'))
+
+        job_info = fill_job_info(job, generate_skaa_actions, profile)
+        actions.addJobInfo(job_info)
+    
+    return HttpResponse(actions.to_json(), mimetype='application/json')
+
+@require_login_as(['skaa'])
+def make_album_unshareable(request, job_id):
+    profile = get_profile_or_None(request)
+    job = get_object_or_None(Job, id=job_id)
+
+    actions = Actions()
+    actions.add('alert', AlertData('There was an error processing your request.', 'error'))
+
+    if job and job.album and profile and job.skaa == profile: 
+        alb = job.album
+        alb.allow_publicly = False
+        alb.save()
+        status = "Album is now private and cannot be shared."
+        actions.clear()
+        actions.add('alert', AlertData('The album is now private and cannot be shared', 'success'))
+
+        job_info = fill_job_info(job, generate_skaa_actions, profile)
+        actions.addJobInfo(job_info)
+    
+    return HttpResponse(actions.to_json(), mimetype='application/json')
 
 
 

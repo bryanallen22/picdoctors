@@ -3,6 +3,7 @@ from django.conf.urls import patterns, include, url
 from skaa.markupviews import markup_page, markup_page_album, markups_handler, pic_instruction_handler
 from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handler, upload_page, need_cookies
 from skaa.jobsviews import job_page, request_modification
+from skaa.jobsviews import make_album_shareable, make_album_unshareable
 from skaa.setpriceviews import set_price, increase_price, create_hold_handler
 from skaa.mergealbumsviews import merge_albums
 from skaa.accept_workviews import accept_work
@@ -40,5 +41,6 @@ urlpatterns = patterns('',
     url(r'^switch_doctor/(?P<job_id>\d+)$',                switch_doctor,            name='switch_doctor'),
     url(r'^refund_user/$',                                 refund_user_endpoint,     name='refund_user_endpoint'),
     url(r'^switch_doctor/$',                               switch_doctor_endpoint,   name='switch_doctor_endpoint'),
+    url(r'^make_album_shareable/(?P<job_id>\d+)/$',        make_album_shareable,     name='make_album_shareable'),
+    url(r'^make_album_unshareable/(?P<job_id>\d+)/$',      make_album_unshareable,   name='make_album_unshareable'),
 )
-

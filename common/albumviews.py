@@ -115,20 +115,3 @@ def update_doc_auto_approve(job):
         doc.auto_approve = True
         doc.save()
 
-@require_login_as(['skaa'])
-def make_album_shareable(request):
-    profile = get_profile_or_None(request)
-    data = simplejson.loads(request.body)
-    job_id = data['job_id']
-    job = get_object_or_None(Job, id=data['job_id'])
-    status = "Something failed"
-
-    if job and job.album and profile and job.skaa == profile: 
-        alb = job.album
-        alb.allow_publicly = True
-        alb.save()
-        status = "Album is now public, Share!"
-    
-    resp = simplejson.dumps({'status':status})
-    return HttpResponse(resp, mimetype='application/json')
-
