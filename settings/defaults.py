@@ -167,6 +167,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.humanize',
     'south',
+    'pipeline',
     'seleniumtests', # TODO - move this to TESTABLE_APPS once I think it's in better shape
 ) + TESTABLE_APPS
 
@@ -239,3 +240,27 @@ DEBUG_TOOLBAR_CONFIG = {
 ALLOWED_HOSTS = [ 'picdoctors.com', 'www.picdoctors.com' ]
 
 SITE_URL = 'https://www.picdoctors.com'
+
+
+PIPELINE_CSS = {
+    'all': {
+        'source_filenames': (
+            # Paths are relative to settings.STATICFILES_DIRS
+            'css/*.css',
+            'bootstrap/css/*.min.css',
+        ),
+        'output_filename': 'static/css/all.css',
+    },
+}
+
+PIPELINE_JS = {
+    'all_js': {
+        'source_filenames': (
+            # Paths are relative to settings.STATICFILES_DIRS
+            'bootstrap/js/bootstrap.min.js',
+            'js/*.js',
+        ),
+        'output_filename': 'static/js/all.js',
+    }
+}
+

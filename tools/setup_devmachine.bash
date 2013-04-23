@@ -65,7 +65,7 @@ echo "====="
 echo "Installing npm, less, shint, recess, and uglify-js..."
 echo "====="
 sudo apt-get install npm -y
-sudo npm install -g less jshint recess uglify-js
+sudo npm install -g less jshint recess uglify-js yuglify
 
 echo "====="
 echo "Installing a crazy Rabbit Message Q"

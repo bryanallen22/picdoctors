@@ -587,8 +587,9 @@ def setup_packages():
     sudo('npm update npm -g')
     sudo('npm install -g less -y -q')
     sudo('npm install -g recess -y -q')
-    sudo('npm install -g uglify-js -y -q')
+    sudo('npm install -g uglify-js -y -q') # Used by bootstrap
     sudo('npm install -g jshint -y -q')
+    sudo('npm install -g yuglify -y -q')
 
 @task
 def setup_local_mysql():
