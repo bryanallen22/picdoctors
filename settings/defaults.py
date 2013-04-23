@@ -243,11 +243,19 @@ SITE_URL = 'https://www.picdoctors.com'
 
 
 PIPELINE_CSS = {
-    'all': {
+    'all_css': {
         'source_filenames': (
-            # Paths are relative to settings.STATICFILES_DIRS
+            # Paths are relative to settings.STATICFILES_DIRS!
+            
+            ###########
+            # Libraries
+            ###########
+            'third_party/twitter-bootstrap/bootstrap/css/bootstrap.min.css',
+
+            ###########
+            # Our stuff
+            ###########
             'css/*.css',
-            'bootstrap/css/*.min.css',
         ),
         'output_filename': 'static/css/all.css',
     },
@@ -256,8 +264,29 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     'all_js': {
         'source_filenames': (
-            # Paths are relative to settings.STATICFILES_DIRS
-            'bootstrap/js/bootstrap.min.js',
+            # Paths are relative to settings.STATICFILES_DIRS!
+
+            ###########
+            # Bootstrap
+            ###########
+            'third_party/js/jquery.1.7.2.min.js',
+            'third_party/js/underscore.min.js',
+            'third_party/js/animatedcollapse.js',
+            'third_party/js/backbone.min.js',
+            'third_party/js/jquery.isotope.min.js',
+            'third_party/js/jquery.qbeforeafter.js',
+            'third_party/js/jquery.tmpl.min.js',
+            'third_party/js/json2.js',
+            'third_party/twitter-bootstrap/bootstrap/js/bootstrap.min.js',
+            'third_party/bootstrap-tour/deps/jquery.cookie.js',
+            'third_party/bootstrap-tour/bootstrap-tour.min.js',
+
+
+
+
+            ###########
+            # Our stuff
+            ###########
             'js/*.js',
         ),
         'output_filename': 'static/js/all.js',

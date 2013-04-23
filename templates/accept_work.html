@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block main %}
-<div class='row'>
+<div id="acceptwork_app" class='row'>
   <form method='post' id='accept_job' >
     {% csrf_token %}
     <div class="span8 accept_view offset2 well" job_id={{job_id}}>

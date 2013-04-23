@@ -11,13 +11,15 @@
     <![endif]-->
 
     <!-- Le styles -->
-    <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" rel="stylesheet">
+    {% load compressed %}
+    <!-- before css dump -->
+    {% compressed_css 'all_css' %}
+    <!-- after css dump -->
     <style type="text/css">
       body {
         padding-top: 10px;
       }
     </style>
-    <link href="{{ STATIC_URL }}css/picdoctors.css" rel="stylesheet">
     {% block styles %}
       {# Each page can add it's own style sheet here if needed. #}
     {% endblock %}
@@ -140,9 +142,10 @@
       </footer>
     </div>
 
-    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js"></script>
-    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
-    <script src="{{ STATIC_URL }}js/base.js"></script>
+    before
+    {% compressed_js 'all_js' %}
+    after
+
     <script type="text/template" id="feedback_form">
       <div>
         From:
