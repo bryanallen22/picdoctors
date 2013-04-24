@@ -53,11 +53,71 @@
 
 {% block scripts %}
     {# Upload stuff: #}
+  {% verbatim %}
     <script id="template-upload" type="text/x-jquery-tmpl">
-        {% include 'template-upload.x-jquery-tmpl' %}
+      <div class="pic_container{{if error}} upload_error{{/if}}" group_id="100000">
+        <div class="contents">
+          <div class="preview"></div>
+          <div class="pic_info">
+            <span>${name}</span><span>${sizef}</span>
+          </div>
+          {{if error}}
+          <div class="error" colspan="2">Error:
+            {{if error === 'maxFileSize'}}File is too big
+            {{else error === 'minFileSize'}}File is too small
+            {{else error === 'acceptFileTypes'}}Filetype not allowed
+            {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
+            {{else}}${error}
+            {{/if}}
+          </div>
+          {{else}}
+          <div style="position: relative; margin: -18px 6px -11px;">
+            <div class="progress" style="height: 6px;">
+              <div class="bar" style="width: 0%; -moz-border-radius: inherit; -webkit-border-radius: inherit; border-radius: inherit;"></div>
+            </div>
+          </div>
+          {{/if}}
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+      </div>
     </script>
     <script id="template-download" type="text/x-jquery-tmpl">
-        {% include 'template-download.x-jquery-tmpl' %}
+      <div class="pic_container{{if error}} upload_error{{/if}}" group_id="100000" uuid="${uuid}">
+        <div class="contents">
+          <div class="preview">
+            {{if thumbnail_url}}
+              <img src="${thumbnail_url}">
+            {{/if}}
+          </div>
+          <div class="pic_info">
+            <span>${name}</span><span>${sizef}</span>
+          </div>
+          {{if error}}
+            <div class="error" colspan="2">Error:
+              {{if error === 1}}File exceeds upload_max_filesize (php.ini directive)
+              {{else error === 2}}File exceeds MAX_FILE_SIZE (HTML form directive)
+              {{else error === 3}}File was only partially uploaded
+              {{else error === 4}}No File was uploaded
+              {{else error === 5}}Missing a temporary folder
+              {{else error === 6}}Failed to write file to disk
+              {{else error === 7}}File upload stopped by extension
+              {{else error === 'maxFileSize'}}File is too big
+              {{else error === 'minFileSize'}}File is too small
+              {{else error === 'acceptFileTypes'}}Filetype not allowed
+              {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
+              {{else error === 'uploadedBytes'}}Uploaded bytes exceed file size
+              {{else error === 'emptyResult'}}Empty file upload result
+              {{else}}${error}
+              {{/if}}
+            </div>
+          {{else}}
+
+
+          {{/if}}
+          <img class="del_pic" src="/static/images/redx.png"/>
+        </div>
+      </div>
     </script>
+  {% endverbatim %}
 {% endblock %}
 
