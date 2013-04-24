@@ -4,9 +4,6 @@
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/isotope.css" />
 {% endblock %}
 
-{% block topscripts %}
-{% endblock %}
-
 {% block main %}
 <div class="row">
   <div class="span10">
@@ -55,10 +52,6 @@
 {% endblock %}
 
 {% block scripts %}
-    {# Isotope stuff: #}
-    <script src="{{ STATIC_URL }}js/jquery.isotope.min.js"></script>
-    <script src="{{ STATIC_URL }}js/isotope-app.js"></script>
-
     {# Upload stuff: #}
     <script id="template-upload" type="text/x-jquery-tmpl">
         {% include 'template-upload.x-jquery-tmpl' %}
@@ -66,19 +59,5 @@
     <script id="template-download" type="text/x-jquery-tmpl">
         {% include 'template-download.x-jquery-tmpl' %}
     </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-    <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery.iframe-transport.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery.fileupload.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery.fileupload-ui.js"></script>
-    <script src="{{ STATIC_URL }}js/upload-application.js"></script>
-    {# IE 6/7 don't have JSON.stringify, so add Douglas Crockford's: #}
-    <script src="{{ STATIC_URL }}js/json2.js"></script>
-
-    <script src="{{ STATIC_URL }}js/upload_tour.js"></script>
-    <script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
-    <script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
-{% comment %}
-{% endcomment %}
 {% endblock %}
 

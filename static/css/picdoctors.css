@@ -39,29 +39,19 @@
   height: 40px;
 }
 .feedback_from {
-  width:95%;
+  width: 95%;
 }
-
 .feedback_textarea {
-  height:120px;
-  width:95%;
+  height: 120px;
+  width: 95%;
 }
-
-.feedback_buttonarea{
-  float:right;
-  margin-bottom:12px;
+.feedback_buttonarea {
+  float: right;
+  margin-bottom: 12px;
 }
-
-/*
-.feedback{
-  color:black;
-  background-color:red;
+body {
+  padding-top: 10px;
 }
-
-.feedback:hover {
-  background-color:pink;
-}
-*/
 /*****************************
   Index page
 ******************************/
@@ -791,8 +781,6 @@
   margin-left: auto;
   margin-right: auto;
 }
-
-
 /****************************************************************
  * Album Etc
  * *************************************************************/

@@ -15,17 +15,6 @@
     <!-- before css dump -->
     {% compressed_css 'all_css' %}
     <!-- after css dump -->
-    <style type="text/css">
-      body {
-        padding-top: 10px;
-      }
-    </style>
-    {#{% block styles %}#}
-      {# Each page can add it's own style sheet here if needed. #}
-    {#{% endblock %}#}
-
-    {% block topscripts %}
-    {% endblock %}
 
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="{{ STATIC_URL }}images/favicon.ico">
@@ -142,9 +131,10 @@
       </footer>
     </div>
 
-    before
+    {% block scripts %}
+    {% endblock %}
+
     {% compressed_js 'all_js' %}
-    after
 
     <script type="text/template" id="feedback_form">
       <div>
@@ -169,8 +159,6 @@
         <H4 class='text-error'>We suffered an error.</H4>
       </div>
     </script>
-    {#{% block scripts %}#}
-    {#{% endblock %}#}
 
     {% csrf_token %}
   </body>

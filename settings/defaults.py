@@ -255,10 +255,9 @@ PIPELINE_CSS = {
             ###########
             # Our stuff
             ###########
-            'isotope.css',
-            'jquery.fileupload-ui.css',
-            'picdoctors.css',
-            #'qbeforeafter.css'
+            'css/picdoctors.css',
+            'css/isotope.css',
+            'css/qbeforeafter.css'
         ),
         'output_filename': 'static/css/all.css',
     },
@@ -278,14 +277,16 @@ PIPELINE_JS = {
             'third_party/js/backbone.min.js',
             'third_party/js/jquery.isotope.min.js',
             'third_party/js/jquery.qbeforeafter.js',
+            'third_party/js/jquery-ui.min.js',
             'third_party/js/jquery.tmpl.min.js',
             'third_party/js/json2.js',
+            'third_party/jquery-file-upload/jquery.fileupload.js',
+            'third_party/jquery-file-upload/jquery.fileupload-ui.js',
+            'third_party/jquery-file-upload/jquery.iframe-transport.js',
+            'third_party/jquery-file-upload/upload-application.js',
             'third_party/twitter-bootstrap/bootstrap/js/bootstrap.min.js',
             'third_party/bootstrap-tour/deps/jquery.cookie.js',
             'third_party/bootstrap-tour/bootstrap-tour.min.js',
-
-
-
 
             ###########
             # Our stuff
