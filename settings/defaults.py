@@ -255,7 +255,10 @@ PIPELINE_CSS = {
             ###########
             # Our stuff
             ###########
-            'css/*.css',
+            'isotope.css',
+            'jquery.fileupload-ui.css',
+            'picdoctors.css',
+            #'qbeforeafter.css'
         ),
         'output_filename': 'static/css/all.css',
     },
