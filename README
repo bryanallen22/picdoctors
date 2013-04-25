@@ -1,5 +1,7 @@
 PicDoctors
 ----------
-sudo Daniel is root
+ballen@pudu:~/tmp$ head daniel | wc
+      0       0       0
+ballen@pudu:~/tmp$
 
 To install run /tools/setup_devmachine.bash

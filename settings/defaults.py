@@ -152,7 +152,6 @@ PD_APPS = (
 # They are added to INSTALLED_APPS
 TESTABLE_APPS = (
     'storages',
-    'debug_toolbar',
     'djcelery',
 ) + PD_APPS
 
@@ -168,6 +167,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'south',
     'pipeline',
+    'debug_toolbar',
     'seleniumtests', # TODO - move this to TESTABLE_APPS once I think it's in better shape
 ) + TESTABLE_APPS
 
@@ -260,7 +260,7 @@ PIPELINE_CSS = {
             'css/isotope.css',
             'css/qbeforeafter.css'
         ),
-        'output_filename': 'static/css/all.css',
+        'output_filename': 'static/all.css',
     },
 }
 
@@ -295,7 +295,7 @@ PIPELINE_JS = {
             ###########
             'js/*.js',
         ),
-        'output_filename': 'static/js/all.js',
+        'output_filename': 'static/all.js',
     }
 }
 
