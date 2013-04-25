@@ -9,7 +9,7 @@
         <p>
           <a id="become_doc_btn" class="btn btn-primary btn-large"
             href="/doc_signin/?next=/account_settings/#merchant_tab">Become a Doctor</a>
-          <a class="btn btn-large btn-info" onclick="begin_tour()">Learn More &raquo;</a>
+          <a id="doc_home_tour" class="btn btn-large btn-info" >Learn More &raquo;</a>
         </p>
       </div>
 
@@ -43,7 +43,4 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ STATIC_URL }}js/settings_tour.js"></script>
-<script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
-<script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
 {% endblock %}

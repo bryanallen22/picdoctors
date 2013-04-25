@@ -1,6 +1,6 @@
 $(function(){
   //globalize 
-  tour = new Tour();
+  var tour = new Tour();
 
   tour.addStep({
     element: ".instruction", 
@@ -33,9 +33,9 @@ $(function(){
     placement:"bottom",
   });
 
+  $("#markup_tour").click( function() {
+    tour.restart();
+  });
 
 });
 
-function begin_tour(){
-  tour.restart();
-}

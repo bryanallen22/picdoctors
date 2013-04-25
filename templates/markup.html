@@ -71,7 +71,7 @@
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
       <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Previous</a>
       <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 12px;'>Next</a>
-      <div class="btn btn-info btn-large" onclick="begin_tour()" style="display : block;margin-top:12px;">Help Me</div>
+      <div id="markup_tour" class="btn btn-info btn-large" style="display : block;margin-top:12px;">Help Me</div>
       {% if is_job_doctor  %}
 
       <form action="{% url 'doc_upload_handler' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
@@ -90,16 +90,6 @@
 {% block scripts %}
 {# Isotope stuff: #}
 <script> var readonly = {{ read_only|lower }};</script>
-<script src="{{ STATIC_URL }}js/json2.js"></script>
-<script src="{{ STATIC_URL }}js/underscore.js"></script>
-<script src="{{ STATIC_URL }}js/backbone.js"></script>
-<script src="{{ STATIC_URL }}js/markup.js"></script>
-
-<script src="{{ STATIC_URL }}js/markup_tour.js"></script>
-<script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
-<script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
-
-<script src="{{ STATIC_URL }}js/shared.js"></script>
 {# Templates #}
 {# This template is just the *style* attribute for the markup div      #}
 {# Note: if you change the border width here from 4px, you'll probably #}
@@ -118,6 +108,5 @@
   </p><div class="dyn_instruction">
   <textarea class="desc autosize-textarea" ><%= desc %></textarea></div>
 </script>
-
 {% endblock %}
 

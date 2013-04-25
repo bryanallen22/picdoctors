@@ -47,7 +47,7 @@
                      rel="popover"
                      data-placement="bottom"
                      data-trigger="manual"
-                     onclick="feedback_link_click(this)" href="#" ><i class="icon-comment"></i> Feedback</a>
+                     href="#" ><i class="icon-comment"></i> Feedback</a>
               </li>
               {% if not user.is_authenticated %}
               <li><a href="{% url 'doc_home' %}"><i class="icon-edit"></i> Become a Pic Doctor</a></li>
@@ -131,10 +131,11 @@
       </footer>
     </div>
 
+    {% compressed_js 'all_js' %}
+
     {% block scripts %}
     {% endblock %}
 
-    {% compressed_js 'all_js' %}
 
     <script type="text/template" id="feedback_form">
       <div>
@@ -145,7 +146,7 @@
         <textarea id='feedback_textarea' class="feedback_textarea" ></textarea>
         <br />
         <div class='feedback_buttonarea'>
-          <button class='btn btn-primary' onclick='submit_feedback()'>Submit Feedback</button>
+          <button class='btn btn-primary feedback_submit'>Submit Feedback</button>
         </div>
       </div>
     </script>

@@ -6,7 +6,7 @@
     <h4>Account Settings</h4>
   </div>
   <div class='span2'>
-    <div class="btn btn-info" onclick="begin_tour()" style="margin-top:12px;">Help Me</div>
+    <div id="settings_tour" class="btn btn-info" style="margin-top:12px;">Help Me</div>
   </div>
 </div>
 <div id='account_settings' class='row span10'>
@@ -584,21 +584,13 @@
   <script type="text/javascript">
     var marketplace_uri = '{{ marketplace_uri }}';
   </script>
-  <script src="{{ STATIC_URL }}js/account_settings.js"></script>
   <script type="text/javascript" src="https://js.balancedpayments.com/v1/balanced.js"></script>
   {% if not request.IS_PRODUCTION %}
   {# This file will be in the directory in production, but nobody should #}
   {# see it. Even if someone found it, these cards won't work in production #}
-  <script src="{{STATIC_URL}}js/set_price_debugbank.js"></script>
+  <script src="{{STATIC_URL}}js/debug/set_price_debugbank.js"></script>
   {% endif %}
   
-  <script src="{{ STATIC_URL }}js/settings_tour.js"></script>
-  <script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
-  <script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
-
-  <script src="{{ STATIC_URL }}js/json2.js"></script>
-  <script src="{{ STATIC_URL }}js/underscore.js"></script>
-  <script src="{{ STATIC_URL }}js/backbone.js"></script>
   <script type="text/template" id="notification_template">
       <div class="span4">
         <%=description%> <br/>

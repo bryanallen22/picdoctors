@@ -1,6 +1,6 @@
 $(function(){
   //globalize 
-  tour = new Tour();
+  var tour = new Tour();
 
   tour.addStep({
     element: "#isocontainer", /* html element next to which the step popover should be shown */
@@ -29,9 +29,8 @@ $(function(){
     placement:"bottom",
   });
 
-
+  $("#upload_tour").click( function() {
+    tour.restart();
+  });
 });
 
-function begin_tour(){
-  tour.restart();
-}

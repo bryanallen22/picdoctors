@@ -112,7 +112,7 @@
                 <div class="row">
                   <div class="span3"> {# we need nested divs for css to not go riley on us #}
                     <button id="submit_payment" type="submit" class="submit-button btn btn-primary">Submit Payment</button>
-                    <div onclick="begin_tour()" class="btn btn-info">Help Me</div>
+                    <div id="setprice_tour" class="btn btn-info">Help Me</div>
                   </div>
                 </div>
 
@@ -205,14 +205,8 @@
       var minimum_price = {{ min_price }};
       var marketplace_uri = '{{ marketplace_uri }}';
     </script>
-    <script src="{{ STATIC_URL }}js/setprice_tour.js"></script>
-    <script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
-    <script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
-    <script src="{{STATIC_URL}}js/set_price.js"></script>
     {% if not request.IS_PRODUCTION %}
-    {# This file will be in the directory in production, but nobody should #}
-    {# see it. Even if someone found it, these cards won't work in production #}
-    <script src="{{STATIC_URL}}js/set_price_debugcards.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/debug/set_price_debugcards.js"></script>
     {% endif %}
 {% endblock %}
 

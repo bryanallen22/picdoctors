@@ -1,6 +1,6 @@
 $(function(){
   //globalize 
-  tour = new Tour();
+  var tour = new Tour();
 
   tour.addStep({
     element: "#col1_hook", 
@@ -38,8 +38,9 @@ $(function(){
     content: "The available actions you can perform on this job.  These actions change depending on the current state of the Job."
   });
 
+  $("#job_doc_tour").click( function() {
+    tour.restart();
+  });
+
 });
 
-function begin_tour(){
-  tour.restart();
-}

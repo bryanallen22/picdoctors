@@ -1,6 +1,6 @@
 $(function(){
   //globalize 
-  tour = new Tour({
+  var tour = new Tour({
       name: "become_a_doctor",
   });
 
@@ -54,8 +54,12 @@ $(function(){
     content: "You can update profile settings here.",
   });
 
+  $("#settings_tour").click( function() {
+    tour.restart();
+  });
+
+  $("#doc_home_tour").click( function() {
+    tour.restart();
+  });
 });
 
-function begin_tour(){
-  tour.restart();
-}

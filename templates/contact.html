@@ -22,14 +22,9 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ STATIC_URL }}js/json2.js"></script>
-<script src="{{ STATIC_URL }}js/underscore.js"></script>
-<script src="{{ STATIC_URL }}js/backbone.js"></script>
 <script>
   var is_owner = {{ is_owner|lower }};
 </script>
-<script src="{{ STATIC_URL }}js/contact.js"></script>
-<script src="{{ STATIC_URL }}js/shared.js"></script>
 <script type="text/template" id="message_template">
   <div class='message_message'><span><%= message %></span></div>
   <div class='message_commentor'><%= commentor %> </div><div class='message_created'><%=created%></div>

@@ -14,7 +14,13 @@
         <h1>{{ title }}</h1>
       </div>
       <div class="offset3 span2" style="text-align: right;">
-        <div class="btn btn-info" onclick="begin_tour()">
+        <div
+          {% if doc_page %}
+            id="job_doc_tour"
+          {% else %}
+            id="job_user_tour"
+          {% endif %}
+          class="btn btn-info">
           Help Me
         </div>
       </div>
@@ -96,18 +102,12 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ STATIC_URL }}js/json2.js"></script>
-  <script src="{{ STATIC_URL }}js/underscore.js"></script>
-  <script src="{{ STATIC_URL }}js/backbone.js"></script>
-  <script src="{{ STATIC_URL }}js/jobs.js"></script>
-  <script src="{{ STATIC_URL }}js/shared.js"></script>
+
 {% if doc_page %}
-  <script src="{{ STATIC_URL }}js/job_doc_tour.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/job_doc_tour.js"></script>
 {% else %}
-  <script src="{{ STATIC_URL }}js/job_user_tour.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/job_user_tour.js"></script>
 {% endif %}
-  <script src="{{ STATIC_URL }}tour/bootstrap-tour.js"></script>
-  <script src="{{ STATIC_URL }}tour/deps/jquery.cookie.js"></script>
 
   <script>
     var doc_page = {{ doc_page|lower }};

@@ -122,16 +122,9 @@
 <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 <script type="text/javascript">stLight.options({publisher: "834ab02a-7243-4360-ba55-32744c1956c1", doNotHash: true, doNotCopy: true, hashAddressBar: false});</script>
 
-<script src="{{ STATIC_URL }}js/json2.js"></script>
-<script src="{{ STATIC_URL }}js/underscore.js"></script>
-<script src="{{ STATIC_URL }}js/backbone.js"></script>
-<script src="{{ STATIC_URL }}js/album.js"></script>
 <script>
   var is_owner = {{ is_owner|lower }};
 </script>
-<script src="{{ STATIC_URL }}js/contact.js"></script>
-<script src="{{ STATIC_URL }}js/jquery.qbeforeafter.js"></script>
-<script src="{{ STATIC_URL }}js/shared.js"></script>
 <script type="text/template" id="message_template">
   <div class='message_message'><span ><%= message %></span></div>
   <div class='message_commentor'><%= commentor %> </div><div class='message_created'><%=created%></div>

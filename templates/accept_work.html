@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block styles %}
+<link href="{{ STATIC_URL }}rating/jquery.rating.css" type="text/css" rel="stylesheet"/>
+{% endblock %}
+
 {% block main %}
 <div id="acceptwork_app" class='row'>
   <form method='post' id='accept_job' >
@@ -63,13 +67,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ STATIC_URL }}js/json2.js"></script>
-<script src="{{ STATIC_URL }}js/underscore.js"></script>
-<script src="{{ STATIC_URL }}js/backbone.js"></script>
-<script src="{{ STATIC_URL }}js/accept_work.js"></script>
-<script src="{{ STATIC_URL }}rating/jquery.rating.js" type="text/javascript" language="javascript"></script>
-
-<link href="{{ STATIC_URL }}rating/jquery.rating.css" type="text/css" rel="stylesheet"/>
 
 {% endblock %}
 

@@ -251,6 +251,7 @@ PIPELINE_CSS = {
             # Libraries
             ###########
             'third_party/twitter-bootstrap/bootstrap/css/bootstrap.min.css',
+            'third_party/rating/jquery.rating.css',
 
             ###########
             # Our stuff
@@ -269,7 +270,7 @@ PIPELINE_JS = {
             # Paths are relative to settings.STATICFILES_DIRS!
 
             ###########
-            # Bootstrap
+            # Libraries
             ###########
             'third_party/js/jquery.1.7.2.min.js',
             'third_party/js/underscore.min.js',
@@ -287,6 +288,7 @@ PIPELINE_JS = {
             'third_party/twitter-bootstrap/bootstrap/js/bootstrap.min.js',
             'third_party/bootstrap-tour/deps/jquery.cookie.js',
             'third_party/bootstrap-tour/bootstrap-tour.min.js',
+            'third_party/rating/jquery.rating.js',
 
             ###########
             # Our stuff

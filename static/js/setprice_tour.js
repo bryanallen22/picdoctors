@@ -1,6 +1,6 @@
 $(function(){
   //globalize 
-  tour = new Tour();
+  var tour = new Tour();
 
   tour.addStep({
     element: "#price_tour_anchor", 
@@ -28,9 +28,9 @@ $(function(){
     content: "Click here to submit your offer.  You won't be charged until the job is complete."
   });
 
+  $("#setprice_tour").click( function() {
+    tour.restart();
+  });
 
 });
 
-function begin_tour(){
-  tour.restart();
-}
