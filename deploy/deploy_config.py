@@ -143,11 +143,13 @@ class SandboxConfig(RemoteConfig):
     deploy_only_production_branch = False
 
 class TestConfig(RemoteConfig):
-    instance_type = 'm1.small'
+    #instance_type = 'm1.small'
+    instance_type = 't1.micro'
     security_groups = ['picdoc-test'] # currently opens up ports 22,80,443
 
 class ProductionConfig(RemoteConfig):
-    instance_type = 'm1.small'
+    #instance_type = 'm1.small'
+    instance_type = 't1.micro'
 
     # BIG FAT WARNING: 'picdoc-production' does not open up ssh at all for
     # super security stuff. We might use that later, but not yet

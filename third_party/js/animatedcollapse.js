@@ -220,4 +220,4 @@ preloadimage:function(){
 	}
 }
 
-}
+};
