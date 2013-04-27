@@ -20,3 +20,4 @@ uwsgi-plugin-python
 python-mysqldb
 libmysqlclient-dev
 
+fail2ban
