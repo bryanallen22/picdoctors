@@ -41,7 +41,7 @@ server {
     server_name www.picdoctors.com;
     root /code/picdoctors;
 
-    location /static_out/ {
+    location /static/ {
         alias /code/picdoctors/static_out/;
         #include /etc/nginx/gzip.conf;
         expires 30d;
