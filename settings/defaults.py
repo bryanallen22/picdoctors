@@ -66,10 +66,6 @@ MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/site_media/'
 
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
-
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
@@ -254,7 +250,7 @@ PIPELINE_CSS = {
             'css/isotope.css',
             'css/qbeforeafter.css'
         ),
-        'output_filename': 'all.css',
+        'output_filename': 'compressed/all.css',
     },
 }
 
@@ -289,7 +285,7 @@ PIPELINE_JS = {
             ###########
             'js/*.js',
         ),
-        'output_filename': 'all.js',
+        'output_filename': 'compressed/all.js',
     }
 }
 

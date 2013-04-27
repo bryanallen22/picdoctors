@@ -38,3 +38,8 @@ SITE_URL = 'https://' + external_ip
 
 # apparently DJANGO isn't smart enough to figure out https if you are using a proxy to fake https
 SECURE_PROXY_SSL_HEADER = ('wsgi.url_scheme', 'https')
+
+SHA = get_cfg_setting(path, "sha")
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = os.path.join('/static/', SHA) + '/'

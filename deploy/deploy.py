@@ -290,15 +290,33 @@ def getcode(force_push=False):
     local('echo %s > /tmp/sha.txt' % head_sha)
     put('/tmp/sha.txt', '%s/sha.txt' % cfg.code_dir, use_sudo=True )
     sudo('chown %s:%s %s/sha.txt' % (cfg.deploy_user, cfg.deploy_user, cfg.code_dir) );
+    # Add sha to the instance tags
+    inst.add_tag('sha', head_sha)
+
+    # Collect static files
+    venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
+    # Copy all.js to all.<sha>.js
+    #all_css_file     = os.path.join(pd_settings.STATIC_ROOT, pd_settings.PIPELINE_CSS['all_css']['output_filename'])
+    #all_css_split    = os.path.splitext(all_css_file)
+    #all_css_sha_file = all_css_split[0] + '.' + head_sha + all_css_split[1] # should be something like all.<sha>.css
+    #all_js_file      = os.path.join(pd_settings.STATIC_ROOT, pd_settings.PIPELINE_JS['all_js']['output_filename'])
+    #all_js_split     = os.path.splitext(all_js_file)
+    #all_js_sha_file  = all_js_split[0] + '.' + head_sha + all_js_split[1]   # should be something like all.<sha>.js
+    #venv_run_user('cp %s %s' % ( all_css_file, all_css_sha_file ), cfg)
+    #venv_run_user('cp %s %s' % ( all_js_file, all_js_sha_file ), cfg)
 
     # To know what settings to use, we create a blank <deploy_type>.cfg 
     # file in the settings directory 
     sudo('rm -f %s/settings/*.cfg' % (cfg.code_dir))
-    run_user('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), cfg)
+    venv_run_user('touch settings/%s.cfg' % (deploy_type), cfg)
     # Add the external IP to that settings file, used for Django's ALLOWED_HOSTS on
     # non production machines.
-    sudo('echo "external_ip: %s" >> %s/settings/%s.cfg' %
-           (inst.ip_address, cfg.code_dir, deploy_type))
+    venv_run_user('echo "external_ip: %s" >> settings/%s.cfg' %
+                   (inst.ip_address, deploy_type))
+    # Add the sha to settings file, used to keep cache coherent
+    venv_run_user('echo "sha: %s" >> settings/%s.cfg' %
+                   (head_sha, deploy_type))
+
 
     # restart uwsgi
     with settings(warn_only=True): # (might not actually exist yet)
@@ -456,23 +474,21 @@ def ls():
     """
     List running instances
     """
-    rows = [ ["Name:", "State:", "Type:", "IP Addr:", "DNS:", "Region:", "AMI:" ] ]
+    rows = [ ["Name:", "State:", "Type:", "IP Addr:", "DNS:", "Region:", "AMI:", "Sha:" ] ]
 
-    # Width of rows for pretty printing. Hard coded size cause it's easier.
-    row_widths = [0, 0, 0, 0, 0, 0, 0]
+    # Width of rows for pretty printing.
+    row_widths = [0] * len(rows[0])
 
     for inst in get_all_instances():
         row = [ ]
-        if 'instance_name' in inst.tags:
-            row.append(inst.tags['instance_name'])
-        else:
-            row.append("---")
+        row.append(inst.tags.get('instance_name', '---'))
         row.append(inst.state or "---")
         row.append(inst.instance_type or "---")
         row.append(inst.ip_address or "---")
         row.append(inst.dns_name or "---")
         row.append(inst.region.name or "---")
         row.append(inst.image_id or "---")
+        row.append(inst.tags.get('sha', '---')[:7]) # Only grab first 7 digits of the sha
         rows.append(row)
 
     # Will have at least 1 row (the titles). 2+ means real rows
@@ -496,8 +512,6 @@ def ls():
         print "------------"
         print "No instances"
         print "------------"
-
-    #ipdb.set_trace()
 
 @task
 def setup_packages():
