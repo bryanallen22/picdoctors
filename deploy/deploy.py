@@ -293,8 +293,18 @@ def getcode(force_push=False):
     # Add sha to the instance tags
     inst.add_tag('sha', head_sha)
 
-    # Collect static files
-    venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
+    # To know what settings to use, we create a blank <deploy_type>.cfg 
+    # file in the settings directory 
+    sudo('rm -f %s/settings/*.cfg' % (cfg.code_dir))
+    run_user('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), cfg)
+    # Add the external IP to that settings file, used for Django's ALLOWED_HOSTS on
+    # non production machines.
+    run_user('echo "external_ip: %s" >> %s/settings/%s.cfg' %
+                   (inst.ip_address, cfg.code_dir, deploy_type), cfg)
+    # Add the sha to settings file, used to keep cache coherent
+    run_user('echo "sha: %s" >> %s/settings/%s.cfg' %
+                   (head_sha, cfg.code_dir, deploy_type), cfg)
+
     # Copy all.js to all.<sha>.js
     #all_css_file     = os.path.join(pd_settings.STATIC_ROOT, pd_settings.PIPELINE_CSS['all_css']['output_filename'])
     #all_css_split    = os.path.splitext(all_css_file)
@@ -305,22 +315,9 @@ def getcode(force_push=False):
     #venv_run_user('cp %s %s' % ( all_css_file, all_css_sha_file ), cfg)
     #venv_run_user('cp %s %s' % ( all_js_file, all_js_sha_file ), cfg)
 
-    # To know what settings to use, we create a blank <deploy_type>.cfg 
-    # file in the settings directory 
-    sudo('rm -f %s/settings/*.cfg' % (cfg.code_dir))
-    venv_run_user('touch settings/%s.cfg' % (deploy_type), cfg)
-    # Add the external IP to that settings file, used for Django's ALLOWED_HOSTS on
-    # non production machines.
-    venv_run_user('echo "external_ip: %s" >> settings/%s.cfg' %
-                   (inst.ip_address, deploy_type))
-    # Add the sha to settings file, used to keep cache coherent
-    venv_run_user('echo "sha: %s" >> settings/%s.cfg' %
-                   (head_sha, deploy_type))
-
-
     # restart uwsgi
-    with settings(warn_only=True): # (might not actually exist yet)
-        sudo('touch /etc/uwsgi/apps-available/picdoctorsapp.ini')
+    #with settings(warn_only=True): # (might not actually exist yet)
+    #    sudo('touch /etc/uwsgi/apps-available/picdoctorsapp.ini')
 
 @task
 def create():
@@ -567,7 +564,6 @@ def setup_packages():
         run_user("virtualenv %s/%s" % (cfg.venv_dir, cfg.venv_proj), cfg)
     venv_run_user('pip install -r requirements.txt -q', cfg)
 
-
     #
     # djcelery service and config must go after venv
     #
@@ -604,6 +600,10 @@ def setup_packages():
     sudo('npm install -g uglify-js -y -q') # Used by bootstrap
     sudo('npm install -g jshint -y -q')
     sudo('npm install -g yuglify -y -q')
+
+    # Collect static files
+    venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
+
 
 @task
 def setup_local_mysql():
@@ -696,12 +696,12 @@ def deploy(force_push=False, update=True, fast=False):
     if not fast:
         validate_can_deploy(inst, cfg)
 
-    # Get our full project code over there
-    getcode(force_push)
-
     # Update system packages, perform upgrades
     if update and not fast:
         patch()
+
+    # Get our full project code over there
+    getcode(force_push)
 
     if not fast:
         setup_packages()

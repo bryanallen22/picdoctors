@@ -39,7 +39,14 @@ SITE_URL = 'https://' + external_ip
 # apparently DJANGO isn't smart enough to figure out https if you are using a proxy to fake https
 SECURE_PROXY_SSL_HEADER = ('wsgi.url_scheme', 'https')
 
-SHA = get_cfg_setting(path, "sha")
+SHA = get_cfg_setting(path, "sha") # useful in stack traces
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = os.path.join('/static/', SHA) + '/'
+STATIC_URL = os.path.join('/static_out/', SHA) + '/'
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/home/media/media.lawrence.com/static/"
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static_out', SHA)
+
