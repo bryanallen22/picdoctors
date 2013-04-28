@@ -639,6 +639,8 @@ def setup_db():
         venv_run_user('./db.py -deploy -f', cfg)
     elif deploy_type == "test":
         setup_local_mysql()
+    elif deploy_type == "production":
+        print "Shouldn't need to set anything up as db for production."
     else:
         abort("Not yet implemented for %s!" % deploy_type)
 
