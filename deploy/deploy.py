@@ -305,16 +305,6 @@ def getcode(force_push=False):
     run_user('echo "sha: %s" >> %s/settings/%s.cfg' %
                    (head_sha, cfg.code_dir, deploy_type), cfg)
 
-    # Copy all.js to all.<sha>.js
-    #all_css_file     = os.path.join(pd_settings.STATIC_ROOT, pd_settings.PIPELINE_CSS['all_css']['output_filename'])
-    #all_css_split    = os.path.splitext(all_css_file)
-    #all_css_sha_file = all_css_split[0] + '.' + head_sha + all_css_split[1] # should be something like all.<sha>.css
-    #all_js_file      = os.path.join(pd_settings.STATIC_ROOT, pd_settings.PIPELINE_JS['all_js']['output_filename'])
-    #all_js_split     = os.path.splitext(all_js_file)
-    #all_js_sha_file  = all_js_split[0] + '.' + head_sha + all_js_split[1]   # should be something like all.<sha>.js
-    #venv_run_user('cp %s %s' % ( all_css_file, all_css_sha_file ), cfg)
-    #venv_run_user('cp %s %s' % ( all_js_file, all_js_sha_file ), cfg)
-
     # restart uwsgi
     #with settings(warn_only=True): # (might not actually exist yet)
     #    sudo('touch /etc/uwsgi/apps-available/picdoctorsapp.ini')

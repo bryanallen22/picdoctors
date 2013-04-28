@@ -4,25 +4,26 @@ DEPLOY_TYPE='PRODUCTION' # useful for logs, stack traces
 DEBUG = False
 IS_PRODUCTION = True # used to toggle things that don't go on the non-live site
 
-DATABASES = {
-    'default': {
-
-    }
-}
+# TODO: Use debug keys with live keys:
+BALANCED_API_KEY_SECRET = '959cf402989b11e29955026ba7c1aba6'
+BALANCED_MARKETPLACE_URI = '/v1/marketplaces/TEST-MP4yysJEaaWktNOnJGlPwHnc'
 
 AWS_ACCESS_KEY_ID = 'AKIAJ5JN3Q5MTH5LX6QQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'picdoctors_media'
 
-# As of Django 1.5, we have to declare the allowed hosts for security reasons.
-# On a non production machine, that's annoying because we'd like to dial in
-# directly through the IP address, so we add it here. Unfortunately, it's kinda
-# clumsy because there's not a good way to figure out our external IP from
-# the machine itself, so we had to write it as part of the deployment process.
-path = os.path.join(PROJECT_ROOT, "settings/test.cfg")
-external_ip = get_cfg_setting(path, "external_ip")
-if external_ip:
-    ALLOWED_HOSTS.insert(0, external_ip )
+DATABASES = {
+    'default': {
+        'ENGINE'   : 'django.db.backends.mysql',
+        'HOST'     : 'db0.c9b9prnejh0e.us-east-1.rds.amazonaws.com',
+        'PORT'     : 3306,
+        'NAME'     : 'picdoctors', # db name
+        'USER'     : 'picdoctors',
+        'PASSWORD' : 'cm9vJ2KUBjh8KQJ7',
+    }
+}
+
+ALLOWED_HOSTS = [ 'www.picdoctors.com', 'picdoctors.com' ]
 
 SITE_URL = 'https://' + external_ip
 
