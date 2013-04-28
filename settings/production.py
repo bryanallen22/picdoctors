@@ -1,4 +1,5 @@
 from defaults import *
+from settings.functions import get_cfg_setting
 
 DEPLOY_TYPE='PRODUCTION' # useful for logs, stack traces
 DEBUG = False
