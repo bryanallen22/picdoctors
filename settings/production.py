@@ -18,7 +18,7 @@ DATABASES = {
     'default': {
         'ENGINE'   : 'django.db.backends.mysql',
         'HOST'     : 'db0.c9b9prnejh0e.us-east-1.rds.amazonaws.com',
-        'PORT'     : 3306,
+        'PORT'     : '3306',
         'NAME'     : 'picdoctors', # db name
         'USER'     : 'picdoctors',
         'PASSWORD' : 'cm9vJ2KUBjh8KQJ7',

@@ -150,7 +150,7 @@ class TestConfig(RemoteConfig):
 class ProductionConfig(RemoteConfig):
     #instance_type = 'm1.small'
     instance_type = 't1.micro'
-    security_groups = ['picdoc-production']
+    security_groups = ['picdoc-production'] # currently opens up ports 22,80,443
 
 
 ########################################

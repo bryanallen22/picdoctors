@@ -586,9 +586,9 @@ def setup_packages():
     # some idiot decided to break npm/node so we need to update npm before we can install other packages
     sudo('npm update npm -g')
     sudo('npm install -g less -y -q')
-    sudo('npm install -g recess -y -q')
-    sudo('npm install -g uglify-js -y -q') # Used by bootstrap
-    sudo('npm install -g jshint -y -q')
+    #sudo('npm install -g recess -y -q')
+    #sudo('npm install -g uglify-js -y -q') # Used by bootstrap
+    #sudo('npm install -g jshint -y -q')
     sudo('npm install -g yuglify -y -q')
 
     # Collect static files
@@ -633,14 +633,13 @@ def setup_db():
     deploy_type = get_deploy_type(inst.tags['instance_name'])
     cfg = get_config(deploy_type)
 
-    # TODO - probably shouldn't do case by case basis here. Figure out later
-    # when I've thought about it more
     if deploy_type == "sandbox":
         venv_run_user('./db.py -deploy -f', cfg)
     elif deploy_type == "test":
         setup_local_mysql()
     elif deploy_type == "production":
-        print "Shouldn't need to set anything up as db for production."
+        print "Learn what to do with ./db.py here. Or make daniel teach me."
+        pass
     else:
         abort("Not yet implemented for %s!" % deploy_type)
 
