@@ -1,5 +1,6 @@
 from defaults import *
 from settings.functions import get_cfg_setting
+import os
 
 DEPLOY_TYPE='PRODUCTION' # useful for logs, stack traces
 DEBUG = False
@@ -31,5 +32,6 @@ SITE_URL = 'https://www.picdoctors.com'
 # apparently DJANGO isn't smart enough to figure out https if you are using a proxy to fake https
 SECURE_PROXY_SSL_HEADER = ('wsgi.url_scheme', 'https')
 
+path = os.path.join(PROJECT_ROOT, "settings/production.cfg")
 SHA = get_cfg_setting(path, "sha") # useful in stack traces
 
