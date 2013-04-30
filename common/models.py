@@ -283,7 +283,7 @@ class Pic(DeleteMixin):
     @staticmethod
     def aws_public_url(url):
         parsed = urlparse(url)
-        return 'http://' + parsed.netloc + parsed.path
+        return 'https://' + parsed.netloc + parsed.path
 
     # See here:
     # http://codespatter.com/2008/09/13/quick-thumbnails-in-django/
