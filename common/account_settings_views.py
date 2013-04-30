@@ -73,7 +73,7 @@ def get_notification_list(profile):
         if tup[0]==Notification.JOBS_AVAILABLE and not profile.isa('doctor'):
             continue
 
-        if tup[0]==Notification.JOBS_NEED_APPROVAL and not profile.has_perm('common.approve_album'):
+        if tup[0]==Notification.JOBS_NEED_APPROVAL and not profile.has_perm('common.album_approver'):
             continue
             
         enabled = len([s for s in ignore_list if s.notification_type == tup[0]]) == 0
@@ -231,7 +231,7 @@ def update_roles(request):
     elif prole == 'userswitch':
         role = 'skaa'
     elif prole == 'approvalswitch' and not settings.IS_PRODUCTION:
-        role = 'approve_album'
+        role = 'album_approver'
     else:
         return # break on them, I don't care
 

@@ -9,14 +9,13 @@
   <div class='span5'>
     <h1>Job #{{job_id|stringformat:"08d" }}</h1>
   </div>
-  <div class='span4'>
-    {% if perms.common.approve_album %}
+  <div class='span5'>
+    {% if perms.common.album_approver %}
     <button class="btn btn_approve_all btn-large btn-primary" type="button">Approve Album</button>
-    {% else %}
-    &nbsp;
+    <a href="{% url 'mod_reject_work' job_id %}" class="btn btn_reject_all btn-large btn-primary" type="button">Reject Album</a>
     {% endif %}
   </div>
-  <div class='span3'>
+  <div class='span2'>
     {% if user_acceptable %}
     <a class="btn btn-large btn-primary" href="{% url 'accept_work' job_id %}">Accept Job</a>
     {% endif %}

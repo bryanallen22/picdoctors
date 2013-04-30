@@ -6,8 +6,7 @@ import ipdb
 # Setup the Album Moderators (if it doesn't already exist)
 g = get_or_define_group('Album Moderators')
 
-add_permission(g, 'view_album')
-add_permission(g, 'approve_album')
+add_permission(g, 'album_approver')
 
 g = get_or_define_group('PD Permissions')
 

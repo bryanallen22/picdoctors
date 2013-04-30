@@ -17,7 +17,7 @@ import ipdb
 def refund(request, job_id):
 
     if not reject_belongs(request, job_id):
-        return redirect('/')
+        return redirect( reverse('permission_denied') )
 
     return  {
             'job_id'        : job_id, 
@@ -30,12 +30,51 @@ def refund(request, job_id):
 def switch_doctor(request, job_id):
 
     if not reject_belongs(request, job_id):
-        return redirect('/')
+        return redirect( reverse('permission_denied') )
 
     return  {
             'job_id'        : job_id, 
             'is_refund'     : False,
             }
+
+# you don't need to be skaa or doctor to have the album_approver permission, maybe I should revisit this
+# TODO above comment
+@require_login_as(['album_approver'])
+@render_to("moderator_reject_work.html")
+def mod_reject_work(request, job_id):
+    profile = request.user
+
+    # you also could say profile.isa('album_approver') but that doesn't make sense to me when I read it
+    moderator =  profile.has_perm('common.album_approver')
+
+    if not moderator:
+        return redirect( reverse('permission_denied') )
+
+    if request.method == 'POST':
+        job = get_object_or_None(Job, id=job_id)
+        if job:
+
+            job.status = Job.DOCTOR_ACCEPTED
+            job.save()
+
+            text = request.POST['comment']
+
+            # send a message to doctor
+            send_job_status_change(job, job.skaa, "  Feedback: " + text)
+
+            # send a message to skaa
+            send_job_status_change(job, job.doctor, "  The job needed more work and was returned to the doctor.")
+
+            return redirect(reverse('album_approval_page'))
+        else:
+            return redirect( reverse('permission_denied') )
+
+
+    return  {
+            'job_id'        : job_id, 
+            }
+
+
 
 def reject_belongs(request, job_id):
     profile = get_profile_or_None(request)

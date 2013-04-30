@@ -153,23 +153,35 @@ def generate_pic_thumbs(filter_album):
     return ret
 
 
-def send_job_status_change(job, profile):
-    to_person = None
-    to_email = ''
+def send_job_status_change(job, triggered_by, additional_info=None):
+    send_to = None
     site_path = ''
-    if job.doctor and job.doctor == profile:
-        to_person = job.skaa
-        site_path = reverse('job_page_with_page_and_id', args=[1, job.id])
-    else:
-        to_person = job.doctor
-        site_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
+    doc_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
 
-    to_email = to_person.email
+    # make sure we aren't comparing None to None
+    if job.doctor and triggered_by == job.doctor:
+        send_to = job.skaa
+        site_path = reverse('job_page_with_page_and_id', args=[1, job.id])
+    elif triggered_by == job.skaa:
+        send_to = job.doctor
+        site_path = doc_path
+    else: # triggered by neither, so send to both?
+        if job.doctor:
+            #pretend triggered by skaa ;) and send
+            send_job_status_change(job, job.skaa, additional_info)
+        send_to = job.doctor
+        site_path = doc_path
+
+    # there is a possibility the doctor doesn't exist
+    if not send_to:
+        return
 
     job_no = str(job.id).rjust(8, '0') 
     subject = 'Job #' + job_no + ' status has changed.'
 
-    message = 'The current status of job #' + job_no + ' is: ' + job.get_status_display()
+    message = 'The current status of job #' + job_no + ' is: ' + job.get_status_display() + '.  '
+    if additional_info is not None:
+        message = message + additional_info
         
-    notify(Notification.JOB_STATUS_CHANGE, subject, message, to_person, site_path)
+    notify(Notification.JOB_STATUS_CHANGE, subject, message, send_to, site_path)
 

@@ -45,7 +45,7 @@ def album(request, album_id):
     if not profile and not album.allow_publicly:
         return redirect( reverse('permission_denied') )
 
-    moderator = False if not profile else profile.has_common_perm('approve_album')
+    moderator = False if not profile else profile.has_common_perm('album_approver')
 
     # if you are not the owner and not the doctor and not the moderator why are you here? (And it's not public, of course)
     if job.skaa != profile and job.doctor != profile and not moderator and not album.allow_publicly:
@@ -94,8 +94,8 @@ def approve_album(request):
     job_id = data['job_id']
     job = get_object_or_None(Job, id=data['job_id'])
 
-    # you also could say profile.isa('approve_album') but that doesn't make sense to me when I read it
-    moderator =  profile.has_perm('common.approve_album')
+    # you also could say profile.isa('album_approver') but that doesn't make sense to me when I read it
+    moderator =  profile.has_perm('common.album_approver')
 
     if job and job.album and profile and moderator: # and moderator
         # only necessary for doctors that aren't auto_approve

@@ -366,8 +366,7 @@ class Album(DeleteMixin):
 
     class Meta:
         permissions = (
-                ("view_album", "Can view all albums"),
-                ("approve_album", "Can approve all albums"),
+                ("album_approver", "Can approve all albums"),
         )
     
     def get_job_or_None(self):
@@ -551,7 +550,7 @@ class Group(models.Model):
         if not job:
             return []
         
-        if job.is_approved() or job.doctor == profile or profile.has_common_perm('view_album'):
+        if job.is_approved() or job.doctor == profile or profile.has_common_perm('album_approver'):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
             
         return []
@@ -561,7 +560,7 @@ class Group(models.Model):
         if not job:
             return []
 
-        if job.is_approved() or job.doctor == profile or ( profile and profile.has_common_perm('view_album') ):
+        if job.is_approved() or job.doctor == profile or ( profile and profile.has_common_perm('album_approver') ):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
             
         return []
@@ -596,7 +595,7 @@ class DocPicGroup(DeleteMixin):
         # if not ( any valid reason to stay ) 
         is_doctor = False if not profile else profile.isa('doctor')
 
-        if not ( job.is_approved() or is_doctor or ( profile and profile.has_common_perm('view_album') ) ):
+        if not ( job.is_approved() or is_doctor or ( profile and profile.has_common_perm('album_approver') ) ):
             return None
 
         # I still don't have to return the full pic, just the watermark for now :)

@@ -9,6 +9,7 @@ from django.shortcuts import resolve_url
 from urlparse import urlparse
 
 import settings
+import ipdb
 
 def passes_test(test_fcn, redirect_name):
     """

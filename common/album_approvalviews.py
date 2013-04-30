@@ -25,7 +25,7 @@ import ipdb
 @require_login_as(['skaa', 'doctor'])
 @render_to('jobs.html')
 def album_approval_page(request, page=1):
-    if not request.user.has_common_perm('approve_album'):
+    if not request.user.has_common_perm('album_approver'):
         return redirect('/')
 
     jobs = Job.objects.filter(status=Job.MODERATOR_APPROVAL_NEEDED).order_by('created').reverse()

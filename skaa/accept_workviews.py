@@ -27,10 +27,10 @@ def accept_work(request, job_id):
     job = get_object_or_None(Job, id=job_id)
 
     if job.skaa != profile or job.status != Job.DOCTOR_SUBMITTED:
-        return redirect('/')
+        return redirect( reverse('permission_denied') )
 
     if request.method == 'POST':
-        if job and profile and job.skaa == profile:
+        if job and job.skaa == profile:
             if 'allow_publicly' in request.POST:
                 if request.POST['allow_publicly'] == 'allow':
                     job.album.allow_publicly = True
@@ -58,11 +58,13 @@ def accept_work(request, job_id):
             send_job_status_change(job, profile)
 
             return redirect(reverse('album', args=[job.album.id]))
+        else:
+            return redirect( reverse('permission_denied') )
 
     return {'job_id':job_id}
 
 def get_rating(request):
-    rating = 1
+    ratig = 1
     try:
         rating = int(request.POST['rating_val'])
     except ValueError:
