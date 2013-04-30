@@ -64,7 +64,7 @@ def accept_work(request, job_id):
     return {'job_id':job_id}
 
 def get_rating(request):
-    ratig = 1
+    rating = 1
     try:
         rating = int(request.POST['rating_val'])
     except ValueError:
