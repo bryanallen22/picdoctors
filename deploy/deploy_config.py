@@ -44,6 +44,9 @@ class LocalConfig():
     remote_nginx_picdocconf = os.path.join(pd_settings.PROJECT_ROOT,
                                    'deploy/configs/nginx_picdoctorsapp')
 
+    remote_nginx_htpasswd = os.path.join(pd_settings.PROJECT_ROOT,
+                               'deploy/configs/nginx_htpasswd')
+
     # celery service
     celery_service = os.path.join(pd_settings.PROJECT_ROOT,
                                    'deploy/services/celeryd')

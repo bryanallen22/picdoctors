@@ -57,6 +57,10 @@ server {
     }
 
     location / {
+        # TODO: Remove these next 2 lines when we want to let people actually go to the site
+        auth_basic "Restricted";
+        auth_basic_user_file htpasswd; # /etc/nginx/htpasswd
+
         include uwsgi_params;
         # django looks for this to make sure it's an ssl site so it doesn't break redirects
         uwsgi_param UWSGI_SCHEME https;

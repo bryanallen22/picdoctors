@@ -158,6 +158,7 @@ def webserver_config():
          '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
     remote_picapp = '/etc/nginx/sites-available/picdoctorsapp' 
     put(LocalConfig.remote_nginx_picdocconf, remote_picapp, use_sudo=True)
+    put(LocalConfig.remote_nginx_htpasswd, '/etc/nginx/htpasswd', use_sudo=True)
 
     # update the redirect for http paths for sandbox and test
     if deploy_type == 'test' or deploy_type =='sandbox':
