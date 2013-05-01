@@ -584,13 +584,18 @@ def setup_packages():
     sudo('apt-get update -y -q')
     sudo('apt-get install nodejs -y -q')
 
-    # some idiot decided to break npm/node so we need to update npm before we can install other packages
-    sudo('npm update npm -g')
-    sudo('npm install -g less -y -q')
-    #sudo('npm install -g recess -y -q')
-    #sudo('npm install -g uglify-js -y -q') # Used by bootstrap
-    #sudo('npm install -g jshint -y -q')
-    sudo('npm install -g yuglify -y -q')
+    # Updating npm/lessc/yuglify takes *forever*, which is silly. If they exist, don't bother to update them.
+    # Maybe some day an update will be important, but until now it just slows down deploys by several *minutes*.
+    if exists('/usr/bin/lessc') and exists('/usr/bin/yuglify'):
+        print "Already found a copy of lessc and yuglify, skipping npm updates"
+    else:
+        # some idiot decided to break npm/node so we need to update npm before we can install other packages
+        sudo('npm update npm -g')
+        sudo('npm install -g less -y -q')
+        #sudo('npm install -g recess -y -q')
+        #sudo('npm install -g uglify-js -y -q') # Used by bootstrap
+        #sudo('npm install -g jshint -y -q')
+        sudo('npm install -g yuglify -y -q')
 
     # Collect static files
     venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
@@ -654,7 +659,7 @@ def setup_remote_conveniences():
     deploy_type = get_deploy_type(inst.tags['instance_name'])
     cfg = get_config(deploy_type)
 
-    sudo("""echo "alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'" >> /etc/bash.bashrc""")
+    put(LocalConfig.remote_bashrc, '~/.bashrc', use_sudo=True)
 
     # This lets us edit /code/pidoctors files without changing permissions.
     sudo("usermod -a -G www-data ubuntu")
