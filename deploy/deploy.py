@@ -138,6 +138,12 @@ def validate_can_deploy(inst, cfg):
     # Do a local test to make sure something isn't broken
     test()
 
+
+
+######################
+# Tasks
+######################
+@task
 def webserver_config():
     """
     Set up nginx and uwsgi
@@ -152,8 +158,6 @@ def webserver_config():
     sudo('chown %s:%s %s' % (cfg.deploy_user, cfg.deploy_user, '/var/log/uwsgi'))
 
     # move over uwsgi/nginx config files
-    put(LocalConfig.remote_uwsgi_conf,
-         '/etc/init/uwsgi.conf', use_sudo=True)
     put(LocalConfig.remote_uwsgi_picdocini,
          '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
     remote_picapp = '/etc/nginx/sites-available/picdoctorsapp' 
@@ -170,9 +174,6 @@ def webserver_config():
     sudo('echo "env = DJANGO_SETTINGS_MODULE=settings.%s" >> '\
          '/etc/uwsgi/apps-available/picdoctorsapp.ini' % deploy_type)
 
-    # Start 'er up
-    sudo('service uwsgi restart') # restart just in case it's already running
-
     dst = '/etc/uwsgi/apps-enabled/picdoctorsapp.ini'
     if not exists(dst):
         sudo('ln -s /etc/uwsgi/apps-available/picdoctorsapp.ini %s' % dst)
@@ -181,13 +182,18 @@ def webserver_config():
     if not exists(dst):
         sudo('sudo ln -s /etc/nginx/sites-available/picdoctorsapp %s' % dst)
 
-    sudo('service nginx restart')
+    if not exists('/usr/local/bin/supervisord'):
+        sudo('pip install --upgrade supervisor')
 
+    # Supervisord
+    put(LocalConfig.remote_supervisord_cfg, '/etc/supervisord.conf', use_sudo=True)
+    dst = '/etc/init.d/supervisord'
+    put(LocalConfig.remote_supervisord_init, dst, use_sudo=True)
+    sudo('chmod +x %s' % dst)
+    sudo('update-rc.d supervisord defaults')
+    sudo('service supervisord restart', pty=False)
+    sudo('supervisorctl start all')
 
-
-######################
-# Tasks
-######################
 @task
 def getcode(force_push=False):
     """
@@ -572,7 +578,7 @@ def setup_packages():
 
     sudo("service celeryd create-paths")
 
-    sudo("service celeryd restart")
+    sudo("service celeryd restart", pty=False)
 
     sudo("echo 'service celeryd create-paths' >> /etc/rc.local")
     sudo("echo 'service celeryd restart' >> /etc/rc.local")
@@ -620,7 +626,7 @@ def setup_local_mysql():
     sudo("apt-get install mysql-server -y -q")
 
     # Start (or restart) mysql
-    sudo("service mysql restart")
+    sudo("service mysql restart", pty=False)
 
     sudo("""mysql -u root --password=asdf <<< "CREATE DATABASE IF NOT EXISTS picdoctors; GRANT ALL PRIVILEGES ON picdoctors.* TO 'django'@'localhost' IDENTIFIED BY 'asdf';" """);
     
@@ -711,11 +717,6 @@ def deploy(force_push=False, update=True, fast=False):
 
     setup_remote_conveniences()
 
-    # TODO - fix this. It shouldn't be necessary here, but it is. Also,
-    # we don't want the (brief) downtime imposed by these.
-    sudo('service uwsgi restart')
-    sudo('service nginx restart')
-    
     print "Try it out: https://%s or https://%s" % (inst.ip_address or '---', inst.dns_name or '---')
 
 @task(default=True)

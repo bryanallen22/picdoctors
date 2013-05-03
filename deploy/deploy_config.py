@@ -32,10 +32,6 @@ class LocalConfig():
     remote_gitconfig = os.path.join(pd_settings.PROJECT_ROOT,
                          'deploy/configs/remote_gitconfig')
 
-    # uwsgi config
-    remote_uwsgi_conf = os.path.join(pd_settings.PROJECT_ROOT,
-                                 'deploy/configs/uwsgi.conf')
-
     # picdoctors uwsgi config
     remote_uwsgi_picdocini = os.path.join(pd_settings.PROJECT_ROOT,
                                   'deploy/configs/uwsgi_picdoctorsapp.ini')
@@ -49,6 +45,12 @@ class LocalConfig():
 
     remote_bashrc = os.path.join(pd_settings.PROJECT_ROOT,
                                'deploy/configs/bashrc')
+
+    remote_supervisord_cfg = os.path.join(pd_settings.PROJECT_ROOT,
+                            'deploy/configs/supervisord.conf')
+
+    remote_supervisord_init = os.path.join(pd_settings.PROJECT_ROOT,
+                                'deploy/configs/supervisord.init.d')
 
     # celery service
     celery_service = os.path.join(pd_settings.PROJECT_ROOT,
