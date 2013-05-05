@@ -31,16 +31,16 @@
         <form id="profile-form" class="form-horizontal">
 
           <div class="control-group">
+            <label class="control-label" for="new_email" >Email</label>
+            <div class="controls">
+              <input type="text" id="new_email" name="new_email" value="{{ request.user.email }}" class="span3">
+            </div>
+          </div>
+          <div class="control-group">
             <label class="control-label" for="nickname" >Nickname</label>
             <div class="controls">
               <input type="text" id="new_nickname" name="new_nickname" value="{{ request.user.nickname }}" class="span3">
               <p class="text-error">Your nickname will be visible to others<p>
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="new_email" >Email</label>
-            <div class="controls">
-              <input type="text" id="new_email" name="new_email" value="{{ request.user.email }}" class="span3">
             </div>
           </div>
 

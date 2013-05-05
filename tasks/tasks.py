@@ -14,12 +14,6 @@ def sendAsyncEmail(msg):
     msg.send()
 
 @task()
-def savePic(pic_id, file):
-    pic = get_object_or_None(id=pic_id)
-    pic.set_file(file)
-    pic.save()
-
-@task()
 def saveWatermark(profile_id, group_id, str_io_pic):
     profile = get_object_or_None(Profile, id=profile_id)
     if not profile:
