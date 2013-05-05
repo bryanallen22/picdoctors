@@ -6,6 +6,7 @@ from doctor.jobsviews import doc_job_page, new_job_page, apply_for_job
 from doctor.jobsviews import mark_job_completed
 from doctor.jobpricetoolowviews import job_price_too_low
 from doctor.withdrawviews import withdraw
+from doctor.doctorprofileviews import doctor_profile, doctor_profile_pic
 from skaa.uploadviews import doc_upload_handler
 
 # Uncomment the next two lines to enable the admin:
@@ -27,5 +28,7 @@ urlpatterns = patterns('',
     url(r'^delete_bank_account/$',                      delete_bank_account, name='delete_bank_account'),
     url(r'^merchant_info/$',                            merchant_info,       name='merchant_info'),
     url(r'^withdraw/$',                                 withdraw,            name='withdraw'),
+    url(r'^doctor_profile/(?P<nickname>.+)/',           doctor_profile,      name='doctor_profile'),
+    url(r'^doctor_profile_pic/',                        doctor_profile_pic,  name='doctor_profile_pic'),
 )
 

@@ -89,6 +89,8 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     # does this person have a bank account?  I'm contemplating ripping this out and adding as a permission 
     has_bank_account            = models.BooleanField(default=False)
 
+    # Doctors can have a profile pic
+    pic                         = models.ForeignKey('Pic', blank=True, null=True)
 
 
     def get_full_name(self):

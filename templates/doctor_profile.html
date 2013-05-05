@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+
+<div id="doctor_profile" class="row">
+
+  {% if not doctor_exists %}
+
+    <div class="row">
+      <div class="span2"> &nbsp; </div>
+      <h2 class="text-center">Doctor profile page not found!</h2>
+    </div>
+
+  {% else %}
+
+    <div class="row">
+      <div class="span2"> &nbsp; </div>
+      <div class="span8">
+        <h1>{{ nickname }}</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span2"> &nbsp; </div>
+      <div class="span2">
+        <div class="picture">
+          {% if profile_url %}
+          <img src="{{ profile_url }}">
+          {% else %}
+          <img src="{{ STATIC_URL }}images/question_mark.png">
+          {% endif %}
+        </div>
+      </div>
+      <div class="span6">
+        <p>
+          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+          tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+          vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+          no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        </p>
+      </div>
+    </div>
+
+  {% endif %}
+
+</div> {# '#doctor_profile' #}
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
