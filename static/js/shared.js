@@ -65,8 +65,4 @@ $(function(){
     joinAutoSize(this);
   });
 
-  //start up any carousels
-  $('.carousel').carousel('next');
-  $('.carousel').carousel();
-  
 });

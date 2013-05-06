@@ -1,1 +1,4 @@
 third_party/twitter-bootstrap/
+tags
+*.min.js
+
