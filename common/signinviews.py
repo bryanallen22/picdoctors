@@ -10,6 +10,7 @@ from annoying.functions import get_object_or_None
 from common.models import Album, Profile
 from doctor.jobsviews import doc_job_page
 from views import index
+import string
 
 import ipdb
 import logging
@@ -63,6 +64,10 @@ def create_user(email, password, confirm_password, usertype):
         nickname = email[:at_idx]
     else:
         nickname = email
+
+    # make sure the nickname only has a-zA-Z0-9 
+    valid_chars = "_%s%s" % (string.ascii_letters, string.digits)
+    nickname = ''.join(c for c in nickname if c in valid_chars)
 
     if password != confirm_password:
         return ( None, { 'passwords_didnt_match' : True } )
