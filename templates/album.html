@@ -32,7 +32,7 @@
     <div class='span1'> &nbsp; </div>
     <div class='span4' style="text-align:center">
       <div class='download_links'>
-        <a class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}'>Download Doctored Image</a>
+        <a class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}' download='PicDoctorsOriginal-{{ group.doc_pic.uuid|slice:":7" }}.jpg'>Download Doctored Image</a>
       </div>
     </div>
     <div class='span1'> &nbsp; </div>

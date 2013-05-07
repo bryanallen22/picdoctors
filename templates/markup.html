@@ -12,11 +12,10 @@
       Doctor Revision #{{pic.0}}
       <span class='doc_pic_container' style="background: url('{{pic.1.get_preview_url}}') no-repeat; width:{{pic.1.preview_width }}px; height:{{pic.1.preview_height}}px;cursor:default;display:block">
       </span>
-      {% if is_job_user %}
+      <br/>
       <div class='download_links'>
-        <a class='btn btn-primary' href='{{ pic.1.get_original_url }}'>Download Original</a>
+        <a class='btn btn-primary' href='{{ pic.1.get_original_url }}' download='PicDoctorsOriginal-{{ pic.1.uuid|slice:":7" }}.jpg'>Download Original</a>
       </div>
-      {% endif %}
     </div>
     {% endfor %}
     {% endif %}
@@ -44,7 +43,7 @@
       <div style='clear:both'></div>
       <br />
       <div class='download_links'>
-        <a class='btn btn-primary' href='{{ pic.get_original_url }}'>Download Original</a>
+        <a class='btn btn-primary' href='{{ pic.get_original_url }}' download='PicDoctorsOriginal-{{ pic.uuid|slice:":7" }}.jpg'>Download Original</a>
       </div>
       {% endif %}
       <div class='markup_desc_container' style="width:{{ pic.preview_width }}px;">
