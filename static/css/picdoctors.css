@@ -792,3 +792,23 @@ body {
   z-index: 100;
 }
 */
+/****************************************************************
+ * Account settings
+ * *************************************************************/
+#account_settings #pic-form .doc_profile_pic {
+  border: 4px #999999;
+  border-style: solid;
+  border-radius: 6px;
+  display: block;
+}
+#account_settings #pic-form #doc_profile_desc {
+  width: 360px;
+  max-width: 360px;
+  display: block;
+}
+#account_settings #pic-form #doc_profile_submit {
+  margin-top: 20px;
+}
+#account_settings #pic-form #doc_pic_control {
+  margin-bottom: 0px;
+}

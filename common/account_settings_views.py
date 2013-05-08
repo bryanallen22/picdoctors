@@ -14,7 +14,7 @@ from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account
 from notifications.models import Notification, NotificationToIgnore
 from common.decorators import require_login_as
-from common.models import Profile
+from common.models import Profile, Pic
 import re
 
 import logging
@@ -38,11 +38,20 @@ def get_shared_params(request, profile):
 @require_login_as(['skaa', 'doctor'])
 @render_to('account_settings.html')
 def account_settings(request):
-    # if user, send them to settings_user
-    # if doc, send them to settings_doc
     profile = get_profile_or_None(request)
-    if not profile:
-        return redirect('/')
+
+    if request.method == 'POST':
+        file = request.FILES[u'file'] if 'file' in request.FILES else None
+        if file is not None:
+            pic = Pic(path_owner="doc_profile")
+            pic.set_file(file, thumb_width=200,   thumb_height=200,
+                               preview_width=200, preview_height=200);
+            pic.save()
+            request.user.pic = pic
+            request.user.save()
+        if 'doc_profile_desc' in request.POST:
+            request.user.doc_profile_desc = request.POST['doc_profile_desc']
+            request.user.save()
 
     # Okay, Bryan is a bad person. This is a horrible hack upon hacks, and
     # all of this stuff needs a rewrite. Eventually. So.

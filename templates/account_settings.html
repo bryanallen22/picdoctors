@@ -60,6 +60,37 @@
             </div>
           </div>
         </form>
+
+        {# Doctor profile picture and description #}
+        {% if perms.common.doctor %}
+          <hr>
+          <form id="pic-form" method="post" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+
+            <div id="doc_pic_control" class="control-group">
+              <label class="control-label" for="profile_pic" >Profile Pic</label>
+              <div class="controls">
+                <p>Your profile can be viewed <a href="{{ doc_profile_url }}">here</a></p>
+                {% if doc_pic_url %}
+                <img class="doc_profile_pic" src="{{ doc_pic_url }}">
+                {% else %}
+                <img class="doc_profile_pic" src="{{ STATIC_URL }}images/question_mark.png">
+                {% endif %}
+
+                <p>Your picture will be resized to fit within a 200x200 area<p>
+                <input type="file" name="file" id="profile_pic"><br>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="doc_profile_desc" >Profile Description</label>
+              <div class="controls">
+                <textarea id="doc_profile_desc" name="doc_profile_desc" class="autosize-textarea">{{ doc_profile_desc }}</textarea>
+                <button id="doc_profile_submit" type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </form>
+        {% endif %}
+
       </div>
 
       {# Password tab #}

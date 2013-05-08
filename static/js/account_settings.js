@@ -426,8 +426,7 @@ $(function(){
           this_view.handle_response(data);
           // enable the button again
           button.removeAttr("disabled");
-
-          });
+        });
       },
 
     });

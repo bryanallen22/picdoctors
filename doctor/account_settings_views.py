@@ -112,6 +112,7 @@ def merchant_info(request):
     # Bring them back to this page
     return redirect( reverse('account_settings') + '#merchant_tab' )
 
+@require_login_as(['doctor'])
 def get_settings_doc(request):
     profile = get_profile_or_None(request)
     if profile.bp_account:
@@ -121,10 +122,18 @@ def get_settings_doc(request):
     else:
         bank_accounts = None
         merchant = False
+    
+    doc_profile_url = reverse('doctor_profile', args=[request.user.nickname]) or None
+    doc_pic_url = None
+    if request.user.pic:
+        doc_pic_url = request.user.pic.get_preview_url()
 
     my_params = {
         'bank_accounts'     : bank_accounts,
         'is_merchant'       : merchant,
+        'doc_profile_url'   : doc_profile_url,
+        'doc_pic_url'       : doc_pic_url,
+        'doc_profile_desc'  : request.user.doc_profile_desc,
     }
 
     return my_params

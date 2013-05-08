@@ -15,30 +15,25 @@
   {% else %}
 
     <div class="row">
-      <div class="span2"> &nbsp; </div>
+      <div class="span1"> &nbsp; </div>
       <div class="span8">
         <h1>{{ nickname }}</h1>
       </div>
     </div>
 
     <div class="row">
-      <div class="span2"> &nbsp; </div>
-      <div class="span2">
+      <div class="span1"> &nbsp; </div>
+      <div class="span3">
         <div class="picture">
-          {% if profile_url %}
-          <img src="{{ profile_url }}">
+          {% if profile_pic_url %}
+          <img src="{{ profile_pic_url }}">
           {% else %}
           <img src="{{ STATIC_URL }}images/question_mark.png">
           {% endif %}
         </div>
       </div>
       <div class="span6">
-        <p>
-          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-          tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-          vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-          no sea takimata sanctus est Lorem ipsum dolor sit amet.
-        </p>
+        <p>{{ doc_profile_desc }}</p>
       </div>
     </div>
 

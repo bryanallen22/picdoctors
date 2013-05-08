@@ -92,6 +92,9 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     # Doctors can have a profile pic
     pic                         = models.ForeignKey('Pic', blank=True, null=True)
 
+    # Description that the doctor puts on their profile
+    doc_profile_desc            = models.TextField()
+
 
     def get_full_name(self):
         # The user is identified by their email address
@@ -174,10 +177,10 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
 # Pic
 ################################################################################
 ungroupedId = 100000  # Make sure that this matches isotope-app.js
-thumb_width    = 200 
-thumb_height   = 200 
-preview_width  = 800 
-preview_height = 800
+default_thumb_width    = 200 
+default_thumb_height   = 200 
+default_preview_width  = 800 
+default_preview_height = 800
 
 def get_pic_path(pic_type, instance, filename):
     path = instance.path_owner + "_" + pic_type
@@ -223,7 +226,10 @@ class Pic(DeleteMixin):
     def __unicode__(self):
         return self.title
 
-    def set_file(self, myfile):
+    def set_file(self, myfile,
+            thumb_width=default_thumb_width, thumb_height=default_thumb_height,
+            preview_width=default_preview_width, preview_height=default_preview_height):
+
         my_uuid = uuid.uuid4().hex # 32 unique hex chars
         logging.info('set_file %s' % my_uuid)
 
