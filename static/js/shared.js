@@ -1,6 +1,9 @@
 
 
   function textAreaResize (text) {
+    // save scrol location so we can restore it
+    var scrollTop = $('body').scrollTop();
+
     if(text.target){
       //for some reason chrome sends as event, ff sends the target item
       text = text.target;
@@ -27,6 +30,9 @@
 
     total = Math.max(total, min_height);
     text.style.height = (total) +'px';
+
+    // restore scroll position
+    $('body').scrollTop(scrollTop);
   }
   /* get already changed text */
   function delayedResize () {
