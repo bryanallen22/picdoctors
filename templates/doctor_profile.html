@@ -23,16 +23,14 @@
 
     <div class="row">
       <div class="span1"> &nbsp; </div>
-      <div class="span3">
-        <div class="picture">
-          {% if profile_pic_url %}
-          <img src="{{ profile_pic_url }}">
-          {% else %}
-          <img src="{{ STATIC_URL }}images/question_mark.png">
-          {% endif %}
-        </div>
-      </div>
-      <div class="span6">
+
+      <div class="span9">
+        {% if profile_pic_url %}
+        <img class="avatar" src="{{ profile_pic_url }}">
+        {% else %}
+        <img class="avatar" src="{{ STATIC_URL }}images/question_mark.png">
+        {% endif %}
+
         {% if profile_pic_url %}
           <p>{{ doc_profile_desc }}</p>
         {% else %}
@@ -53,7 +51,7 @@
       <div class="row album_link">
         <div class="span1"> &nbsp; </div>
           <div class="span9">
-            <a href="{% url 'album' job.0.album.id %}">{{ job.1 }}</a>
+            <a class="link" href="{% url 'album' job.0.album.id %}">&raquo; {{ job.1 }}</a>
           </div>
       </div>
       {% endfor %}
