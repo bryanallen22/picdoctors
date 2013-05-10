@@ -812,3 +812,9 @@ body {
 #account_settings #pic-form #doc_pic_control {
   margin-bottom: 0px;
 }
+/****************************************************************
+ * Doctor Profile Page
+ * *************************************************************/
+#doctor_profile .album_link {
+  margin: 25px 10px;
+}

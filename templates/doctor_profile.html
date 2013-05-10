@@ -33,9 +33,39 @@
         </div>
       </div>
       <div class="span6">
-        <p>{{ doc_profile_desc }}</p>
+        {% if profile_pic_url %}
+          <p>{{ doc_profile_desc }}</p>
+        {% else %}
+          <p>(No description available)</p>
+        {% endif %}
       </div>
     </div>
+
+    {% if jobs %}
+      <div class="row">
+        <div class="span1"> &nbsp; </div>
+        <div class="span9">
+          <h4>Selected completed works</h4>
+        </div>
+      </div>
+
+      {% for job in jobs %}
+      <div class="row album_link">
+        <div class="span1"> &nbsp; </div>
+          <div class="span9">
+            <a href="{% url 'album' job.0.album.id %}">{{ job.1 }}</a>
+          </div>
+      </div>
+      {% endfor %}
+
+      <div class="row">
+        <div class="span1"> &nbsp; </div>
+        <div class="span9">
+          <p>Jobs only shown if permitted by original uploader.</p>
+        </div>
+      </div>
+    {% endif %}
+
 
   {% endif %}
 

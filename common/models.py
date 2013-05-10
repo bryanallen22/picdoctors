@@ -358,7 +358,7 @@ class Album(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
     userprofile          = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, 
                                              null=True, db_index=True)
-    description          = models.TextField(blank=True)
+    #description          = models.TextField(blank=True)
     num_groups           = models.IntegerField(blank=True, null=True, default=0)
 
     # This only becomes true after they've paid (set a hold)
