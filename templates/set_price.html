@@ -10,19 +10,13 @@
 
           <legend>
             {% if increase_price %}
-            <h3>Increase the price for
+            <h3>Increase the price for this job</h3>
             {% else %}
-            <h3>Please set a price for 
-            {% endif %}
-
-            {% if num_pics == '1' %}
-            this pic
-            {% else %}
-            these {{ num_pics }} pics
+            <h3>Please set a price for this job<h3>
             {% endif %}
 
             {% if increase_price %}
-            <br />Original price: ${{ original_price }} 
+            <h4>Original price: ${{ original_price }}<h4>
             {% endif %}
 
             </h3>
@@ -79,7 +73,7 @@
                   {% if credit_cards|length > 0 %}
                     <input class="radio" type="radio" name="card_radio_group" value="myval">
                   {% endif %}
-                  <p>Create a new card</p>
+                  <p><strong>Enter new credit card information</strong></p>
                   <div class="row">
                     <div id="card_div" class="span2">
                       <label for="card_number">Card Number:</label>

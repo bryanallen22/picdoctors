@@ -392,15 +392,12 @@ body {
   display: block;
   margin-left: 40px;
 }
-#markup_app .markup_h2_header {
-  text-align: center;
-  color: inherit;
+#markup_app #instructions {
   /* Picture is 800 px wide. The margins on the well are 19px.
-       762 + 19*2 = 800
-     */
+       762 + 19*2 = 800 */
 
   width: 762px;
-  font-size: 28px;
+  text-align: center;
 }
 /*****************************
   Job page

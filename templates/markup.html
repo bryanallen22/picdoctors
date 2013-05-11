@@ -4,9 +4,12 @@
 <div class='row'>
   <div id="markup_app" class='span10'>
     {% if doc_pics %}
-    <h2 class='markup_h2_header well'>
-      Doctor's Picture{{doc_pics|pluralize}}
-    </h2>
+    <div id="instructions" class="well">
+      <h3>
+        Doctor's Picture{{doc_pics|pluralize}}
+      </h3>
+    </div>
+
     {% for pic in doc_pics %}
     <div class='doc_pics'>
       Doctor Revision #{{pic.0}}
@@ -18,15 +21,23 @@
       </div>
     </div>
     {% endfor %}
-    {% endif %}
-    <h2 class='markup_h2_header well'>
+    {% endif %} {# doc_pics #}
+    
+    <div id="instructions" class="well">
       {% if read_only %}
-      User's Picture{{pics|pluralize}}
+        <h3>
+          User's Picture{{pics|pluralize}}
+        </h3>
       {% else %}
-      Click and drag on your picture{{pics|pluralize}} to make additional notes
+        <h3>
+          Give some general instructions for what you'd like done
+        </h3>
+        <h3>
+          Click and drag to add instructions for a specific area
+        </h3>
       {% endif %}
-    </h2>
-    <br/>
+    </div>
+
     {% for pic in pics %}
     <div class='markup_outer'>
       <span class='markup_pic_container' style="{% if read_only %}cursor:default;{% endif %}background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;"  uuid="{{ pic.uuid }}" >
@@ -70,7 +81,9 @@
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
       <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Previous</a>
       <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 12px;'>Next</a>
+      {% comment %}
       <div id="markup_tour" class="btn btn-info btn-large" style="display : block;margin-top:12px;">Help Me</div>
+      {% endcomment %}
       {% if is_job_doctor  %}
 
       <form action="{% url 'doc_upload_handler' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
