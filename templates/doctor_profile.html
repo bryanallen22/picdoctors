@@ -28,10 +28,10 @@
         {% if profile_pic_url %}
         <img class="avatar" src="{{ profile_pic_url }}">
         {% else %}
-        <img class="avatar" src="{{ STATIC_URL }}images/question_mark.png">
+        <img class="avatar" src="{{ STATIC_URL }}images/doctor_200x200.png">
         {% endif %}
 
-        {% if profile_pic_url %}
+        {% if doc_profile_desc %}
           <p>{{ doc_profile_desc }}</p>
         {% else %}
           <p>(No description available)</p>
