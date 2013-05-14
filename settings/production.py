@@ -17,7 +17,7 @@ AWS_STORAGE_BUCKET_NAME = 'picdoctors_media'
 DATABASES = {
     'default': {
         'ENGINE'   : 'django.db.backends.mysql',
-        'HOST'     : 'db0.c9b9prnejh0e.us-east-1.rds.amazonaws.com',
+        'HOST'     : 'production.c9b9prnejh0e.us-east-1.rds.amazonaws.com',
         'PORT'     : '3306',
         'NAME'     : 'picdoctors', # db name
         'USER'     : 'picdoctors',

@@ -109,4 +109,3 @@ fi
 
 ### PicDoctors customizations
 alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'
-alias updown='sudo service uwsgi restart; sudo service nginx restart'
