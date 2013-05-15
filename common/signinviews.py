@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.utils import simplejson
 
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
@@ -11,10 +12,12 @@ from common.models import Album, Profile
 from doctor.jobsviews import doc_job_page
 from views import index
 import string
+import re
 
 import ipdb
 import logging
 import datetime
+import settings
 
 def create_skaa(user):
     user.add_permission('skaa')
@@ -36,7 +39,7 @@ def auth(email, password):
         return ( user, { } )
     return ( None, { 'bad_email_or_password' : True } )
 
-def create_user(email, password, confirm_password, usertype):
+def create_user(email, nickname, password, confirm_password, usertype):
     """
     Create the user.
 
@@ -59,18 +62,27 @@ def create_user(email, password, confirm_password, usertype):
     # you shouldn't be able to create two different users with different emails
     # just based on capitalization
     email = email.lower()
-    at_idx = email.find("@")
-    if at_idx != -1:
-        nickname = email[:at_idx]
-    else:
-        nickname = email
 
     # make sure the nickname only has a-zA-Z0-9 
     valid_chars = "_%s%s" % (string.ascii_letters, string.digits)
-    nickname = ''.join(c for c in nickname if c in valid_chars)
+    new_nickname = ''.join(c for c in nickname if c in valid_chars)
+
+    if new_nickname != nickname:
+        return ( None, { 'invalid_nick' : True } )
+
+    if Profile.objects.filter(nickname=nickname).count() > 0:
+        return ( None, { 'invalid_nick' : True } )
 
     if password != confirm_password:
         return ( None, { 'passwords_didnt_match' : True } )
+
+    if settings.IS_PRODUCTION:
+        if len(password) < 8:
+            return ( None, { 'password_invalid' : True } )
+    else: # for non production we need at least 1 character
+        if len(password) < 1:
+            return ( None, { 'password_invalid' : True } )
+
 
     if Profile.objects.filter(email=email).count() > 0:
         # Username exists... Can we log in?
@@ -136,6 +148,7 @@ def signin(request, usertype='user'):
                 user, tmp = ( None, { 'need_tos' : True } )
             else:
                 user, tmp = create_user( request.POST['email'],
+                                         request.POST['nickname'],
                                          request.POST['password'],
                                          request.POST['confirm_password'],
                                          usertype )
@@ -164,6 +177,7 @@ def signin(request, usertype='user'):
         else:
             # Something went wrong. Let's at least prepopulate the email address for them
             ret['email'] = request.POST['email']
+            ret['nickname'] = request.POST['nickname']
 
     return ret
 
@@ -188,3 +202,52 @@ def doc_signin(request):
     return signin(request, usertype='doc')
 
 
+def valid_nick(nickname):
+    if nickname.strip() == "":
+        result = {
+            'success'   : False,
+            'text'      : "You're nickname can't be blank",
+            }
+    elif len(nickname) > 32:
+        result = {
+            'success'   : False,
+            'text'      : "You're nickname can't be greater then 32 characters long",
+            }
+    elif not re.match('^[a-zA-Z0-9_]+$', nickname):
+        result = {
+            'success'   : False,
+            'text'      : "You're nickname can only contain letters, numbers and underscores",
+            }
+    else:
+        result= {'success':True}
+
+    return result
+
+
+#@require_login_as([])
+# no required login
+def check_unique_nickname(request):
+    try:
+        nickname = request.POST['nickname'] 
+        result = valid_nick(nickname)
+        if result.get('success'):
+            nick_count = Profile.objects.filter(nickname=nickname).count()
+            if nick_count == 0:
+
+                result = {
+                       'success' : True,
+                       'text'    : 'That nickname is available!',
+                         }
+            else:
+                result = {
+                        'success' :False,
+                        'text' : "That nickname is already in use!",
+                        }
+    except:
+        result = {
+                'success' : False,
+                'text' : "There was an unexpected error, we may be unable to save your nickname"
+                 }
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')

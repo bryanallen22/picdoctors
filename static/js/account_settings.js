@@ -368,7 +368,6 @@ $(function(){
       // Delegated events for creating new items, and clearing completed ones.
       events: {
         //"keypress #new-todo":  "createOnEnter",
-        "blur      #new_nickname"         : "check_unique_nickname",
         "click     #profile_submit"       : "profile_submit",
       },
 
@@ -390,21 +389,6 @@ $(function(){
             this.$el.find("#profile_error").show();
             this.$el.find("#profile_error_text").text( data.text );
           }
-
-      },
-
-      check_unique_nickname: function(){
-        this.hide_messages();
-
-        var obj = {
-          'nickname'    : this.$el.find("#new_nickname").val(),
-        };
-
-        var this_view = this;
-
-        postTo('/check_unique_nickname/', obj, function(data) {
-          this_view.handle_response(data);
-        });
 
       },
 

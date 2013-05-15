@@ -142,55 +142,6 @@ def change_password(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-def valid_nick(nickname):
-    if nickname.strip() == "":
-        result = {
-            'success'   : False,
-            'text'      : "You're nickname can't be blank",
-            }
-    elif len(nickname) > 32:
-        result = {
-            'success'   : False,
-            'text'      : "You're nickname can't be greater then 32 characters long",
-            }
-    elif not re.match('^[a-zA-Z0-9_]+$', nickname):
-        result = {
-            'success'   : False,
-            'text'      : "You're nickname can only contain letters, numbers and underscores",
-            }
-    else:
-        result= {'success':True}
-
-    return result
-
-
-@require_login_as(['skaa', 'doctor'])
-def check_unique_nickname(request):
-    profile = get_profile_or_None(request)
-    try:
-        nickname = request.POST['nickname'] 
-        result = valid_nick(nickname)
-        if result.get('success'):
-            nick_count = Profile.objects.filter(nickname=nickname).exclude(id=profile.id).count()
-            if nick_count == 0:
-
-                result = {
-                       'success' : True,
-                       'text'    : 'That nickname is available!',
-                         }
-            else:
-                result = {
-                        'success' :False,
-                        'text' : "That nickname is already in use!",
-                        }
-    except:
-        result = {
-                'success' : False,
-                'text' : "There was an unexpected error, we may be unable to save your nickname"
-                 }
-
-    response_data = simplejson.dumps(result)
-    return HttpResponse(response_data, mimetype='application/json')
 
 @require_login_as(['skaa', 'doctor'])
 def change_profile_settings(request):
