@@ -107,7 +107,7 @@
           </form>
           <p id="error_bankaccount" class="label label-important balanced_error" style="display:none;">Invalid Bank Account Information, please try again.</p>
 
-          {% if not request.IS_PRODUCTION %}
+          {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
             {# Include some debug accounts #}
             <div class="row" style="background-color:#FFBB80;">
               <div class="span7">

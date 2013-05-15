@@ -39,6 +39,7 @@ class BaseMiddleware(object):
 
         request.IS_PRODUCTION = settings.IS_PRODUCTION
         request.deploy_type = settings.DEPLOY_TYPE
+        request.PRODUCTION_TESTING = settings.PRODUCTION_TESTING if hasattr(settings, 'PRODUCTION_TESTING') else False
 
         return None
 

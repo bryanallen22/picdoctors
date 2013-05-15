@@ -382,7 +382,7 @@
           </form>
           <p id="error_bankaccount" class="label label-important balanced_error" style="display:none;">Invalid Bank Account Information, please try again.</p>
 
-          {% if not request.IS_PRODUCTION %}
+          {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
             {# Include some debug accounts #}
             <div class="row" style="background-color:#FFD8B5;">
               <div class="span7">
@@ -589,7 +589,7 @@
             </div>
 
           </form>
-          {% if not request.IS_PRODUCTION %}
+          {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
             {# Include some debug accounts #}
             <div class="row" style="background-color:#FFD8B5;">
               <div class="span7">
@@ -616,7 +616,7 @@
     var marketplace_uri = '{{ marketplace_uri }}';
   </script>
   <script type="text/javascript" src="https://js.balancedpayments.com/v1/balanced.js"></script>
-  {% if not request.IS_PRODUCTION %}
+  {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
   {# This file will be in the directory in production, but nobody should #}
   {# see it. Even if someone found it, these cards won't work in production #}
   <script src="{{STATIC_URL}}js/debug/set_price_debugbank.js"></script>

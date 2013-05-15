@@ -112,7 +112,7 @@
 
               </form>
 
-              {% if not request.IS_PRODUCTION %}
+              {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
               <div class="row" style="background-color:#FFD8B5;">
                 <div class="span5">
                   Test Credit Cards:<br/>
@@ -199,7 +199,7 @@
       var minimum_price = {{ min_price }};
       var marketplace_uri = '{{ marketplace_uri }}';
     </script>
-    {% if not request.IS_PRODUCTION %}
+    {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
       <script type="text/javascript" src="{{ STATIC_URL }}js/debug/set_price_debugcards.js"></script>
     {% endif %}
 {% endblock %}
