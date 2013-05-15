@@ -115,7 +115,7 @@
       <hr>
       <footer>
         <p>&copy; PicDoctors 2012
-        {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
+        {% if not request.IS_PRODUCTION%}
         <span style="color:hotpink;background-color:black;">This is a {{ request.deploy_type}} instance, not a production server. </span>
         {% endif %}
         </p>
