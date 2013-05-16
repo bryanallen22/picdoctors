@@ -15,6 +15,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
 from common.decorators import require_login_as
+from common.jobs import send_job_status_change
 
 import ipdb
 import logging
@@ -97,11 +98,13 @@ def approve_album(request):
     # you also could say profile.isa('album_approver') but that doesn't make sense to me when I read it
     moderator =  profile.has_perm('common.album_approver')
 
-    if job and job.album and profile and moderator: # and moderator
+    if job and job.album and moderator: # and moderator
         # only necessary for doctors that aren't auto_approve
         job.approved = True
         job.status = Job.DOCTOR_SUBMITTED
         job.save()
+
+        send_job_status_change(job, None)
 
         update_doc_auto_approve(job)
     
