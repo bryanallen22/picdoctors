@@ -102,6 +102,12 @@
               <input id="old_password" name="old_password" type="password" class="span3">
             </div>
           </div>
+          <div class="control-group">
+            <label class="control-label" for="passlabel" ></label>
+            <div class="controls">
+              <p class="text-warning">Your new password must be at least 8 characters long.</p>
+            </div>
+          </div>
 
           <div class="control-group">
             <label class="control-label" for="new_password" >New Password</label>
@@ -128,6 +134,10 @@
           <div id="password-nomatch" class="alert alert-error password_alert" style="display:none;">
             <button class="close" data-dismiss="alert">×</button>
             Your new passwords didn't match.
+          </div>
+          <div id="password-invalid" class="alert alert-error password_alert" style="display:none;">
+            <button class="close" data-dismiss="alert">×</button>
+            Your password must be at least 8 characters long.
           </div>
 
           <div class="control-group">

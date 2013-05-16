@@ -130,7 +130,11 @@ def change_password(request):
                         password=request.POST['old_password'])
 
     if user and user.is_active and user == request.user:
-        if request.POST['new_password'] == request.POST['confirm_password']:
+        new_pass = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+        if not legit_password(new_pass):
+            result = { 'invalid_pass': True }
+        elif new_password == confirm_password:
             user.set_password( request.POST['new_password'] )
             user.save()
             result = { 'success' : True }
@@ -141,6 +145,16 @@ def change_password(request):
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
+
+def legit_password(password):
+    if settings.IS_PRODUCTION:
+        if len(password) > 7:
+            return True
+    else: # for non production we need at least 1 character
+        if len(password) > 0:
+            return True
+    return False
+
 
 
 @require_login_as(['skaa', 'doctor'])

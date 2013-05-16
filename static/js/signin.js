@@ -23,10 +23,7 @@ $(function(){
    * button. This shouldn't normally be necessary, but if they hit the back button
    * or something it can be checked. */
   if( $('input:radio[name=create_acct_radio]:checked').val() == 'have' ) {
-      $("#confirm_password").hide();
-      $("#nickname").hide();
-      $("#nickname-info").hide();
-      $("#tos").hide();
+    haveChecked();
   }
 
   $('input:radio[name=create_acct_radio]').click( function() {
@@ -40,6 +37,11 @@ $(function(){
       $("#tos").show();
     }
     else if( checked == "have" ) {
+      haveChecked();
+    }
+  });
+
+  function haveChecked(){
       // They already have an account
       checkNickName = false;
       $("#confirm_password").hide();
@@ -48,8 +50,7 @@ $(function(){
       $('#nickErrorParent').hide();
       $("#tos").hide();
       $("#btnsubmit").removeAttr('disabled');
-    }
-  });
+  }
 
   var disableAutoNickName = false;
 

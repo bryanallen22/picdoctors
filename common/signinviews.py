@@ -9,6 +9,7 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
 from common.models import Album, Profile
+from common.account_settings_views import legit_password 
 from doctor.jobsviews import doc_job_page
 from views import index
 import string
@@ -76,12 +77,8 @@ def create_user(email, nickname, password, confirm_password, usertype):
     if password != confirm_password:
         return ( None, { 'passwords_didnt_match' : True } )
 
-    if settings.IS_PRODUCTION:
-        if len(password) < 8:
-            return ( None, { 'password_invalid' : True } )
-    else: # for non production we need at least 1 character
-        if len(password) < 1:
-            return ( None, { 'password_invalid' : True } )
+    if not legit_password(password):
+        return ( None, { 'password_invalid' : True } )
 
 
     if Profile.objects.filter(email=email).count() > 0:

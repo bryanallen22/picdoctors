@@ -235,6 +235,9 @@ $(function(){
         else if ( data.nomatch ) {
           $("#password-nomatch").show();
         }
+        else if ( data.invalid_pass){
+          $("#password-invalid").show();
+        }
       });
     });
 
