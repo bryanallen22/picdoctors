@@ -157,11 +157,12 @@ def send_job_status_change(job, triggered_by, additional_info=None):
     send_to = None
     site_path = ''
     doc_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
+    user_path = reverse('job_page_with_page_and_id', args=[1, job.id])
 
     # make sure we aren't comparing None to None
     if job.doctor and triggered_by == job.doctor:
         send_to = job.skaa
-        site_path = reverse('job_page_with_page_and_id', args=[1, job.id])
+        site_path = user_path
     elif triggered_by == job.skaa:
         send_to = job.doctor
         site_path = doc_path
@@ -169,8 +170,8 @@ def send_job_status_change(job, triggered_by, additional_info=None):
         if job.doctor:
             #pretend triggered by skaa ;) and send
             send_job_status_change(job, job.skaa, additional_info)
-        send_to = job.doctor
-        site_path = doc_path
+        send_to = job.skaa
+        site_path = user_path
 
     # there is a possibility the doctor doesn't exist
     if not send_to:

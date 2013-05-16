@@ -91,7 +91,7 @@
       </div>
       <br />
       <div class='message_input_arena span10'>
-        <textarea class='message_input autosize-textarea span9 center' style="margin-left:auto" username='{{ request.email }}' group_id='{{ group.group_id }}' job_id='{{job_id}}' >Write your message here</textarea>
+        <textarea class='message_input autosize-textarea span9 center' style="margin-left:auto" username='{{ request.user.nickname }}' group_id='{{ group.group_id }}' job_id='{{job_id}}' >Write your message here</textarea>
       </div>
     </div>
   </div>

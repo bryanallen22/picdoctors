@@ -1,6 +1,6 @@
 $(function(){
   
-  if( $('#contact_app').length > 0 ) {
+  if( $('.contact_arena').length > 0 ) {
     var true_sync_func = Backbone.sync;
     var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
     Backbone.sync = function(method, model, options){

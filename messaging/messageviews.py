@@ -43,7 +43,7 @@ def prep_messages(base_messages, job):
     messages = []
     for msg in base_messages:
         message = Message()
-        message.commentor = msg.commentor.email
+        message.commentor = msg.commentor.nickname
         message.message = msg.message
         message.created = get_time_string(msg.created)
         message.is_owner = msg.commentor == job.skaa
@@ -138,10 +138,10 @@ def generate_message_email(job, profile, message):
     to_peeps = None
 
     if message.commentor == job.skaa:
-        from_whom = 'User'
+        from_whom = job.skaa.nickname
         to_peeps = get_doctors(job, message)
     else:
-        from_whom = 'Doctor'
+        from_whom = job.doctor.nickname
         to_peeps = [job.skaa]
 
     if len(to_peeps) == 0:
@@ -156,7 +156,7 @@ def generate_message_email(job, profile, message):
         subject = 'Comment on a picture in job #' + job_no
         site_path = reverse('album', args=[job.album.id])
 
-    the_message = "The " + from_whom + " said '" + message.message + "'"
+    the_message = from_whom + " said '" + message.message + "'"
 
     notify(Notification.JOB_MESSAGE, subject,  the_message, to_peeps, site_path) 
 
