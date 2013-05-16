@@ -19,7 +19,7 @@ $(function () {
     if( $("#fileupload").length > 0 ) {
       $('#fileupload').fileupload({
           autoUpload : true,
-          limitMultiFileUploads : 3,
+          limitConcurrentUploads : 3,
           maxFileSize : 52482800, // 50 megabytes, not all browsers support
           previewMaxWidth: 200,
           previewMaxHeight: 200,

@@ -274,7 +274,6 @@ PIPELINE_JS = {
             'third_party/jquery-file-upload/jquery.fileupload.js',
             'third_party/jquery-file-upload/jquery.fileupload-ui.js',
             'third_party/jquery-file-upload/jquery.iframe-transport.js',
-            'third_party/jquery-file-upload/upload-application.js',
             'third_party/twitter-bootstrap/bootstrap/js/bootstrap.min.js',
             'third_party/bootstrap-tour/deps/jquery.cookie.js',
             'third_party/bootstrap-tour/bootstrap-tour.min.js',
