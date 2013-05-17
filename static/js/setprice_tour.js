@@ -5,20 +5,20 @@ $(function(){
   tour.addStep({
     element: "#price_tour_anchor", 
     title: "Choose a price", 
-    content: "How much are you willing to pay for this job? Choose a price and type it here. You won't be charged until the job is complete.",
+    content: "How much is the job worth? You won't be charged until the job is complete.",
     placement:"right",
   });
 
   tour.addStep({
     element: "#suggestions", 
     title: "Suggestions", 
-    content: "If you need some suggestions on how much it should cost, click here." 
+    content: "Need suggestion on how much to pay? Click here." 
   });
 
   tour.addStep({
     element: ".new_card", /* html element next to which the step popover should be shown */
     title: "Credit Card", /* title of the popover */
-    content: "Enter your Credit Card information here." /* content of the popover */
+    content: "Enter your Credit Card information here. Your CCV2 number is usually the last 3 digits printed on the back of your card." /* content of the popover */
   });
 
 

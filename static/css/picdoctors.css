@@ -473,8 +473,17 @@ body {
 /*****************************
   Set price page
 ******************************/
-#payment-errors {
+#setprice_app #payment-errors {
   margin-bottom: 9px;
+}
+#setprice_app #offer_label {
+  display: inline;
+}
+#setprice_app #suggestions {
+  float: right;
+}
+#setprice_app #table_header {
+  text-align: center;
 }
 /*****************************
   Merge page
