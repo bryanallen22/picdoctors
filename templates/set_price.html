@@ -30,7 +30,7 @@
 
                 <div class="row">
                   <div class="span4">
-                    <label id="offer_label">How much will you offer?</label>
+                    <label id="offer_label" for="price">How much will you offer?</label>
                     <a id="suggestions" href="#" data-toggle="collapse" data-target="#pricing-table-container">
                       Want suggestions?
                     </a>
@@ -81,7 +81,7 @@
                   <div class="row">
                     <div id="card_div" class="span2">
                       <label for="card_number">Card Number:</label>
-                      <input id="card_utype="text" name="card_number"><br/>
+                      <input id="card_number" type="text" name="card_number"><br/>
                       <p id="error_card" class="label label-important balanced_error" style="display:none;">Invalid card number</p>
                     </div>
                   </div>
@@ -89,12 +89,12 @@
                   <div class="row">
                     <div class="span2">
                       <label for="expiration_month">Expiration:</label>
-                      <input type="text" name="expiration_month" class="span1" > /
+                      <input id="expiration_month" type="text" name="expiration_month" class="span1" > /
                       <input type="text" name="expiration_year"  class="span1" >
                     </div>
                     <div class="span1">
                       <label for="security_code">CCV2:</label>
-                      <input type="text" name="security_code" class="span1" >
+                      <input id="security_code" type="text" name="security_code" class="span1" >
                     </div>
                     <div class="span3">
                       <p id="error_exp" class="label label-important balanced_error" style="display:none;">Invalid expiration date</p>
