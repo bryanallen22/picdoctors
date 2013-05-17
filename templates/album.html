@@ -82,6 +82,7 @@
     </div>
   {% endif %}
 
+  {% if can_view_comments %}
   <div class='span10 contact_arena'>
     <script type='application/json' class='previous_messages'>
       {{group.messages|safe}}
@@ -95,6 +96,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
   {% if shareable %}
   <div style="float:right;padding-top:20px;">

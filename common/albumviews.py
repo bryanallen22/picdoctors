@@ -77,11 +77,15 @@ def album(request, album_id):
             
         groupings.append(picco)
 
+    can_view_comments = profile == job.skaa or \
+                        profile == job.doctor or \
+                        (profile and profile.isa('moderator'))
 
     return  {
             'job_id'            : job.id, 
             'user_acceptable'   : user_acceptable, 
             'is_owner'          : (profile == job.skaa), 
+            'can_view_comments' : can_view_comments,
             'groupings'         : groupings,
             'is_public'         : album.allow_publicly,
             'shareable'         : job.status == Job.USER_ACCEPTED and job.skaa == profile,
