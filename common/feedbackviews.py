@@ -42,9 +42,12 @@ def feedback(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-def send_feedback(from_whom, feedback):
+def send_feedback(from_whom, feedback, to_email=None):
+    """
+    Only provide to_email when faking emails
+    """
     try:
-        to_email = ['feedback@picdoctors.com']
+        to_email = [to_email] or ['feedback@picdoctors.com']
 
         subject = from_whom + ' has some feedback'
 

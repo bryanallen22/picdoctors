@@ -22,14 +22,21 @@ def gen_password(length=12):
     return ''.join([ rand.choice(chars) for x in range(length) ])
 
 @render_to('reset_password.html')
-def reset_password(request):
+def reset_password(request, email=None):
+    """
+    Only provide the 'email' parameter when faking emails
+    """
     if request.method == 'GET':
         return { }
     elif request.method == 'POST':
-        if 'email' in request.POST:
+
+        if not email and 'email' in request.POST:
+            email = request.POST['email']
+
+        if email:
             new_password = gen_password()
 
-            user = get_object_or_None(Profile, email=request.POST['email'])
+            user = get_object_or_None(Profile, email=email)
             if user:
                 user.set_password(new_password)
                 user.save()
@@ -41,7 +48,7 @@ def reset_password(request):
                 text_content  = "Your password has been changed to %s.\n\n" % new_password
                 text_content += "You can log in here: http://picdoctors.com/signin/"
                 msg = EmailMultiAlternatives( subject, text_content, 'donotreply@picdoctors.com',
-                                              [request.POST['email']] )
+                                              [email] )
                 msg.attach_alternative(html_content, "text/html")
 
                 if settings.IS_PRODUCTION:
@@ -50,7 +57,10 @@ def reset_password(request):
                     sendAsyncEmail(msg)
 
         else:
-            pass
+            logging.debug('reset_password has no email in POST...')
+            return { 'success' : False }
+
+        return { 'success' : True }
 
         return { 'success' : True }
 

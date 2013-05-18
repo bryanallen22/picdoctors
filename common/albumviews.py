@@ -13,7 +13,6 @@ from common.functions import get_profile_or_None, get_time_string
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from tasks.tasks import sendAsyncEmail
 from common.decorators import require_login_as
 from common.jobs import send_job_status_change
 

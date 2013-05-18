@@ -12,7 +12,6 @@ from common.functions import get_profile_or_None, get_time_string
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from tasks.tasks import sendAsyncEmail
 import settings
 from notifications.functions import notify
 from notifications.models import Notification

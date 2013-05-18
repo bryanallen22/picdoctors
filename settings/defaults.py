@@ -158,7 +158,8 @@ INSTALLED_APPS = (
     'south',
     'pipeline',
     'debug_toolbar',
-    'seleniumtests', # TODO - move this to TESTABLE_APPS once I think it's in better shape
+    'seleniumtests',
+    'debug',
 ) + TESTABLE_APPS
 
 
