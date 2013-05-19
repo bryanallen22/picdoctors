@@ -46,7 +46,6 @@ def send_email(notification):
         
         args = {
                 'message'           : message,
-                'site_url'          : settings.SITE_URL,
                 'site_path'         : url,
                 } 
         html_content = render_to_string('notification_email.html', args)

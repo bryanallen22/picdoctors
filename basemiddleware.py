@@ -38,8 +38,9 @@ class BaseMiddleware(object):
         request.new_notification_cnt = len([n for n in request.notifications if n.viewed == False])
 
         request.IS_PRODUCTION = settings.IS_PRODUCTION
-        request.deploy_type = settings.DEPLOY_TYPE
+        request.DEPLOY_TYPE = settings.DEPLOY_TYPE
         request.PRODUCTION_TESTING = settings.PRODUCTION_TESTING if hasattr(settings, 'PRODUCTION_TESTING') else False
+        request.SITE_URL = settings.SITE_URL
 
         return None
 

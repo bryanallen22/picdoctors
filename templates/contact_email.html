@@ -3,7 +3,7 @@
 {% block main %}
 <h2> 
   The {{ from_whom }} commented on your job. <br/>
-  You can view the page by clicking <a href='{{ site_url }}{{ site_path }}'>here</a>
+  You can view the page by clicking <a href='{{ request.SITE_URL }}{{ site_path }}'>here</a>
 </h2>
 {% endblock %}
 

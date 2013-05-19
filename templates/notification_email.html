@@ -3,7 +3,7 @@
 {% block main %}
 <h3> 
   Notification: {{ message }} <br/>
-  Go to the page by clicking <a href='{{ site_url }}{{site_path}}'>here</a>
+  Go to the page by clicking <a href='{{ request.SITE_URL }}{{site_path}}'>here</a>
 </h3>
 {% endblock %}
 

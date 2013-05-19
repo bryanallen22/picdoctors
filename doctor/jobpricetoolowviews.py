@@ -78,7 +78,6 @@ def send_user_email(job):
                 'avg_price'             : avg_price,
                 'job_id'                : job.id,
                 'number_of_doctors'     : len(contribs),
-                'site_url'              : settings.SITE_URL,
                 'site_path'             : site_path,
                 } 
         html_content = render_to_string('job_price_too_low_email.html', args)
