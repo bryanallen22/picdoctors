@@ -130,9 +130,9 @@ def change_password(request):
                         password=request.POST['old_password'])
 
     if user and user.is_active and user == request.user:
-        new_pass = request.POST['new_password']
+        new_password = request.POST['new_password']
         confirm_password = request.POST['confirm_password']
-        if not legit_password(new_pass):
+        if not legit_password(new_password):
             result = { 'invalid_pass': True }
         elif new_password == confirm_password:
             user.set_password( request.POST['new_password'] )
