@@ -10,6 +10,7 @@ from common.models import Job, Album, Group, Pic
 from messaging.models import JobMessage, GroupMessage
 from common.functions import get_profile_or_None, get_time_string
 from django.core.mail import EmailMultiAlternatives
+from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
@@ -52,7 +53,7 @@ def send_feedback(from_whom, feedback, to_email=None):
         subject = from_whom + ' has some feedback'
 
         args = {'from':from_whom, 'feedback':feedback} 
-        html_content = render_to_string('feedback_email.html', args)
+        html_content = render_to_string('feedback_email.html', args, RequestContext(request))
                                         
         
         # this strips the html, so people will have the text

@@ -3,15 +3,16 @@ from django.utils import simplejson
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.template import RequestContext
 
 from annoying.decorators import render_to
 
 from common.models import *
 from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account, get_withdraw_jobs, is_merchant, credit_doctor
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
 from common.decorators import require_login_as
 
@@ -80,7 +81,7 @@ def send_user_email(job):
                 'number_of_doctors'     : len(contribs),
                 'site_path'             : site_path,
                 } 
-        html_content = render_to_string('job_price_too_low_email.html', args)
+        html_content = render_to_string('job_price_too_low_email.html', args, RequestContext(request))
                                         
         
         # this strips the html, so people will have the text

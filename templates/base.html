@@ -114,9 +114,9 @@
 
       <hr>
       <footer>
-        <p>&copy; PicDoctors 2012
+        <p>&copy; PicDoctors LLC
         {% if not request.IS_PRODUCTION%}
-        <span style="color:hotpink;background-color:black;">This is a {{ request.deploy_type}} instance, not a production server. </span>
+        <span style="color:hotpink;background-color:black;">This is a {{ request.DEPLOY_TYPE}} instance, not a production server. </span>
         {% endif %}
         </p>
       </footer>

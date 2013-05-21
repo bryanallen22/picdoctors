@@ -1,6 +1,7 @@
 from common.models import Profile
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.template import RequestContext
 
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
@@ -44,7 +45,7 @@ def reset_password(request, email=None):
                 subject = 'Picdoctors password reset'
 
                 args = { 'new_password' : new_password }
-                html_content  = render_to_string('reset_password_email.html', args)
+                html_content  = render_to_string('reset_password_email.html', args, RequestContext(request))
                 text_content  = "Your password has been changed to %s.\n\n" % new_password
                 text_content += "You can log in here: http://picdoctors.com/signin/"
                 msg = EmailMultiAlternatives( subject, text_content, 'donotreply@picdoctors.com',

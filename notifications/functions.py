@@ -1,3 +1,4 @@
+from django.template import RequestContext
 from notifications.models import Notification, NotificationToIgnore
 from django.core.urlresolvers import reverse
 import ipdb
@@ -48,7 +49,7 @@ def send_email(notification):
                 'message'           : message,
                 'site_path'         : url,
                 } 
-        html_content = render_to_string('notification_email.html', args)
+        html_content = render_to_string('notification_email.html', args, RequestContext(request))
                                         
         
         # this strips the html, so people will have the text
