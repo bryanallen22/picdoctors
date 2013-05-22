@@ -29,21 +29,23 @@ def feedback(request):
 
     if profile:
         from_whom = profile.email
+        logged_in = True
     elif tmp_from != '':
         from_whom = tmp_from
+        logged_in = False
         
     feedback = data['user_feedback'].strip()
     success = False
 
     if feedback != '':
-        success = send_feedback(from_whom, feedback)
+        success = send_feedback(from_whom, feedback, logged_in)
         
     result = { 'success': success}
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-def send_feedback(from_whom, feedback, to_email=None):
+def send_feedback(from_whom, feedback, logged_in, to_email=None):
     """
     Only provide to_email when faking emails
     """
@@ -52,7 +54,7 @@ def send_feedback(from_whom, feedback, to_email=None):
 
         subject = from_whom + ' has some feedback'
 
-        args = {'from':from_whom, 'feedback':feedback} 
+        args = {'from':from_whom, 'feedback':feedback, 'logged_in':logged_in} 
         html_content = render_to_string('feedback_email.html', args, RequestContext(request))
                                         
         

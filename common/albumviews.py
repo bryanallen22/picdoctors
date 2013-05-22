@@ -10,7 +10,6 @@ from common.models import Job, Album, Group, Pic
 from messaging.messageviews import prep_messages
 from messaging.models import JobMessage, GroupMessage
 from common.functions import get_profile_or_None, get_time_string
-from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 from common.decorators import require_login_as
 from common.jobs import send_job_status_change

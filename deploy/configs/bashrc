@@ -110,6 +110,6 @@ fi
 ### PicDoctors customizations
 alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'
 alias pdmysql='mysql -u picdoctors -P 3306 -h production.c9b9prnejh0e.us-east-1.rds.amazonaws.com -pcm9vJ2KUBjh8KQJ7'
-
+alias pds='python manage.py shell'
 export EDITOR=vim
 

@@ -47,6 +47,8 @@ def job_price_too_low_action(request, job):
         if not job.doctor:
             too_low_contributor = PriceTooLowContributor.objects.filter(job=job.id).filter(doctor=doc.id)
             if len(too_low_contributor) == 0:
+                # If we're here, it's because we need to add this doctor
+                # to the PriceTooLowContributor set
                 job_qs = Job.objects.select_for_update().filter(pk=job.id)
                 for job in job_qs:
                     job.price_too_low_count += 1
@@ -55,10 +57,11 @@ def job_price_too_low_action(request, job):
                     contrib=PriceTooLowContributor(job=job, doctor=doc, price=price)
                     contrib.save()
                     
-                if job.price_too_low_count % 5 == 0:
-                    send_user_email(job)
+            if job.price_too_low_count % 5 == 0:
+                send_user_email(job)
 
-def send_user_email(job):
+def send_user_email(job, request):
+    import ipdb; ipdb.set_trace()
     try:
         to_email = [job.skaa.email]
 

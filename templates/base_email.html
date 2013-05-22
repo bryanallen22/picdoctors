@@ -17,7 +17,9 @@
                       <td valign="top">
                         <div mc:edit="std_preheader_content">
                           {% block teaser %}
+                          {% comment %}
                           Use this area to offer a short teaser of your email's content. Text here will show in the preview area of some email clients.
+                          {% endcomment %}
                           {% endblock %}
                         </div>
                       </td>
@@ -70,7 +72,7 @@
                             <td valign="top">
                               <div mc:edit="std_content00">
                                 <h2 class="h2">
-                                  {% block heading %}
+                                  {% block header %}
                                   {% endblock %}
                                 </h2>
                                 {% block main %}

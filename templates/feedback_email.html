@@ -1,14 +1,21 @@
 {% extends 'base_email.html' %}
 
-{% block main %}
-<h2> 
-  The user {{ from }} has really awesome feedback for you. <br/>
-  They said: <br/>
-  <p>
-  {{ feedback }}
-  </p>
-  <br/>
-  <H1>Most importantly Daniel is root</H1>
-</h2>
+{% block teaser %}
+  Feedback from {{ from }}. User email
+  {% if logged_in %}
+    <em>IS</em>
+  {% else %}
+    <em>IS NOT</em>
+  {% endif %}<br/>
+  confirmed.
 {% endblock %}
 
+{% block main %}
+  {{ from }} gave this feedback:
+  <br/>
+  <br/>
+  <p>
+    {{ feedback }}
+  </p>
+  <br/>
+{% endblock %}
