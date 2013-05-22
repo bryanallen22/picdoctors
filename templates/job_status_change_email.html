@@ -1,9 +1,8 @@
 {% extends 'base_email.html' %}
 
 {% block main %}
-<h2> 
-  The status of the job #{{ job_id|stringformat:"08d" }} has changed. <br/>
-  Current state: {{ job_status }}<br/>
+  The status of the job #{{ job_id|stringformat:"08d" }} has changed. <br/><br/>
+  Current state: <strong>{{ job_status }}</strong> <br/><br/>
   You can view view the page by clicking <a href='{{ request.SITE_URL }}{{site_path}}'>here</a>
 </h2>
 {% endblock %}
