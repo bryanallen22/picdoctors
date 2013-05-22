@@ -153,7 +153,7 @@ def generate_pic_thumbs(filter_album):
     return ret
 
 
-def send_job_status_change(job, triggered_by, additional_info=None):
+def send_job_status_change(request, job, triggered_by, additional_info=None):
     send_to = None
     site_path = ''
     doc_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
@@ -169,7 +169,7 @@ def send_job_status_change(job, triggered_by, additional_info=None):
     else: # triggered by neither, so send to both?
         if job.doctor:
             #pretend triggered by skaa ;) and send
-            send_job_status_change(job, job.skaa, additional_info)
+            send_job_status_change(request, job, job.skaa, additional_info)
         send_to = job.skaa
         site_path = user_path
 
@@ -184,5 +184,5 @@ def send_job_status_change(job, triggered_by, additional_info=None):
     if additional_info is not None:
         message = message + additional_info
         
-    notify(Notification.JOB_STATUS_CHANGE, subject, message, send_to, site_path)
+    notify(request, Notification.JOB_STATUS_CHANGE, subject, message, send_to, site_path)
 

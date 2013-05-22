@@ -58,10 +58,9 @@ def job_price_too_low_action(request, job):
                     contrib.save()
                     
             if job.price_too_low_count % 5 == 0:
-                send_user_email(job)
+                send_user_email(request, job)
 
-def send_user_email(job, request):
-    import ipdb; ipdb.set_trace()
+def send_user_email(request, job):
     try:
         to_email = [job.skaa.email]
 

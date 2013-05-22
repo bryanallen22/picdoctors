@@ -105,7 +105,7 @@ def approve_album(request):
         job.status = Job.DOCTOR_SUBMITTED
         job.save()
 
-        send_job_status_change(job, None)
+        send_job_status_change(request, job, None)
 
         update_doc_auto_approve(job)
     

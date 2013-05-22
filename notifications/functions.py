@@ -10,7 +10,7 @@ from tasks.tasks import sendAsyncEmail
 import logging
 
 
-def notify(notification_type, description, notification, recipients, url):
+def notify(request, notification_type, description, notification, recipients, url):
     # who am I supposed to notify if recipients is None????
     if recipients is None:
         logging.error("attempted to send notification '%s' without recipient" % notification)
@@ -30,9 +30,9 @@ def notify(notification_type, description, notification, recipients, url):
         n.url = url
         n.save()
 
-        send_email(n)
+        send_email(request, n)
 
-def send_email(notification):
+def send_email(request, notification):
     if not i_want_this_email(notification.recipient, notification.notification_type):
         return
 

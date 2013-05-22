@@ -198,7 +198,7 @@ def request_modification(request):
         actions.add('action_button', r)
         job.status = Job.USER_REQUESTS_MODIFICATION
         job.save()
-        send_job_status_change(job, profile)
+        send_job_status_change(request, job, profile)
         job_info = fill_job_info(job, generate_skaa_actions, profile)
         actions.addJobInfo(job_info)
 

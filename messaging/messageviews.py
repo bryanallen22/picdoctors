@@ -123,14 +123,14 @@ def message_handler(request):
             job.save()
 
 
-            generate_message_email(job, profile, msg)
+            generate_message_email(request, job, profile, msg)
 
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
 
-def generate_message_email(job, profile, message):
+def generate_message_email(request, job, profile, message):
     job_message = isinstance(message, JobMessage)
     group_message = isinstance(message, GroupMessage)
     to_peeps = None
@@ -156,7 +156,7 @@ def generate_message_email(job, profile, message):
 
     the_message = from_whom + " said '" + message.message + "'"
 
-    notify(Notification.JOB_MESSAGE, subject,  the_message, to_peeps, site_path) 
+    notify(request, Notification.JOB_MESSAGE, subject,  the_message, to_peeps, site_path)
 
 def get_doctors(job, message):
     ret = []

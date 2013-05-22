@@ -38,14 +38,14 @@ def feedback(request):
     success = False
 
     if feedback != '':
-        success = send_feedback(from_whom, feedback, logged_in)
+        success = send_feedback(request, from_whom, feedback, logged_in)
         
     result = { 'success': success}
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-def send_feedback(from_whom, feedback, logged_in, to_email=None):
+def send_feedback(request, from_whom, feedback, logged_in, to_email=None):
     """
     Only provide to_email when faking emails
     """

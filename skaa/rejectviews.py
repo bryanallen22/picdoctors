@@ -60,10 +60,10 @@ def mod_reject_work(request, job_id):
             text = request.POST['comment']
 
             # send a message to doctor
-            send_job_status_change(job, job.skaa, "  Feedback: " + text)
+            send_job_status_change(request, job, job.skaa, "  Feedback: " + text)
 
             # send a message to skaa
-            send_job_status_change(job, job.doctor, "  The job needed more work and was returned to the doctor.")
+            send_job_status_change(request, job, job.doctor, "  The job needed more work and was returned to the doctor.")
 
             return redirect(reverse('album_approval_page'))
         else:
@@ -99,7 +99,7 @@ def refund_user_endpoint(request):
         job.status = Job.REFUND
         job.save()
 
-        send_job_status_change(job, profile)
+        send_job_status_change(request, job, profile)
 
     result = { 'relocate' : reverse('job_page') }
     response_data = simplejson.dumps(result)
@@ -114,7 +114,7 @@ def switch_doctor_endpoint(request):
     if job and profile and job.skaa == profile:
         remove_previous_doctor(job)
     # TODO do we send the doctor an email saying they are out????    
-    #send_job_status_change(job, profile)
+    #send_job_status_change(request, job, profile)
 
     result = { 'relocate' : reverse('job_page') }
     response_data = simplejson.dumps(result)

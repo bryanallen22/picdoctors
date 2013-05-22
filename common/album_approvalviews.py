@@ -15,7 +15,7 @@ from decimal import *
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
 from common.jobs import Actions, Action, RedirectData, DynamicAction
-from common.jobs import send_job_status_change, fill_job_info
+from common.jobs import fill_job_info
 from common.decorators import require_login_as
 
 import math
