@@ -16,6 +16,7 @@ from common.decorators import passes_test
 from common.functions import get_profile_or_None
 from common.functions import get_unfinished_album
 from models import Markup
+from progressbar.views import get_progressbar_vars
 
 import ipdb
 import logging
@@ -144,7 +145,8 @@ def markup_page_album(request, album_id, sequence):
     else:
         previous_url = reverse('markup_album', args = [album.id, sequence-1])
 
-    return { 
+    ret = get_progressbar_vars(request, 'markup')
+    ret.update({ 
             'pics'          : pics, 
             'next_url'      : next_url, 
             'previous_url'  : previous_url, 
@@ -153,7 +155,8 @@ def markup_page_album(request, album_id, sequence):
             'is_job_doctor' : is_job_doctor, 
             'is_job_user'   : is_job_user, 
             'read_only'     : read_only,
-    }
+    })
+    return ret
 
 def get_markup_whitelist():
     """ Returns whitelisted Markup attributes

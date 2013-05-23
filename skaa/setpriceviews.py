@@ -20,6 +20,7 @@ from models import Markup
 from skaa.jobsviews import update_job_hold
 from skaa.rejectviews import remove_previous_doctor
 from common.decorators import require_login_as
+from progressbar.views import get_progressbar_vars
 
 import ipdb
 import logging
@@ -151,7 +152,8 @@ def increase_price(request, job_id):
     str_num_pics = "%s" % job.album.num_groups
     str_original_price =  "{0:.2f}".format(original_price)
 
-    return { 
+    ret = get_progressbar_vars(request, 'set_price')
+    ret.update({ 
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
@@ -159,7 +161,8 @@ def increase_price(request, job_id):
         'credit_cards'      : user_credit_cards,
         'increase_price'    : True,
         'original_price'    : str_original_price,
-    }
+    })
+    return ret
 
 @require_login_as(['skaa'])
 @render_to('set_price.html')
@@ -196,12 +199,14 @@ def set_price(request):
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
     str_num_pics = "%s" % album.num_groups
 
-    return { 
+    ret = get_progressbar_vars(request, 'set_price')
+    ret.update({ 
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
         'num_pics'          : str_num_pics,
         'credit_cards'      : user_credit_cards,
-    }
+    })
+    return ret
 
 

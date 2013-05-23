@@ -11,6 +11,7 @@ from annoying.functions import get_object_or_None
 from common.models import Album, Profile
 from common.account_settings_views import legit_password 
 from doctor.jobsviews import doc_job_page
+from progressbar.views import get_progressbar_vars, show_progressbar_on_login_page
 from views import index
 import string
 import re
@@ -176,6 +177,12 @@ def signin(request, usertype='user'):
             ret['email'] = request.POST['email']
             ret['nickname'] = request.POST['nickname']
 
+    # Do 
+    if usertype == 'user' and show_progressbar_on_login_page(request):
+        ret['show_progressbar'] = True
+        ret.update( get_progressbar_vars(request, 'signin') )
+    else:
+        ret['show_progressbar'] = False
     return ret
 
 #Nothing special here, we don't need to check if they are logged in or not#I'm just lazy and want to sign out, logic of this needs to be looked at

@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block main %}
+
+{% if not read_only %}
+{% include 'progressbar.html' %}
+{% endif %}
+
 <div class='row'>
   <div id="markup_app" class='span10'>
     {% if doc_pics %}

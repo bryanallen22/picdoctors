@@ -20,6 +20,8 @@ from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
+from progressbar.views import get_progressbar_vars
+
 from PIL import Image
 from StringIO import StringIO
 import ipdb
@@ -50,7 +52,10 @@ def upload_page(request):
 
     logging.info('album.id is %d' % album.id)
     pics = Pic.objects.filter( album__exact=album.id );
-    return { "pics" : pics, "ungroupedId" :  ungroupedId }
+
+    ret = get_progressbar_vars(request, 'upload')
+    ret.update( { "pics" : pics, "ungroupedId" :  ungroupedId } )
+    return ret
 
 @render_to('need_cookies.html')
 def need_cookies(request):

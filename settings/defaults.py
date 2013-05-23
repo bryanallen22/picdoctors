@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     'pipeline',
     'debug_toolbar',
     'seleniumtests',
+    'progressbar',
 ) + TESTABLE_APPS
 
 
