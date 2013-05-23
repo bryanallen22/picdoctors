@@ -176,6 +176,10 @@ def signin(request, usertype='user'):
             # Something went wrong. Let's at least prepopulate the email address for them
             ret['email'] = request.POST['email']
             ret['nickname'] = request.POST['nickname']
+            if request.POST['create_acct_radio'] == 'have':
+                ret['have_checked'] = 'checked'
+            elif request.POST['create_acct_radio'] == 'create':
+                ret['create_checked'] = 'checked'
 
     # Do 
     if usertype == 'user' and show_progressbar_on_login_page(request):
