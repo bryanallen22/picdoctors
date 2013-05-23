@@ -8,9 +8,11 @@ def get_progressbar_vars(request, url_name):
 
     # Do we return want to show the login step in the progress bar?
     show_login = request.session.get('progressbar_show_login', True)
+    arrowclass = "arrow_signin" if show_login else "arrow_nosignin"
 
     ret = {
         'show_login'        : show_login,
+        'arrowclass'        : arrowclass,
         'upload_progress'   : 'filled', # Always going to be filled
         'markup_progress'   : 'empty',
         'signin_progress'   : 'empty',

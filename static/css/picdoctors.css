@@ -185,7 +185,12 @@ body {
 .progressbar {
   margin-bottom: 14px;
 }
-.progressbar .arrow {
+.progressbar .arrow_nosignin {
+  padding: 5px;
+  border-radius: 4px;
+  margin-left: 86px;
+}
+.progressbar .arrow_signin {
   padding: 5px;
   border-radius: 4px;
   margin-left: 35px;

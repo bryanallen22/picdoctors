@@ -1,7 +1,7 @@
 <div class="row progressbar">
 
   <div class="{{ upload_progress }}">
-    <div class="arrow nav_arrow span2">
+    <div class="{{ arrowclass }} nav_arrow span2">
       <div class="txt">
         Upload Pics
       </div>
@@ -9,7 +9,7 @@
   </div>
 
   <div class="{{ markup_progress }}">
-    <div class="arrow nav_arrow span2">
+    <div class="{{ arrowclass }} nav_arrow span2">
       <div class="txt">
         Describe
       </div>
@@ -18,7 +18,7 @@
 
   {% if show_login %}
   <div class="{{ signin_progress }}">
-    <div class="arrow nav_arrow span2">
+    <div class="{{ arrowclass }} nav_arrow span2">
       <div class="txt">
         Sign In
       </div>
@@ -27,7 +27,7 @@
   {% endif %}
 
   <div class="{{ setprice_progress }}">
-    <div class="arrow nav_arrow span2">
+    <div class="{{ arrowclass }} nav_arrow span2">
       <div class="txt">
         Pay
       </div>

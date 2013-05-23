@@ -209,10 +209,10 @@ body {
 .progressbar {
   margin-bottom: 14px;
 
-  .arrow {
+  .arrow(@margin-left : 35px) {
     padding: 5px;
     border-radius: 4px;
-    margin-left: 35px;
+    margin-left: @margin-left;
   }
 
   .nav_arrow_creator(@background, @border, @textcol) {
@@ -253,6 +253,14 @@ body {
       font-size: 14px;
       line-height: 12px;
     }
+  }
+
+  .arrow_nosignin {
+    .arrow(86px);
+  }
+
+  .arrow_signin {
+    .arrow(35px);
   }
 
   .filled {
