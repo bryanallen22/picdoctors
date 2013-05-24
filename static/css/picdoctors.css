@@ -1,43 +1,6 @@
 /*****************************
   All pages
 ******************************/
-.navbar {
-  height: 40px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10000;
-  overflow: visible;
-}
-.navbar .container {
-  position: relative;
-}
-.navbar .logo {
-  float: left;
-  padding: 4px;
-  margin-left: 8px;
-  cursor: pointer;
-}
-.navbar .logo img {
-  margin-right: 4px;
-}
-.navbar .logo a:hover {
-  text-decoration: none;
-}
-.navbar .pills {
-  position: absolute;
-  right: 0;
-}
-.navbar h2 {
-  display: inline;
-  vertical-align: top;
-}
-.details .icon {
-  float: left;
-  margin-right: 20px;
-  height: 40px;
-}
 .feedback_from {
   width: 95%;
 }
