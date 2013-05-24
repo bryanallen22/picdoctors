@@ -20,7 +20,7 @@ from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
-from progressbar.views import get_progressbar_vars
+from skaa.progressbarviews import get_progressbar_vars
 
 from PIL import Image
 from StringIO import StringIO

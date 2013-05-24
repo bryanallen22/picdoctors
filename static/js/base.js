@@ -1,4 +1,6 @@
-
+/*
+ * Feedback stuff
+ */
 $(function(){
 
   var user_feedback = "";
@@ -12,7 +14,7 @@ $(function(){
     current_popup_state += 1;
 
     console.log('feedback');
-    el = $(this);
+    var el = $(this);
     var data_set = el.attr('data-set');
     data_set = Boolean(data_set); //anything that isn't blank is true to me!
 
@@ -134,3 +136,29 @@ $(function(){
   }
 
 });
+
+
+/*
+ * Feedback stuff
+ */
+$(function(){
+
+  $("#cart_link").click( function() {
+      var el = $(this);
+      var template = $('#cart_form').html().trim();
+      //el.attr('data-set', users_entered_data);
+      el.attr('data-content', template);
+      el.attr('data-original-title','Pictures in your cart');
+      el.popover('toggle', { 'html' : true } );
+  });
+
+  /*
+  $('#iso_cart').isotope({
+    // options
+    itemSelector : '.item',
+    layoutMode   : 'masonry',
+  });
+  */
+
+});
+

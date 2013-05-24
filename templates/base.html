@@ -71,7 +71,19 @@
                   </li>
                 {% endif %}
                 {% if request.has_cart %}
-                <li><a href="{% url 'upload' %}"><i class="icon-shopping-cart"></i> ({{ request.pic_count }})</a></li>
+                <li>
+                  <a id='cart_link'
+                     class="cart" 
+                     data-original-title="Pictures in your cart:"
+                     rel="popover"
+                     data-placement="bottom"
+                     data-html="true"
+                     data-trigger="manual"
+                     album-pics-url={{ request.async_album_info_url }}
+                     href="#" >
+                     <i class="icon-shopping-cart"></i> ({{ request.pic_count }})
+                  </a>
+                </li>
                 {% endif %}
                 {% if request.notifications|length > 0 %}
                 <li class="dropdown">
@@ -149,6 +161,15 @@
     <script type="text/template" id="feedback_thanks_but">
       <div>
         <H4 class='text-error'>We suffered an error.</H4>
+      </div>
+    </script>
+
+    <script type="text/template" id="cart_form">
+      <div id="iso_cart">
+        <div class="item">...</div>
+        <div class="item">...</div>
+        <div class="item">...</div>
+        ...
       </div>
     </script>
 

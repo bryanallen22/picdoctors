@@ -20,7 +20,7 @@ from models import Markup
 from skaa.jobsviews import update_job_hold
 from skaa.rejectviews import remove_previous_doctor
 from common.decorators import require_login_as
-from progressbar.views import get_progressbar_vars
+from skaa.progressbarviews import get_progressbar_vars
 
 import ipdb
 import logging

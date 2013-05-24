@@ -16,7 +16,7 @@ from common.decorators import passes_test
 from common.functions import get_profile_or_None
 from common.functions import get_unfinished_album
 from models import Markup
-from progressbar.views import get_progressbar_vars
+from skaa.progressbarviews import get_progressbar_vars
 
 import ipdb
 import logging

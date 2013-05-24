@@ -11,6 +11,7 @@ from common.account_settings_views import account_settings, account_settings_del
 from common.account_settings_views import change_password, change_profile_settings 
 from common.account_settings_views import update_roles
 from common.permissionfunctions import permission_denied
+from common.navbarviews import async_album_info
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -35,5 +36,6 @@ urlpatterns = patterns('',
     url(r'^check_unique_nickname/$',                    check_unique_nickname,        name='check_unique_nickname'),
     url(r'^update_roles/$',                             update_roles,                 name='update_roles'),
     url(r'^permission_denied/$',                        permission_denied,            name='permission_denied'),
+    url(r'^async_album_info/$',                            async_album_info,         name='async_album_info'),
 )
 

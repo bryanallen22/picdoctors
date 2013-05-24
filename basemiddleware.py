@@ -3,6 +3,7 @@ from common.functions import get_unfinished_album
 from common.models import Album
 from notifications.models import Notification
 from django.core.exceptions import MultipleObjectsReturned
+from django.core.urlresolvers import reverse
 import settings
 
 import ipdb
@@ -21,18 +22,14 @@ class BaseMiddleware(object):
 
         skaa = True if not profile else profile.isa('skaa')
         
-        if not skaa:
-            request.has_cart = False
-        else:
+        request.has_cart = False
+        if (skaa and                     # has to be a skaa
+            not invalid_album_state and  # just 1 album, don't need to merge
+            album):                      # has to be an album
             request.has_cart = True
+            request.pic_count = album.get_picture_count()
+            request.async_album_info_url = reverse( 'async_album_info' )
 
-            # multiple albums (throw up ?)
-            if invalid_album_state:
-                request.pic_count = "?"
-            elif album:
-                request.pic_count = album.get_picture_count()
-            else:
-                request.pic_count = 0
 
         request.notifications = Notification.GetRecentNotifications(profile, 8)
         request.new_notification_cnt = len([n for n in request.notifications if n.viewed == False])

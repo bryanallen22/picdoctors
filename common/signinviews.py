@@ -11,7 +11,7 @@ from annoying.functions import get_object_or_None
 from common.models import Album, Profile
 from common.account_settings_views import legit_password 
 from doctor.jobsviews import doc_job_page
-from progressbar.views import get_progressbar_vars, show_progressbar_on_login_page
+from skaa.progressbarviews import get_progressbar_vars, show_progressbar_on_login_page
 from views import index
 import string
 import re
