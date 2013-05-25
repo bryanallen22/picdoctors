@@ -1,19 +1,28 @@
 /*****************************
   All pages
 ******************************/
-.feedback_from {
+#navbar .feedback_from {
   width: 95%;
 }
-.feedback_textarea {
+#navbar .feedback_textarea {
   height: 120px;
   width: 95%;
 }
-.feedback_buttonarea {
+#navbar .feedback_buttonarea {
   float: right;
   margin-bottom: 12px;
 }
-body {
+#navbar body {
   padding-top: 10px;
+}
+#navbar #cart_li .popover {
+  max-width: 455px;
+}
+#navbar #cart_li .popover .arrow {
+  left: 77px;
+}
+#navbar #iso_cart .item {
+  padding: 5px;
 }
 /*****************************
   Index page

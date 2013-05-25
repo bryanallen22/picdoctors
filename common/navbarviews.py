@@ -1,6 +1,12 @@
-from annoying.decorators import ajax_request
-from skaa.uploadviews import pic_json
+from django.core.exceptions import MultipleObjectsReturned
+from django.core.urlresolvers import reverse
 
+from annoying.decorators import ajax_request
+
+from common.models import Pic, Album
+
+# No require_login_as because the cart is valid
+# for people who haven't even logged in.
 @ajax_request
 def async_album_info(request):
     try:
@@ -11,11 +17,11 @@ def async_album_info(request):
     pic_array = []
     pics = Pic.objects.filter(album=album)
 
-    for pic in pics:
-        pic_array.append(pic_json(pic))
+    thumb_json = lambda pic: { 'name' : pic.title, 'thumbnail_url' : pic.get_thumb_url() }
+    pic_array = [ thumb_json(pic) for pic in pics ]
 
     return {
-        'pics' : pics,
+        'pics' : pic_array,
         'url'  : reverse( 'upload' ),
     }
 

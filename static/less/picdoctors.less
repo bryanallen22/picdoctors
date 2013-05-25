@@ -3,22 +3,42 @@
 /*****************************
   All pages
 ******************************/
-.feedback_from {
-  width:95%;
-}
+#navbar {
+  .feedback_from {
+    width:95%;
+  }
 
-.feedback_textarea {
-  height:120px;
-  width:95%;
-}
+  .feedback_textarea {
+    height:120px;
+    width:95%;
+  }
 
-.feedback_buttonarea{
-  float:right;
-  margin-bottom:12px;
-}
+  .feedback_buttonarea{
+    float:right;
+    margin-bottom:12px;
+  }
 
-body {
-  padding-top: 10px;
+  body {
+    padding-top: 10px;
+  }
+
+  #cart_li {
+    .popover {
+      max-width: 455px;
+      .arrow {
+        // By allowing a wider popover, we've messed up bootstrap a little.
+        // We've got to recenter the arrow
+        left: 77px;
+      }
+    }
+  }
+
+  #iso_cart {
+    .item {
+      padding: 5px;
+    }
+  }
+
 }
 
 

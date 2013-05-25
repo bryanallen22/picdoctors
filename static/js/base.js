@@ -158,9 +158,21 @@ $(function(){
 
 
 /*
- * Feedback stuff
+ * Cart stuff
  */
 $(function(){
+
+  function create_cart(click_url, pics) {
+    var iso_cart = $($("#iso_cart"));
+
+    // Clear everything that was in there,
+    // and provide the link
+    iso_cart.html("<a href='"+ click_url + "'>Edit cart contents</a><br/>");
+
+    for(var i = 0; i < pics.length; i++) {
+      iso_cart.append("<img class='item' src=" + pics[i].thumbnail_url + ">")
+    }
+  }
 
   $("#cart_link").click( function() {
       var el = $(this);
@@ -168,16 +180,14 @@ $(function(){
       //el.attr('data-set', users_entered_data);
       el.attr('data-content', template);
       el.attr('data-original-title','Pictures in your cart');
-      el.popover('toggle', { 'html' : true } );
-  });
+      el.popover('toggle');
 
-  /*
-  $('#iso_cart').isotope({
-    // options
-    itemSelector : '.item',
-    layoutMode   : 'masonry',
+      // Now we've got the popover created. We just need to call the provided URL and asynchronously load some masonry
+      var url = $("#cart_link").attr('album-pics-url')
+      $.getJSON( url, function( json ) {
+        create_cart(json.url, json.pics);
+      });
   });
-  */
 
 });
 

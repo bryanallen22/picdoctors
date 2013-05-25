@@ -157,6 +157,7 @@
                             $(this).show();
                         });
                 }
+                updateCartCount();
             },
             // Callback for failed (abort or error) uploads:
             fail: function (e, data) {
@@ -688,20 +689,20 @@
 
     });
 
+    function disableNext(disabled){
+      
+      var next_button = $('#next');
+
+      if(disabled){
+        next_button.addClass('disabled');
+        next_button.text('Busy Uploading...');
+        next_button.attr('onclick','return false');
+      } else {
+        next_button.removeClass('disabled');
+        next_button.text('Next');
+        next_button.attr('onclick','return true');
+      }
+    }
+
 }(jQuery));
 
-function disableNext(disabled){
-  
-  var next_button = $('#next');
-
-  if(disabled){
-    next_button.addClass('disabled');
-    next_button.text('Busy Uploading...');
-    next_button.attr('onclick','return false');
-  } else {
-    next_button.removeClass('disabled');
-    next_button.text('Next');
-    next_button.attr('onclick','return true');
-  }
-
-}

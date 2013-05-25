@@ -420,6 +420,7 @@ $(function(){
     $isocontainer.isotope('remove', pic_container);
     pic_container.remove();
     IsoWrapper.relayout();
+    updateCartCount();
   });
 });
 
@@ -445,4 +446,10 @@ $(window).load(function() {
   IsoWrapper.startIso();
   setNextGroupId();
 });
+
+function updateCartCount() {
+  console.log("updateCartCount");
+  var count = $(".pic_container[uuid]").length;
+  $("#cart_count").html( "(" + count + " Pics)" );
+}
 

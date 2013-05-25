@@ -20,7 +20,7 @@
 
   <body>
     <div class="container">
-      <div class="row">
+      <div id="navbar" class="row">
         <div class="span12" style="line-height: 20px">
           <div style="float:left; display:inline; margin-top:4px;">
             <div style="float:left; display:inline;">
@@ -40,9 +40,30 @@
                      data-trigger="manual"
                      href="#" ><i class="icon-comment"></i> Feedback</a>
               </li>
+
+              {% if request.has_cart %}
+              <li id="cart_li">
+                <a id='cart_link'
+                   class="cart" 
+                   data-original-title="Pictures in your cart:"
+                   rel="popover"
+                   data-placement="bottom"
+                   data-html="true"
+                   data-trigger="manual"
+                   album-pics-url={{ request.async_album_info_url }}
+                   href="#" >
+                   <i class="icon-shopping-cart"></i>
+                   <span id="cart_count">
+                     ({{ request.pic_count }} Pics)
+                   </span>
+                </a>
+              </li>
+              {% endif %}
+
               {% if not user.is_authenticated %}
               <li><a href="{% url 'doc_home' %}"><i class="icon-edit"></i> Become a Pic Doctor</a></li>
               {% endif %}
+
               {% if not user.is_authenticated %}
                 <li><a href="{% url 'skaa_signin' %}"><i class="icon-user"></i> Log In</a></li>
               {% else %}
@@ -69,21 +90,6 @@
                       {% endif %}
                     </ul>
                   </li>
-                {% endif %}
-                {% if request.has_cart %}
-                <li>
-                  <a id='cart_link'
-                     class="cart" 
-                     data-original-title="Pictures in your cart:"
-                     rel="popover"
-                     data-placement="bottom"
-                     data-html="true"
-                     data-trigger="manual"
-                     album-pics-url={{ request.async_album_info_url }}
-                     href="#" >
-                     <i class="icon-shopping-cart"></i> ({{ request.pic_count }})
-                  </a>
-                </li>
                 {% endif %}
                 {% if request.notifications|length > 0 %}
                 <li class="dropdown">
@@ -166,10 +172,7 @@
 
     <script type="text/template" id="cart_form">
       <div id="iso_cart">
-        <div class="item">...</div>
-        <div class="item">...</div>
-        <div class="item">...</div>
-        ...
+        <p>Loading...</p>
       </div>
     </script>
 
