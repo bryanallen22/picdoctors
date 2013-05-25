@@ -2,7 +2,7 @@
 
 def get_progressbar_vars(request, url_name):
     """
-    Get variables which will be passed to progressbar.html
+    Get variables which will be passed to skaa_progressbar.html
     to render correctly
     """
 
