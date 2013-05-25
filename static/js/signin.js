@@ -1,23 +1,7 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
 
-    var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
-
-    function postTo(url, obj, callback) {
-
-      $.ajax({
-        headers: {
-          "X-CSRFToken":CSRF_TOKEN
-        },
-        type: "POST",
-        url: url,
-        data: obj,
-        success : callback,
-      });
-
-    }
-
-    var checkNickName = true;
+  var checkNickName = true;
 
   /* If the radio button says they've got an account, hide the confirm password
    * button. This shouldn't normally be necessary, but if they hit the back button

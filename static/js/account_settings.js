@@ -190,22 +190,6 @@ $(function(){
     /*
      * Password/email stuff
      */
-    var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
-
-    function postTo(url, obj, callback) {
-
-      $.ajax({
-        headers: {
-          "X-CSRFToken":CSRF_TOKEN
-        },
-        type: "POST",
-        url: url,
-        data: obj,
-        success : callback,
-      });
-
-    }
-
     $("#password-form").find("button:submit").click( function(e) {
       e.preventDefault();
 
