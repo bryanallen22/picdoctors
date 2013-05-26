@@ -391,12 +391,8 @@ $(function(){
   });
 
   $('.del_pic').live('click', function(evt) {
-    // TODO -- send some ajax up to do delete on server
     var pic_container = $(this).parent().parent();
     var uuid = pic_container.attr("uuid");
-
-    // Am I still uploading? If so, time to cancel
-    // TODO -- Tie into _cancelHandler
 
     if(uuid) {
       var json = JSON.stringify( { "uuid" : uuid, } );
@@ -414,6 +410,10 @@ $(function(){
           //console.log(textStatus);
         }
       });
+    }
+    else
+    {
+      console.log("Can't delete without uuid! This be baaad.");
     }
 
     // Client side removal
@@ -448,7 +448,6 @@ $(window).load(function() {
 });
 
 function updateCartCount() {
-  console.log("updateCartCount");
   var count = $(".pic_container[uuid]").length;
   $("#cart_count").html( "(" + count + " Pics)" );
 }
