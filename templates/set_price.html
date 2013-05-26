@@ -13,9 +13,21 @@
 
           <legend>
             {% if increase_price %}
-            <h3>Increase the price for this job</h3>
+            <h3>Increase the price for
+              {% if num_pics > 1 %}
+              these {{ num_pics }} pics
+              {% else %}
+              this pic
+              {% endif %}
+            </h3>
             {% else %}
-            <h3>Please set a price for this job<h3>
+            <h3>Please set a price for
+              {% if num_pics > 1 %}
+              these {{ num_pics }} pics
+              {% else %}
+              this pic
+              {% endif %}
+            </h3>
             {% endif %}
 
             {% if increase_price %}
