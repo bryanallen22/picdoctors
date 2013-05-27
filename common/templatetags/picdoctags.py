@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 import locale
 
 register = template.Library()
-locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
+locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
 
 @register.filter
 def dyn_url_reverse(val, arg):
