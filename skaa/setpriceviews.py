@@ -1,4 +1,9 @@
 # Create your views here.
+from django.template import RequestContext
+from tasks.tasks import sendAsyncEmail
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -57,6 +62,28 @@ def currency_to_cents(currency):
     price = int(float(stripped)*100)
     return price
 
+@require_login_as(['skaa'])
+def send_newjob_email(request, job):
+    if request.user:
+        subject = 'PicDoctors job confirmation'
+        email = request.user.email
+
+        args = {
+                'jobs_url' : reverse( 'job_page' ),
+                'amount'   : job.bp_hold.cents,
+        }
+
+        html_content  = render_to_string('newjob_email.html', args, RequestContext(request))
+        text_content = strip_tags(html_content) 
+        msg = EmailMultiAlternatives( subject, text_content, 'contact@picdoctors.com',
+                                      [email] )
+        msg.attach_alternative(html_content, "text/html")
+
+        if settings.IS_PRODUCTION:
+            sendAsyncEmail.apply_async(args=[msg])
+        else:
+            sendAsyncEmail(msg)
+
 def create_hold_handler(request):
     """
     Save credit card info, create hold on card for the price they offer
@@ -101,13 +128,15 @@ def create_hold_handler(request):
        cents = currency_to_cents( request.POST['price'] )
 
        if cents >= min_price * 100:
-           # job can be None here, it'd be totally cool, we don't build anything based on the job, unless updating
+           # job can be None here, it'd be totally cool, we don't build anything based on the job, unless updating. It will be created (if necessary) in place_hold
 
-           place_hold(job, album, request.user, cents, request.POST['card_uri'])
+           job = place_hold(job, album, request.user, cents, request.POST['card_uri'])
 
            # Remove any previous doctor information, this essentially happens when they go from
            # refund to back in market
            remove_previous_doctor(job)
+
+           send_newjob_email(request, job)
 
            ret['status'] = 200
            ret['next'] = reverse('job_page')

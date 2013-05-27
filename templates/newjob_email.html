@@ -1,0 +1,14 @@
+{% extends 'base_email.html' %}
+{% load picdoctags %}
+
+{% block main %}
+Your job has been placed on the market!<br/><br/>
+
+We've placed a hold on your credit card in the amount of {{ amount|currency_cents }}, but we won't charge it until you've accepted a Pic Doctor's work.<br/><br/>
+
+You can check the status of your jobs at any time <a href="{{ request.SITE_URL }}{{ jobs_url }}">here</a>.<br/><br/>
+
+Thanks for using PicDoctors!
+
+{% endblock %}
+

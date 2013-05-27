@@ -89,7 +89,7 @@ def send_user_email(request, job):
         # this strips the html, so people will have the text
         text_content = strip_tags(html_content) 
         # create the email, and attach the HTML version as well.
-        msg = EmailMultiAlternatives(subject, text_content, 'donotreply@picdoctors.com', to_email)
+        msg = EmailMultiAlternatives(subject, text_content, 'contact@picdoctors.com', to_email)
         msg.attach_alternative(html_content, "text/html")
         if settings.IS_PRODUCTION:
             sendAsyncEmail.apply_async(args=[msg])

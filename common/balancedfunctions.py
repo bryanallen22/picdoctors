@@ -164,13 +164,14 @@ def place_hold(job, album, user, cents, card_uri):
     if job:
         update_job_hold(job, hold)
     else:
-        create_job(profile, album, hold)
+        job = create_job(profile, album, hold)
 
     album.finished = True
     album.save()
 
     logging.info("Album owned by %s has been finished with price at $%s (cents)" %
                      (album.userprofile.email, cents))
+    return job
 
 def rehold_if_necessary(job):
     """

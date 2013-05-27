@@ -48,7 +48,7 @@ def reset_password(request, email=None):
                 html_content  = render_to_string('reset_password_email.html', args, RequestContext(request))
                 text_content  = "Your password has been changed to %s.\n\n" % new_password
                 text_content += "You can log in here: http://picdoctors.com/signin/"
-                msg = EmailMultiAlternatives( subject, text_content, 'donotreply@picdoctors.com',
+                msg = EmailMultiAlternatives( subject, text_content, 'contact@picdoctors.com',
                                               [email] )
                 msg.attach_alternative(html_content, "text/html")
 

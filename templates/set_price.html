@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block main %}
 
@@ -15,7 +16,7 @@
             {% if increase_price %}
             <h3>Increase the price for
               {% if num_pics > 1 %}
-              these {{ num_pics }} pics
+              these {{ num_pics|apnumber }} pics
               {% else %}
               this pic
               {% endif %}
@@ -23,7 +24,7 @@
             {% else %}
             <h3>Please set a price for
               {% if num_pics > 1 %}
-              these {{ num_pics }} pics
+              these {{ num_pics|apnumber }} pics
               {% else %}
               this pic
               {% endif %}
