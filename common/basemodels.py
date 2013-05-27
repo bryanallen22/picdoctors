@@ -1,7 +1,13 @@
+from datetime import datetime
+
 from django.db import models
 
 from django.core.exceptions import FieldError
 from django.db.models.query import QuerySet
+
+# We need a default value for migrated columns that are NOT NULL. This is it.
+# Hopefully we recognize that it's bogus and predates our real launch.
+BEFORE_LAUNCH = datetime(2013, 1, 1, 0, 0, 0, 0)
 
 ################################################################################
 # Some of this comes from:
@@ -34,8 +40,8 @@ class MixinManager(models.Manager):
 class BaseMixin(models.Model):
     admin   = models.Manager()
     objects = MixinManager()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, default=BEFORE_LAUNCH)
+    updated = models.DateTimeField(auto_now=True, default=BEFORE_LAUNCH)
 
     class MixinQuerySet(QuerySet):
 

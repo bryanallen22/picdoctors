@@ -539,9 +539,9 @@ class Album(DeleteMixin):
 
 ################################################################################
 # Group
-# We actually want to be able to delete and recreate these
+# We delete and recreate these
 ################################################################################
-class Group(models.Model):
+class Group(DeleteMixin):
     sequence        = models.IntegerField()
     album           = models.ForeignKey('Album', db_index=True)
     is_locked       = models.BooleanField(default=False)
