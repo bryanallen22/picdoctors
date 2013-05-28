@@ -31,15 +31,15 @@
         <form id="profile-form" class="form-horizontal">
 
           <div class="control-group">
+            <label class="control-label" for="nickname" >Nickname</label>
+            <div class="controls">
+              <label class="control-label text-success nickname">{{ request.user.nickname }}</label>
+            </div>
+          </div>
+          <div class="control-group email-group">
             <label class="control-label" for="new_email" >Email</label>
             <div class="controls">
               <input type="text" id="new_email" name="new_email" value="{{ request.user.email }}" class="span3">
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="nickname" >Nickname</label>
-            <div class="controls">
-            <label class="control-label text-success" style="text-align:left;cursor:auto;">{{ request.user.nickname }}</label>
             </div>
           </div>
 
@@ -69,7 +69,7 @@
             <div id="doc_pic_control" class="control-group">
               <label class="control-label" for="profile_pic" >Profile Pic</label>
               <div class="controls">
-                <p>Your profile can be viewed <a href="{{ doc_profile_url }}">here</a></p>
+                <p id="prof_link">Your profile can be viewed <a href="{{ doc_profile_url }}">here</a></p>
                 {% if doc_pic_url %}
                 <img class="doc_profile_pic" src="{{ doc_pic_url }}">
                 {% else %}
@@ -663,18 +663,20 @@
         </div>
       </div>  <!-- span2 switches -->
   </script>
+  {% comment %}
   {% if perms.common.doctor %}
-  <script>
-  $(function(){
-  {% if not is_merchant %}
-  <!-- Calling showStep for some reason freezes the tour, so restart and next will have to do -->
-  tour.restart();
-  {% elif bank_accounts|length == 0 %}
-  tour.restart();
-  tour.next();
+    <script>
+    $(function(){
+    {% if not is_merchant %}
+    <!-- Calling showStep for some reason freezes the tour, so restart and next will have to do -->
+    tour.restart();
+    {% elif bank_accounts|length == 0 %}
+    tour.restart();
+    tour.next();
+    {% endif %}
+    })
+    </script>
   {% endif %}
-  })
-  </script>
-  {% endif %}
+  {% endcomment %}
 {% endblock %}
 

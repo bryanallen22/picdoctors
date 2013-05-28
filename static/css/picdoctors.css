@@ -878,6 +878,16 @@
 #account_settings #pic-form #doc_pic_control {
   margin-bottom: 0px;
 }
+#account_settings #pic-form #prof_link {
+  padding-top: 5px;
+}
+#account_settings #profile-form .nickname {
+  text-align: left;
+  cursor: auto;
+}
+#account_settings #profile-form .email-group {
+  margin-bottom: 10px;
+}
 /****************************************************************
  * Doctor Profile Page
  * *************************************************************/
