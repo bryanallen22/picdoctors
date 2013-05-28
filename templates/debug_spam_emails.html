@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class='row'>
+  <div class="span4 offset4 well">
+
+    <legend>
+      Spam all emails
+    </legend>
+    <form method="POST" action="" accept-charset="UTF-8">
+      {% csrf_token %}
+      <label>
+        Enter your spam email victim:
+        <input type="text" id="email" class="span4" name="email"
+          placeholder="Email Address" value="" >
+      </label>
+      <label>
+        Reset password email:
+        <input type="checkbox" id="reset_password" name="reset_password" checked>
+      </label>
+      <button type="submit" name="submit" class="btn btn-info btn-block">Submit</button>
+    </form>    
+    <br/>
+    {% if success %}
+      <div class="alert alert-info">
+        <a class="close" data-dismiss="alert" href="#">×</a>
+        Your spam has been sent.
+      </div>
+    {% endif %}
+    {% if email_error %}
+      <div class="alert alert-error">
+        <a class="close" data-dismiss="alert" href="#">×</a>
+        Uh, oh. Something's broked. Did you forget your email?
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

@@ -31,7 +31,7 @@ urlpatterns = patterns('',
     (r'', include('common.urls')),
     (r'', include('messaging.urls')),
     (r'', include('notifications.urls')),
-    
+    (r'', include('emailer.urls')),
 
     url(r'^500/$',   oh_sob_500,        name='error500'),
     url(r'^404/$',   wheres_waldo_404,  name='error404'),

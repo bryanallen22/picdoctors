@@ -136,6 +136,7 @@ PD_APPS = (
     'messaging',
     'tasks',
     'notifications',
+    'emailer',
 )
 
 # These are apps whose tests must pass before we can deploy.
