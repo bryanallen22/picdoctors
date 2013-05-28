@@ -287,6 +287,23 @@
             </div>  <!-- span2 switches -->
           </div>
           {% endif %}
+          {% if not request.IS_PRODUCTION %}
+          <div class="row">
+            <div class="span2 control-label">
+              Admin Role (only available in debug): <br/>
+            </div>
+            <div class="span2">
+              <div class="onoffswitch">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide" 
+                id="admin" {% if perms.common.admin %} checked {% endif %} >
+                <label class="onoffswitch-label" for="admin">
+                  <div class="onoffswitch-inner"></div>
+                  <div class="onoffswitch-switch"></div>
+                </label>
+              </div>
+            </div>  <!-- span2 switches -->
+          </div>
+          {% endif %}
         </form>
       </div>
 

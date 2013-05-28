@@ -206,6 +206,8 @@ def update_roles(request):
         role = 'skaa'
     elif prole == 'approvalswitch' and not settings.IS_PRODUCTION:
         role = 'album_approver'
+    elif prole == 'admin' and not settings.IS_PRODUCTION:
+        role = 'admin'
     else:
         return # break on them, I don't care
 
