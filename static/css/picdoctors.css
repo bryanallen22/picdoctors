@@ -239,6 +239,14 @@
   font-size: 14px;
   line-height: 12px;
 }
+.progressbar .arrow_doc {
+  padding: 5px;
+  border-radius: 4px;
+  margin-left: 86px;
+}
+.progress_desc {
+  text-align: center;
+}
 /*****************************
   Upload page
 ******************************/

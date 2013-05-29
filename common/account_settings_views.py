@@ -9,6 +9,7 @@ from annoying.decorators import render_to
 
 from skaa.account_settings_views import get_settings_user
 from doctor.account_settings_views import get_settings_doc
+from doctor.progressbarviews import get_doc_progressbar_vars
 
 from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account
@@ -65,6 +66,7 @@ def account_settings(request):
     if profile.isa('doctor'):
         child_params = get_settings_doc(request)
         parent_params.update(child_params)
+        parent_params.update(get_doc_progressbar_vars(request))
     
     if profile.isa('skaa'):
         child_params = get_settings_user(request)

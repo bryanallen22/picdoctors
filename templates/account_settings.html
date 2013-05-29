@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 
 {% block main %}
+
+{# Doctors see progress bar at the top if they haven't finished their sign up process #}
+{% if perms.common.doctor and show_progressbar %}
+{% include 'doc_progressbar.html' %}
+{% endif %}
+
+
+
 <div id='account_settings' class='row'>
   <div class='span9'>
     <h4>Account Settings</h4>
@@ -12,7 +20,7 @@
 <div id='account_settings' class='row span10'>
   <div class="well">
     <ul class="nav nav-tabs">
-      <li class="active"><a id="home_tab" href="#home_pane" data-toggle="tab">Profile</a></li>
+      <li class="active"><a id="profile_tab" href="#profile_pane" data-toggle="tab">Profile</a></li>
       <li><a id="password_tab" href="#password_pane" data-toggle="tab">Password</a></li>
       <li><a id="notifications_tab" href="#notifications_pane" data-toggle="tab">Notifications</a></li>
       {% if perms.common.skaa %}
@@ -27,7 +35,7 @@
     <div id="myTabContent" class="tab-content">
 
       {# Profile tab #}
-      <div class="tab-pane active in" id="home_pane">
+      <div class="tab-pane active in" id="profile_pane">
         <form id="profile-form" class="form-horizontal">
 
           <div class="control-group">

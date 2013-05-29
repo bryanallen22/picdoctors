@@ -48,8 +48,8 @@ $(function(){
   });
 
   tour.addStep({
-    element: "#home_tab", 
-    onShow: function (tour) { $("#home_tab").click(); },
+    element: "#profile_tab", 
+    onShow: function (tour) { $("#profile_tab").click(); },
     title: "Profile", 
     content: "You can update profile settings here.",
   });

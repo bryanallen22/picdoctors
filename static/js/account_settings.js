@@ -407,6 +407,21 @@ $(function(){
     list.container = $("#notifications-form");
     var notification_infos =  jQuery.parseJSON( $('.notification_infos').html());
     list.reset(notification_infos);
+
+    $("#progressbar_merchant_link").click( function(evt) {
+      evt.preventDefault();
+      $("#merchant_tab").click();
+    });
+
+    $("#progressbar_bank_link").click( function(evt) {
+      evt.preventDefault();
+      $("#bank_tab").click();
+    });
+
+    $("#progressbar_profile_link").click( function(evt) {
+      evt.preventDefault();
+      $("#profile_tab").click();
+    });
   }
 });
 

@@ -10,6 +10,7 @@ def get_progressbar_vars(request, url_name):
     show_login = request.session.get('progressbar_show_login', True)
     arrowclass = "arrow_signin" if show_login else "arrow_nosignin"
 
+    # defaults
     ret = {
         'show_login'        : show_login,
         'arrowclass'        : arrowclass,

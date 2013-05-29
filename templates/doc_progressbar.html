@@ -1,0 +1,43 @@
+<div class="row progressbar">
+
+  <a href="#" id="progressbar_merchant_link">
+    <div class="{{ merchant_info_progress }}">
+      <div class="{{ arrowclass }} nav_arrow span2">
+        <div class="txt">
+          Merchant Info
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <a href="#" id="progressbar_bank_link">
+    <div class="{{ bank_transfer_progress }}">
+      <div class="{{ arrowclass }} nav_arrow span2">
+        <div class="txt">
+          Bank Transfer Info
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <a href="#" id="progressbar_profile_link">
+    <div class="{{ doc_profile_progress }}">
+      <div class="{{ arrowclass }} nav_arrow span2">
+        <div class="txt">
+          Your Public Profile
+        </div>
+      </div>
+    </div>
+  </a>
+
+</div>
+
+<div class="row">
+  <p class="progress_desc">
+    We need to collect some information from you before you can start.
+  </p>
+  <p class="progress_desc text-error">
+    You have {{ remaining }} step{{ remaining|pluralize }} left to complete before you can begin!
+  </p>
+</div>
+
