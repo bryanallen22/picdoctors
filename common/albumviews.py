@@ -89,17 +89,14 @@ def album(request, album_id):
     }
 
 #This is for a moderator to approve an album
-@require_login_as(['admin'])
+@require_login_as(['album_approver'])
 def approve_album(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
     job_id = data['job_id']
     job = get_object_or_None(Job, id=data['job_id'])
 
-    # you also could say profile.isa('album_approver') but that doesn't make sense to me when I read it
-    moderator =  profile.has_perm('common.album_approver')
-
-    if job and job.album and moderator: # and moderator
+    if job and job.album:
         # only necessary for doctors that aren't auto_approve
         job.approved = True
         job.status = Job.DOCTOR_SUBMITTED
