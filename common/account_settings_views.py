@@ -160,7 +160,6 @@ def legit_password(password):
 @require_login_as(['skaa', 'doctor'])
 def change_profile_settings(request):
     profile = get_profile_or_None(request)
-    nickname = request.POST['nickname']
     new_email = request.POST['email']
     old_email = request.user.email
 
@@ -176,7 +175,6 @@ def change_profile_settings(request):
         account.save()
 
         request.user.email = new_email
-        request.user.nickname = nickname
         request.user.save()
 
         result = { 'success' : True , 'text': 'We successfully updated your account settings!'}

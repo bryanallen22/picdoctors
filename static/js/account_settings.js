@@ -383,7 +383,6 @@ $(function(){
         this.hide_messages();
 
         var obj = {
-          'nickname'    : this.$el.find("#new_nickname").val(),
           'email'    : this.$el.find("#new_email").val(),
         };
 
