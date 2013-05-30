@@ -17,10 +17,10 @@ def get_doc_progressbar_vars(request):
     }
 
     complete = 0
-    if request.user.is_merchant:
+    if request.user.is_merchant():
         ret['merchant_info_progress'] = 'filled'
         complete += 1
-    if request.user.has_bank_account:
+    if request.user.has_bank_account():
         ret['bank_transfer_progress'] = 'filled'
         complete += 1
     if request.user.pic or request.user.doc_profile_desc:

@@ -56,9 +56,9 @@ def new_job_page(request, page=1):
     profile = get_profile_or_None(request)
     if profile and profile.isa('doctor'):
         if not profile.can_view_jobs(request, profile):
-            if not profile.is_merchant:
+            if not profile.is_merchant():
                 return redirect( reverse('account_settings') + '#merchant_tab' )
-            elif not profile.has_bank_account:
+            elif not profile.has_bank_account():
                 return redirect( reverse('account_settings') + '#bank_tab' )
             else:
                 # I don't know how we got here, there is only 2 reasons why

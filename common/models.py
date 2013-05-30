@@ -83,12 +83,6 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     approval_pic_count          = models.IntegerField(default=0)
     approval_pic_last_update    = models.DateTimeField(blank=True, null=True)
     
-    # is this person a merchant?  I'm contemplating ripping this out and adding as a permission 
-    is_merchant                 = models.BooleanField(default=False)
-
-    # does this person have a bank account?  I'm contemplating ripping this out and adding as a permission 
-    has_bank_account            = models.BooleanField(default=False)
-
     # Doctors can have a profile pic
     pic                         = models.ForeignKey('Pic', blank=True, null=True)
 
@@ -136,15 +130,7 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         self.save()
 
     def can_view_jobs(self, request, profile):
-        from common.balancedfunctions import has_bank_account, is_merchant, get_merchant_account
-
-        # if they can't view, check to see the merchant/bankaccount status has changed
-        if not self.is_merchant or not self.has_bank_account:
-            merchant_account = get_merchant_account(request, profile)
-            self.is_merchant = is_merchant(merchant_account)
-            self.has_bank_account = has_bank_account(merchant_account)
-            self.save()
-        return self.is_merchant and self.has_bank_account
+        return self.is_merchant() and self.has_bank_account()
 
     def get_approval_count(self, invalidate=False):
         from common.functions import get_datetime
@@ -170,6 +156,16 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
 
         return self.approval_pic_count
 
+    # is this person a merchant?  I'm contemplating ripping this out and adding as a permission 
+    def is_merchant(self):
+        from common.balancedfunctions import is_merchant, get_merchant_account
+        merchant_account = get_merchant_account(None, self)
+        return is_merchant(merchant_account)
+
+    def has_bank_account(self):
+        from common.balancedfunctions import has_bank_account, get_merchant_account
+        merchant_account = get_merchant_account(None, self)
+        return has_bank_account(merchant_account)
 
 
 
