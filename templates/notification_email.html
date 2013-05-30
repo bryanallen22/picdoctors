@@ -1,6 +1,6 @@
 {% extends 'base_email.html' %}
 
-{% block main %}
+{% block html %}
   Notification: {{ message }} <br/><br/>
   Go to the page by clicking <a href='{{ request.SITE_URL }}{{site_path}}'>here</a>
 {% endblock %}

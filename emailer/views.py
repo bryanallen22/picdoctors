@@ -13,7 +13,6 @@ def spam_emails(request, email_address):
     if has('reset_password'):
         send_email(request,
                    email_address=email_address,
-                   subject='Picdoctors password reset',
                    template_name='reset_password_email.html',
                    template_args={ 'new_password' : 'd1qJUriJAVKJKjPz' }
                   )
@@ -35,5 +34,8 @@ def debug_spam_emails(request):
             logging.debug('reset_password has no email in POST...')
             return { 'success' : False, 'email_error' : True }
 
-        return { 'success' : True }
+        return {
+                 'success' : True,
+                 'prefilled_email' : request.POST.get('email', '')
+               }
 

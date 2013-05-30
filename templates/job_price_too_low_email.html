@@ -1,6 +1,6 @@
 {% extends 'base_email.html' %}
 
-{% block main %}
+{% block html %}
   Your job #{{ job_id|stringformat:"08d" }} might have a price too low. {{ number_of_doctors }} doctors have suggested that a more appropriate price would be approximately ${{ avg_price}}.<br/>
   You can view your job by clicking <a href='{{ request.SITE_URL }}{{site_path}}'>here</a>.
 {% endblock %}

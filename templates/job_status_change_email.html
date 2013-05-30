@@ -1,6 +1,6 @@
 {% extends 'base_email.html' %}
 
-{% block main %}
+{% block html %}
   The status of the job #{{ job_id|stringformat:"08d" }} has changed. <br/><br/>
   Current state: <strong>{{ job_status }}</strong> <br/><br/>
   You can view view the page by clicking <a href='{{ request.SITE_URL }}{{site_path}}'>here</a>
