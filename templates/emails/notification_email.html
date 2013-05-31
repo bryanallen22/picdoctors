@@ -1,5 +1,15 @@
 {% extends 'base_email.html' %}
 
+{% block subject %}
+NEED A SUBJECT HERE
+{% endblock %}
+
+{% block plain %}
+  Notification: {{ message }}
+
+  Go to the page by visiting {{ request.SITE_URL }}{{site_path}}
+{% endblock %}
+
 {% block html %}
   Notification: {{ message }} <br/><br/>
   Go to the page by clicking <a href='{{ request.SITE_URL }}{{site_path}}'>here</a>

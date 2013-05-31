@@ -6,19 +6,17 @@ from django.utils import simplejson
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from common.models import Job, Album, Group, Pic
-from messaging.models import JobMessage, GroupMessage
+from common.decorators import require_login_as
 from common.functions import get_profile_or_None, get_time_string
-from django.core.mail import EmailMultiAlternatives
-from django.utils.html import strip_tags
-import settings
+from common.models import Job, Album, Group
+from messaging.models import JobMessage, GroupMessage
 from notifications.functions import notify
 from notifications.models import Notification
-from common.decorators import require_login_as
 
 import ipdb
 import logging
 import datetime
+import settings
 
 class Message():
     def __init__(self):

@@ -1,0 +1,17 @@
+{% extends 'base_email.html' %}
+
+{% block subject %}
+Job price too low
+{% endblock %}
+
+{% block plain %}
+  Your job #{{ job_id|stringformat:"08d" }} might have a price too low. {{ number_of_doctors }} doctors have suggested that a more appropriate price would be approximately ${{ avg_price}}.
+
+  You can view your job by visiting {{ request.SITE_URL }}{{ site_path }}
+{% endblock %}
+
+{% block html %}
+  Your job #{{ job_id|stringformat:"08d" }} might have a price too low. {{ number_of_doctors }} doctors have suggested that a more appropriate price would be approximately ${{ avg_price}}.<br/>
+  You can view your job by clicking <a href='{{ request.SITE_URL }}{{ site_path }}'>here</a>.
+{% endblock %}
+

@@ -1,31 +1,21 @@
 # Create your views here.
-from django.template import RequestContext
-from tasks.tasks import sendAsyncEmail
-from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
-from django.utils.html import strip_tags
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import redirect
 from django.utils import simplejson
 
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from common.functions import get_unfinished_album
+from common.balancedfunctions import *
+from common.decorators import require_login_as
 from common.functions import get_profile_or_None
 from common.functions import get_referer_view_and_id
-from common.models import Album
-from common.models import Group
+from common.functions import get_unfinished_album
 from common.models import Job 
-from common.models import Pic
-from common.models import ungroupedId
-from common.balancedfunctions import *
-from models import Markup
-from skaa.jobsviews import update_job_hold
-from skaa.rejectviews import remove_previous_doctor
-from common.decorators import require_login_as
 from skaa.progressbarviews import get_progressbar_vars
+from skaa.rejectviews import remove_previous_doctor
+from emailer.emailfunctions import send_email
 
 import ipdb
 import logging
@@ -64,25 +54,12 @@ def currency_to_cents(currency):
 
 @require_login_as(['skaa'])
 def send_newjob_email(request, job):
-    if request.user:
-        subject = 'PicDoctors job confirmation'
-        email = request.user.email
-
-        args = {
-                'jobs_url' : reverse( 'job_page' ),
-                'amount'   : job.bp_hold.cents,
-        }
-
-        html_content  = render_to_string('newjob_email.html', args, RequestContext(request))
-        text_content = strip_tags(html_content) 
-        msg = EmailMultiAlternatives( subject, text_content, 'contact@picdoctors.com',
-                                      [email] )
-        msg.attach_alternative(html_content, "text/html")
-
-        if settings.IS_PRODUCTION:
-            sendAsyncEmail.apply_async(args=[msg])
-        else:
-            sendAsyncEmail(msg)
+    send_email(request,
+               email_address=request.user.email,
+               template_name='newjob_email.html',
+               template_args={'jobs_url' : reverse( 'job_page' ),
+                              'amount'   : job.bp_hold.cents, },
+              )
 
 def create_hold_handler(request):
     """

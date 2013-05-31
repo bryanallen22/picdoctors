@@ -1,0 +1,24 @@
+{% extends 'base_email.html' %}
+
+{% block subject %}
+Feedback from {{ from }}
+{% endblock %}
+
+{% block plain %}
+  Feedback from {{ from }}. User email {% if logged_in %}IS{% else %}IS NOT{% endif %} confirmed.
+
+  {{ from }} gave this feedback:
+
+  {{ feedback }}
+{% endblock %}
+
+{% block html %}
+  Feedback from {{ from }}. User email <strong>{% if logged_in %}IS{% else %}IS NOT{% endif %}</strong> confirmed.
+
+  {{ from }} gave this feedback:
+  <br/>
+  <br/>
+  <p>
+    {{ feedback }}
+  </p>
+{% endblock %}

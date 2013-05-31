@@ -18,7 +18,7 @@ class Notification(DeleteMixin):
     JOB_MESSAGE = 'jb_msg' # A message from a doc/user to user/doc about a job
 
     NOTIFICATION_TYPES = (
-        (JOB_STATUS_CHANGE, 'Job Status has changed'),
+        (JOB_STATUS_CHANGE, 'Job status has changed'),
         (JOBS_AVAILABLE, 'Jobs are available'),
         (JOBS_NEED_APPROVAL, 'Jobs need approval'),
         (JOB_REMINDER, 'Job waiting on you'),

@@ -32,7 +32,7 @@ $(function(){
   $("#feedback_link").click( function() {
     current_popup_state += 1;
 
-    console.log('feedback');
+    //console.log('feedback');
     var el = $(this);
     var data_set = el.attr('data-set');
     data_set = Boolean(data_set); //anything that isn't blank is true to me!
@@ -43,7 +43,7 @@ $(function(){
     if(cur_input.length > 0){
       user_feedback = $.trim(cur_input.val());
       from_feedback = $.trim(cur_from.val());
-      console.log('setting feedback');
+      //console.log('setting feedback');
     }else{
       if(user_feedback!= ''){
         setTimeout('fill_previous_feedback()', 20);
@@ -61,7 +61,7 @@ $(function(){
   });
 
   $(".feedback_submit").live('click', function() {
-    console.log('submit_feedback');
+    //console.log('submit_feedback');
     var cur_input = $('#feedback_textarea');
     var cur_from = $('#feedback_from_textarea');
     if(cur_input.length > 0){
@@ -89,8 +89,8 @@ $(function(){
         url:  '/feedback/' ,
         data: json_data,
         success : function(data, textStatus) {
-          console.log(data);
-          console.log(textStatus);
+          //console.log(data);
+          //console.log(textStatus);
           if(data.success){
             show_result('feedback_thanks', 'Feedback Submitted', popup_state_when_posted);
           } else {
@@ -105,7 +105,7 @@ $(function(){
   });
 
   function fill_previous_feedback(){
-    console.log('fill_previous_feedback');
+    //console.log('fill_previous_feedback');
     var cur_input = $('#feedback_textarea');
     var cur_from = $('#feedback_from_textarea');
     if(cur_input.length > 0){
@@ -118,7 +118,7 @@ $(function(){
 
   function delayed_show(popup_state_when_posted){
     if(!validPopupState(popup_state_when_posted)) return;
-    console.log('delayed_show');
+    //console.log('delayed_show');
     var el = $('#feedback_link');
     el.popover('show');
   }
@@ -126,7 +126,7 @@ $(function(){
   function delayed_hide(popup_state_when_posted){
     if(!validPopupState(popup_state_when_posted)) return;
 
-    console.log('delayed_hide');
+    //console.log('delayed_hide');
     var el = $('#feedback_link');
     el.popover('hide');
 
@@ -135,7 +135,7 @@ $(function(){
   function show_result(template, title, popup_state_when_posted){
     if(!validPopupState(popup_state_when_posted)) return;
 
-    console.log('show_result');
+    //console.log('show_result');
     var el = $('#feedback_link');
     var template = $('#' + template).html().trim();
     el.removeAttr('data-set');

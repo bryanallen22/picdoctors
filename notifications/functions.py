@@ -1,12 +1,7 @@
-from django.template import RequestContext
 from notifications.models import Notification, NotificationToIgnore
 from django.core.urlresolvers import reverse
 import ipdb
 import settings
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from tasks.tasks import sendAsyncEmail
 import logging
 
 
@@ -30,45 +25,22 @@ def notify(request, notification_type, description, notification, recipients, ur
         n.url = url
         n.save()
 
-        send_email(request, n)
+        send_notification_email(request, n)
 
-def send_email(request, notification):
+def send_notification_email(request, notification):
     if not i_want_this_email(notification.recipient, notification.notification_type):
         return
 
-    try:
-        to_email = notification.recipient.email
-
-        subject = notification.description
-
-        message = notification.notification
-
-        url = reverse('notification_redirecter', args=[notification.id])
-        
-        args = {
-                'message'           : message,
-                'site_path'         : url,
-                } 
-        html_content = render_to_string('notification_email.html', args, RequestContext(request))
-                                        
-        
-        # this strips the html, so people will have the text
-        text_content = strip_tags(html_content) 
-        # create the email, and attach the HTML version as well.
-        msg = EmailMultiAlternatives(subject, text_content, 'contact@picdoctors.com', [to_email])
-        msg.attach_alternative(html_content, "text/html")
-        if settings.IS_PRODUCTION:
-            sendAsyncEmail.apply_async(args=[msg])
-        else:
-            sendAsyncEmail(msg)
-
-    except Exception as ex:
-        # later I'd like to ignore this, but for now, let's see errors happen
-        # raise ex
-        pass
-
-
-
+    #subject = notification.description
+    message = notification.notification
+    url = reverse('notification_redirecter', args=[notification.id])
+    
+    send_email(request,
+               email_address=notification.recipient.email,
+               template_name='notification_email.html',
+               template_args = { 'message'   : message,
+                                 'site_path' : url },
+              )
 
 def i_want_this_email(profile, notification_type):
     

@@ -117,8 +117,8 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 
-    # bta - not sure why it likes this format when launched from cygwin:
     '%s/templates/' % PROJECT_ROOT,
+    '%s/templates/emails/' % PROJECT_ROOT,
 )
 
 djcelery.setup_loader()

@@ -1,5 +1,7 @@
 {% extends 'base_email.html' %}
 
+{% subject %}
+
 {% block html %}
   The status of the job #{{ job_id|stringformat:"08d" }} has changed. <br/><br/>
   Current state: <strong>{{ job_status }}</strong> <br/><br/>
