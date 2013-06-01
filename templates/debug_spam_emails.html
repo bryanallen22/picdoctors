@@ -5,7 +5,7 @@
   <div class="span4 offset4 well">
 
     <legend>
-      Spam all emails
+      Spam emails
     </legend>
     <form method="POST" action="" accept-charset="UTF-8">
       {% csrf_token %}
@@ -15,8 +15,20 @@
           placeholder="Email Address" value="{{ prefilled_email }}" >
       </label>
       <label>
-        Reset password email:
-        <input type="checkbox" id="reset_password" name="reset_password" checked>
+        <input type="checkbox" id="reset_password" name="reset_password" {{ reset_password }}>
+        Reset password email
+      </label>
+      <label>
+        <input type="checkbox" id="send_feedback" name="send_feedback" {{ send_feedback }}>
+        Send feedback
+      </label>
+      <label>
+        <input type="checkbox" id="job_price_too_low" name="job_price_too_low" {{ job_price_too_low }}>
+        Job price too low
+      </label>
+      <label>
+        <input type="checkbox" id="new_job" name="new_job" {{ new_job }}>
+        New Job
       </label>
       <button type="submit" name="submit" class="btn btn-info btn-block">Submit</button>
     </form>    

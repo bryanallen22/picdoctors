@@ -33,7 +33,7 @@ def notification_handler(request):
         data = simplejson.loads(request.body)
         tp = data['type']
         ignore = not data['enabled']
-        ignorers = NotificationToIgnore.objects.filter(notification_type=tp).filter(profile=profile)
+        ignorers = NotificationToIgnore.objects.filter(profile=profile).filter(notification_type=tp)
         if len(ignorers) == 0:
             nti = NotificationToIgnore()
             nti.notification_type = tp
