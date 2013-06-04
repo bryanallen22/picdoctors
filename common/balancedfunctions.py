@@ -184,7 +184,7 @@ def rehold_if_necessary(job):
     guessed_expire = job.bp_hold.created + timedelta(days=6, hours=23, minutes=55)
     now = get_datetime()
 
-    if now < guessed_expire:
+    if now > guessed_expire:
         hold = job.bp_hold.fetch()
         place_hold(job, job.album, job.skaa, job.bp_hold.cents, hold.source.uri)
         job = get_object_or_None(Job, id=job.id)
