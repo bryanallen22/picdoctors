@@ -4,6 +4,8 @@ import ipdb
 import settings
 import logging
 
+from emailer.emailfunctions import send_email
+
 
 def notify(request, notification_type, description, notification, recipients, url):
     # who am I supposed to notify if recipients is None????
