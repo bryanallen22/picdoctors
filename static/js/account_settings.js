@@ -236,11 +236,9 @@ $(function(){
       };
 
       postTo('/update_roles/', obj, function(data) {
-
         if ( data.success ) {
-          if (data.redirect) {
-              window.location.reload(data.redirect);
-          }
+              window.location.hash = "#roles_tab";
+              window.location.reload(true);
         } else {
           alert('There was an error!');
         }

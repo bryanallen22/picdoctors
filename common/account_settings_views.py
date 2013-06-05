@@ -212,6 +212,7 @@ def update_roles(request):
         return # break on them, I don't care
 
     state = request.POST['state'] == 'true'
+    ret = { "success": False }
     
     if profile:
         if state:
@@ -219,13 +220,7 @@ def update_roles(request):
         else:
             profile.remove_permission(role)
         
-        success = True
-        redirect =  reverse('account_settings') + '#roles_tab' 
-
-    ret = { 
-            "success" : True,
-            "redirect"  : redirect,
-            }
+    ret = { "success" : True }
 
     response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')
