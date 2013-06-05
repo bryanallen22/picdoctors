@@ -59,6 +59,13 @@
       <br />
       <br />
 
+        {% if charge_error_occurred %}
+      <div id="allow_publicly" class="alert alert-error password_alert"  >
+        <button class="close" data-dismiss="alert">×</button>
+        There was an error charging your card: {{ charge_error.description }}
+
+      </div>
+        {% endif %}
       <button id="btn_accept" class="btn btn_accept_job btn-large btn-primary" type="submit">Accept Job</button>
 
     </div>

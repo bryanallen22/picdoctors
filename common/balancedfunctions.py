@@ -205,19 +205,24 @@ def do_debit(request, profile, job):
     if not is_merchant(doc_acct):
         raise KeyError("Doctors %s does not have a merchant balanced role" % job.doctor.email)
 
-    debit = user_acct.debit(
-        amount                  = job.bp_hold.cents,
-        description             = 'Some descriptive text for the debit in the dashboard',
-        hold_uri                = job.bp_hold.uri,
-        merchant_uri            = doc_acct.uri,
-        appears_on_statement_as = 'PicDoctors',
-    )
+    try:
+        debit = user_acct.debit(
+            amount                  = job.bp_hold.cents,
+            description             = 'Debit for job ' + str(job.id) + ' for ' + str(job.bp_hold.cents) + ' cents.' ,
+            hold_uri                = job.bp_hold.uri,
+            merchant_uri            = doc_acct.uri,
+            appears_on_statement_as = 'PicDoctors',
+        )
+    except balanced.exc.HTTPError as ex:
+        return False, ex
 
     # Create a wrapper in our local db
     bp_debit = BPDebit(uri=debit.uri, associated_hold=job.bp_hold)
     bp_debit.save()
     job.bp_debit = bp_debit
     job.save()
+
+    return True
 
 
 ################################################################################

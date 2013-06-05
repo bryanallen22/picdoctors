@@ -31,15 +31,25 @@ def accept_work(request, job_id):
 
     if request.method == 'POST':
         if job and job.skaa == profile:
-            if 'allow_publicly' in request.POST:
-                if request.POST['allow_publicly'] == 'allow':
-                    job.album.allow_publicly = True
-                    job.album.save()
-            else:
-                # Return some kind of error
+
+            if not 'allow_publicly' in request.POST:
                 return { 'job_id':job_id, 'allowpublic_error':True }
 
-            do_debit(request, profile, job)
+            debited, failure = do_debit(request, profile, job)
+            
+            if not debited:
+                # TODO send an email to admins informing us there was an error charging
+                # This is important enough of a stage we don't want there to be an issue here
+                log_msg = "job #" + str(job.id) + " failed to charge: '" + failure.description + "'  - allow_publicly: "
+                log_msg += request.POST['allow_publicly'] + ' star: ' + request.POST['rating_val'] + ' comment: '
+                log_msg += request.POST['comment']
+                logging.critical(log_msg)
+
+                return {'job_id': job_id, 'charge_error_occurred': True, 'charge_error': failure}
+
+            if request.POST['allow_publicly'] == 'allow':
+                job.album.allow_publicly = True
+                job.album.save()
 
             job.status = Job.USER_ACCEPTED
             job.accepted_date = get_datetime()
