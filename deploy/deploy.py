@@ -168,8 +168,10 @@ def webserver_config():
     # update the redirect for http paths for sandbox and test
     if deploy_type == 'test' or deploy_type =='sandbox':
         sudo("sed -i 's/rewrite_redirect_host/" + inst.ip_address.replace(".",r"\.") + "/g' " + remote_picapp)
+        sudo("sed -i 's/COMMENT_OUT_IF_DEBUG/#/g' " + remote_picapp)
     elif deploy_type == 'production':
         sudo("sed -i 's/rewrite_redirect_host/www\.picdoctors\.com/g' " + remote_picapp)
+        sudo("sed -i 's/COMMENT_OUT_IF_DEBUG//g' " + remote_picapp)
 
     # Tell uwsgi to start with the appropriate settings file
     sudo('echo "env = DJANGO_SETTINGS_MODULE=settings.%s" >> '\
@@ -185,6 +187,11 @@ def webserver_config():
 
     if not exists('/usr/local/bin/supervisord'):
         sudo('pip install --upgrade supervisor')
+
+    print "Creating celery user for use with supervisord"
+    with settings(warn_only=True): 
+        sudo("useradd celery")
+
 
     # Supervisord
     put(LocalConfig.remote_supervisord_cfg, '/etc/supervisord.conf', use_sudo=True)
@@ -565,28 +572,6 @@ def setup_packages():
     if not exists( os.path.join(cfg.venv_dir, cfg.venv_proj) ):
         run_user("virtualenv %s/%s" % (cfg.venv_dir, cfg.venv_proj), cfg)
     venv_run_user('pip install -r requirements.txt -q', cfg)
-
-    #
-    # djcelery service and config must go after venv
-    #
-    # print "Copying celery service and config."
-    # put(LocalConfig.celery_service,
-    #     '/etc/init.d/celeryd', use_sudo=True)
-    # sudo('chmod 777 /etc/init.d/celeryd')
-
-    # put(LocalConfig.celery_config,
-    #     '/etc/default/celeryd', use_sudo=True)
-
-    # TODO how do I know this service is always running?
-    with settings(warn_only=True): 
-        sudo("useradd celery")
-
-    # sudo("service celeryd create-paths")
-
-    # sudo("service celeryd restart", pty=False)
-
-    # sudo("echo 'service celeryd create-paths' >> /etc/rc.local")
-    # sudo("echo 'service celeryd restart' >> /etc/rc.local")
 
     #
     # node stuff. Probably don't actually need this on the server, though
