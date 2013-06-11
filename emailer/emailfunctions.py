@@ -11,7 +11,7 @@ def send_email(request,
                template_name,
                # Optional args:
                template_args = { },
-               from_address  = 'contact@picdoctors.com',
+               from_address  = 'PicDoctors <contact@picdoctors.com>',
               ):
     """
     Generic email function. All sent emails should go through here.
