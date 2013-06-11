@@ -47,7 +47,7 @@ class Notification(DeleteMixin):
     # whether or not they've viewed this notification
     viewed              = models.BooleanField(default=False)
 
-    # This relevant job
+    # The relevant job
     job                 = models.ForeignKey(Job)
     
 

@@ -9,82 +9,101 @@
     </legend>
     <form method="POST" action="" accept-charset="UTF-8">
       {% csrf_token %}
-      <h5>General emails:</h5>
       <label>
-        Enter your spam email victim:
+        <div class="span3">
+          Enter your spam email victim:
+        </div>
         <input type="text" id="email" class="span4" name="email"
           placeholder="Email Address" value="{{ prefilled_email }}" >
       </label>
-      <label>
-        <input type="checkbox" id="reset_password" name="reset_password" {{ reset_password }}>
-        Reset password email
-      </label>
-      <label>
-        <input type="checkbox" id="send_feedback" name="send_feedback" {{ send_feedback }}>
-        Send feedback
-      </label>
-      <label>
-        <input type="checkbox" id="job_price_too_low" name="job_price_too_low" {{ job_price_too_low }}>
-        Job price too low
-      </label>
-      <label>
-        <input type="checkbox" id="new_job" name="new_job" {{ new_job }}>
-        New Job
-      </label>
 
       <hr>
 
-      <h5>Jobstatus emails sent to the doctor:</h5>
-      <label>
-        <input type="checkbox" id="jobstatus_doc_doctor_accepted" name="jobstatus_doc_doctor_accepted" {{ jobstatus_doc_doctor_accepted }}>
-        Doctor accepted the job
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_doc_doctor_submitted" name="jobstatus_doc_doctor_submitted" {{ jobstatus_doc_doctor_submitted }}>
-        Doctor submitted the job
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_doc_moderator_approval_needed" name="jobstatus_doc_moderator_approval_needed" {{ jobstatus_doc_moderator_approval_needed }}>
-        Doctor submitted, but needs moderator approval
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_doc_user_accepted" name="jobstatus_doc_user_accepted" {{ jobstatus_doc_user_accepted }}>
-        User accepted the job
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_doc_refund" name="jobstatus_doc_refund" {{ jobstatus_doc_refund }}>
-        User has requested a refund
-      </label>
+      <div>
+        <h5>General emails:</h5>
+        <a class="checkall span2" href="#">Check All</a>
+        <a class="uncheckall span2" href="#">Uncheck All</a><br/>
+
+        <label>
+          <input type="checkbox" id="reset_password" name="reset_password" {{ reset_password }}>
+          Reset password email
+        </label>
+        <label>
+          <input type="checkbox" id="send_feedback" name="send_feedback" {{ send_feedback }}>
+          Send feedback
+        </label>
+        <label>
+          <input type="checkbox" id="job_price_too_low" name="job_price_too_low" {{ job_price_too_low }}>
+          Job price too low
+        </label>
+        <label>
+          <input type="checkbox" id="new_job" name="new_job" {{ new_job }}>
+          New Job
+        </label>
+      </div>
 
       <hr>
 
-      <h5>Jobstatus emails sent to the user:</h5>
-      <label>
-        <input type="checkbox" id="jobstatus_skaa_doctor_accepted" name="jobstatus_skaa_doctor_accepted" {{ jobstatus_skaa_doctor_accepted }}>
-        A doctor has accepted the job
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_skaa_doctor_submitted" name="jobstatus_skaa_doctor_submitted" {{ jobstatus_skaa_doctor_submitted }}>
-        A doctor has submitted their work on the job
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_skaa_in_market" name="jobstatus_skaa_in_market" {{ jobstatus_skaa_in_market }}>
-        Job has entered the market
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_skaa_out_of_market" name="jobstatus_skaa_out_of_market" {{ jobstatus_skaa_out_of_market }}>
-        Job has left the market -- no doctors took it at that price
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_skaa_refund" name="jobstatus_skaa_refund" {{ jobstatus_skaa_refund }}>
-        Job has been refunded and removed from market
-      </label>
-      <label>
-        <input type="checkbox" id="jobstatus_skaa_user_accepted" name="jobstatus_skaa_user_accepted" {{ jobstatus_skaa_user_accepted }}>
-        User accepted the job
-      </label>
+      <div>
+        <h5>Jobstatus emails sent to the doctor:</h5>
+        <a class="checkall span2" href="#">Check All</a>
+        <a class="uncheckall span2" href="#">Uncheck All</a><br/>
 
-      <button type="submit" name="submit" class="btn btn-info btn-block">Submit</button>
+        <label>
+          <input type="checkbox" id="jobstatus_doc_doctor_accepted" name="jobstatus_doc_doctor_accepted" {{ jobstatus_doc_doctor_accepted }}>
+          Doctor accepted the job
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_doc_doctor_submitted" name="jobstatus_doc_doctor_submitted" {{ jobstatus_doc_doctor_submitted }}>
+          Doctor submitted the job
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_doc_moderator_approval_needed" name="jobstatus_doc_moderator_approval_needed" {{ jobstatus_doc_moderator_approval_needed }}>
+          Doctor submitted, but needs moderator approval
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_doc_user_accepted" name="jobstatus_doc_user_accepted" {{ jobstatus_doc_user_accepted }}>
+          User accepted the job
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_doc_refund" name="jobstatus_doc_refund" {{ jobstatus_doc_refund }}>
+          User has requested a refund
+        </label>
+      </div>
+
+      <hr>
+
+      <div>
+        <h5>Jobstatus emails sent to the user:</h5>
+        <a class="checkall span2" href="#">Check All</a>
+        <a class="uncheckall span2" href="#">Uncheck All</a><br/>
+        <label>
+          <input type="checkbox" id="jobstatus_skaa_doctor_accepted" name="jobstatus_skaa_doctor_accepted" {{ jobstatus_skaa_doctor_accepted }}>
+          A doctor has accepted the job
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_skaa_doctor_submitted" name="jobstatus_skaa_doctor_submitted" {{ jobstatus_skaa_doctor_submitted }}>
+          A doctor has submitted their work on the job
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_skaa_in_market" name="jobstatus_skaa_in_market" {{ jobstatus_skaa_in_market }}>
+          Job has entered the market
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_skaa_out_of_market" name="jobstatus_skaa_out_of_market" {{ jobstatus_skaa_out_of_market }}>
+          Job has left the market -- no doctors took it at that price
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_skaa_refund" name="jobstatus_skaa_refund" {{ jobstatus_skaa_refund }}>
+          Job has been refunded and removed from market
+        </label>
+        <label>
+          <input type="checkbox" id="jobstatus_skaa_user_accepted" name="jobstatus_skaa_user_accepted" {{ jobstatus_skaa_user_accepted }}>
+          User accepted the job
+        </label>
+      </div>
+
+      <button type="submit" name="submit" class="btn btn-info span3">Submit</button>
     </form>    
     <br/>
     {% if success %}
@@ -104,5 +123,18 @@
 {% endblock %}
 
 {% block scripts %}
+{# Inline this here -- we don't want to pollute all.js with this kind of stuff #}
+<script type="text/javascript">
+  $(function(){
+    $(".checkall").click( function(e) {
+      e.preventDefault();
+      $(this.parentElement).find("input[type=checkbox]").attr("checked","checked");
+    });
+    $(".uncheckall").click( function(e) {
+      e.preventDefault();
+      $(this.parentElement).find("input[type=checkbox]").removeAttr("checked");
+    });
+  });
+</script>
 {% endblock %}
 
