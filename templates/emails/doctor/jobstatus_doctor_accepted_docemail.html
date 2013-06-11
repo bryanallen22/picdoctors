@@ -1,0 +1,25 @@
+{% extends 'base_email.html' %}
+
+{% load picdoctags %}
+
+{% block subject %}
+You've accepted {{ job.skaa.nickname }}'s job
+{% endblock %}
+
+{% block plain %}
+You've accepted job #{{ job.id }} from {{ job.skaa.nickname }}. Only you will be able to work on the job until you finish.
+
+Once the user accepts this work, you will receive {{ job.payout_price_cents|currency_cents }} for this job.
+
+Please finish the job in a timely manner. You can see the job here:
+{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{% endblock %}
+
+{% block html %}
+You've accepted job #{{ job.id }} from {{ job.skaa.nickname }}. Only you will be able to work on the job until you finish. <br/><br/>
+
+Once the user accepts this work, you will receive <strong>{{ job.payout_price_cents|currency_cents }}</strong>.<br/><br/>
+
+Please finish the job in a timely manner. You can see the job by clicking <a href="{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
+{% endblock %}
+

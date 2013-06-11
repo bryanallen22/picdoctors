@@ -1,5 +1,5 @@
 from django.db import models
-from common.models import DeleteMixin, Profile
+from common.models import DeleteMixin, Profile, Job
 import settings
 
 from django.db import models
@@ -11,18 +11,18 @@ from common.basemodels import *
 # Stuff that the user says should change about their picture
 ################################################################################
 class Notification(DeleteMixin):
-    JOB_STATUS_CHANGE = 'jb_status_chg' # job status change
-    JOBS_AVAILABLE = 'jb_ava' # jobs are available (for spamming doctors)
-    JOBS_NEED_APPROVAL = 'jb_need_app' # jobs need approval (for spamming moderators)
-    JOB_REMINDER = 'jb_remind' # If a job is waiting on you, remind the user/doctor
-    JOB_MESSAGE = 'jb_msg' # A message from a doc/user to user/doc about a job
+    JOB_STATUS_CHANGE  = 'jb_status_chg' # job status change
+    JOBS_AVAILABLE     = 'jb_ava'        # jobs are available (for spamming doctors)
+    JOBS_NEED_APPROVAL = 'jb_need_app'   # jobs need approval (for spamming moderators)
+    JOB_REMINDER       = 'jb_remind'     # If a job is waiting on you, remind the user/doctor
+    JOB_MESSAGE        = 'jb_msg'        # A message from a doc/user to user/doc about a job
 
     NOTIFICATION_TYPES = (
-        (JOB_STATUS_CHANGE, 'Job status has changed'),
-        (JOBS_AVAILABLE, 'Jobs are available'),
+        (JOB_STATUS_CHANGE,  'Job status has changed'),
+        (JOBS_AVAILABLE,     'Jobs are available'),
         (JOBS_NEED_APPROVAL, 'Jobs need approval'),
-        (JOB_REMINDER, 'Job waiting on you'),
-        (JOB_MESSAGE, 'You have received a message about your job'),
+        (JOB_REMINDER,       'Job waiting on you'),
+        (JOB_MESSAGE,        'You have received a message about your job'),
     )
 
     # max_length refers to the shorthand versions above
@@ -46,6 +46,9 @@ class Notification(DeleteMixin):
 
     # whether or not they've viewed this notification
     viewed              = models.BooleanField(default=False)
+
+    # This relevant job
+    job                 = models.ForeignKey(Job)
     
 
     @staticmethod

@@ -117,8 +117,10 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 
-    '%s/templates/' % PROJECT_ROOT,
-    '%s/templates/emails/' % PROJECT_ROOT,
+    '%s/templates/'               % PROJECT_ROOT,
+    '%s/templates/emails/'        % PROJECT_ROOT,
+    '%s/templates/emails/skaa/'   % PROJECT_ROOT,
+    '%s/templates/emails/doctor/' % PROJECT_ROOT,
 )
 
 djcelery.setup_loader()

@@ -1,0 +1,25 @@
+{% extends 'base_email.html' %}
+
+{% load picdoctags %}
+
+{% block subject %}
+You've submitted {{ job.skaa.nickname }}'s job
+{% endblock %}
+
+{% block plain %}
+Thank you for finishing {{ job.skaa.nickname}}'s job, number {{ job.id }}.
+
+He will now have a chance to look over it. If he accepts your work without further modifications, you will receive {{ job.payout_price_cents|currency_cents }}.
+
+You can check the status of this job here:
+{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{% endblock %}
+
+{% block html %}
+Thank you for finishing {{ job.skaa.nickname}}'s job.<br/><br/>
+
+He will now have a chance to look over it. If he accepts your work without further modifications, you will receive <strong>{{ job.payout_price_cents|currency_cents }}</strong>.<br/><br/>
+
+You can check the status of this job by clicking <a href="{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}">here</a>.
+{% endblock %}
+

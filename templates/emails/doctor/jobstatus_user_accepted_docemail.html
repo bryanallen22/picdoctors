@@ -1,0 +1,35 @@
+{% extends 'base_email.html' %}
+
+{% load picdoctags %}
+
+{% block subject %}
+{{ job.skaa.nickname }} has accepted your work!
+{% endblock %}
+
+{% block plain %}
+{{ job.skaa.nickname }} has accepted job #{{ job.id }}. That means the job is now complete. {{ job.payout_price_cents|currency_cents }} is now available for you to withdraw to your bank account. If you'd like to make a withdrawl, visit:
+{% url 'withdraw' %}
+
+{% if job.album.allow_publicly %}
+{{ job.skaa.nickname }} has also allowed this job to be publicly. You can see it on your public profile page, here:
+{% url 'album' job.album.id %}
+{# weird spacing since the plaintext is literal #}
+{% endif %}
+Thank you for your excellent work!
+
+If you'd like to look for another job, look here:
+  {{ request.SITE_URL }}{% url 'new_job_page' %}
+{% endblock %}
+
+{% block html %}
+{{ job.skaa.nickname }} has accepted job #{{ job.id }}. That means the job is now complete. <strong>{{ job.payout_price_cents|currency_cents }}</strong> is now available for you to <a href="{{ request.SITE_URL}}{% url 'withdraw' %}">withdraw</a> to your bank account.<br/><br/>
+
+{% if job.album.allow_publicly %}
+{{ job.skaa.nickname }} has also allowed this job to be publicly. You can see it on your <a href="{{ request.SITE_URL }}{% url 'album' job.album.id %}">public profile page</a>.<br/><br/>
+{% endif %}
+
+Thank you for your excellent work!<br/><br/>
+
+Click <a href="{{ request.SITE_URL }}{% url 'new_job_page' %}">here</a> if you'd like to look for another job.<br/><br/>
+{% endblock %}
+

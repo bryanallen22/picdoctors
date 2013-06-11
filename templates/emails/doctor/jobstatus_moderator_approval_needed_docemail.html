@@ -1,0 +1,23 @@
+{% extends 'base_email.html' %}
+
+{% block subject %}
+Your work on {{ job.skaa.nickname }}'s job has been submitted to a moderator
+{% endblock %}
+
+{% block plain %}
+Thanks for submitting {{ job.skaa.nickname}}'s job. Because you are a newer Pic Doctor, a moderator will quickly look at your work before the user sees it. Once you are more experienced, we'll skip this step.
+
+We'll let you know soon if the moderator approves it. Then it'll go to the user.
+
+You can check the status of this job here:
+{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{% endblock %}
+
+{% block html %}
+Thanks for submitting {{ job.skaa.nickname}}'s job. Because you are a newer Pic Doctor, a moderator will quickly look at your work before the user sees it. Once you are more experienced, we'll skip this step.<br/><br/>
+
+We'll let you know soon if the moderator approves it. Then it'll go to the user.<br/><br/>
+
+You can check the status of this job <a href='{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}'>here</a>.<br/><br/>
+{% endblock %}
+

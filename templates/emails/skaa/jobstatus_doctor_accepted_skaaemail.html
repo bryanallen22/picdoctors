@@ -1,0 +1,18 @@
+{% extends 'base_email.html' %}
+
+{% block subject %}
+A Pic Doctor has begun work on your job
+{% endblock %}
+
+{% block plain %}
+One of our Pic Doctors, {{ doc_name }}, has accepted your job! They'll get started on it right away.
+
+We'll let you know when they are done, so you can review their work. If you'd like to check the status of your job, visit {{ request.SITE_URL }}{{ url }}.
+{% endblock %}
+
+{% block html %}
+One of our Pic Doctors, {{ doc_name }}, has accepted your job! They'll get started on it right away.<br/><br/>
+
+We'll let you know when they are done, so you can review their work. If you'd like to check the status of your job, please click <a href='{{ request.SITE_URL }}{{ url }}'>here</a>.
+{% endblock %}
+

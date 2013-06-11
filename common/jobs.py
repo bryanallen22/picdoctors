@@ -184,5 +184,5 @@ def send_job_status_change(request, job, triggered_by, additional_info=None):
     if additional_info is not None:
         message = message + additional_info
         
-    notify(request, Notification.JOB_STATUS_CHANGE, subject, message, send_to, site_path)
+    notify(request, Notification.JOB_STATUS_CHANGE, subject, message, send_to, site_path, job)
 

@@ -64,7 +64,7 @@ def send_user_email(request, job):
 
         send_email(request,
                    email_address=job.skaa.email,
-                   template_name='job_price_too_low_email.html',
+                   template_name='price_too_low_email.html',
                    template_args= { 'avg_price'             : avg_price,
                                     'job_id'                : job.id,
                                     'number_of_doctors'     : len(contribs),

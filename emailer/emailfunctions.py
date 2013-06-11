@@ -24,8 +24,6 @@ def send_email(request,
     from django.template import loader_tags
     import types
 
-
-
     try:
         if isinstance(email_address, types.ListType):
             email_addresses = email_address
@@ -54,4 +52,5 @@ def send_email(request,
         
         return True
     except Exception as ex:
+        logging.error("send_email error!: %s" % ex.message)
         return False
