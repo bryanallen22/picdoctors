@@ -12,6 +12,7 @@ from common.models import DocBlock
 from common.models import PriceTooLowContributor
 from common.calculations import calculate_job_payout
 from common.functions import get_profile_or_None, get_datetime
+from skaa.rejectviews import remove_previous_doctor
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
 from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction 
@@ -106,6 +107,7 @@ def generate_doctor_actions(job):
     view_markup = DynamicAction('View Job', view_markup_url, True)
     view_album = DynamicAction('Before & After Album', reverse('album', args=[job.album.id]), True)
     job_price_too_low = DynamicAction('Job Price Too Low', reverse('job_price_too_low', args=[job.id]), True)
+    quit_job = DynamicAction('Return Job To Market', reverse('quit_job', args=[job.id]), True)
     
 
     if job.status == Job.IN_MARKET:
@@ -113,20 +115,24 @@ def generate_doctor_actions(job):
         ret.append(contact)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(job_price_too_low)
+        ret.append(quit_job)
 
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(work_job)
         ret.append(view_album)
         ret.append(mark_as_completed)
         ret.append(contact)
+        ret.append(quit_job)
 
     elif job.status == Job.MODERATOR_APPROVAL_NEEDED:
         ret.append(view_album)
         ret.append(contact)
+        ret.append(quit_job)
 
     elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(contact)
         ret.append(view_album)
+        ret.append(quit_job)
 
     elif job.status == Job.USER_ACCEPTED:
         #do nothing these are for doctor
@@ -243,3 +249,31 @@ def mark_job_completed(request):
             actions.add('action_button', r)
     return HttpResponse(actions.to_json(), mimetype='application/json')
 
+@require_login_as(['doctor'])
+@render_to("quit_job.html")
+def quit_job(request, job_id):
+
+    profile = get_profile_or_None(request)
+    job = get_object_or_None(Job, id=job_id)
+
+    if not profile == job.doctor:
+        return redirect( reverse('permission_denied') )
+
+    return  {
+            'job_id'        : job_id, 
+            }
+
+@require_login_as(['doctor'])
+def quit_job_endpoint(request):
+    profile = get_profile_or_None(request)
+    data = simplejson.loads(request.body)
+    job = get_object_or_None(Job, id=int(data['job_id']))
+
+    if job and job.doctor and job.doctor == profile:
+        remove_previous_doctor(job)
+
+    send_job_status_change(request, job, profile)
+
+    result = { 'relocate' : reverse('doc_job_page') }
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')

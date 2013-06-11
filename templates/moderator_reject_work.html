@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+{% endblock %}
+
+{% block main %}
+<div id="rejectwork_app" class='row'>
+  <form method='post' id='reject_job' >
+    {% csrf_token %}
+    <div class="span8 accept_view offset2 well" job_id={{job_id}}>
+
+      <legend>
+        Reject the doctor's work
+      </legend>
+
+      <p>Please provide some feedback as to why you are rejecting the doctor's work</p>
+      <br />
+      <br />
+      <h5>Additional Feedback:</h5>
+      <input class="span8" name="comment" value=""/>
+      <input type="hidden" name="job_id" value="{{ job_id }}"/>
+      <br />
+      <br />
+
+      <button id="btn_reject" class="btn btn_reject_job btn-large btn-primary" type="submit">Reject Job</button>
+
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
+

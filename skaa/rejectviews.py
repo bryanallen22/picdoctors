@@ -111,7 +111,7 @@ def switch_doctor_endpoint(request):
     data = simplejson.loads(request.body)
     job = get_object_or_None(Job, id=int(data['job_id']))
 
-    if job and profile and job.skaa == profile:
+    if job and job.skaa == profile:
         remove_previous_doctor(job)
     # TODO do we send the doctor an email saying they are out????    
     #send_job_status_change(request, job, profile)

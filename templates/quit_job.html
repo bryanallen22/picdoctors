@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class='row'>
+  <div class="span8 offset2 well" job_id={{job_id}}>
+
+    <legend>
+      Are you sure you'd like to quit this job and return it to the market?
+    </legend>
+
+    <br />
+    <div class="span3" style="text-align:right">
+      <button class="btn btn_quit btn-large" job_id="{{job_id}}" type="button">Yes (Quit job)</button>
+    </div>
+    <div class="span3 offset1">
+      <button class="btn btn_nevermind btn-large btn-primary" job_id="{{job_id}}" type="button">No (Return to jobs)</button>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
