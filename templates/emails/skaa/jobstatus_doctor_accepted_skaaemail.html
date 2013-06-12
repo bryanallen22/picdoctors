@@ -4,15 +4,24 @@
 A Pic Doctor has begun work on your job
 {% endblock %}
 
-{% block plain %}
-One of our Pic Doctors, {{ doc_name }}, has accepted your job! They'll get started on it right away.
 
-We'll let you know when they are done, so you can review their work. If you'd like to check the status of your job, visit {{ request.SITE_URL }}{{ url }}.
+{% block plain %}
+One of our Pic Doctors, {{ job.doctor.nickname }}, has accepted your job! They'll get started on it right away.
+
+We'll let you know when they are done, so you can review their work. You can see this job here:
+
+{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+
+Thanks for using PicDoctors!
 {% endblock %}
 
-{% block html %}
-One of our Pic Doctors, {{ doc_name }}, has accepted your job! They'll get started on it right away.<br/><br/>
 
-We'll let you know when they are done, so you can review their work. If you'd like to check the status of your job, please click <a href='{{ request.SITE_URL }}{{ url }}'>here</a>.
+
+{% block html %}
+One of our Pic Doctors, {{ job.doctor.nickname }}, has accepted your job! They'll get started on it right away.<br/><br/>
+
+We'll let you know when they are done, so you can review their work. You can see this job <a href="{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
+
+Thanks for using PicDoctors!<br/><br/>
 {% endblock %}
 
