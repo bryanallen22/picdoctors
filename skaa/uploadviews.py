@@ -1,4 +1,4 @@
-import logging
+import logging; log = logging.getLogger('pd')
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -50,7 +50,7 @@ def upload_page(request):
         else:
             return redirect( redirect_url )
 
-    logging.info('album.id is %d' % album.id)
+    log.info('album.id is %d' % album.id)
     pics = Pic.objects.filter( album__exact=album.id );
 
     ret = get_progressbar_vars(request, 'upload')
@@ -59,7 +59,7 @@ def upload_page(request):
 
 @render_to('need_cookies.html')
 def need_cookies(request):
-    logging.info('got to %s' % __name__)
+    log.info('got to %s' % __name__)
     return locals()
 
 def has_doc_upload_access(request):
@@ -103,7 +103,7 @@ def has_doc_upload_access(request):
 
 @passes_test(has_doc_upload_access, '/')
 def doc_upload_handler(request):
-    logging.info('got to %s' % __name__)
+    log.info('got to %s' % __name__)
     if request.method == 'POST':
         profile = get_profile_or_None(request)
         if request.FILES == None:
@@ -112,7 +112,7 @@ def doc_upload_handler(request):
         group_id = int(request.POST['group_id'])
         group = get_object_or_None(Group, id=group_id )
         # Save this off into the database
-        logging.info('got to %s' % __name__)
+        log.info('got to %s' % __name__)
         file = request.FILES[u'doc_file']
         if file is not None:
             pickleable_pic = StringIO(file.read())
@@ -120,14 +120,14 @@ def doc_upload_handler(request):
             # saveWatermark.apply_async(args=[profile.id, group_id, pickleable_pic])
             saveWatermark(profile.id, group_id, pickleable_pic)
 
-            logging.info('File saving done')
+            log.info('File saving done')
      
     #redirect to where they came from
     return redirect(request.META['HTTP_REFERER'])
 
 #Since the browser is posting this it includes the CSRF token
 def upload_handler(request):
-    logging.info('got to %s' % __name__)
+    log.info('got to %s' % __name__)
     if request.method == 'POST':
         if request.FILES == None:
             return HttpResponseBadRequest('Must have files attached!')
@@ -136,17 +136,17 @@ def upload_handler(request):
         delete_groupings(request)
 
         # Save this off into the database
-        logging.info('got to %s' % __name__)
+        log.info('got to %s' % __name__)
         file = request.FILES[u'files[]']
         if file is not None:
-            logging.info(file.name)
+            log.info(file.name)
             pic = Pic()
             pic.set_file(file)
             album = Album.get_unfinished(request)
             pic.album = album if album else Album.create_album(request)
             pic.save()
 
-            logging.info('File saving done')
+            log.info('File saving done')
             
             result = []
             result.append(pic_json(pic))
@@ -155,19 +155,19 @@ def upload_handler(request):
             album.kick_groups_modified()
 
             response_data = simplejson.dumps(result)
-            #logging.info(response_data)
+            #log.info(response_data)
             return HttpResponse(response_data, mimetype='application/json')
         else:
-            logging.error("file is None. How did we get here?")
+            log.error("file is None. How did we get here?")
             return HttpResponse('[ ]', mimetype='application/json')
 
     else: #GET
-        logging.info('got to %s' % __name__)
+        log.info('got to %s' % __name__)
         # TODO - get rid of this temporary debug code:
         result = []
 
         response_data = simplejson.dumps(result)
-        #logging.info(response_data)
+        #log.info(response_data)
         return HttpResponse(response_data, mimetype='application/json')
 
 def group_pic_handler(request):
@@ -214,7 +214,7 @@ def delete_pic_handler(request):
 def delete_groupings(request):
     album = Album.get_unfinished(request)
     if album:
-        logging.info('deleting %d' % album.id)
+        log.info('deleting %d' % album.id)
         Group.objects.filter(album=album.id).delete()
         album.kick_groups_modified()
 

@@ -15,7 +15,7 @@ from common.decorators import require_login_as
 from common.jobs import send_job_status_change
 
 import ipdb
-import logging
+import logging; log = logging.getLogger('pd')
 import datetime
 
 class Combination():

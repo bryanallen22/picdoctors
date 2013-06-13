@@ -4,7 +4,7 @@ from common.models import Profile
 from emailer.emailfunctions import send_email
 
 import ipdb
-import logging
+import logging; log = logging.getLogger('pd')
 import random
 import string
 import settings

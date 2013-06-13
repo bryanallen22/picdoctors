@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 from collections import namedtuple
 
 import ipdb
-import logging
+import logging; log = logging.getLogger('pd')
 from datetime import datetime
 from common.decorators import require_login_as
 
@@ -99,7 +99,7 @@ def merge_albums(request):
             return redirect( request.GET['next'] )
         else:
             # No idea where to send them. Send them to upload page?
-            logging.error("Merge doesn't know where to redirect! %s %s" %  \
+            log.error("Merge doesn't know where to redirect! %s %s" %  \
                           (request.method, request.build_absolute_uri()))
             return redirect( reverse('upload') )
 

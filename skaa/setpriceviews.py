@@ -18,7 +18,7 @@ from skaa.rejectviews import remove_previous_doctor
 from emailer.emailfunctions import send_email
 
 import ipdb
-import logging
+import logging; log = logging.getLogger('pd')
 
 import settings
 

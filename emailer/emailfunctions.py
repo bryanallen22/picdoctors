@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from tasks.tasks import sendAsyncEmail
-import logging
+import logging; log = logging.getLogger('pd')
 import settings
 
 def send_email(request,
@@ -44,7 +44,7 @@ def send_email(request,
         msg = EmailMultiAlternatives( subject, text_content, from_address, email_addresses )
         msg.attach_alternative(html_content, "text/html")
 
-        logging.info("Sending <%s> email to <%s>" % (subject, str(email_addresses)))
+        log.info("Sending <%s> email to <%s>" % (subject, str(email_addresses)))
         if settings.IS_PRODUCTION:
             sendAsyncEmail.apply_async(args=[msg])
         else:
@@ -52,5 +52,5 @@ def send_email(request,
         
         return True
     except Exception as ex:
-        logging.error("send_email error!: %s" % ex.message)
+        log.error("send_email error!: %s" % ex.message)
         return False

@@ -18,7 +18,7 @@ from common.decorators import require_login_as
 from common.models import Profile, Pic
 import re
 
-import logging
+import logging; log = logging.getLogger('pd')
 
 import settings
 import balanced
@@ -168,7 +168,7 @@ def change_profile_settings(request):
     # Initialize to fail
     result = { 'success' : False, 'text': 'Oh no, something bad has happened!' }
 
-    logging.info("Changing user email %s to %s" % (request.user.email, new_email))
+    log.info("Changing user email %s to %s" % (request.user.email, new_email))
 
     # Change the email on the balanced side
     try:
@@ -182,7 +182,7 @@ def change_profile_settings(request):
         result = { 'success' : True , 'text': 'We successfully updated your account settings!'}
     except:
         # TODO - make sure our local db copy is okay
-        logging.info("Error updating user email from %s to %s! Resetting our local copy, just in case."
+        log.info("Error updating user email from %s to %s! Resetting our local copy, just in case."
                      % (request.user.email, new_email))
         request.user.email = old_email
         request.user.save()

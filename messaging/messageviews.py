@@ -14,7 +14,7 @@ from notifications.functions import notify
 from notifications.models import Notification
 
 import ipdb
-import logging
+import logging; log = logging.getLogger('pd')
 import datetime
 import settings
 

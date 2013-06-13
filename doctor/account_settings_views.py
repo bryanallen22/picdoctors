@@ -12,7 +12,7 @@ from common.decorators import require_login_as
 
 import balanced
 import settings
-import logging
+import logging; log = logging.getLogger('pd')
 
 @require_login_as(['doctor'])
 def create_bank_account(request):
@@ -103,7 +103,7 @@ def merchant_info(request):
         account.add_merchant(merchant_data)
     except balanced.exc.MoreInformationRequiredError as ex:
         # could not identify this account.
-        logging.info('redirect merchant to:', ex.redirect_uri)
+        log.info('redirect merchant to:', ex.redirect_uri)
         return redirect( ex.redirect_uri )
     except balanced.exc.HTTPError as error:
         # TODO: handle 400 and 409 exceptions as required

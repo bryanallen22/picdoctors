@@ -2,7 +2,7 @@ from notifications.models import Notification, NotificationToIgnore
 from django.core.urlresolvers import reverse
 import ipdb
 import settings
-import logging
+import logging; log = logging.getLogger('pd')
 
 from emailer.emailfunctions import send_email
 from common.models import Job
@@ -10,7 +10,7 @@ from common.models import Job
 def notify(request, notification_type, description, notification, recipients, url, job):
     # who am I supposed to notify if recipients is None????
     if recipients is None:
-        logging.error("attempted to send notification '%s' without recipient" % notification)
+        log.error("attempted to send notification '%s' without recipient" % notification)
         return
     
     # don't feel like sending [profile] be lazy and send profile

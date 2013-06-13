@@ -19,7 +19,7 @@ from models import Markup
 from skaa.progressbarviews import get_progressbar_vars
 
 import ipdb
-import logging
+import logging; log = logging.getLogger('pd')
 
 def belongs_on_this_markup_page(request, album_id, sequence):
     album_id = int(album_id)
@@ -98,9 +98,9 @@ def markup_page_album(request, album_id, sequence):
     # if that's not necessary)
     album.set_sequences()
 
-    logging.info('sequence=%d, album.id=%d, album_num=%d' % (sequence, album.id, album.num_groups))
+    log.info('sequence=%d, album.id=%d, album_num=%d' % (sequence, album.id, album.num_groups))
 
-    logging.info('len(pics)=%d' % len(pics))
+    log.info('len(pics)=%d' % len(pics))
     group = Group.objects.get(sequence=sequence,album=album)
     doc_pic_groups = group.get_doctor_pics(job, profile)
     doc_pics = []

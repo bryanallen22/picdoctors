@@ -6,7 +6,7 @@ from common.functions import get_datetime
 
 from django.db import models
 
-import logging
+import logging; log = logging.getLogger('pd')
 
 import balanced
 import settings
@@ -169,7 +169,7 @@ def place_hold(job, album, user, cents, card_uri):
     album.finished = True
     album.save()
 
-    logging.info("Album owned by %s has been finished with price at $%s (cents)" %
+    log.info("Album owned by %s has been finished with price at $%s (cents)" %
                      (album.userprofile.email, cents))
     return job
 

@@ -6,7 +6,7 @@ from annoying.functions import get_object_or_None
 
 from common.models import Album
 
-import logging
+import logging; log = logging.getLogger('pd')
 import urllib
 import urlparse
 
@@ -52,7 +52,7 @@ def get_time_string(prev_date):
     # Created in the future? (Don't do this.)
     if prev_date > now:
         ret = "in the future, on %s" % (prev_date.isoformat(' '))
-        logging.error("get_time_string() for obj in the future! %s" %
+        log.error("get_time_string() for obj in the future! %s" %
                       (prev_date.isoformat(' ')))
     # Created in the last hour?
     elif prev_date > hour_ago:

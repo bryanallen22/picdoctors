@@ -17,7 +17,7 @@ import string
 import re
 
 import ipdb
-import logging
+import logging; log = logging.getLogger('pd')
 import datetime
 import settings
 

@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from emailer.emailfunctions import send_email
 from common.models import Job
 
-import logging
+import logging; log = logging.getLogger('pd')
 
 def send_statuschanges(request, email_address):
     # Be gutsy. Assume there's a job I can steal. This could throw an error -- but I'm too lazy to throw a nice error
@@ -35,7 +35,7 @@ def send_statuschanges(request, email_address):
 
     for el in element_to_template.keys():
         if has(el):
-            logging.debug("Sending email: %s" % element_to_template[el])
+            log.debug("Sending email: %s" % element_to_template[el])
             send_email(request,
                        email_address=email_address,
                        template_name=element_to_template[el],
@@ -43,7 +43,7 @@ def send_statuschanges(request, email_address):
                       )
 
 def spam_emails(request, email_address):
-    logging.debug("Going to spam %s" % request.POST['email'])
+    log.debug("Going to spam %s" % request.POST['email'])
 
     has = lambda val: val in request.POST and request.POST[val]
 
@@ -95,6 +95,8 @@ def debug_spam_emails(request):
     This should probably be in the admin, but I'm not going to figure it
     out just now.
     """
+
+    log.debug("Entering debug_spam_emails...")
 
     checked_boxes = {
                         'reset_password'                           : 'checked',

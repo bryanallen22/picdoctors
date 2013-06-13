@@ -1,7 +1,6 @@
 import math
 from common.models import Job
 import ipdb
-import logging
 
 def calculate_job_payout(job, profile):
     ###  Calculate the payout in cents ### 

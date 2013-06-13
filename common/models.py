@@ -3,7 +3,7 @@ import pytz
 from PIL import Image
 from StringIO import StringIO
 from urlparse import urlparse
-import logging
+import logging; log = logging.getLogger('pd')
 import os
 import ipdb
 import uuid
@@ -200,7 +200,7 @@ class Pic(DeleteMixin):
                                             unique=True, db_index=True)
     title                = models.CharField(max_length=60, blank=True)
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
-    group                = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
+    group                = models.ForeignKey('Group', blank=True, null=True)
     original             = models.ImageField(upload_to = pic_originals_path)
     preview              = models.ImageField(upload_to = pic_previews_path)
     thumbnail            = models.ImageField(upload_to = pic_thumbnails_path)
@@ -227,7 +227,7 @@ class Pic(DeleteMixin):
             preview_width=default_preview_width, preview_height=default_preview_height):
 
         my_uuid = uuid.uuid4().hex # 32 unique hex chars
-        logging.info('set_file %s' % my_uuid)
+        log.info('set_file %s' % my_uuid)
 
         file_root, file_ext = os.path.splitext(myfile.name)
         file_name = my_uuid + file_ext.lower() # append '.jpg', etc
@@ -295,7 +295,7 @@ class Pic(DeleteMixin):
     # not totally understood yet. Whee for copy paste google code!
     # (ducks his head in shame)
     def create_thumbnail(self, file, width, height):
-        logging.info('got to %s' % __name__)
+        log.info('got to %s' % __name__)
         try:
             size = width, height
             tmp_file = StringIO() # We'll return this as an image
@@ -405,38 +405,38 @@ class Album(DeleteMixin):
         """
 
         if not force and self.groups_last_modified < self.sequences_last_set:
-            logging.info("Album.set_sequences bailing out early - no groups have been modified")
+            log.info("Album.set_sequences bailing out early - no groups have been modified")
             return
 
         pics = Pic.objects.filter( album=self )
-        logging.info('setting sequences for album_id %d' % self.id)
+        log.info('setting sequences for album_id %d' % self.id)
 
         # This doesn't feel like the most efficient way to get a sorted,
         # unique list, but it works
         browser_ids = sorted(list(set([pic.browser_group_id for pic in pics])))
-        logging.info(browser_ids)
+        log.info(browser_ids)
         next_sequence = 1
         for id in browser_ids:
-            logging.info('browser id: %d' % id)
+            log.info('browser id: %d' % id)
 
             # Find all pics that match this id
             matches = pics.filter( browser_group_id__exact=id )
             if id != ungroupedId:
                 # All matching pics get next_sequence
-                logging.info('id != ungroupedId - creating new group sequence %d' % next_sequence)
+                log.info('id != ungroupedId - creating new group sequence %d' % next_sequence)
                 g = Group(album=self, sequence=next_sequence) 
                 g.save()
                 for pic in matches:
-                    logging.info('setting group to pic')
+                    log.info('setting group to pic')
                     #pic.group_id = next_sequence
                     pic.group = g
                     pic.save()
                 next_sequence += 1
             else:
                 # All ungrouped pics get their own sequence
-                logging.info('id == ungroupedId - creating new group')
+                log.info('id == ungroupedId - creating new group')
                 for pic in matches:
-                    logging.info('creating new group sequence %d' % next_sequence)
+                    log.info('creating new group sequence %d' % next_sequence)
                     g = Group(album=self, sequence=next_sequence) 
                     g.save()
                     #pic.group_id = next_sequence
@@ -445,7 +445,7 @@ class Album(DeleteMixin):
                     next_sequence += 1
 
         next_sequence -= 1
-        logging.info('Saving number of groups %d' % next_sequence)
+        log.info('Saving number of groups %d' % next_sequence)
 
         self.num_groups = next_sequence
         self.sequences_last_set = get_datetime()

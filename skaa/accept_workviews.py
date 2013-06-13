@@ -15,7 +15,7 @@ from common.balancedfunctions import *
 from common.decorators import require_login_as
 
 import ipdb
-import logging
+import logging; log = logging.getLogger('pd')
 from datetime import datetime
 import pytz
 
@@ -43,7 +43,7 @@ def accept_work(request, job_id):
                 log_msg = "job #" + str(job.id) + " failed to charge: '" + failure.description + "'  - allow_publicly: "
                 log_msg += request.POST['allow_publicly'] + ' star: ' + request.POST['rating_val'] + ' comment: '
                 log_msg += request.POST['comment']
-                logging.critical(log_msg)
+                log.critical(log_msg)
 
                 return {'job_id': job_id, 'charge_error_occurred': True, 'charge_error': failure}
 

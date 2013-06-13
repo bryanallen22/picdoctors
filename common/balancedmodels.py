@@ -5,7 +5,7 @@ from common.models import *
 
 from django.db import models
 
-import logging
+import logging; log = logging.getLogger('pd')
 
 import balanced
 import settings
