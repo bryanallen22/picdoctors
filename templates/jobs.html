@@ -175,7 +175,15 @@
   <script type="text/template" id="doctor_row_template">
       <div class="job_id" job_id="<%= job_id %>"></div>
       <div class="span1">
-        <b><a href="<%= albumurl %>"><%= job_id.padLeft(8) %></a></b>
+        <b>
+          <% if (show_links) { %>
+          <a href="<%= albumurl %>">
+          <% } %>
+            <%= job_id.padLeft(8) %>
+          <% if (show_links) { %>
+          </a>
+          <% } %>
+        </b>
       </div>
       <div class="span2">
         <div id="myCarousel" class="carousel slide carousel_no_bottom_margin">
@@ -183,9 +191,13 @@
           <div class="carousel-inner pic_carousel">
             <% _.each( pic_thumbs, function( pic ){  %>
             <div class="item"> 
+          <% if (show_links) { %>
               <a href="<%= pic[1]%>">
+          <% } %>
                 <img src="<%= pic[0] %>" class="pic_carousel" alt="">
+          <% if (show_links) { %>
               </a>
+          <% } %>
             </div>
             <% }); %>
           </div>

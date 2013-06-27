@@ -24,6 +24,7 @@ $(function(){
         dynamic_actions      : [],
         doctor_payout        : '',
         job_worth            : '',
+        show_links           : false,
       };
     },
     
@@ -100,6 +101,7 @@ $(function(){
           dynamic_actions     : this.model.get('dynamic_actions'),
           doctor_payout       : this.model.get('doctor_payout'),
           job_worth           : this.model.get('job_worth'),
+          show_links          : this.model.get('show_links'),
         }
       ));
     },
