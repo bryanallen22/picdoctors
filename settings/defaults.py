@@ -193,7 +193,7 @@ LOGGING = {
         'logfile': {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': PROJECT_ROOT + "/logfile", 
+            'filename': '/var/log/django/picdoctors.log', 
             'maxBytes': 50000,
             'backupCount': 2,
             'formatter': 'standard',

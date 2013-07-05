@@ -156,7 +156,9 @@ def webserver_config():
     sudo('mkdir -p /etc/uwsgi/apps-enabled')
     sudo('mkdir -p /var/log/uwsgi')
     sudo('mkdir -p /var/log/celeryd')
-    sudo('chown %s:%s %s' % (cfg.deploy_user, cfg.deploy_user, '/var/log/uwsgi'))
+    sudo('mkdir -p /var/log/django')
+    sudo('chown %s:%s /var/log/uwsgi'  % (cfg.deploy_user, cfg.deploy_user))
+    sudo('chown %s:%s /var/log/django' % (cfg.deploy_user, cfg.deploy_user))
 
     # move over uwsgi/nginx config files
     put(LocalConfig.remote_uwsgi_picdocini,
