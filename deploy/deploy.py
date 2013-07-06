@@ -156,9 +156,7 @@ def webserver_config():
     sudo('mkdir -p /etc/uwsgi/apps-enabled')
     sudo('mkdir -p /var/log/uwsgi')
     sudo('mkdir -p /var/log/celeryd')
-    sudo('mkdir -p /var/log/django')
     sudo('chown %s:%s /var/log/uwsgi'  % (cfg.deploy_user, cfg.deploy_user))
-    sudo('chown %s:%s /var/log/django' % (cfg.deploy_user, cfg.deploy_user))
 
     # move over uwsgi/nginx config files
     put(LocalConfig.remote_uwsgi_picdocini,
@@ -594,6 +592,12 @@ def setup_packages():
         #sudo('npm install -g uglify-js -y -q') # Used by bootstrap
         #sudo('npm install -g jshint -y -q')
         sudo('npm install -g yuglify -y -q')
+
+    # Create django log
+    sudo('mkdir -p /var/log/django')
+    sudo('touch /var/log/django/picdoctors.log')
+    sudo('chown %s:%s /var/log/django' % (cfg.deploy_user, cfg.deploy_user))
+    sudo('chown %s:%s /var/log/django/picdoctors.log' % (cfg.deploy_user, cfg.deploy_user))
 
     # Collect static files
     venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
