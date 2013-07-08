@@ -1,7 +1,7 @@
 PicDoctors
 ----------
-ballen@pudu:~/tmp$ head daniel | wc
+ballen@isaputo:~/tmp$ head daniel | wc
       0       0       0
-ballen@pudu:~/tmp$
+ballen@isaputo:~/tmp$
 
 To install run /tools/setup_devmachine.bash
