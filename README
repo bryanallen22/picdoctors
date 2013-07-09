@@ -1,7 +1,7 @@
 PicDoctors
 ----------
-ballen@isaputo:~/tmp$ head daniel | wc
-      0       0       0
-ballen@isaputo:~/tmp$
+echo "import antigravity" | python
+
+(No, really. Try it.)
 
 To install run /tools/setup_devmachine.bash
