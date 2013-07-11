@@ -13,6 +13,7 @@ from common.account_settings_views import legit_password
 from doctor.jobsviews import doc_job_page
 from skaa.progressbarviews import get_progressbar_vars, show_progressbar_on_login_page
 from views import index
+from emailer.emailfunctions import send_email
 import string
 import re
 
@@ -21,11 +22,29 @@ import logging; log = logging.getLogger('pd')
 import datetime
 import settings
 
-def create_skaa(user):
+def create_skaa(request, user):
     user.add_permission('skaa')
+    from emailer.emailfunctions import DEFAULT_CONTACT_EMAIL
+    send_email( request=request,
+                email_address=user.email,
+                template_name='skaa_signup.html',
+                template_args={ 
+                    'profile' : user,
+                    'contact_email' : DEFAULT_CONTACT_EMAIL,
+                }
+              )
 
-def create_doctor(user):
+def create_doctor(request, user):
     user.add_permission('doctor')
+    from emailer.emailfunctions import DEFAULT_CONTACT_EMAIL
+    send_email( request=request,
+                email_address=user.email,
+                template_name='doc_signup.html',
+                template_args={
+                    'profile' : user,
+                    'contact_email' : DEFAULT_CONTACT_EMAIL,
+                }
+              ) 
 
 def auth(email, password):
     """
@@ -41,7 +60,7 @@ def auth(email, password):
         return ( user, { } )
     return ( None, { 'bad_email_or_password' : True } )
 
-def create_user(email, nickname, password, confirm_password, usertype):
+def create_user(request, email, nickname, password, confirm_password, usertype):
     """
     Create the user.
 
@@ -102,9 +121,9 @@ def create_user(email, nickname, password, confirm_password, usertype):
         user.save()
         
         if usertype == 'doc':
-            create_doctor(user)
+            create_doctor(request, user)
         elif usertype == 'user':
-            create_skaa(user)
+            create_skaa(request, user)
         else:
             raise ValueError('Bad usertype: %s' % usertype)
 
@@ -145,7 +164,8 @@ def signin(request, usertype='user'):
             if 'agree_tos' not in request.POST.keys():
                 user, tmp = ( None, { 'need_tos' : True } )
             else:
-                user, tmp = create_user( request.POST['email'],
+                user, tmp = create_user( request,
+                                         request.POST['email'],
                                          request.POST['nickname'],
                                          request.POST['password'],
                                          request.POST['confirm_password'],

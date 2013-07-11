@@ -59,7 +59,6 @@ def upload_page(request):
 
 @render_to('need_cookies.html')
 def need_cookies(request):
-    log.info('got to %s' % __name__)
     return locals()
 
 def has_doc_upload_access(request):
@@ -103,7 +102,6 @@ def has_doc_upload_access(request):
 
 @passes_test(has_doc_upload_access, '/')
 def doc_upload_handler(request):
-    log.info('got to %s' % __name__)
     if request.method == 'POST':
         profile = get_profile_or_None(request)
         if request.FILES == None:
@@ -112,7 +110,6 @@ def doc_upload_handler(request):
         group_id = int(request.POST['group_id'])
         group = get_object_or_None(Group, id=group_id )
         # Save this off into the database
-        log.info('got to %s' % __name__)
         file = request.FILES[u'doc_file']
         if file is not None:
             pickleable_pic = StringIO(file.read())
@@ -127,7 +124,6 @@ def doc_upload_handler(request):
 
 #Since the browser is posting this it includes the CSRF token
 def upload_handler(request):
-    log.info('got to %s' % __name__)
     if request.method == 'POST':
         if request.FILES == None:
             return HttpResponseBadRequest('Must have files attached!')
@@ -136,7 +132,6 @@ def upload_handler(request):
         delete_groupings(request)
 
         # Save this off into the database
-        log.info('got to %s' % __name__)
         file = request.FILES[u'files[]']
         if file is not None:
             log.info(file.name)
@@ -162,7 +157,6 @@ def upload_handler(request):
             return HttpResponse('[ ]', mimetype='application/json')
 
     else: #GET
-        log.info('got to %s' % __name__)
         # TODO - get rid of this temporary debug code:
         result = []
 

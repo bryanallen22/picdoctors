@@ -6,12 +6,15 @@ from tasks.tasks import sendAsyncEmail
 import logging; log = logging.getLogger('pd')
 import settings
 
+DEFAULT_CONTACT_EMAIL = 'contact@picdoctors.com'
+DEFAULT_CONTACT_EMAIL_FULL = 'PicDoctors <' + DEFAULT_CONTACT_EMAIL + '>'
+
 def send_email(request,
                email_address,
                template_name,
                # Optional args:
                template_args = { },
-               from_address  = 'PicDoctors <contact@picdoctors.com>',
+               from_address  = DEFAULT_CONTACT_EMAIL_FULL,
               ):
     """
     Generic email function. All sent emails should go through here.

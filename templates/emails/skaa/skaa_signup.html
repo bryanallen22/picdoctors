@@ -1,0 +1,28 @@
+{% extends 'base_email.html' %}
+
+{% block subject %}
+Welcome to PicDoctors!
+{% endblock %}
+
+{% block plain %}
+Welcome to PicDoctors, {{ profile.nickname }}!
+
+You can find out more about how the PicDoctors works here:
+
+{{ request.SITE_URL }}{% url 'faq' %}
+
+If you have any questions, don't hesitate to contact us. Just send it to {{ contact_email }} or reply to this message.
+
+Thanks for using PicDoctors!
+{% endblock %}
+
+{% block html %}
+Welcome to PicDoctors, {{ profile.nickname }}!<br/><br/>
+
+You can find out more about how the PicDoctors works <a href="{{ request.SITE_URL }}{% url 'faq' %}">here</a>.<br/><br/>
+
+If you have any questions, don't hesitate to contact us. Just send it to <a href="mailto:{{ contact_email }}">{{ contact_email }}</a> or reply to this message.<br/><br/>
+
+Thanks for using PicDoctors!<br/><br/>
+{% endblock %}
+
