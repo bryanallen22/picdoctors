@@ -65,6 +65,15 @@ server {
         # django looks for this to make sure it's an ssl site so it doesn't break redirects
         uwsgi_param UWSGI_SCHEME https;
         uwsgi_pass unix:/tmp/picdoctorsapp.sock;
+
+        if (-f $document_root/503Live.html) {
+                return 503;
+        }
+    }
+
+    error_page 503 @maintenance;
+    location @maintenance {
+        rewrite ^(.*)$ /503Live.html break;
     }
 
     # ssl stuff
