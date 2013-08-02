@@ -2,7 +2,6 @@ from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.console import confirm
 from fabric.contrib.files import exists
-import boto
 
 # Don't get these confused:
 #   'settings.py'     -- the django settings file, imported as pd_settings
@@ -14,6 +13,7 @@ import sys
 sys.path.insert(0, 'deploy')
 
 from deploy_config import LocalConfig, RemoteConfig, get_deploy_type, get_config
+from digitalocean import *
 
 import inspect
 import os
@@ -332,38 +332,23 @@ def getcode(force_push=False):
 @task
 def create():
     """
-    Spin up a new ec2 instance
+    Spin up a new DigitalOcean instance
     """
 
-    if get_instance(required=False):
-        abort("Instance already exists! If it's terminated, you can wait.")
+    # TODO add this back
+    #if get_instance(required=False):
+    #    abort("Instance already exists! If it's terminated, you can wait.")
 
     # Extract deploy type (ex: 'sandbox') and config for that type
     instance_name = env.host_string
     deploy_type = get_deploy_type(instance_name)
     cfg = get_config(deploy_type)
 
-    reservation = ec2.run_instances(
-        cfg.ami,
-        key_name        = cfg.key_name,
-        instance_type   = cfg.instance_type,
-        security_groups = cfg.security_groups,
-    )
-
-    if len(reservation.instances) != 1:
-        abort("%d instances reserved! We expected to get 1." % len(reservation.instances))
-
-    # So, there's a race condition here. We can't add our tags during creation, and we
-    # can't add them until amazon makes the instance exist. They seem to be very dang fast,
-    # (no wait at all still works ~90% of the time) so I'll keep my wait short.
-    time.sleep(1)
-
-    # Go directly to index[0] - we only create at a time
-    reservation.instances[0].add_tag('deploy_type', cfg.deploy_type)
-    reservation.instances[0].add_tag('instance_name', instance_name)
-    # AWS likes 'Name' and uses it on their web pages, etc, so we'll 
-    # add the instance_name there too
-    reservation.instances[0].add_tag('Name', instance_name)
+    instance_json = create_droplet( name      = instance_name,
+                                    size_name = cfg.do_size_name,
+                                    image_id  = cfg.do_image_id,
+                                    region_id = cfg.do_region_id,
+                                    key_name  = cfg.do_key_name)
 
     print "Creation of %s underway..." % instance_name
 
@@ -481,21 +466,23 @@ def ls():
     """
     List running instances
     """
-    rows = [ ["Name:", "State:", "Type:", "IP Addr:", "DNS:", "Region:", "AMI:", "Sha:" ] ]
+    
+    droplets = get_droplets()
+
+    rows = [ ["Name:", "Status:", "IP Addr:", "Backups:", "Size:", "Id:" ] ]
 
     # Width of rows for pretty printing.
     row_widths = [0] * len(rows[0])
 
-    for inst in get_all_instances():
+    for inst in droplets:
         row = [ ]
-        row.append(inst.tags.get('instance_name', '---'))
-        row.append(inst.state or "---")
-        row.append(inst.instance_type or "---")
-        row.append(inst.ip_address or "---")
-        row.append(inst.dns_name or "---")
-        row.append(inst.region.name or "---")
-        row.append(inst.image_id or "---")
-        row.append(inst.tags.get('sha', '---')[:7]) # Only grab first 7 digits of the sha
+        row.append(inst['name'])
+        row.append(inst['status'] or "---")
+        row.append(inst['ip_address'] or "---")
+        row.append('yes' if inst['backups_active'] else 'no')
+        # This generates an entire http call: (Speed up later if we start deploying lots of servers)
+        row.append( get_size_name( inst['size_id'] ) )
+        row.append(str(inst['id']))
         rows.append(row)
 
     # Will have at least 1 row (the titles). 2+ means real rows
@@ -733,14 +720,9 @@ if __name__=="fabfile":
     # Here's some stuff we do every stinkin' time to simplify what comes below
     #
 
-    # Always going to have to connect to ec2. Do it just once
-    # to minimize number of times this is required
-    ec2 = boto.connect_ec2(pd_settings.AWS_ACCESS_KEY_ID,
-                           pd_settings.AWS_SECRET_ACCESS_KEY)
-
     # git is a big fan of permissive permissions. ssh isn't so much.
     with hide('running', 'stdout', 'stderr'):
-        local("chmod 600 %s" % LocalConfig.aws_key_path)
+        local("chmod 600 %s" % LocalConfig.do_key_path)
 
     # Just about everything in here will require us to ssh remotely.
     # Rather than keep all configuration internal via: env.hosts,
@@ -750,5 +732,5 @@ if __name__=="fabfile":
     env.use_ssh_config = True
 
     # Set the ssh config file on local machine for easy ssh access
-    set_sshconfig()
+    #set_sshconfig()
 

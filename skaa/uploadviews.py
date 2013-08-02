@@ -208,7 +208,7 @@ def delete_pic_handler(request):
 def delete_groupings(request):
     album = Album.get_unfinished(request)
     if album:
-        log.info('deleting %d' % album.id)
+        log.info('deleting all groupings in album id=%d' % album.id)
         Group.objects.filter(album=album.id).delete()
         album.kick_groups_modified()
 

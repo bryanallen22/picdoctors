@@ -3,17 +3,14 @@ import os
 import ipdb
 import getpass
 
-
-
 #############################################################
 # LocalConfig
 # 
 # This stores where things are on our local computer, etc
 #############################################################
 class LocalConfig():
-    # aws key
-    aws_key_path = os.path.join(pd_settings.PROJECT_ROOT,
-                     'deploy/keys/picdoc_aws_key.pem')
+    do_key_path = os.path.join(pd_settings.PROJECT_ROOT,
+                        'deploy/keys/pd_digitalocean.id_rsa')
 
     # bitbucket private key
     deploybot_id_path = os.path.join(pd_settings.PROJECT_ROOT,
@@ -53,7 +50,6 @@ class LocalConfig():
                                 'deploy/configs/supervisord.init.d')
 
     # Locally, what do we call bitbucket in our git commands?
-    #git_remote = 'https'
     git_remote = 'origin'
 
     @staticmethod
@@ -82,26 +78,26 @@ class LocalConfig():
 # if they so choose
 #############################################################
 class RemoteConfig():
-    # 'sandbox', 'test' or 'production'
-    deploy_type = None # make children specify
+    do_size_name = None # make children specify
 
-    # Instance type to create
-    ami = 'ami-3d4ff254'   # Ubuntu Server 12.04 LTS, 64 bit
+    # DigitalOcean image id -- Ubuntu 12.04 x64
+    do_image_id = 284203
 
-    # The AWS name for the ssh key
-    key_name = 'picdoc_key'
+    # DigitalOcean region id
+    do_region_id = 4 # new york -- lower latency to our S3 buckets in virginia
+    #do_region_id = 3 # san francisco
+
+    # The DO name for the key
+    do_key_name = 'pd_digitalocean'
 
     # As whom shall we log in, m'lord?
-    ssh_user = "ubuntu" # set_sshconfig uses this directly (not a subclass) so overriding not allowed
+    ssh_user = "root" # set_sshconfig uses this directly (not a subclass) so overriding not allowed
 
     # ssh port?
     ssh_port = 22 # set_sshconfig uses this directly (not a subclass) so overriding not allowed
 
     # How beefy should the instance be? (micro, small, etc)
-    instance_type = None   # Make the children specify
-
-    # Security groups, what ports to open up, etc
-    security_groups = ['picdoc-production']  # The most restrictive
+    do_size_id = None   # Make the children specify
 
     # Where the code will end up
     code_dir = '/code/picdoctors'
@@ -134,19 +130,14 @@ class RemoteConfig():
     venv_activate = 'source %s/%s/bin/activate' % (venv_dir, venv_proj)
 
 class SandboxConfig(RemoteConfig):
-    instance_type = 't1.micro'
-    security_groups = ['picdoc-sandbox'] # currently opens up ports 22,80,443,8000
+    do_size_name = '512MB'
     deploy_only_production_branch = False
 
 class TestConfig(RemoteConfig):
-    #instance_type = 'm1.small'
-    instance_type = 't1.micro'
-    security_groups = ['picdoc-test'] # currently opens up ports 22,80,443
+    do_size_name = '1GB'
 
 class ProductionConfig(RemoteConfig):
-    #instance_type = 'm1.small'
-    instance_type = 't1.micro'
-    security_groups = ['picdoc-production'] # currently opens up ports 22,80,443
+    do_size_name = '1GB'
 
 
 ########################################

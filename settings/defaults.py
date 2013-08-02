@@ -336,3 +336,4 @@ STATIC_URL = '/static/'
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static_out')
 
+
