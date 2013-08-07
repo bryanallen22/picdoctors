@@ -19,6 +19,7 @@ import inspect
 import os
 import ipdb
 import time
+import socket
 
 ######################
 # Helper functions
@@ -30,17 +31,11 @@ def venv_run_user(str, cfg):
     with cd(cfg.code_dir):
         run_user(cfg.venv_activate + ' && ' + str, cfg)
     
-def get_all_instances(refresh=False):
+def get_all_instances():
     """
     Find all instances
     """
-    # TODO - cache this? It causes problems with lining up lots of tasks though...
-    #  for example "fab -H sandbox0 create wait patch deploy"
-    instances = []
-    reservations = ec2.get_all_instances()
-    for res in reservations:
-        instances.extend( res.instances )
-    return instances
+    get_droplets()
 
 def get_instance(required=True):
     """
@@ -62,6 +57,14 @@ def get_instance(required=True):
 
     return None
 
+def valid_ip_address(addr):
+    try:
+        socket.inet_aton(addr)
+        return True
+    except socket.error:
+        # Not legal
+        return False
+
 def set_sshconfig():
     """
     Update local ~/.ssh/config to allow simple sshing into running instances
@@ -79,8 +82,8 @@ def set_sshconfig():
         # Get rid of old entries found below the fingerprint
         local("sed -i -n '/%s/q;p' %s" % (fingerprint, local_ssh_config))
 
-    running_instances = [inst for inst in get_all_instances() if (inst.state == "running" or
-                                                                  inst.state == "pending") ]
+    running_instances = [inst for inst in handle_url('/droplets')['droplets']
+                            if valid_ip_address(inst['ip_address'])]
 
     # Append to the ssh config file
     if len(running_instances) > 0:
@@ -90,19 +93,16 @@ def set_sshconfig():
             proxy_cmd = LocalConfig.get_proxy_command()
 
             for inst in running_instances:
-                if 'instance_name' in inst.tags:
-                    print >> ssh_config, "Host %s" % inst.tags['instance_name']
-                else:
-                    print >> ssh_config, "Host %s" % "---"
+                print >> ssh_config, "Host %s" % inst['name']
 
                 # If there is a proxy for this machine, add it to the file
                 if(proxy_cmd): print >> ssh_config, "    %s" % proxy_cmd
 
-                print >> ssh_config, "    Hostname %s" % inst.dns_name
+                print >> ssh_config, "    Hostname %s" % inst['ip_address']
                 print >> ssh_config, "    User %s" % RemoteConfig.ssh_user
-                print >> ssh_config, "    IdentityFile %s" % LocalConfig.aws_key_path
+                print >> ssh_config, "    IdentityFile %s" % LocalConfig.do_key_path
                 print >> ssh_config, "    Port %s" % RemoteConfig.ssh_port
-                print >> ssh_config, "    StrictHostKeyChecking no"
+                print >> ssh_config, "    StrictHostKeyChecking no" # don't confirm key - makes fabric happy
 
     print "%s has been updated" % local_ssh_config
 
@@ -335,10 +335,6 @@ def create():
     Spin up a new DigitalOcean instance
     """
 
-    # TODO add this back
-    #if get_instance(required=False):
-    #    abort("Instance already exists! If it's terminated, you can wait.")
-
     # Extract deploy type (ex: 'sandbox') and config for that type
     instance_name = env.host_string
     deploy_type = get_deploy_type(instance_name)
@@ -353,34 +349,9 @@ def create():
     print "Creation of %s underway..." % instance_name
 
 @task
-def start():
+def destroy():
     """
-    Start an instance by its name.
-    """
-    inst = get_instance()
-    instance_name = inst.tags['instance_name']
-    inst.start()
-    print "Starting %s..." % instance_name
-
-@task
-def stop():
-    """
-    Stop an instance
-    """
-    inst = get_instance()
-    instance_name = inst.tags['instance_name']
-    deploy_type = inst.tags['deploy_type']
-    
-    if deploy_type == "production" and not confirm("You are stopping a production server!!! Continue anyway?"):
-        abort("Good riddance, evil production server stopper.")
-
-    inst.stop()
-    print "Stopping %s..." % instance_name
-
-@task
-def terminate():
-    """
-    Terminate an instance
+    Destroy an instance
     """
     inst = get_instance()
 
@@ -393,50 +364,8 @@ def terminate():
         if deploy_type == "production" and not confirm("You are killing a production server!!! Continue anyway?"):
             abort("Good riddance, evil production server killer.")
 
-    inst.terminate()
+    inst.destroy()
     print "Terminating %s..." % instance_name
-
-@task
-def wait():
-    """
-    Wait while instance is starting up ('pending')
-
-    Useful if you are trying to launch a full instance at once
-    """
-
-    # Wait for the instance to appear (sometimes takes it a sec)
-    inst = get_instance(required=False)
-    if not inst:
-        print "%s couldn't be found in running instances! Waiting for it to appear..." % env.host_string
-        for i in range(60): # 30 seconds
-            inst = get_instance(required=False)
-            if inst:
-                break
-            else:
-                print "."
-                time.sleep(.5)
-
-    print "Waiting for %s to be ready..." % env.host_string
-
-    i = 0
-    while i < 360: # 3 minutes
-        inst = get_instance(required=False)
-        if inst.state == "pending":
-            print '.', 
-            # That doesn't always flush, so the program feels like it has stalled.
-            sys.stdout.flush()
-        elif inst.state == "running":
-            print "done!"
-            set_sshconfig()
-            break
-        else:
-            abort("%s state is %s!" % (env.host_string, inst.state))
-        time.sleep(.5)
-
-    if i == 120:
-        abort("Timed out!")
-
-    print "%s is now in state '%s'" % (env.host_string, inst.state)
 
 @task
 def test():
@@ -732,5 +661,5 @@ if __name__=="fabfile":
     env.use_ssh_config = True
 
     # Set the ssh config file on local machine for easy ssh access
-    #set_sshconfig()
+    set_sshconfig()
 

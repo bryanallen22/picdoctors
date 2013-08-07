@@ -84,8 +84,7 @@ class RemoteConfig():
     do_image_id = 284203
 
     # DigitalOcean region id
-    do_region_id = 4 # new york -- lower latency to our S3 buckets in virginia
-    #do_region_id = 3 # san francisco
+    do_region_id = None # make children override
 
     # The DO name for the key
     do_key_name = 'pd_digitalocean'
@@ -132,12 +131,15 @@ class RemoteConfig():
 class SandboxConfig(RemoteConfig):
     do_size_name = '512MB'
     deploy_only_production_branch = False
+    do_region_id = 3 # sf - closer to us
 
 class TestConfig(RemoteConfig):
     do_size_name = '1GB'
+    do_region_id = 3 # sf - closer to us
 
 class ProductionConfig(RemoteConfig):
     do_size_name = '1GB'
+    do_region_id = 4 # new york -- lower latency to our S3 buckets in virginia
 
 
 ########################################

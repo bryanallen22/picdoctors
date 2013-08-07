@@ -65,6 +65,9 @@ def match_ssh_key(key_name):
             return key['id']
     return None
 
+def get_droplet_id( name ):
+    return 0
+
 def create_droplet( name, size_name, image_id, region_id, key_name ):
     """
     Create a new droplet. Return it's id
@@ -78,9 +81,15 @@ def create_droplet( name, size_name, image_id, region_id, key_name ):
         'region_id'  : region_id,
         'ssh_key_id' : ssh_key_id,
     }
-    import ipdb; ipdb.set_trace()
     droplet = handle_url('/droplets/new', params)['droplet']
     return droplet['id']
+
+def destroy_droplet( name ):
+    """
+    Take a droplet down
+    """
+    id = get_droplet_id( name )
+    status = handle_url( '/droplet/%d/destroy' % id )
 
 def droplet_info(droplet_id):
     droplet = handle_url('/droplets/%d' % droplet_id)['droplet']
