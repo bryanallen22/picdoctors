@@ -41,12 +41,8 @@ def get_instance(required=True):
     """
     Get an actual ec2 for the current task
     """
-    for inst in get_all_instances():
-        if env.host_string == 'empty_host' and len(inst.tags) == 0:
-            return inst
-
-        if 'instance_name' in inst.tags and \
-                    inst.tags['instance_name'] == env.host_string:
+    for inst in handle_url('/droplets')['droplets']:
+        if inst['name'] == env.host_string:
             return inst
 
     if required:
@@ -355,17 +351,13 @@ def destroy():
     """
     inst = get_instance()
 
-    instance_name = "I don't know what it's name is!?!?!"
-    # sometimes a bad instance is generated! No tags are associated, so this crashes
-    if len(inst.tags) != 0:
-        instance_name = inst.tags['instance_name']
-        deploy_type = inst.tags['deploy_type']
-    
-        if deploy_type == "production" and not confirm("You are killing a production server!!! Continue anyway?"):
-            abort("Good riddance, evil production server killer.")
+    deploy_type = get_deploy_type(inst['name'])
 
-    inst.destroy()
-    print "Terminating %s..." % instance_name
+    if deploy_type == "production" and not confirm("You are killing a production server!!! Continue anyway?"):
+        abort("Good riddance, evil production server killer.")
+
+    handle_url('/droplets/%d/destroy' % inst['id'])
+    print "Destroyed %s..." % inst['name']
 
 @task
 def test():
