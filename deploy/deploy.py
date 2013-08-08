@@ -205,6 +205,7 @@ def webserver_config():
         sudo('unlink /tmp/supervisor.sock')
     sudo('service supervisord restart', pty=False)
     sudo('supervisorctl start all')
+    sudo('service nginx restart')
 
 @task
 def getcode(force_push=False):
@@ -598,7 +599,7 @@ def setup_packages():
     sudo('touch /var/log/django/picdoctors.log')
     sudo('chown %s:%s /var/log/django' % (cfg.deploy_user, cfg.deploy_user))
     sudo('chown %s:%s /var/log/django/picdoctors.log' % (cfg.deploy_user, cfg.deploy_user))
-    sudo('chmod   664 /var/log/django/picdoctors.log' % (cfg.deploy_user, cfg.deploy_user))
+    sudo('chmod   664 /var/log/django/picdoctors.log')
 
     # Collect static files
     venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
