@@ -12,6 +12,9 @@ class LocalConfig():
     do_key_path = os.path.join(pd_settings.PROJECT_ROOT,
                         'deploy/keys/pd_digitalocean.id_rsa')
 
+    do_key_path_pub = os.path.join(pd_settings.PROJECT_ROOT,
+                        'deploy/keys/pd_digitalocean.id_rsa.pub')
+
     # bitbucket private key
     deploybot_id_path = os.path.join(pd_settings.PROJECT_ROOT,
                           'deploy/keys/picdoc_deploybot.id_rsa')

@@ -343,6 +343,20 @@ def create():
                                     key_name  = cfg.do_key_name)
 
     print "Creation of %s underway..." % instance_name
+    print "  Want to know what's a bummer? DO doesn't seem to support setting SSH keys as part of creation."
+    print "  Wait for the email (to admin@pd) that gives you the root password, and then run this: "
+    print "     fab -H %s do_init" % instance_name
+
+@task
+def do_init():
+    """
+    Do one time digital ocean setup
+    """
+    
+    inst = get_instance()
+    from fabric.operations import prompt
+    print "\n\nCheck admin@pd for an email with the root password. Then enter below:"
+    local("ssh-copy-id -i %s %s" % (LocalConfig.do_key_path_pub, inst['name'] ))
 
 @task
 def destroy():
