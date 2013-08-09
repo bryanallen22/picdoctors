@@ -66,14 +66,16 @@ server {
         uwsgi_param UWSGI_SCHEME https;
         uwsgi_pass unix:/tmp/picdoctorsapp.sock;
 
-        if (-f $document_root/503Live.html) {
+        if (-f $document_root/template/maintenance.html) {
                 return 503;
         }
     }
 
+    # If you need to block the page for maintenance or something, place the maintenance.html file
+    # in the template directory (or rename the maintenance.off to maintenance.html) and reset nginx
     error_page 503 @maintenance;
     location @maintenance {
-        rewrite ^(.*)$ /503Live.html break;
+        rewrite ^(.*)$ /template/maintenance.html break;
     }
 
     # ssl stuff
