@@ -1,4 +1,3 @@
-
 # I got this from the optimizing SSL guide: http://nginx.org/en/docs/http/configuring_https_servers.html
 ssl_session_cache   shared:SSL:10m;
 ssl_session_timeout 10m;
@@ -66,7 +65,7 @@ server {
         uwsgi_param UWSGI_SCHEME https;
         uwsgi_pass unix:/tmp/picdoctorsapp.sock;
 
-        if (-f $document_root/template/maintenance.html) {
+        if (-f $document_root/templates/maintenance.html) {
                 return 503;
         }
     }
@@ -75,7 +74,7 @@ server {
     # in the template directory (or rename the maintenance.off to maintenance.html) and reset nginx
     error_page 503 @maintenance;
     location @maintenance {
-        rewrite ^(.*)$ /template/maintenance.html break;
+        rewrite ^(.*)$ /templates/maintenance.html break;
     }
 
     # ssl stuff
