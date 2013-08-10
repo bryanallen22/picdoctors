@@ -21,3 +21,5 @@ python-mysqldb
 libmysqlclient-dev
 
 fail2ban
+
+python-software-properties

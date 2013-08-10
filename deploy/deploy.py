@@ -109,10 +109,12 @@ def validate_can_deploy(inst, cfg):
         - Only bitbucket's 'master' deploys to test/production
         - All tests pass locally
     """
-    instance_name = inst.tags['instance_name']
+    inst = get_instance()
+    instance_name = inst['name']
 
-    if inst.state != "running":
-        abort("%s is not running, sorry. Current state: %s" % (instance_name, inst.state))
+
+    if inst['status'] != 'active':
+        abort('%s is not running, sorry. Current state: %s' % (instance_name, inst['status']))
 
     # Is HEAD deployable?
     if cfg.deploy_only_production_branch:
@@ -145,7 +147,7 @@ def webserver_config():
     Set up nginx and uwsgi
     """
     inst = get_instance()
-    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
 
     sudo('mkdir -p /etc/uwsgi/apps-available')
@@ -163,7 +165,7 @@ def webserver_config():
 
     # update the redirect for http paths for sandbox and test
     if deploy_type == 'test' or deploy_type =='sandbox':
-        sudo("sed -i 's/rewrite_redirect_host/" + inst.ip_address.replace(".",r"\.") + "/g' " + remote_picapp)
+        sudo("sed -i 's/rewrite_redirect_host/" + inst['ip_address'].replace(".",r"\.") + "/g' " + remote_picapp)
         sudo("sed -i 's/COMMENT_OUT_IF_DEBUG/#/g' " + remote_picapp)
     elif deploy_type == 'production':
         sudo("sed -i 's/rewrite_redirect_host/www\.picdoctors\.com/g' " + remote_picapp)
@@ -226,8 +228,8 @@ def getcode(force_push=False):
     print "--------"
 
     inst = get_instance()
-    deploy_type = get_deploy_type(inst.tags['instance_name'])
-    instance_name = inst.tags['instance_name']
+    deploy_type = get_deploy_type(env.host_string)
+    instance_name = env.host_string;
     cfg = get_config(deploy_type)
     
     # New box needs and ssh config so it can use bitbucket
@@ -307,7 +309,7 @@ def getcode(force_push=False):
     put('/tmp/sha.txt', '%s/sha.txt' % cfg.code_dir, use_sudo=True )
     sudo('chown %s:%s %s/sha.txt' % (cfg.deploy_user, cfg.deploy_user, cfg.code_dir) );
     # Add sha to the instance tags
-    inst.add_tag('sha', head_sha)
+    #inst.add_tag('sha', head_sha)
 
     # To know what settings to use, we create a blank <deploy_type>.cfg 
     # file in the settings directory 
@@ -316,7 +318,7 @@ def getcode(force_push=False):
     # Add the external IP to that settings file, used for Django's ALLOWED_HOSTS on
     # non production machines.
     run_user('echo "external_ip: %s" >> %s/settings/%s.cfg' %
-                   (inst.ip_address, cfg.code_dir, deploy_type), cfg)
+                   (inst['ip_address'], cfg.code_dir, deploy_type), cfg)
     # Add the sha to settings file, used to keep cache coherent
     run_user('echo "sha: %s" >> %s/settings/%s.cfg' %
                    (head_sha, cfg.code_dir, deploy_type), cfg)
@@ -453,7 +455,7 @@ def setup_packages():
 
     # we want to allow a developer to set up his own box with this too
     inst = get_instance()
-    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    deploy_type = get_deploy_type(env.host_string)
     # Duck typing: totally different config than localhost
     cfg = get_config(deploy_type)
 
@@ -533,7 +535,7 @@ def setup_local_mysql():
     Set up mysql locally. This had better not be production
     """
     inst = get_instance()
-    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
 
     if deploy_type == "production":
@@ -562,7 +564,7 @@ def setup_db():
     Production: assert. I think this should be done by hand
     """
     inst = get_instance()
-    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
 
     if deploy_type == "sandbox":
@@ -582,14 +584,10 @@ def setup_remote_conveniences():
     Setup random helpful things on the remote machine
     """
     inst = get_instance()
-    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
 
     put(LocalConfig.remote_bashrc, '~/.bashrc', use_sudo=True)
-
-    # This lets us edit /code/pidoctors files without changing permissions.
-    sudo("usermod -a -G www-data ubuntu")
-
 
 @task
 def deploy(force_push=False, update=True, fast=False):
@@ -612,7 +610,7 @@ def deploy(force_push=False, update=True, fast=False):
     """
 
     inst = get_instance()
-    deploy_type = get_deploy_type(inst.tags['instance_name'])
+    deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
 
     # Validate that it makes sense to actually do this deployment
@@ -637,7 +635,7 @@ def deploy(force_push=False, update=True, fast=False):
 
     setup_remote_conveniences()
 
-    print "Try it out: https://%s or https://%s" % (inst.ip_address or '---', inst.dns_name or '---')
+    print "Try it out: https://%s" % (inst['ip_address'] or '---')
 
 @task(default=True)
 def print_help():

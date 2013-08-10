@@ -1,6 +1,7 @@
 # I got this from the optimizing SSL guide: http://nginx.org/en/docs/http/configuring_https_servers.html
 ssl_session_cache   shared:SSL:10m;
 ssl_session_timeout 10m;
+server_names_hash_bucket_size  64;
 
 # Redirect http://picdoctors.com to https://www.picdoctors.com
 server {
