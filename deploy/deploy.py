@@ -135,7 +135,7 @@ def validate_can_deploy(inst, cfg):
     print "Running self tests..."
     print "--------"
     # Do a local test to make sure something isn't broken
-    test()
+    #test()
 
 
 
