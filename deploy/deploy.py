@@ -189,7 +189,7 @@ def webserver_config():
     print "Creating celery user for use with supervisord"
     with settings(warn_only=True): 
         sudo("useradd celery")
-
+        sudo("usermod -a -G www-data celery") # add to www-data, so it can open the logfile
 
     # Supervisord
     put(LocalConfig.remote_supervisord_cfg, '/etc/supervisord.conf', use_sudo=True)
@@ -297,7 +297,7 @@ def getcode(force_push=False):
             print "--------"
             # Clean out anything exist in our spot
             sudo('rm -rf %s' % cfg.code_dir) # with root, just in case
-            run_user('git clone %s %s' % (cfg.repo_url, cfg.code_dir), cfg)
+            run_user('cd /var/www; git clone %s %s' % (cfg.repo_url, cfg.code_dir), cfg)
 
         with cd(cfg.code_dir):
             # Prevent hypothetical race condition by using head_sha in case
