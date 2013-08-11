@@ -20,6 +20,7 @@ import os
 import ipdb
 import time
 import socket
+import requests
 
 ######################
 # Helper functions
@@ -396,7 +397,7 @@ def patch():
     print " Updating and upgrading..."
     print "--------"
     sudo("aptitude update -q")
-    sudo("aptitude safe-upgrade -y -q")
+    sudo("export DEBIAN_FRONTEND=noninteractive ; aptitude safe-upgrade -y -q")
 
 @task
 def ls():
@@ -406,7 +407,7 @@ def ls():
     
     droplets = get_droplets()
 
-    rows = [ ["Name:", "Status:", "IP Addr:", "Backups:", "Size:", "Id:" ] ]
+    rows = [ ["Name:", "Status:", "IP Addr:", "Backups:", "Size:", "Id:", "SHA:"] ]
 
     # Width of rows for pretty printing.
     row_widths = [0] * len(rows[0])
@@ -420,6 +421,14 @@ def ls():
         # This generates an entire http call: (Speed up later if we start deploying lots of servers)
         row.append( get_size_name( inst['size_id'] ) )
         row.append(str(inst['id']))
+
+        # Fetch the sha
+        req = requests.get('https://192.241.225.4/sha', verify=False)
+        if req.status_code == 200 and len(req.text.strip()) == 40:
+            row.append( req.text.strip()[:7] ) # only show first 7 digits of the SHA
+        else:
+            row.append( '---' )
+
         rows.append(row)
 
     # Will have at least 1 row (the titles). 2+ means real rows

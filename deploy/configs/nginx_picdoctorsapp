@@ -48,6 +48,10 @@ server {
         access_log off;
     }
     
+    location /sha {
+        alias /code/picdoctors/sha.txt;
+    }
+
     location /favicon.ico {
         alias /code/picdoctors/static/images/favicon.ico;
     }
