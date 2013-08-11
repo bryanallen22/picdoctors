@@ -423,11 +423,15 @@ def ls():
         row.append(str(inst['id']))
 
         # Fetch the sha
-        req = requests.get('https://192.241.225.4/sha', verify=False)
-        if req.status_code == 200 and len(req.text.strip()) == 40:
-            row.append( req.text.strip()[:7] ) # only show first 7 digits of the SHA
-        else:
+        try:
+            req = requests.get('https://%s/sha' % inst['ip_address'], verify=False)
+            if req.status_code == 200 and len(req.text.strip()) == 40:
+                row.append( req.text.strip()[:7] ) # only show first 7 digits of the SHA
+            else:
+                row.append( '---' )
+        except:
             row.append( '---' )
+
 
         rows.append(row)
 
