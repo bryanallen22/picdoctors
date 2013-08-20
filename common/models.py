@@ -200,7 +200,7 @@ class Pic(DeleteMixin):
                                             unique=True, db_index=True)
     title                = models.CharField(max_length=60, blank=True)
     browser_group_id     = models.IntegerField(blank=False, default=ungroupedId)
-    group                = models.ForeignKey('Group', blank=True, null=True)
+    group                = models.ForeignKey('Group', blank=True, null=True, on_delete=models.SET_NULL)
     original             = models.ImageField(upload_to = pic_originals_path)
     preview              = models.ImageField(upload_to = pic_previews_path)
     thumbnail            = models.ImageField(upload_to = pic_thumbnails_path)
