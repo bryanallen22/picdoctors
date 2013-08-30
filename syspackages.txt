@@ -23,3 +23,6 @@ libmysqlclient-dev
 fail2ban
 
 python-software-properties
+
+graphviz
+libgraphviz-dev
