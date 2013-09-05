@@ -4,22 +4,20 @@
     // save scrol location so we can restore it
     var scrollTop = $('body').scrollTop();
 
-    if(text.target){
-      //for some reason chrome sends as event, ff sends the target item
-      text = text.target;
-    }
+    //for some reason chrome sends as event, ff sends the target item
+    text = text.target || text;
 
     var isDisabled = true;
 
-    if($(text).attr('disabled')==undefined){
+    if($(text).attr('disabled') === undefined){
       isDisabled = false;
     }
     var min_height = 0;
-    if($(text).attr('auto-minheight')!=undefined){
+    if($(text).attr('auto-minheight') !== undefined){
       min_height = parseInt($(text).attr('auto-minheight'));
     }
 
-    if(text.value == '') {
+    if(text.value === '') {
       text.style.height = Math.max(20, min_height) + 'px';
       return;
     }
@@ -47,7 +45,9 @@
     $(el).on('paste',   delayedResize);
     $(el).on('drop',    delayedResize);
     $(el).on('keydown', delayedResize);
-    textAreaResize(el);
+    // delay the resize...
+    // I can't reproduce this in dev, so modify and push to prod
+    setTimeout(function(){ textAreaResize(el);}, 50);
   }
 
 String.prototype.pluralize = function(count, plural)
