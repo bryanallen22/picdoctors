@@ -18,7 +18,7 @@ sudo apt-get install python2.7-dev -y
 sudo apt-get install python-mysqldb libmysqlclient-dev -y
 
 # Used for django-extensions
-sudo apt-get install libgraphviz-dev graphviz
+sudo apt-get install libgraphviz-dev graphviz pkg-config
 
 echo "====="
 echo "Install pip"
