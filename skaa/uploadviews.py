@@ -24,7 +24,6 @@ from skaa.progressbarviews import get_progressbar_vars
 
 from PIL import Image
 from StringIO import StringIO
-import ipdb
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from django.core.urlresolvers import reverse
@@ -141,6 +140,11 @@ def upload_handler(request):
             pic.album = album if album else Album.create_album(request)
             pic.save()
 
+            prof = request.user
+            # If they aren't a skaa already, they are now...
+            if prof.is_authenticated() and prof.isa('skaa') == False:
+                prof.add_permission('skaa')
+
             log.info('File saving done')
 
             result = []
@@ -157,11 +161,8 @@ def upload_handler(request):
             return HttpResponse('[ ]', mimetype='application/json')
 
     else: #GET
-        # TODO - get rid of this temporary debug code:
         result = []
-
         response_data = simplejson.dumps(result)
-        #log.info(response_data)
         return HttpResponse(response_data, mimetype='application/json')
 
 def group_pic_handler(request):
