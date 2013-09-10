@@ -62,12 +62,12 @@ def account_settings(request):
     # template things.
 
     parent_params = get_shared_params(request, profile)
-    
+
     if profile.isa('doctor'):
         child_params = get_settings_doc(request)
         parent_params.update(child_params)
         parent_params.update(get_doc_progressbar_vars(request))
-    
+
     if profile.isa('skaa'):
         child_params = get_settings_user(request)
         parent_params.update(child_params)
@@ -86,13 +86,13 @@ def get_notification_list(profile):
 
         if tup[0]==Notification.JOBS_NEED_APPROVAL and not profile.has_perm('common.album_approver'):
             continue
-            
+
         enabled = len([s for s in ignore_list if s.notification_type == tup[0]]) == 0
         n = NotificationInfo()
         n.type = tup[0]
         n.description = tup[1]
         n.enabled = enabled
-        
+
         nts.append(n.__dict__)
 
     return simplejson.dumps(nts)
@@ -106,7 +106,7 @@ def account_settings_delete_card(request):
     card_uri = request.POST['card_uri']
     # Now, it would take some mighty fine guessing to predict a card uri, but we
     # gotta make sure that this card belongs to this user
-    
+
     profile = get_profile_or_None(request)
     balanced.configure(settings.BALANCED_API_KEY_SECRET)
     acct = profile.bp_account.fetch()
@@ -187,7 +187,7 @@ def change_profile_settings(request):
         request.user.email = old_email
         request.user.save()
         raise
-    
+
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
@@ -213,13 +213,13 @@ def update_roles(request):
 
     state = request.POST['state'] == 'true'
     ret = { "success": False }
-    
+
     if profile:
         if state:
             profile.add_permission(role)
         else:
             profile.remove_permission(role)
-        
+
     ret = { "success" : True }
 
     response_data = simplejson.dumps(ret)

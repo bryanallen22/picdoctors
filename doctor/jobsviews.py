@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
-from common.models import Job 
+from common.models import Job
 from common.models import Album
 from common.models import Group
 from common.models import Pic
@@ -14,8 +14,8 @@ from common.calculations import calculate_job_payout
 from common.functions import get_profile_or_None, get_datetime
 from skaa.rejectviews import remove_previous_doctor
 
-from common.jobs import get_job_infos_json, get_pagination_info, JobInfo 
-from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction 
+from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
+from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction
 from common.jobs import send_job_status_change, fill_job_info
 from common.decorators import require_login_as
 from datetime import timedelta
@@ -36,16 +36,16 @@ def doc_job_page(request, page=1, job_id=None):
     else:
         return redirect('/')
 
-    pager, cur_page = get_pagination_info(jobs, page)    
+    pager, cur_page = get_pagination_info(jobs, page)
 
     job_infos_json = get_job_infos_json(cur_page, generate_doctor_actions, request)
 
-    return { 
-            'job_infos_json'   : job_infos_json, 
-            'num_pages'        : range(1,pager.num_pages+1), 
-            'cur_page'         : page, 
-            'reverser'         : 'doc_job_page_with_page', 
-            'doc_page'         : True, 
+    return {
+            'job_infos_json'   : job_infos_json,
+            'num_pages'        : range(1,pager.num_pages+1),
+            'cur_page'         : page,
+            'reverser'         : 'doc_job_page_with_page',
+            'doc_page'         : True,
             'title'            : 'Jobs To Do'
     }
 
@@ -65,7 +65,7 @@ def new_job_page(request, page=1):
                 # I don't know how we got here, there is only 2 reasons why
                 # they can't view a job, so why else would we reject them?
                 return redirect('/')
-        # only show jobs where a hold has been placed in the last 6 days 23 hours 
+        # only show jobs where a hold has been placed in the last 6 days 23 hours
         # (hold only lasts 7 days)
         # if a job hasn't been taken in 7 days inform user to up the price!
         now =  get_datetime()
@@ -75,16 +75,16 @@ def new_job_page(request, page=1):
     else:
         return redirect( reverse('permission_denied') )
 
-    pager, cur_page = get_pagination_info(jobs, page)    
+    pager, cur_page = get_pagination_info(jobs, page)
 
     job_infos_json = get_job_infos_json(cur_page, generate_doctor_actions, request)
 
     return {
-            'job_infos_json'   : job_infos_json, 
-            'num_pages'        : range(1,pager.num_pages+1), 
-            'cur_page'         : page, 
+            'job_infos_json'   : job_infos_json,
+            'num_pages'        : range(1,pager.num_pages+1),
+            'cur_page'         : page,
             'reverser'         : 'new_job_page_with_page',
-            'doc_page'         : True, 
+            'doc_page'         : True,
             'title'            : 'Available Jobs'
     }
 
@@ -102,13 +102,13 @@ def generate_doctor_actions(job):
     work_job = DynamicAction('Work on Job', work_job_url, redirect_url)
 
     mark_as_completed = DynamicAction('Mark as Completed', '/mark_job_completed/')
-    
+
     view_markup_url = reverse('markup_album', args=[job.album.id, 1])
     view_markup = DynamicAction('View Job', view_markup_url, True)
     view_album = DynamicAction('Before & After Album', reverse('album', args=[job.album.id]), True)
     job_price_too_low = DynamicAction('Job Price Too Low', reverse('job_price_too_low', args=[job.id]), True)
     quit_job = DynamicAction('Return Job To Market', reverse('quit_job', args=[job.id]), True)
-    
+
 
     if job.status == Job.IN_MARKET:
         ret.append(view_markup)
@@ -156,9 +156,9 @@ def apply_for_job(request):
     actions.add('remove_job_row', data['job_id'])
     r = RedirectData(reverse("new_job_page"), 'available jobs')
     actions.add('action_button', r)
-    
+
     if job is None or job.doctor is not None or profile is None:
-        pass 
+        pass
     else:
         # Get exclusive access to the job
         job_qs = Job.objects.select_for_update().filter(pk=job.id)
@@ -183,14 +183,14 @@ def apply_for_job(request):
 
                     # Email
                     send_job_status_change(request, job, profile)
-                    
+
                     # Response
                     actions = Actions()
                     actions.add('alert', AlertData('Congratulations, the job is yours!', 'success'))
 
                     job_inf = fill_job_info(job, generate_doctor_actions, profile)
                     actions.addJobInfo(job_inf)
-                    
+
                     db = DocBlock(job=job, doctor=profile)
                     db.save()
 
@@ -260,7 +260,7 @@ def quit_job(request, job_id):
         return redirect( reverse('permission_denied') )
 
     return  {
-            'job_id'        : job_id, 
+            'job_id'        : job_id,
             }
 
 @require_login_as(['doctor'])

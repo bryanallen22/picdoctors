@@ -9,7 +9,7 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
 from common.models import Album, Profile
-from common.account_settings_views import legit_password 
+from common.account_settings_views import legit_password
 from doctor.jobsviews import doc_job_page
 from skaa.progressbarviews import get_progressbar_vars, show_progressbar_on_login_page
 from views import index
@@ -28,7 +28,7 @@ def create_skaa(request, user):
     send_email( request=request,
                 email_address=user.email,
                 template_name='skaa_signup.html',
-                template_args={ 
+                template_args={
                     'profile' : user,
                     'contact_email' : DEFAULT_CONTACT_EMAIL,
                 }
@@ -44,7 +44,7 @@ def create_doctor(request, user):
                     'profile' : user,
                     'contact_email' : DEFAULT_CONTACT_EMAIL,
                 }
-              ) 
+              )
 
 def auth(email, password):
     """
@@ -67,8 +67,8 @@ def create_user(request, email, nickname, password, confirm_password, usertype):
     usertype should be:
         'user' -- create a skaa
         'doc'  -- create a doctor
-    
-    If the email is taken and the password matches that 
+
+    If the email is taken and the password matches that
     email, just be nice and log them in.
 
     Possible return values:
@@ -79,12 +79,12 @@ def create_user(request, email, nickname, password, confirm_password, usertype):
       ( None, { 'passwords_didnt_match' : True } )
           Self explanatory
     """
-    
+
     # you shouldn't be able to create two different users with different emails
     # just based on capitalization
     email = email.lower()
 
-    # make sure the nickname only has a-zA-Z0-9 
+    # make sure the nickname only has a-zA-Z0-9
     valid_chars = "_%s%s" % (string.ascii_letters, string.digits)
     new_nickname = ''.join(c for c in nickname if c in valid_chars)
 
@@ -119,7 +119,7 @@ def create_user(request, email, nickname, password, confirm_password, usertype):
         # in common/models.py
         user.nickname = nickname
         user.save()
-        
+
         if usertype == 'doc':
             create_doctor(request, user)
         elif usertype == 'user':
@@ -128,12 +128,12 @@ def create_user(request, email, nickname, password, confirm_password, usertype):
             raise ValueError('Bad usertype: %s' % usertype)
 
         return ( user, { } )
-        
+
 @render_to('signin.html')
 def signin(request, usertype='user'):
     """
     Shared view for both user login and doctor login
-    
+
     usertype should be 'user' or 'doc'
     """
 
@@ -175,7 +175,7 @@ def signin(request, usertype='user'):
         if user:
             # Successful login. Take care of "remember me" button
             login(request, user)
-            
+
             associate_album(request, album, user)
 
             if 'remember' in request.POST.keys():
@@ -201,7 +201,7 @@ def signin(request, usertype='user'):
             elif request.POST['create_acct_radio'] == 'create':
                 ret['create_checked'] = 'checked'
 
-    # Do 
+    # Do
     if usertype == 'user' and show_progressbar_on_login_page(request):
         ret['show_progressbar'] = True
         ret.update( get_progressbar_vars(request, 'signin') )
@@ -211,7 +211,7 @@ def signin(request, usertype='user'):
 
 #Nothing special here, we don't need to check if they are logged in or not#I'm just lazy and want to sign out, logic of this needs to be looked at
 def signout(request):
-    logout(request)   
+    logout(request)
     return redirect('/')
 
 def associate_album(request, album, user):
@@ -256,7 +256,7 @@ def valid_nick(nickname):
 # no required login
 def check_unique_nickname(request):
     try:
-        nickname = request.POST['nickname'] 
+        nickname = request.POST['nickname']
         result = valid_nick(nickname)
         if result.get('success'):
             nick_count = Profile.objects.filter(nickname=nickname).count()

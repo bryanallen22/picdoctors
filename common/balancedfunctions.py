@@ -34,15 +34,15 @@ def get_buyer_account(profile, email_address, card_uri):
             wrapper.save()
             profile.bp_account = wrapper
             profile.save()
-            
+
         except balanced.exc.HTTPError as ex:
             if ex.category_code == 'duplicate-email-address':
                 # So, Balanced already has an account associated with this email
                 # address, but we don't have it saved under thir profile. Weird.
                 #  1) We didn't save it, but we were supposed to. Why not?
-                #  2) Some weird thing happened with changed emails? Or something? 
+                #  2) Some weird thing happened with changed emails? Or something?
                 #     Does that even make sense?
-                #  3) you aren't in production and you keep wiping your db and adding 
+                #  3) you aren't in production and you keep wiping your db and adding
                 #     the same user
                 if not settings.IS_PRODUCTION:
                     # In testlandia we just re link up user accounts with email addresses
@@ -131,7 +131,7 @@ def is_merchant(account):
 
 def has_bank_account(account):
     """
-    Checks to see if this person(doctor) has a bank account associated with their account. 
+    Checks to see if this person(doctor) has a bank account associated with their account.
     'account' is a fetched balanced payment account
     """
     bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]

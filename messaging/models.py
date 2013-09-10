@@ -17,9 +17,9 @@ class JobMessage(BaseMessage):
     @staticmethod
     def get_messages(job):
         return JobMessage.objects.filter(job=job).order_by('created')
-        
+
 class GroupMessage(BaseMessage):
-    group             = models.ForeignKey(Group, 
+    group             = models.ForeignKey(Group,
                                           db_index=True)
 
     # IO include the job #, and then filter by job, then group later

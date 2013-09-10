@@ -34,7 +34,7 @@ def album(request, album_id):
     profile = get_profile_or_None(request)
 
     album = get_object_or_None(Album, pk=album_id)
-    
+
     job = album.get_job_or_None()
 
     if not job:
@@ -71,7 +71,7 @@ def album(request, album_id):
             picco.max_height = max(picco.max_height, picco.doc_pic.preview_height)
             picco.max_width = max(picco.max_width, picco.doc_pic.preview_width)
         picco.group_id = group.id
-            
+
         groupings.append(picco)
 
     can_view_comments = profile == job.skaa or \
@@ -79,9 +79,9 @@ def album(request, album_id):
                         (profile and profile.isa('moderator'))
 
     return  {
-            'job_id'            : job.id, 
-            'user_acceptable'   : user_acceptable, 
-            'is_owner'          : (profile == job.skaa), 
+            'job_id'            : job.id,
+            'user_acceptable'   : user_acceptable,
+            'is_owner'          : (profile == job.skaa),
             'can_view_comments' : can_view_comments,
             'groupings'         : groupings,
             'is_public'         : album.allow_publicly,
@@ -105,7 +105,7 @@ def approve_album(request):
         send_job_status_change(request, job, None)
 
         update_doc_auto_approve(job)
-    
+
     resp = simplejson.dumps({'redirect':reverse('album_approval_page')})
     return HttpResponse(resp, mimetype='application/json')
 

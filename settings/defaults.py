@@ -194,7 +194,7 @@ LOGGING = {
         'logfile': {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/django/picdoctors.log', 
+            'filename': '/var/log/django/picdoctors.log',
             'maxBytes': 50000,
             'backupCount': 2,
             'formatter': 'standard',
@@ -273,7 +273,7 @@ PIPELINE_CSS = {
     'all_css': {
         'source_filenames': (
             # Paths are relative to settings.STATICFILES_DIRS!
-            
+
             ###########
             # Libraries
             ###########

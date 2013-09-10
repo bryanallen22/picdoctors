@@ -26,10 +26,10 @@ class Notification(DeleteMixin):
     )
 
     # max_length refers to the shorthand versions above
-    notification_type   = models.CharField(max_length=15, 
-                                               choices=NOTIFICATION_TYPES, 
+    notification_type   = models.CharField(max_length=15,
+                                               choices=NOTIFICATION_TYPES,
                                                db_index=True)
-    
+
     # the notification to send to the recipient
     notification        = models.CharField(max_length=256, blank=True)
 
@@ -49,7 +49,7 @@ class Notification(DeleteMixin):
 
     # The relevant job
     job                 = models.ForeignKey(Job)
-    
+
 
     @staticmethod
     def GetRecentNotifications(recipient, cnt):
@@ -60,14 +60,14 @@ class Notification(DeleteMixin):
 
 class NotificationToIgnore(DeleteMixin):
     # max_length refers to the shorthand versions above
-    notification_type   = models.CharField(max_length=15, 
-                                               choices=Notification.NOTIFICATION_TYPES, 
+    notification_type   = models.CharField(max_length=15,
+                                               choices=Notification.NOTIFICATION_TYPES,
                                                db_index=True)
 
-    profile             = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, 
+    profile             = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True,
                                              null=True, db_index=True)
 
     # by default we send a notification, unless they've said nayyyyyyy
     ignore              = models.BooleanField(default=True)
-    
-    
+
+

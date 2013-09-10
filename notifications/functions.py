@@ -12,7 +12,7 @@ def notify(request, notification_type, description, notification, recipients, ur
     if recipients is None:
         log.error("attempted to send notification '%s' without recipient" % notification)
         return
-    
+
     # don't feel like sending [profile] be lazy and send profile
     if not isinstance(recipients, list):
         recipients = [recipients]
@@ -93,7 +93,7 @@ def send_notification_email(request, notification):
                   )
 
 def i_want_this_email(profile, notification_type):
-    
+
     if not profile or not notification_type:
         return False
 

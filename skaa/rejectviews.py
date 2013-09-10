@@ -20,7 +20,7 @@ def refund(request, job_id):
         return redirect( reverse('permission_denied') )
 
     return  {
-            'job_id'        : job_id, 
+            'job_id'        : job_id,
             'is_refund'     : True,
             }
 
@@ -33,7 +33,7 @@ def switch_doctor(request, job_id):
         return redirect( reverse('permission_denied') )
 
     return  {
-            'job_id'        : job_id, 
+            'job_id'        : job_id,
             'is_refund'     : False,
             }
 
@@ -71,7 +71,7 @@ def mod_reject_work(request, job_id):
 
 
     return  {
-            'job_id'        : job_id, 
+            'job_id'        : job_id,
             }
 
 
@@ -113,7 +113,7 @@ def switch_doctor_endpoint(request):
 
     if job and job.skaa == profile:
         remove_previous_doctor(job)
-    # TODO do we send the doctor an email saying they are out????    
+    # TODO do we send the doctor an email saying they are out????
     #send_job_status_change(request, job, profile)
 
     result = { 'relocate' : reverse('job_page') }
@@ -126,15 +126,15 @@ def remove_previous_doctor(job):
 
     job.status = Job.IN_MARKET
     if job.doctor:
-        job.ignore_last_doctor = job.doctor     
+        job.ignore_last_doctor = job.doctor
     job.doctor = None
     job.approved = False
     job.payout_price_cents = 0
     job.save()
-       
+
     groups = Group.get_job_groups(job)
 
     for group in groups:
         group.delete_doctor_pics()
 
-    
+

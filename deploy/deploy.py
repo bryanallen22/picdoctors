@@ -31,7 +31,7 @@ def run_user(str, cfg):
 def venv_run_user(str, cfg):
     with cd(cfg.code_dir):
         run_user(cfg.venv_activate + ' && ' + str, cfg)
-    
+
 def get_all_instances():
     """
     Find all instances
@@ -122,13 +122,13 @@ def validate_can_deploy(inst, cfg):
         # Make sure HEAD matches bitbucket's 'master'
         local('git fetch %s' % LocalConfig.git_remote)
         head_sha = local('git rev-parse HEAD', capture=True)
-        check_sha = local('git rev-parse %s/%s' % 
-                              (LocalConfig.git_remote, 
+        check_sha = local('git rev-parse %s/%s' %
+                              (LocalConfig.git_remote,
                                cfg.production_branch),
                           capture=True)
         if head_sha != check_sha:
             abort("To deploy to a that box, your HEAD must be lined up with " \
-                  " '%s/%s'." % (LocalConfig.git_remote, 
+                  " '%s/%s'." % (LocalConfig.git_remote,
                                  cfg.production_branch))
 
     print "--------"
@@ -160,7 +160,7 @@ def webserver_config():
     # move over uwsgi/nginx config files
     put(LocalConfig.remote_uwsgi_picdocini,
          '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
-    remote_picapp = '/etc/nginx/sites-available/picdoctorsapp' 
+    remote_picapp = '/etc/nginx/sites-available/picdoctorsapp'
     put(LocalConfig.remote_nginx_picdocconf, remote_picapp, use_sudo=True)
     put(LocalConfig.remote_nginx_htpasswd, '/etc/nginx/htpasswd', use_sudo=True)
 
@@ -188,7 +188,7 @@ def webserver_config():
         sudo('pip install --upgrade supervisor')
 
     print "Creating celery user for use with supervisord"
-    with settings(warn_only=True): 
+    with settings(warn_only=True):
         sudo("useradd celery")
         sudo("usermod -a -G www-data celery") # add to www-data, so it can open the logfile
 
@@ -232,7 +232,7 @@ def getcode(force_push=False):
     deploy_type = get_deploy_type(env.host_string)
     instance_name = env.host_string;
     cfg = get_config(deploy_type)
-    
+
     # New box needs and ssh config so it can use bitbucket
     sudo('mkdir -p %s/.ssh' % cfg.deploy_user_home_dir)
     put(LocalConfig.deploybot_id_path,
@@ -241,7 +241,7 @@ def getcode(force_push=False):
         '%s/.ssh/id_rsa.pub' % cfg.deploy_user_home_dir, use_sudo=True)
     put(LocalConfig.deploybot_ssh_config_git,
         '%s/.ssh/config' % cfg.deploy_user_home_dir, use_sudo=True)
-    sudo('chown -R %s:%s %s' % 
+    sudo('chown -R %s:%s %s' %
          (cfg.deploy_user, cfg.deploy_user, cfg.deploy_user_home_dir))
     sudo('chmod 600 %s/.ssh/*' % cfg.deploy_user_home_dir)
 
@@ -262,7 +262,7 @@ def getcode(force_push=False):
     if (head_sha in not_yet_upstream) or force_push:
         # We can't get to it with a remote 'git fetch' or anything,
         # so we've got to push it from our local machine
-        
+
         # Clean out anything exist in our spot
         sudo(  'rm -rf %s' % cfg.code_dir ) # with root, just in case
         run_user( 'mkdir -p %s' % cfg.code_dir, cfg ) # recreate destination
@@ -312,8 +312,8 @@ def getcode(force_push=False):
     # Add sha to the instance tags
     #inst.add_tag('sha', head_sha)
 
-    # To know what settings to use, we create a blank <deploy_type>.cfg 
-    # file in the settings directory 
+    # To know what settings to use, we create a blank <deploy_type>.cfg
+    # file in the settings directory
     sudo('rm -f %s/settings/*.cfg' % (cfg.code_dir))
     run_user('touch %s/settings/%s.cfg' % (cfg.code_dir, deploy_type), cfg)
     # Add the external IP to that settings file, used for Django's ALLOWED_HOSTS on
@@ -355,7 +355,7 @@ def do_init():
     """
     Do one time digital ocean setup
     """
-    
+
     inst = get_instance()
     from fabric.operations import prompt
     print "\n\nCheck admin@pd for an email with the root password. Then enter below:"
@@ -404,7 +404,7 @@ def ls():
     """
     List running instances
     """
-    
+
     droplets = get_droplets()
 
     rows = [ ["Name:", "Status:", "IP Addr:", "Backups:", "Size:", "Id:", "SHA:"] ]
@@ -481,7 +481,7 @@ def setup_packages():
         lines = filter( lambda l: len(l) > 0 and l[0] != '#', lines)
     packages = " ".join(lines)
     sudo("apt-get install %s -y -q" % packages)
-        
+
     #
     # rabbitmq stuff.
     #
@@ -564,7 +564,7 @@ def setup_local_mysql():
     sudo("service mysql restart", pty=False)
 
     sudo("""mysql -u root --password=asdf <<< "CREATE DATABASE IF NOT EXISTS picdoctors; GRANT ALL PRIVILEGES ON picdoctors.* TO 'django'@'localhost' IDENTIFIED BY 'asdf';" """);
-    
+
     venv_run_user('./db.py -deploy -f', cfg)
 
 @task

@@ -50,11 +50,11 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
                 ("skaa", "Can do user stuff"),
                 ("doctor", "Can do doctor stuff"),
         )
-    
+
     # manager for creating the user
     objects = ProfileUserManager()
 
-    
+
     email                       = models.EmailField( verbose_name='email address', max_length=255, unique=True, db_index=True)
     nickname                    = models.CharField(max_length=32, blank=True, unique=True, db_index=True)
 
@@ -82,7 +82,7 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     # how many pics have been approved in the last X days (currently 30)
     approval_pic_count          = models.IntegerField(default=0)
     approval_pic_last_update    = models.DateTimeField(blank=True, null=True)
-    
+
     # Doctors can have a profile pic
     pic                         = models.ForeignKey('Pic', blank=True, null=True)
 
@@ -140,23 +140,23 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         last_update = self.approval_pic_last_update
 
         if last_update == None or last_update < yesterday or invalidate:
-            
+
             jobs = Job.objects.filter(doctor=self) \
                     .filter(status=Job.USER_ACCEPTED) \
                     .filter(accepted_date__gte=thirty_ago)
-            
+
             cnt = 0
-            
+
             for j in jobs:
                 cnt = cnt + j.album.num_groups
-                
+
             self.approval_pic_last_update = now
             self.approval_pic_count = cnt
             self.save()
 
         return self.approval_pic_count
 
-    # is this person a merchant?  I'm contemplating ripping this out and adding as a permission 
+    # is this person a merchant?  I'm contemplating ripping this out and adding as a permission
     def is_merchant(self):
         from common.balancedfunctions import is_merchant, get_merchant_account
         merchant_account = get_merchant_account(None, self)
@@ -173,9 +173,9 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
 # Pic
 ################################################################################
 ungroupedId = 100000  # Make sure that this matches isotope-app.js
-default_thumb_width    = 200 
-default_thumb_height   = 200 
-default_preview_width  = 800 
+default_thumb_width    = 200
+default_thumb_height   = 200
+default_preview_width  = 800
 default_preview_height = 800
 
 def get_pic_path(pic_type, instance, filename):
@@ -207,7 +207,7 @@ class Pic(DeleteMixin):
     #The next two fields are used for generating the path
     path_owner           = models.CharField(max_length = 5, blank=False, default="user")
     watermark            = models.BooleanField(blank=False, default=False)
-    
+
     general_instructions = models.TextField(blank=True)
 
     # Getting these later requires fetching the picture.
@@ -236,9 +236,9 @@ class Pic(DeleteMixin):
         self.uuid      = my_uuid
         self.title     = file_root # Not the full myfile name, just the root
 
-        # So when we deliver the original jpeg to the user they don't want 
+        # So when we deliver the original jpeg to the user they don't want
         # it delivered in the browser window do they?
-        # I doubt it, I bet they'd like to download the file.  
+        # I doubt it, I bet they'd like to download the file.
         # Unfortunately since we can't modify the headers when s3 is serving
         # the file, we are forced to set the content type of the file when saving to s3
         # and then they decide to serve it with the same headers, aka something
@@ -352,7 +352,7 @@ class Pic(DeleteMixin):
 ################################################################################
 class Album(DeleteMixin):
     # This can be blank if they haven't logged in / created a user yet:
-    userprofile          = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, 
+    userprofile          = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True,
                                              null=True, db_index=True)
     description          = models.TextField(blank=True)
     num_groups           = models.IntegerField(blank=True, null=True, default=0)
@@ -372,14 +372,14 @@ class Album(DeleteMixin):
         permissions = (
                 ("album_approver", "Can approve all albums"),
         )
-    
+
     def get_job_or_None(self):
         job = get_object_or_None(Job, album=self)
         return job
 
     def get_picture_count(self):
         return Pic.objects.filter(album=self).count()
-    
+
     def kick_groups_modified(self):
         from common.functions import get_datetime
         """
@@ -399,7 +399,7 @@ class Album(DeleteMixin):
         prevent this method from being overly wasteful, it won't actually
         set any groupings if th`ere hasn't been a call to kick_groups_modified()
         since this method was last called.
-        
+
         Note that this will quite happily override any existing sequence
         that was already set.
         """
@@ -424,7 +424,7 @@ class Album(DeleteMixin):
             if id != ungroupedId:
                 # All matching pics get next_sequence
                 log.info('id != ungroupedId - creating new group sequence %d' % next_sequence)
-                g = Group(album=self, sequence=next_sequence) 
+                g = Group(album=self, sequence=next_sequence)
                 g.save()
                 for pic in matches:
                     log.info('setting group to pic')
@@ -437,7 +437,7 @@ class Album(DeleteMixin):
                 log.info('id == ungroupedId - creating new group')
                 for pic in matches:
                     log.info('creating new group sequence %d' % next_sequence)
-                    g = Group(album=self, sequence=next_sequence) 
+                    g = Group(album=self, sequence=next_sequence)
                     g.save()
                     #pic.group_id = next_sequence
                     pic.group = g
@@ -512,7 +512,7 @@ class Album(DeleteMixin):
                 albums = Album.objects.filter(finished=False, userprofile=user_profile)
 
             if len(albums) >= 2:
-                raise MultipleObjectsReturned("%s unfinished albums at once!" 
+                raise MultipleObjectsReturned("%s unfinished albums at once!"
                                               % len(albums))
             elif len(albums) == 1:
                 ret = albums[0]
@@ -531,7 +531,7 @@ class Album(DeleteMixin):
         if self.userprofile is not None:
             return "Album # " + str(self.id) + " -- owned by: " + self.userprofile.email
         else:
-            return "Album # " + str(self.id) + " -- owned by the internet"  
+            return "Album # " + str(self.id) + " -- owned by the internet"
 
 ################################################################################
 # Group
@@ -541,7 +541,7 @@ class Group(DeleteMixin):
     sequence        = models.IntegerField()
     album           = models.ForeignKey('Album', db_index=True)
     is_locked       = models.BooleanField(default=False)
- 
+
     def add_doctor_pic(self, pic, watermark_pic):
         doc = DocPicGroup(group=self, pic=pic, watermark_pic=watermark_pic)
         doc.save()
@@ -553,10 +553,10 @@ class Group(DeleteMixin):
     def get_doctor_pics(self, job, profile):
         if not job:
             return []
-        
+
         if job.is_approved() or job.doctor == profile or profile.has_common_perm('album_approver'):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
-            
+
         return []
 
 
@@ -566,7 +566,7 @@ class Group(DeleteMixin):
 
         if job.is_approved() or job.doctor == profile or ( profile and profile.has_common_perm('album_approver') ):
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()[:1]
-            
+
         return []
 
     def delete_doctor_pics(self):
@@ -586,8 +586,8 @@ class Group(DeleteMixin):
     def __unicode__(self):
         return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked)
 
-    
-# Doc Pic Group allows us to keep track of all pictures uploaded 
+
+# Doc Pic Group allows us to keep track of all pictures uploaded
 # by a doctor for a combination of pics from the user
 class DocPicGroup(DeleteMixin):
     group           = models.ForeignKey(Group, related_name='doc_pic_group', db_index=True)
@@ -596,7 +596,7 @@ class DocPicGroup(DeleteMixin):
 
     #I can see me setting a value that flips this from watermark pic to pic
     def get_pic(self, profile, job):
-        # if not ( any valid reason to stay ) 
+        # if not ( any valid reason to stay )
         is_doctor = False if not profile else profile.isa('doctor')
 
         if not ( job.is_approved() or is_doctor or ( profile and profile.has_common_perm('album_approver') ) ):
@@ -630,12 +630,12 @@ class Job(DeleteMixin):
     )
 
     #Never blank, no album = no job. related_name since Album already has a FK
-    album                   = models.ForeignKey(Album, 
+    album                   = models.ForeignKey(Album,
                                                 db_index=True)
-    skaa                    = models.ForeignKey(settings.AUTH_USER_MODEL, 
-                                                related_name='job_owner', 
+    skaa                    = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                                related_name='job_owner',
                                                 db_index=True)
-    doctor                  = models.ForeignKey(settings.AUTH_USER_MODEL, 
+    doctor                  = models.ForeignKey(settings.AUTH_USER_MODEL,
                                                 related_name='job_doctor',
                                                 blank=True, null=True)
 
@@ -643,11 +643,11 @@ class Job(DeleteMixin):
                                                 related_name='job_block_doctor',
                                                 blank=True, null=True)
 
-    #this price is set when a doctor takes the job.  payout prices 
+    #this price is set when a doctor takes the job.  payout prices
     #that appear on the job page, vary based on accepted job count
     payout_price_cents      = models.IntegerField(blank=True, null=True)
-    
-    price_too_low_count     = models.IntegerField(blank=False, 
+
+    price_too_low_count     = models.IntegerField(blank=False,
                                                   default=0)
 
     # the hold for the charge (good for up to 7 days after creation)
@@ -658,15 +658,15 @@ class Job(DeleteMixin):
 
     # You might think that there should be a bp_credit in here. You are wrong.
     # We don't actually issue a credit at the end of every job (to save on ACH fees),
-    # so you'll have to look through the various BPDebits for ones with 
+    # so you'll have to look through the various BPDebits for ones with
     # associated_credit == None
-    
+
     # max_length refers to the shorthand versions above
-    status                  = models.CharField(max_length=15, 
-                                               choices=STATUS_CHOICES, 
-                                               default=IN_MARKET, 
+    status                  = models.CharField(max_length=15,
+                                               choices=STATUS_CHOICES,
+                                               default=IN_MARKET,
                                                db_index=True)
-    
+
     # doc pics are approved for viewing by skaa
     approved                = models.BooleanField(default=False)
 
@@ -676,7 +676,7 @@ class Job(DeleteMixin):
                                                 blank=True, null=True)
 
     accepted_date           = models.DateTimeField(blank=True, null=True)
-    
+
     def is_part_of(self, profile):
         if not profile:
             return False

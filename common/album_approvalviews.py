@@ -30,12 +30,12 @@ def album_approval_page(request, page=1):
 
     jobs = Job.objects.filter(status=Job.MODERATOR_APPROVAL_NEEDED).order_by('created').reverse()
 
-    pager, cur_page = get_pagination_info(jobs, page)    
+    pager, cur_page = get_pagination_info(jobs, page)
 
     job_infos_json = get_job_infos_json(cur_page, generate_album_approval_actions, request)
 
     return {'job_infos_json':job_infos_json,
-            'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page), 
+            'num_pages': range(1,pager.num_pages+1), 'cur_page': int(page),
             'reverser': 'album_approval_page_with_page', 'doc_page':False, 'title':'Jobs Needing Approval'}
 
 #get and fill up possible actions based on the status of this job
@@ -44,4 +44,4 @@ def generate_album_approval_actions(job):
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), True)
     ret.append(view_album)
     return ret
-        
+

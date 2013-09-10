@@ -12,7 +12,7 @@ def send_statuschanges(request, email_address):
     # and it doesn't matter on this page anyway
     job = Job.objects.filter(status=Job.USER_ACCEPTED)[0]
     has = lambda val: val in request.POST and request.POST[val]
-    
+
     # set union of all needed template args
     all_template_args = {
         'job' : job,
@@ -49,10 +49,10 @@ def spam_emails(request, email_address):
 
     site_path = reverse('job_page_with_page_and_id', args=[1, 1])
     element_to_template = {
-       'reset_password' : 
-           (                                                          
-               'reset_password_email.html',                             
-               { 'new_password'      : 'SOMEPASSWORD' }                 
+       'reset_password' :
+           (
+               'reset_password_email.html',
+               { 'new_password'      : 'SOMEPASSWORD' }
            ),
        'send_feedback' :
            (

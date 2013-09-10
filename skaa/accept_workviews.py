@@ -36,7 +36,7 @@ def accept_work(request, job_id):
                 return { 'job_id':job_id, 'allowpublic_error':True }
 
             debited, failure = do_debit(request, profile, job)
-            
+
             if not debited:
                 # TODO send an email to admins informing us there was an error charging
                 # This is important enough of a stage we don't want there to be an issue here
@@ -57,7 +57,7 @@ def accept_work(request, job_id):
 
             # Update Doctor Approval Count (for use in figuring out how much $$/job)
             job.doctor.get_approval_count(True)
-            
+
             dr = DocRating()
             dr.doctor = job.doctor
             dr.job = job
@@ -78,7 +78,7 @@ def get_rating(request):
     try:
         rating = int(request.POST['rating_val'])
     except ValueError:
-        rating = 1 
+        rating = 1
     # Make sure between 1 and 5
     rating = min(5, rating)
     rating = max(1, rating)

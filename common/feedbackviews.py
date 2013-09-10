@@ -14,7 +14,7 @@ def feedback(request):
     else:
         from_whom = data['from_whom'].strip() or 'Cowardly Lion'
         logged_in = False
-        
+
     feedback = data['user_feedback'].strip()
     success = False
 
@@ -26,6 +26,6 @@ def feedback(request):
                                             'feedback'  : feedback,
                                             'logged_in' : logged_in },
                             )
-        
+
     return { 'success': success }
 

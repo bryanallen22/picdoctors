@@ -92,10 +92,10 @@ class AlertData:
 def get_pagination_info(jobs, page):
     #this should be configurable! they maybe want to see 20 jobs...
     pager = Paginator(jobs, 5)
-    
+
     cur_page = pager.page(page)
 
-    return pager, cur_page 
+    return pager, cur_page
 
 #Populate job info based on job objects from database.
 #job infos are a mixture of Pic, Job, & Album
@@ -192,12 +192,12 @@ def send_job_status_change(request, job, triggered_by, additional_info=None):
     if not send_to:
         return
 
-    job_no = str(job.id).rjust(8, '0') 
+    job_no = str(job.id).rjust(8, '0')
     subject = 'Job #' + job_no + ' status has changed.'
 
     message = 'The current status of job #' + job_no + ' is: ' + job.get_status_display() + '.  '
     if additional_info is not None:
         message = message + additional_info
-        
+
     notify(request, Notification.JOB_STATUS_CHANGE, subject, message, send_to, site_path, job)
 

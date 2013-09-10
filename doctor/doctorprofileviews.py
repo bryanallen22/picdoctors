@@ -21,7 +21,7 @@ def get_job_summary(job):
 @render_to('doctor_profile.html')
 def doctor_profile(request, nickname ):
     profile = get_object_or_None(Profile, nickname=nickname)
-    
+
     if not profile:
         return { 'doctor_exists' : False }
 

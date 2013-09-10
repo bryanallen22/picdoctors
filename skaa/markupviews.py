@@ -38,7 +38,7 @@ def belongs_on_this_markup_page(request, album_id, sequence):
             return True
         else:
             return False
-    
+
     #the user is logged in by this point
     profile = request.user
 
@@ -93,7 +93,7 @@ def markup_page_album(request, album_id, sequence):
       # No pictures. How did they get here? Direct typing of the url?
       # Let's send them back to the upload page
         return redirect('upload')
-    
+
     # We need valid sequences in this view. Set them. (This will fall through
     # if that's not necessary)
     album.set_sequences()
@@ -113,7 +113,7 @@ def markup_page_album(request, album_id, sequence):
     read_only = group.is_locked
 
     pics = pics.filter(group__exact=group)
-    
+
     job_page = 'job_page'
     is_job_doctor = False
 
@@ -146,14 +146,14 @@ def markup_page_album(request, album_id, sequence):
         previous_url = reverse('markup_album', args = [album.id, sequence-1])
 
     ret = get_progressbar_vars(request, 'markup')
-    ret.update({ 
-            'pics'          : pics, 
-            'next_url'      : next_url, 
-            'previous_url'  : previous_url, 
-            'group_id'      : group.id, 
-            'doc_pics'      : doc_pics, 
-            'is_job_doctor' : is_job_doctor, 
-            'is_job_user'   : is_job_user, 
+    ret.update({
+            'pics'          : pics,
+            'next_url'      : next_url,
+            'previous_url'  : previous_url,
+            'group_id'      : group.id,
+            'doc_pics'      : doc_pics,
+            'is_job_doctor' : is_job_doctor,
+            'is_job_user'   : is_job_user,
             'read_only'     : read_only,
     })
     return ret
@@ -214,7 +214,7 @@ def can_modify_markup(request, markup_id=None):
     else:
         data = simplejson.loads(request.body)
         pic = Pic.objects.get(uuid__exact=data['pic_uuid'])
-    
+
     if not pic:
         return False
 
@@ -231,7 +231,7 @@ def markups_handler(request, markup_id=None):
     if request.method == 'POST':
         if can_modify_markup(request):
             data = simplejson.loads(request.body)
-        
+
 
             markup = Markup()
             apply_markup_whitelist(markup, data)
@@ -264,7 +264,7 @@ def markups_handler(request, markup_id=None):
             if album_id and markup.pic.album_id == album_id:
                 apply_markup_whitelist(markup, data)
                 markup.save()
-        
+
         # Return any modified properties... Uh.... I don't forsee
         # overriding any of the things that they set...
         result = {}
@@ -294,5 +294,5 @@ def pic_instruction_handler(request):
     if can_modify_pic(request, pic):
         pic.general_instructions = data['general_instructions']
         pic.save()
-    
+
     return HttpResponse(simplejson.dumps({}), mimetype='application/json')

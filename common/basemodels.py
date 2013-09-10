@@ -12,7 +12,7 @@ BEFORE_LAUNCH = datetime(2013, 1, 1, 0, 0, 0, 0)
 ################################################################################
 # Some of this comes from:
 #   http://stackoverflow.com/questions/809210/django-manager-chaining
-# 
+#
 # Basically, we (most) all of our classes to be subclasses of DeleteMixin, so
 # that instead of deleting objects, we simply mark them deleted. Good for
 # recovering from bugs, etc.
@@ -23,7 +23,7 @@ BEFORE_LAUNCH = datetime(2013, 1, 1, 0, 0, 0, 0)
 #
 # Don't show deleted objects
 ################################################################################
-class MixinManager(models.Manager):    
+class MixinManager(models.Manager):
 
     def get_query_set(self):
         try:

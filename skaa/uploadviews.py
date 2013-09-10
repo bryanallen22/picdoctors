@@ -31,7 +31,7 @@ from django.core.urlresolvers import reverse
 from tasks.tasks import saveWatermark
 
 def pic_json(pic):
-    return {"name"             : pic.title, 
+    return {"name"             : pic.title,
             "size"             : 0, # pic.get_size(), // This is sloooow!
             "url"              : pic.get_preview_url(),
             "thumbnail_url"    : pic.get_thumb_url(),
@@ -65,14 +65,14 @@ def has_doc_upload_access(request):
     #invalid post
     if not request.POST.__contains__('group_id'):
         return False
-    
+
     group_id = -1
     #convert group_id to int else, return false
     try:
         group_id = int(request.POST['group_id'])
     except:
         return False
-    
+
     #not logged in
     if not request.user.is_authenticated():
         return False
@@ -83,7 +83,7 @@ def has_doc_upload_access(request):
     if not profile.isa('doctor'):
         return False
 
-    
+
     group = get_object_or_None(Group, id=group_id)
 
     if group is None:
@@ -98,7 +98,7 @@ def has_doc_upload_access(request):
         return True
 
     return False
-    
+
 
 @passes_test(has_doc_upload_access, '/')
 def doc_upload_handler(request):
@@ -118,7 +118,7 @@ def doc_upload_handler(request):
             saveWatermark(profile.id, group_id, pickleable_pic)
 
             log.info('File saving done')
-     
+
     #redirect to where they came from
     return redirect(request.META['HTTP_REFERER'])
 
@@ -127,7 +127,7 @@ def upload_handler(request):
     if request.method == 'POST':
         if request.FILES == None:
             return HttpResponseBadRequest('Must have files attached!')
-        
+
         #remove database groupings (this will force them to be regrouped in database)
         delete_groupings(request)
 
@@ -142,7 +142,7 @@ def upload_handler(request):
             pic.save()
 
             log.info('File saving done')
-            
+
             result = []
             result.append(pic_json(pic))
 

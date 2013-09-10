@@ -1,4 +1,4 @@
-from PIL import Image, ImageEnhance, ImageFont, ImageDraw 
+from PIL import Image, ImageEnhance, ImageFont, ImageDraw
 import settings
 import ipdb, os
 
@@ -35,7 +35,7 @@ def watermark(im, mark, position, overlay_text, font, font_size, opacity):
     """Adds a watermark to an image."""
     if opacity < 1:
         mark = reduceOpacity(mark, opacity)
-    
+
     addOverlayText(mark, overlay_text, font, font_size)
     corner_radius = int(font_size / 2)
     corner = round_corner(corner_radius, "black")

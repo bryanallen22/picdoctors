@@ -12,7 +12,7 @@ import ipdb
 
 def get_settings_user(request):
     profile = get_profile_or_None(request)
-    
+
     if profile.bp_account:
         acct = profile.bp_account.fetch()
 

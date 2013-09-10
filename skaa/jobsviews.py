@@ -40,16 +40,16 @@ def job_page(request, page=1, job_id=None):
 
     update_old_jobs(jobs)
 
-    pager, cur_page = get_pagination_info(jobs, page)    
+    pager, cur_page = get_pagination_info(jobs, page)
 
     job_infos_json = get_job_infos_json(cur_page, generate_skaa_actions, request)
 
     return {
             'job_infos_json'   : job_infos_json,
-            'num_pages'        : range(1,pager.num_pages+1), 
-            'cur_page'         : int(page), 
-            'reverser'         : 'job_page_with_page', 
-            'doc_page'         : False, 
+            'num_pages'        : range(1,pager.num_pages+1),
+            'cur_page'         : int(page),
+            'reverser'         : 'job_page_with_page',
+            'doc_page'         : False,
             'title'            : 'My Jobs',
     }
 
@@ -72,7 +72,7 @@ def update_old_jobs(list_of_jobs):
             job.status=Job.OUT_OF_MARKET
             job.save()
             # TODO we may need to do other things in the future
-            
+
 
 # get and fill up possible actions based on the status of this job
 def generate_skaa_actions(job):
@@ -92,7 +92,7 @@ def generate_skaa_actions(job):
     place_back_in_market = DynamicAction('Return to Market', reverse('increase_price', args=[job.id]), url_redirect)
     share_album = DynamicAction('Share Album', reverse('make_album_shareable', args=[job.id]))
     unshare_album = DynamicAction('Unshare Album', reverse('make_album_unshareable', args=[job.id]))
-    
+
     if job.status == Job.IN_MARKET:
         ret.append(contact)
         ret.append(view_album)
@@ -137,7 +137,7 @@ def generate_skaa_actions(job):
         pass
 
     return ret
-    
+
 
 # when the user sets a price, we create a job
 def create_job(profile, album, hold):
@@ -146,10 +146,10 @@ def create_job(profile, album, hold):
     bp_hold.save()
     if album is not None:
         job = Job(skaa=profile,
-                album=album, 
+                album=album,
                 bp_hold=bp_hold,
                 status=Job.IN_MARKET)
-        
+
         job.save()
 
         set_groups_locks(album, True)
@@ -175,7 +175,7 @@ def update_job_hold(job, hold):
 def set_groups_locks(album_to_lock, state):
     groups = Group.objects.filter(album=album_to_lock)
     # Performance Opportunity, just update all at once, in fact
-    # the line below would do it, but then I think that skips 
+    # the line below would do it, but then I think that skips
     # the modified date time update
     # Group.objects.filter(album=album_to_lock).update(is_locked=state)
     for group in groups:
@@ -225,18 +225,18 @@ def make_album_public(to_public, success_message, job, profile):
     actions = Actions()
 
     try:
-        if job and job.album and profile and job.skaa == profile: 
+        if job and job.album and profile and job.skaa == profile:
             alb = job.album
             alb.allow_publicly = to_public
             alb.save()
             status = success_message
             actions.clear()
             actions.add('alert', AlertData(success_message, 'success'))
-    
+
             job_info = fill_job_info(job, generate_skaa_actions, profile)
             actions.addJobInfo(job_info)
     except:
         actions.clear()
         actions.add('alert', AlertData('There was an error processing your request.', 'error'))
-        
+
     return HttpResponse(actions.to_json(), mimetype='application/json')

@@ -38,7 +38,7 @@ def entry_point():
         print Fore.RED + "It makes no sense to do an Alpha DB and a migration, Keep it Simple Stupid"
         print_help()
         return
-    
+
     if alphadb and gen:
         print Fore.RED + "It makes no sense to do an Alpha DB and gen a migration, Keep it Simple Stupid"
         print_help()
@@ -81,10 +81,10 @@ def do_gen(force):
     If there is a diff, the migration will be made, if not, it will skip it
     """
     for app in settings.PD_APPS:
-        
+
         print Fore.GREEN + "generating migrations files for " + Fore.RED + "'" + app + "'" + Fore.WHITE
         do_cmd("python manage.py schemamigration " + app + " --auto")
-    
+
     print Fore.BLUE + "If there were any changes, we've made the migration files!"
     print "To see available migrations type 'python manage.py migrate --list' or './db.py -list'"
     print "To apply migrations type 'python manage.py migrate' or './db.py -migrate'"
@@ -100,7 +100,7 @@ def do_migrate(force):
 def do_alphadb(force, delete_migration=True):
     """
     Blast away everything in the world and pretend like this is the first time the db will be made.
-    What does this really mean?  It means we blast away any migrations, any db and 
+    What does this really mean?  It means we blast away any migrations, any db and
     creates a new db, starts the south history, formats your computer, and fakes the migrations (see init_db)
     """
     if settings.DEPLOY_TYPE == "SANDBOX" or settings.DEPLOY_TYPE == "DEV":
@@ -161,7 +161,7 @@ def init_db():
             do_cmd("python manage.py schemamigration " + app + " --initial")
             print Fore.GREEN + "Faking " + Fore.RED + "'" + app + "'" +  Fore.GREEN + " migration" + Fore.WHITE
             do_cmd("python manage.py migrate " + app + " --fake")
-    
+
 
 def print_quitter():
     print Fore.MAGENTA + "I guess you didn't really want to do it, all good, ciao"
@@ -172,15 +172,15 @@ def confirm(prompt=None, force=False):
     prompts for yes or no response from the user. Returns True for yes and
     False for no.
     """
-    
+
     if force:
         return True
-    
+
     if prompt is None:
         prompt = 'Confirm'
 
     prompt = '%s %s|%s: ' % (prompt, 'y', 'n')
-        
+
     while True:
         ans = raw_input(prompt)
         if not ans or ans not in ['y', 'Y', 'n', 'N']:

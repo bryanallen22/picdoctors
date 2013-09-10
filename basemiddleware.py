@@ -21,7 +21,7 @@ class BaseMiddleware(object):
             invalid_album_state = True
 
         skaa = True if not profile else profile.isa('skaa')
-        
+
         request.has_cart = False
         if (skaa and                     # has to be a skaa
             not invalid_album_state and  # just 1 album, don't need to merge

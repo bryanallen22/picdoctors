@@ -34,7 +34,7 @@ def generate_rows(withdraw_jobs):
                             .get_thumb_url()
 
         ret.append( WithdrawRow(
-            album_url=reverse('markup_album', args=[wj.album.id, 1]), 
+            album_url=reverse('markup_album', args=[wj.album.id, 1]),
             album_img_url=pic_url,
             date=wj.created,
             doc_earnings=wj.payout_price_cents,

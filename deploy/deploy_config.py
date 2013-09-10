@@ -5,7 +5,7 @@ import getpass
 
 #############################################################
 # LocalConfig
-# 
+#
 # This stores where things are on our local computer, etc
 #############################################################
 class LocalConfig():
@@ -175,7 +175,7 @@ def get_deploy_type(instance_name):
             else:
                 raise Exception("You need an identifier, e.g. %s0, %s-myfeature, etc."
                                     % (instance_name, instance_name))
-    
+
     raise Exception("Could not determine deploy_type for %s" % instance_name)
 
 def get_config(deploy_type):
@@ -191,4 +191,4 @@ def get_config(deploy_type):
         return ret
     else:
         raise Exception("Invalid deploy_type: %s" % deploy_type)
-    
+

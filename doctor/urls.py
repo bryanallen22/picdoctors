@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 
 from doctor.account_settings_views import create_bank_account, delete_bank_account, merchant_info
 from doctor.homeviews import doc_home
-from doctor.jobsviews import doc_job_page, new_job_page, apply_for_job 
+from doctor.jobsviews import doc_job_page, new_job_page, apply_for_job
 from doctor.jobsviews import mark_job_completed, quit_job, quit_job_endpoint
 from doctor.jobpricetoolowviews import job_price_too_low
 from doctor.withdrawviews import withdraw

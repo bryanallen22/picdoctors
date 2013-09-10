@@ -32,7 +32,7 @@ def send_email(request,
             email_addresses = email_address
         else:
             email_addresses = [ email_address ]
-        
+
         # Directly render nodes in the email templates. This allows us to
         # embed the subject, the plaintext and the html in the same template
         nodes = dict((n.name, n) for n in loader.get_template(template_name).nodelist.get_nodes_by_type(loader_tags.BlockNode))
@@ -52,7 +52,7 @@ def send_email(request,
             sendAsyncEmail.apply_async(args=[msg])
         else:
             sendAsyncEmail(msg)
-        
+
         return True
     except Exception as ex:
         log.error("send_email error!: %s" % ex.message)

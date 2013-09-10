@@ -17,7 +17,7 @@ import logging; log = logging.getLogger('pd')
 @require_login_as(['doctor'])
 def create_bank_account(request):
     profile = get_profile_or_None(request)
-    
+
     if not profile or not profile.isa('doctor'):
         return HttpResponse('{ }', mimetype='application/json')
 
@@ -122,7 +122,7 @@ def get_settings_doc(request):
     else:
         bank_accounts = None
         merchant = False
-    
+
     doc_profile_url = reverse('doctor_profile', args=[request.user.nickname]) or None
     doc_pic_url = None
     if request.user.pic:

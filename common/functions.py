@@ -36,7 +36,7 @@ def get_time_string(prev_date):
 
     The string should fit a sentence like this:
         Uploaded __________.
-        
+
     Examples:
         21 minutes ago
         2 hours ago
@@ -57,7 +57,7 @@ def get_time_string(prev_date):
     # Created in the last hour?
     elif prev_date > hour_ago:
         delta = now - prev_date
-        minutes = int(round(delta.seconds / 60.0)) 
+        minutes = int(round(delta.seconds / 60.0))
         if minutes == 0:
             ret = "Less than a minute ago"
         elif minutes == 1:
@@ -68,7 +68,7 @@ def get_time_string(prev_date):
     # Created in the last day?
     elif prev_date > yesterday:
         delta = now - prev_date
-        hours = int(round(delta.seconds / 3600.0)) 
+        hours = int(round(delta.seconds / 3600.0))
         if hours == 1:
             ret = "%s hour ago" % ( hours )
         else:

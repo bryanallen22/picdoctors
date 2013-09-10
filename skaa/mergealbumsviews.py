@@ -3,7 +3,7 @@ from annoying.decorators import render_to
 
 from common.models import Album
 from common.models import Pic
-from common.models import Group 
+from common.models import Group
 from common.functions import get_profile_or_None
 from common.functions import get_time_string
 from django.core.urlresolvers import reverse
@@ -70,7 +70,7 @@ def merge_albums(request):
     else:
         older_album = albums[1]
         newer_album = albums[0]
-    
+
     if request.method== 'POST':
         # Actually merge or delete the older album
         if 'delete' in request.POST.keys():

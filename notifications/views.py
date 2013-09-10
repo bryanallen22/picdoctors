@@ -38,7 +38,7 @@ def notification_handler(request):
             nti = NotificationToIgnore()
             nti.notification_type = tp
             nti.profile = profile
-            nti.ignore = ignore 
+            nti.ignore = ignore
             nti.save()
         else:
             for nti in ignorers:

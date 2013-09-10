@@ -16,10 +16,10 @@ def get_params():
 
     sys.exc_clear()
 
-    return { 
+    return {
             'printout': printout,
             }
-        
+
 
 #@render_to('500.html')
 def oh_sob_500(request):

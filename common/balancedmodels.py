@@ -78,7 +78,7 @@ class BPDebit(DeleteMixin):
     uri = models.CharField(max_length=128, blank=True)
 
     ### Cached info:
-    
+
     # How much was the debit? Check the associated_hold.cents
     associated_hold   = models.ForeignKey(BPHold)
 

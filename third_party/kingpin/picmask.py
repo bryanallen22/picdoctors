@@ -1,4 +1,4 @@
-from PIL import Image, ImageEnhance, ImageFont, ImageDraw 
+from PIL import Image, ImageEnhance, ImageFont, ImageDraw
 
 def reduceOpacity(im, opacity):
     """Returns an image with reduced opacity."""
@@ -23,9 +23,9 @@ def watermark(im, mark, position, overlay_text, font, opacity):
     """Adds a watermark to an image."""
     if opacity < 1:
         mark = reduceOpacity(mark, opacity)
-    
+
     addOverlayText(mark, overlay_text, font)
-    
+
     if im.mode != 'RGBA':
         im = im.convert('RGBA')
     # create a transparent layer the size of the image and draw the

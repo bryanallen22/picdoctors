@@ -75,7 +75,7 @@ def can_add_message(request, job):
         return False
 
     profile = get_profile_or_None(request)
-    
+
     if job.skaa == profile:
         return True
 
@@ -111,7 +111,7 @@ def message_handler(request):
                 msg.group = group
             else:
                 msg = JobMessage()
-            
+
             msg.job = job
             msg.message = message
             msg.commentor = profile
@@ -143,7 +143,7 @@ def generate_message_email(request, job, profile, message):
     if len(to_peeps) == 0:
         return
 
-    job_no = str(job.id).rjust(8, '0') 
+    job_no = str(job.id).rjust(8, '0')
 
     if job_message:
         subject = 'Comment on job #' + job_no

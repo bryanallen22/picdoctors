@@ -15,12 +15,12 @@ def job_price_too_low(request, job_id=None):
     job_id = int(job_id)
     job = get_object_or_None(Job, id=job_id)
     profile = get_profile_or_None(request)
-    if not job: 
+    if not job:
         return redirect('/')
 
     if request.method == "GET":
 
-        return { 
+        return {
                 'pic_count'      : job.album.num_groups,
                 'job_price'      : float(job.bp_hold.cents)/100,
                 }
@@ -46,7 +46,7 @@ def job_price_too_low_action(request, job):
                     price = max(job.bp_hold.cents, int(float(request.POST['price'])*100))
                     contrib=PriceTooLowContributor(job=job, doctor=doc, price=price)
                     contrib.save()
-                    
+
             if job.price_too_low_count % 5 == 0:
                 send_user_email(request, job)
 

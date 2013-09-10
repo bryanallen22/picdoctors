@@ -12,7 +12,7 @@ from common.decorators import require_login_as
 from common.functions import get_profile_or_None
 from common.functions import get_referer_view_and_id
 from common.functions import get_unfinished_album
-from common.models import Job 
+from common.models import Job
 from skaa.progressbarviews import get_progressbar_vars
 from skaa.rejectviews import remove_previous_doctor
 from emailer.emailfunctions import send_email
@@ -138,7 +138,7 @@ def increase_price(request, job_id):
 
     if not job or not profile or job.skaa != profile:
         return redirect('/')
-        
+
     if profile.bp_account:
         # Get the balanced account info. This is slow.
         acct = profile.bp_account.fetch()
@@ -149,7 +149,7 @@ def increase_price(request, job_id):
 
 
 
-    original_price = (job.bp_hold.cents / 100) 
+    original_price = (job.bp_hold.cents / 100)
     min_price = original_price + 1
     if request.method == 'GET':
         pass
@@ -159,7 +159,7 @@ def increase_price(request, job_id):
     str_original_price =  "{0:.2f}".format(original_price)
 
     ret = get_progressbar_vars(request, 'set_price')
-    ret.update({ 
+    ret.update({
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
@@ -184,7 +184,7 @@ def set_price(request):
     album.set_sequences()
 
     profile = get_profile_or_None(request)
-    
+
     if profile.bp_account:
         # Get the balanced account info. This is slow.
         acct = profile.bp_account.fetch()
@@ -206,7 +206,7 @@ def set_price(request):
     str_num_pics = "%s" % album.num_groups
 
     ret = get_progressbar_vars(request, 'set_price')
-    ret.update({ 
+    ret.update({
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
