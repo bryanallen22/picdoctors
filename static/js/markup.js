@@ -3,6 +3,7 @@ $(function(){
 
   if( $('#markup_app').length > 0 ) {
     // Block creation when we're clicking on little red boxes
+    // uggg, this is terrible :)  polluting the global namespace
     var creationEnabled = true;
     
     var markup_colors = [
@@ -303,12 +304,12 @@ $(function(){
       },
 
       redBoxIn: function() {
-        console.log('red in');
+        // console.log('red in');
         creationEnabled = false;
       },
 
       redBoxOut: function() {
-        console.log('red out');
+        // console.log('red out');
         creationEnabled = true;
       },
 
@@ -318,7 +319,7 @@ $(function(){
 
       mouseOut: function() {
         if(readonly){
-          console.log('hide ' + this.model.get('color_name'));
+          // console.log('hide ' + this.model.get('color_name'));
          // this.$el.popover('hide');
         }
       },
@@ -584,7 +585,6 @@ $(function(){
       },
 
       resizeMarkup: function(e) {
-        //console.log('resize');
         // Only care if we're in the middle of a move and they the left mouse is pressed
         if( this.cur_markup && e.which == 1) {
           var img = this.pic_container;
@@ -650,7 +650,7 @@ $(function(){
         //console.log('finish w/o pic_container');
         if (this.pic_container == null)
           return;
-        //console.log('finish w pic_container');
+        console.log('finish w pic_container');
 
         var x = e.pageX - this.pic_container.offset().left;
         var y = e.pageY - this.pic_container.offset().top;
@@ -708,6 +708,7 @@ $(function(){
         }
         else if (this.cur_markup) {
           // This guy is big enough! Let's sync() to the server
+          console.log('save');
           this.cur_markup.save();
           this.cur_markup.trigger('focus');
           //if the mouse was hovering over redx when we moved focus
