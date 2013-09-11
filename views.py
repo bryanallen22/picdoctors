@@ -45,6 +45,13 @@ def wheres_waldo_404(request):
     params = get_params()
     return http.HttpResponseNotFound(t.render(RequestContext(request, params)))
 
+@render_to('privacy_policy.html')
+def privacy_policy(request):
+    return {}
+
+@render_to('terms_of_service.html')
+def terms_of_service(request):
+    return {}
 
 def error():
     tb =  traceback.format_exception(sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])

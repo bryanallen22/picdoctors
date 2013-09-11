@@ -142,8 +142,8 @@
       {% endblock %}
 
       <hr>
-      <footer>
-        <p>&copy; PicDoctors LLC
+      <footer id="footer">
+        <p>&copy; PicDoctors LLC - <a href="{% url 'privacy_policy' %}">Privacy Policy</a> - <a href="{% url 'terms_of_service' %}">Terms of Service</a> 
         {% if not request.IS_PRODUCTION%}
         <span style="color:hotpink;background-color:black;">This is a {{ request.DEPLOY_TYPE}} instance, not a production server. </span>
         {% endif %}

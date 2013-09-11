@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url, handler404, handler500
 from views import *
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 #from common.errors import wheres_waldo_404
+from views import privacy_policy, terms_of_service
 
 from common.functions import raise_error
 
@@ -33,9 +34,11 @@ urlpatterns = patterns('',
     (r'', include('notifications.urls')),
     (r'', include('emailer.urls')),
 
-    url(r'^500/$',   oh_sob_500,        name='error500'),
-    url(r'^404/$',   wheres_waldo_404,  name='error404'),
-    url(r'^raise/$', raise_error,       name="raise_error"),
+    url(r'^500/$',              oh_sob_500,        name='error500'),
+    url(r'^404/$',              wheres_waldo_404,  name='error404'),
+    url(r'^raise/$',            raise_error,       name='raise_error'),
+    url(r'^privacy_policy/$',   privacy_policy,    name='privacy_policy'),
+    url(r'^terms_of_service/$', terms_of_service,  name='terms_of_service'),
 )
 
 if settings.DEBUG:

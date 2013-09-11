@@ -24,6 +24,12 @@
 #navbar #iso_cart .item {
   padding: 5px;
 }
+#footer p {
+  color: #777777;
+}
+#footer p a {
+  color: #777777;
+}
 /*****************************
   Index page
 ******************************/
@@ -909,4 +915,10 @@
 #doctor_profile .avatar {
   margin: 0px 20px 8px 0px;
   float: left;
+}
+/****************************************************************
+ * Privacy Policy
+ * *************************************************************/
+#privacy blockquote {
+  margin-bottom: 0px;
 }
