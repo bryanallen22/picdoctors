@@ -538,9 +538,9 @@ def setup_packages():
     sudo('chown %s:%s /var/log/django/picdoctors.log' % (cfg.deploy_user, cfg.deploy_user))
     sudo('chmod   664 /var/log/django/picdoctors.log')
 
+def collect_static():
     # Collect static files
     venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
-
 
 @task
 def setup_local_mysql():
@@ -639,6 +639,8 @@ def deploy(force_push=False, update=True, fast=False):
 
     if not fast:
         setup_packages()
+
+    collect_static()
 
     # nginx/uwsgi configurations
     webserver_config()
