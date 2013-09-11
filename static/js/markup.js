@@ -527,8 +527,9 @@ $(function(){
       },
 
       createMarkup: function(e) {
-        //console.log('create');
+        console.log('create');
         if(e.which == 1 && creationEnabled) { // left click
+        console.log('serious create');
           var initial_size = 10;
           /* This seems like a lot of work, but e.target seems a little bit
            * unpredictable, so I'm dancing around to ensure that I always end
