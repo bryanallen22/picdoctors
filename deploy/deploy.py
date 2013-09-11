@@ -539,6 +539,9 @@ def setup_packages():
     sudo('chmod   664 /var/log/django/picdoctors.log')
 
 def collect_static():
+    deploy_type = get_deploy_type(env.host_string)
+    cfg = get_config(deploy_type)
+
     # Collect static files
     venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
 
