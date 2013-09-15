@@ -14,6 +14,7 @@ from annoying.functions import get_object_or_None
 from django.core.files.uploadedfile import UploadedFile
 
 from common.functions import get_unfinished_album, get_profile_or_None
+from common.functions import json_result
 from common.models import Pic
 from common.models import Album
 from common.models import Group
@@ -213,3 +214,4 @@ def delete_groupings(request):
         Group.objects.filter(album=album.id).delete()
         album.kick_groups_modified()
 
+    

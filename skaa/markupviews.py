@@ -15,6 +15,7 @@ from common.models import ungroupedId
 from common.decorators import passes_test
 from common.functions import get_profile_or_None
 from common.functions import get_unfinished_album
+from common.functions import json_result
 from models import Markup
 from skaa.progressbarviews import get_progressbar_vars
 
@@ -296,3 +297,11 @@ def pic_instruction_handler(request):
         pic.save()
 
     return HttpResponse(simplejson.dumps({}), mimetype='application/json')
+
+def albums(request, album_id):
+    
+    return json_result({'a':'b'})
+
+
+def groups(request, group_id):
+    return json_result({'a':'b'})

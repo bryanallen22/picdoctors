@@ -316,10 +316,24 @@ PIPELINE_JS = {
             'third_party/bootstrap-tour/bootstrap-tour.min.js',
             'third_party/rating/jquery.rating.js',
 
+            ###############
+            # Ember Stuff #
+            ###############
+            'third_party/js/handlebars-1.0.0.js',
+            'third_party/js/ember.js',
+            'third_party/js/ember-data.js',
+
             ###########
             # Our stuff
             ###########
             'js/*.js',
+
+            ###################
+            # Our Ember Stuff #
+            ###################
+            'js/ember/application.js',
+            'js/ember/*.js',
+
         ),
         'output_filename': 'compressed/all.js',
     }

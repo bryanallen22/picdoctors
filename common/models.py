@@ -318,6 +318,10 @@ class Pic(DeleteMixin):
         return (ContentFile(tmp_file.getvalue()),)  + im.size
 
     def get_markups_json(self):
+        markups = self.get_markups()
+        return simplejson.dumps(markups)
+
+    def get_markups(self):
         # These imports can't be at the top, because they cause a circular depedency
         from skaa.models import Markup
         from skaa.markupviews import markup_to_dict
@@ -326,7 +330,8 @@ class Pic(DeleteMixin):
             result = [ markup_to_dict(m) for m in markups ]
         else:
             result = []
-        return simplejson.dumps(result)
+        return result
+
 
     @staticmethod
     def get_group_pics(group):

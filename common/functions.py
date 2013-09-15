@@ -3,6 +3,8 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from annoying.functions import get_object_or_None
+from django.utils import simplejson
+from django.http import HttpResponse
 
 from common.models import Album
 
@@ -118,4 +120,9 @@ def raise_error(request):
     Raise an error immediately. Useful for debugging production environment.
     """
     raise Exception("You asked for it.")
+
+
+def json_result(python_object):
+    response_data = simplejson.dumps(python_object)
+    return HttpResponse(response_data, mimetype='application/json')
 

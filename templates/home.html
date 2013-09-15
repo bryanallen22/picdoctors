@@ -6,11 +6,23 @@
 {% include 'skaa_progressbar.html' %}
 {% endif %}
 
+<div id="ember-container"></div>
+
+{% verbatim %}
+
 <script type="text/x-handlebars" data-template-name="application">
-  {{outlet}}
+  {{ outlet }}
+</script>
+
+<script type="text/x-handlebars" data-template-name="albums">
+  {{ outlet }}
 </script>
 
 <script type="text/x-handlebars" data-template-name="album">
+  {{outlet}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="groups">
   {{outlet}}
 </script>
 
@@ -18,11 +30,36 @@
   {{outlet}}
 </script>
 
-<script type="text/x-handlebars" data-template-name="markup">
-<div class='row'>
-  hello world
-</div>
+<script type="text/x-handlebars" data-template-name="pics">
+  {{outlet}}
+  pics
 </script>
+
+<script type="text/x-handlebars" data-template-name="pics/edit">
+<div class='row'>
+  <div id="markup_app" class='span10'>
+  {{#each pic in controller }}
+  <div class='markup_outer'>
+  <span {{bind-attr class=":markup_pic_container" style="pic.picStyle" uuid="pic.uuid"}}>
+    
+        <!-- Do not, under any circumstances, change the padding or margin of  
+         this .markup_pic_container or .pic unless you are 200% certain    
+         that you aren't messing things up. Careful calculation of offsets 
+         for drawing markups at the right location is done, and if you     
+       change them, old markups might appear at the wrong spot           -->
+      </span>
+    end here
+  {{/each}}
+            <textarea class="desc autosize-textarea">--------- pic.general_instructions --------</textarea>
+
+          <div class="imaginary_instruction_for_tour"></div>
+  {{outlet}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="markup">
+</script>
+
+{% endverbatim %}
 
 <!--------------------
 
@@ -67,40 +104,6 @@ This is the current one
       {% endif %}
     </div>
 
-    {% for pic in pics %}
-    <div class='markup_outer'>
-      <span class='markup_pic_container' style="{% if read_only %}cursor:default;{% endif %}background: url('{{ pic.get_preview_url }}') no-repeat; width:{{ pic.preview_width }}px; height:{{ pic.preview_height }}px;"  uuid="{{ pic.uuid }}" >
-        {# Do not, under any circumstances, change the padding or margin of  #}
-        {# this .markup_pic_container or .pic unless you are 200% certain    #}
-        {# that you aren't messing things up. Careful calculation of offsets #}
-        {# for drawing markups at the right location is done, and if you     #}
-        {# change them, old markups might appear at the wrong spot           #}
-      </span>
-      <script type="application/json" class="preloaded_markups">
-        {{ pic.get_markups_json|safe }}
-      </script>
-      {% if is_job_doctor %}
-      <div style='clear:both'></div>
-      <br />
-      <div class='download_links'>
-        <a class='btn btn-primary' href='{{ pic.get_original_url }}' download='PicDoctorsOriginal-{{ pic.uuid|slice:":7" }}.jpg'>Download Original</a>
-      </div>
-      {% endif %}
-      <div class='markup_desc_container' style="width:{{ pic.preview_width }}px;">
-        <div class="markup_desc">
-          <p class="desc_title">General instructions:</p>
-          <div class="instruction">
-            <textarea class="desc autosize-textarea">{{ pic.general_instructions }}</textarea>
-
-          </div>
-          <div class="imaginary_instruction_for_tour"></div>
-        </div>
-      </div>
-    </div>
-    <br/>
-    <br/>
-    <br/>
-    {% endfor %}
   </div>
   <div class='span2'>
     {# This '#anchor' is a hack to make sure that the div has a min width #}
@@ -130,7 +133,12 @@ This is the current one
 
 {% block scripts %}
 {# Isotope stuff: #}
-<script> var readonly = {{ read_only|lower }};</script>
+<script> var readonly = true; 
+  for(var i = 0;i<100;i++){
+    console.log("readonly shouldn't be hardcoded");
+  }
+
+</script>
 {# Templates #}
 {# This template is just the *style* attribute for the markup div      #}
 {# Note: if you change the border width here from 4px, you'll probably #}

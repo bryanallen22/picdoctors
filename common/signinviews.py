@@ -8,6 +8,8 @@ from django.utils import simplejson
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
+from common.functions import json_result
+
 from common.models import Album, Profile
 from common.account_settings_views import legit_password
 from doctor.jobsviews import doc_job_page
@@ -279,3 +281,4 @@ def check_unique_nickname(request):
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
+

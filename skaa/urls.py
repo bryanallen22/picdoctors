@@ -44,4 +44,8 @@ urlpatterns = patterns('',
     url(r'^switch_doctor/$',                               switch_doctor_endpoint,   name='switch_doctor_endpoint'),
     url(r'^make_album_shareable/(?P<job_id>\d+)/$',        make_album_shareable,     name='make_album_shareable'),
     url(r'^make_album_unshareable/(?P<job_id>\d+)/$',      make_album_unshareable,   name='make_album_unshareable'),
+
+    # Ember restendpoints
+   # url(r'^api/groups/(?P<group_id>\d+)$',                  group_endpoint,           name='group_endpoint'),
+
 )
