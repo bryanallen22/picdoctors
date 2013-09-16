@@ -1,7 +1,7 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
 
-  if( $('#markup_app').length > 0 ) {
+  if( $('#markup_app').length > 0 && $('#oldmarkup_app').length >0 ) {
     // Block creation when we're clicking on little red boxes
     // uggg, this is terrible :)  polluting the global namespace
     var creationEnabled = true;
@@ -540,6 +540,7 @@ $(function(){
            * like it. See here: http://www.quirksmode.org/js/events_order.html */
           this.pic_container = $(e.target).closest('.markup_outer')
             .find(".markup_pic_container");
+          console.log(this.pic_container);
           var left = e.pageX - this.pic_container.offset().left - initial_size;
           var top = e.pageY - this.pic_container.offset().top - initial_size;
 

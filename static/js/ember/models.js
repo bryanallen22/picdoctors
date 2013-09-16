@@ -5,7 +5,14 @@ hasMany = DS.hasMany;
 
 Pd.User = DS.Model.extend({
   nickname: attr(),
-  email: attr(),
+  email: attr()
+});
+
+Pd.User.reopen({
+  isLoggedIn: function(){
+    return this.get('id') != -1;
+  }.property('id')
+
 });
 
 Pd.Album = DS.Model.extend({
@@ -28,7 +35,6 @@ Pd.Pic = DS.Model.extend({
 
 Pd.Markup = DS.Model.extend({
   pic: belongsTo('pic'),
-
   border_style: attr(),
   color: attr(),
   color_name: attr(),
@@ -39,4 +45,8 @@ Pd.Markup = DS.Model.extend({
   top: attr(),
   width: attr()
 
+});
+
+Pd.Markup.reopen({
+  selected: false
 });

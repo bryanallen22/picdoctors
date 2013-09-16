@@ -320,6 +320,7 @@ PIPELINE_JS = {
             # Ember Stuff #
             ###############
             'third_party/js/handlebars-1.0.0.js',
+            # this is the debug build, I want a way to say in debug use this
             'third_party/js/ember.js',
             'third_party/js/ember-data.js',
 

@@ -12,7 +12,7 @@ from common.account_settings_views import change_password, change_profile_settin
 from common.account_settings_views import update_roles
 from common.permissionfunctions import permission_denied
 from common.navbarviews import async_album_info
-from common.emberviews import home, albums_endpoint, users_endpoint
+from common.emberviews import home, albums_endpoint, users_endpoint, markups_endpoint
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -44,5 +44,6 @@ urlpatterns = patterns('',
     # Ember restendpoints
     url(r'^api/users/(?P<user_id>-?\d+)$',                 users_endpoint,                name='users_endpoint'),
     url(r'^api/albums/(?P<album_id>-?\d+)$',                 albums_endpoint,                name='albums_endpoint'),
+    url(r'^api/markups$',                 markups_endpoint,                name='markups_endpoint'),
 )
 

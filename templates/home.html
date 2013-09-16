@@ -27,135 +27,131 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="group">
+<div class='row'>
+  <div id="markup_app" class='span10'>
   {{outlet}}
+  </div>
+  {{ render 'markup_navigation' this.model}}
+</div>
 </script>
 
 <script type="text/x-handlebars" data-template-name="pics">
   {{outlet}}
-  pics
 </script>
 
 <script type="text/x-handlebars" data-template-name="pics/edit">
-<div class='row'>
-  <div id="markup_app" class='span10'>
-  {{#each pic in controller }}
-  <div class='markup_outer'>
-  <span {{bind-attr class=":markup_pic_container" style="pic.picStyle" uuid="pic.uuid"}}>
-    
-        <!-- Do not, under any circumstances, change the padding or margin of  
-         this .markup_pic_container or .pic unless you are 200% certain    
-         that you aren't messing things up. Careful calculation of offsets 
-         for drawing markups at the right location is done, and if you     
-       change them, old markups might appear at the wrong spot           -->
-      </span>
-    end here
-  {{/each}}
-            <textarea class="desc autosize-textarea">--------- pic.general_instructions --------</textarea>
+    <div id="instructions" class="well">
+      <h3>
+        Give some general instructions for what you'd like done
+      </h3>
+      <h3>
+        Click and drag to add instructions for a specific area
+      </h3>
+    </div>
 
-          <div class="imaginary_instruction_for_tour"></div>
+  {{#each pic in controller }}
+    <div class='markup_outer'>
+      {{ view Pd.EditablePicView contentBinding="pic.model"}}
+      {{ partial "generalInstructions"}}
+      {{ render 'editableComments' pic.markups}}
+    </div>
+  {{/each}}
+
   {{outlet}}
 </script>
 
-<script type="text/x-handlebars" data-template-name="markup">
+<script type="text/x-handlebars" data-template-name="markup_navigation">
+  <div class='span2'>
+    <!-- This '#anchor' is a hack to make sure that the div has a min width -->
+    <div id="anchor" style="width:180px; height:1px;"></div>
+    <!-- These buttons are slid down by js. Using 'position:fixed' breaks -->
+    <!-- on narrow monitors -->
+    <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
+      {{#if previousGroup}}
+      {{#link-to 'pics.edit' previousGroup }}
+      <span id='previous' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Previous</span>
+      {{/link-to}}
+      {{else}}
+        {{#link-to 'album.upload'}}
+          <span id='previous' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Upload</span>
+        {{/link-to}}
+      {{/if}}
+
+      {{#if nextGroup}}
+      {{#link-to 'pics.edit' nextGroup}}
+      <span id='next' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Next</span>
+      {{/link-to}}
+      {{else}}
+        {{#if isLoggedIn}}
+          {{#link-to 'album.pay'}}
+            <span id='next' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Pay</span>
+          {{/link-to}}
+        {{else}}
+          {{#link-to 'signinToPay'}}
+            <span id='next' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Sign In</span>
+          {{/link-to}}
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+</script>
+
+
+<script type="text/x-handlebars" data-template-name="pic_span">
+  <!-- Do not, under any circumstances, change the padding or margin of  
+       this .markup_pic_container or .pic unless you are 200% certain    
+       that you aren't messing things up. Careful calculation of offsets 
+       for drawing markups at the right location is done, and if you     
+       change them, old markups might appear at the wrong spot -->
+       <span class="markup_pic_container" {{bind-attr style="picStyle" uuid="uuid"}}> 
+         {{#each markup in markups}}
+           {{ render 'editableMarkup' markup}}
+         {{/each}}
+       </span>
+</script>
+
+<!-- This template is just the *style* attribute for the markup div      
+ Note: if you change the border width here from 4px, you'll probably 
+ want to fix the math in the *createMarkup* method in markup.js      -->
+<script type="text/x-handlebars" data-template-name="editable_markup">
+  <div class="markup" {{bind-attr style="markupStyle"}}></div> 
+</script>
+
+<script type="text/x-handlebars" data-template-name="_general_instructions">
+      <div class='markup_desc_container'>
+        <div class="markup_desc">
+          <p class="desc_title">General instructions:</p>
+          <div class="instruction">
+            {{view Pd.AutoGrowTextArea class="desc" valueBinding="pic.general_instructions"}}
+
+          </div>
+          <div class="imaginary_instruction_for_tour"></div>
+        </div>
+      </div>
+</script>
+
+<script type="text/x-handlebars" data-template-name="editable_comments">
+      <div class='markup_desc_container'>
+        {{#each markup in this}}
+        <div class="markup_desc">
+          <p class="desc_title" {{bind-attr style="descStyle"}}>some color instructions:</p>
+          <div class="dyn_instruction">
+            {{view Pd.AutoGrowTextArea class="desc" valueBinding="markup.description"}}
+          </div>
+        </div>
+        {{/each}}
+      </div>
+</script>
+
+<!-- Used to put the red X on a markup element -->
+<script type="text/x-handlebars" id="markup-template-redx">
+  <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
 </script>
 
 {% endverbatim %}
 
-<!--------------------
-
-This is the current one
-
--------------------->
-
-<div class='row'>
-  <div id="markup_app" class='span10'>
-    {% if doc_pics %}
-    <div id="instructions" class="well">
-      <h3>
-        Doctor's Picture{{doc_pics|pluralize}}
-      </h3>
-    </div>
-
-    {% for pic in doc_pics %}
-    <div class='doc_pics'>
-      Doctor Revision #{{pic.0}}
-      <span class='doc_pic_container' style="background: url('{{pic.1.get_preview_url}}') no-repeat; width:{{pic.1.preview_width }}px; height:{{pic.1.preview_height}}px;cursor:default;display:block">
-      </span>
-      <br/>
-      <div class='download_links'>
-        <a class='btn btn-primary' href='{{ pic.1.get_original_url }}' download='PicDoctorsOriginal-{{ pic.1.uuid|slice:":7" }}.jpg'>Download Original</a>
-      </div>
-    </div>
-    {% endfor %}
-    {% endif %} {# doc_pics #}
-    
-    <div id="instructions" class="well">
-      {% if read_only %}
-        <h3>
-          User's Picture{{pics|pluralize}}
-        </h3>
-      {% else %}
-        <h3>
-          Give some general instructions for what you'd like done
-        </h3>
-        <h3>
-          Click and drag to add instructions for a specific area
-        </h3>
-      {% endif %}
-    </div>
-
-  </div>
-  <div class='span2'>
-    {# This '#anchor' is a hack to make sure that the div has a min width #}
-    <div id="anchor" style="width:180px; height:1px;"></div>
-    {# These buttons are slid down by js. Using 'position:fixed' breaks #}
-    {# on narrow monitors #}
-    <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
-      <a id='previous' href='{{ previous_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Previous</a>
-      <a id='next' href='{{ next_url }}' class='btn btn-primary btn-large' style='display: block; margin-top: 12px;'>Next</a>
-      {% comment %}
-      <div id="markup_tour" class="btn btn-info btn-large" style="display : block;margin-top:12px;">Help Me</div>
-      {% endcomment %}
-      {% if is_job_doctor  %}
-
-      <form action="{% url 'doc_upload_handler' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
-        <div class="btn btn-success btn-large fileupload-addbutton" style='display: block; margin-top: 12px;'>
-          Upload Finished Product
-          <input id="doc_file" type="file" name="doc_file">
-        </div>
-        <input type="hidden" value="{{ group_id }}" name="group_id" />
-      </form>
-      {% endif %}
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {% block scripts %}
-{# Isotope stuff: #}
-<script> var readonly = true; 
-  for(var i = 0;i<100;i++){
-    console.log("readonly shouldn't be hardcoded");
-  }
-
-</script>
-{# Templates #}
-{# This template is just the *style* attribute for the markup div      #}
-{# Note: if you change the border width here from 4px, you'll probably #}
-{# want to fix the math in the *createMarkup* method in markup.js      #}
-<script type="text/template" id="markup-template-styleattr">
-  left: <%= left %>; top: <%= top %>; height: <%= height %>; width: <%= width %>; border: 4px <%= color %>; border-style: <%= border_style %>;
-</script>
-{# Used to put the red X on a markup element #}
-<script type="text/template" id="markup-template-redx">
-  <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
-</script>
-{# MarkupDesc view #}
-<script type="text/template" id="markup-template-desc">
-  <p class="desc_title" style="border: 4px <%= color %>; border-style: <%= border_style %>;">
-  <%= color_name %>
-  </p><div class="dyn_instruction">
-  <textarea class="desc autosize-textarea" ><%= desc %></textarea></div>
-</script>
 {% endblock %}
 
