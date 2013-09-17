@@ -1,8 +1,10 @@
 from annoying.decorators import render_to
 from skaa.progressbarviews import get_progressbar_vars
-from skaa.markupviews import belongs_on_this_markup_page
+from skaa.markupviews import belongs_on_this_markup_page, markup_to_dict
 from skaa.models import Markup
 from django.http import HttpResponse
+
+from django.utils import simplejson
 
 from common.models import Job, Album, Group, Pic
 from common.functions import json_result
@@ -45,21 +47,52 @@ def albums_endpoint(request, album_id):
     response["markups"] = prepMarkups(response["pics"])
     return json_result(response)
 
+def can_modify_markup(request, markup_id=None):
+    pic = None
+    if markup_id:
+        markup = get_object_or_None(Markup, id=markup_id)
+        if markup:
+            pic = markup.pic
+    else:
+        data = simplejson.loads(request.body)
+        try:
+            pic = Pic.objects.get(uuid__exact=data['markup']['pic'])
+        except: 
+            return False
+
+    if not pic:
+        return False
+
+    album = Album.get_unfinished(request)
+
+    #all pics are in a album, all pics are in a grouping
+    if pic.group and pic.album and pic.album == album:
+        return not pic.group.is_locked
+
+    return False
+
+
 def markups_endpoint(request, markup_id=None):
     # POST /markups_handler/ -- create a new markup
     if request.method == 'POST':
-        return json_result({'markup': {'id':87686}})
         if can_modify_markup(request):
             data = simplejson.loads(request.body)
+            data = data['markup']
+            pic = Pic.objects.get(uuid__exact=data['pic'])
 
 
             markup = Markup()
-            apply_markup_whitelist(markup, data)
+            markup.pic = pic
+            markup.left = data['left']
+            markup.top = data['top']
+            markup.width = data['width']
+            markup.height = data['height']
             markup.save()
 
-            result = { 'id' : markup.id }
-            response_data = simplejson.dumps(result)
-            return HttpResponse(response_data, mimetype='application/json')
+            m = markup_to_dict(markup)
+            clientMarkupModify(m)
+            return json_result({'markup': m})
+
 
     # GET /markups_handler/1234/
     elif request.method == 'GET' and markup_id is not None:
@@ -77,17 +110,16 @@ def markups_endpoint(request, markup_id=None):
     elif request.method == 'PUT':
         if can_modify_markup(request):
             data = simplejson.loads(request.body)
-            markup = Markup.objects.get(id=data['id'])
+            data = data['markup']
+            markup = Markup.objects.get(id=markup_id)
 
             album = Album.get_unfinished(request)
             album_id = album.id if album else None
             if album_id and markup.pic.album_id == album_id:
-                apply_markup_whitelist(markup, data)
+                markup.description = data['description']
                 markup.save()
 
-        # Return any modified properties... Uh.... I don't forsee
-        # overriding any of the things that they set...
-        result = {}
+            result = {}
     elif request.method == 'DELETE':
         m = Markup.objects.get(id=markup_id)
         if can_modify_markup( request, markup_id):
@@ -96,8 +128,6 @@ def markups_endpoint(request, markup_id=None):
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
-
-    return json_result({id:87686})
 
 def prepAlbum(album):
     groups = Group.get_album_groups(album)
@@ -152,9 +182,13 @@ def prepMarkups(pics):
         p = get_object_or_None(Pic, uuid=pic["id"])
         markupList = p.get_markups()
         for m in markupList:
-            m["pic"] = m["pic_uuid"]
-            del m["pic_uuid"]
+            clientMarkupModify(m)
+
 
         markups.extend(markupList)
     return markups
+
+def clientMarkupModify(m):
+    m["pic"] = m["pic_uuid"]
+    del m["pic_uuid"]
 

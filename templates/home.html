@@ -136,11 +136,15 @@
         <div class="markup_desc">
           <p class="desc_title" {{bind-attr style="descStyle"}}>some color instructions:</p>
           <div class="dyn_instruction">
-            {{view Pd.AutoGrowTextArea class="desc" valueBinding="markup.description"}}
+            {{render 'markupDescriptionEdit' markup}}
           </div>
         </div>
         {{/each}}
       </div>
+</script>
+
+<script type="text/x-handlebars" id="markup_description_edit">
+   {{view Pd.AutoGrowTextArea class="desc" focusOutEvent="saveMeFocus" keyUpEvent="saveMeKeyUp" eventDelegateBinding="controller" valueBinding="description"}}
 </script>
 
 <!-- Used to put the red X on a markup element -->

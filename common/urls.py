@@ -42,8 +42,9 @@ urlpatterns = patterns('',
     url(r'^home/$',                                     home,                         name='home'),
 
     # Ember restendpoints
-    url(r'^api/users/(?P<user_id>-?\d+)$',                 users_endpoint,                name='users_endpoint'),
-    url(r'^api/albums/(?P<album_id>-?\d+)$',                 albums_endpoint,                name='albums_endpoint'),
-    url(r'^api/markups$',                 markups_endpoint,                name='markups_endpoint'),
+    url(r'^api/users/(?P<user_id>-?\d+)$',                 users_endpoint,            name='users_endpoint'),
+    url(r'^api/albums/(?P<album_id>\d+)$',               albums_endpoint,           name='albums_endpoint'),
+    url(r'^api/markups$',                                  markups_endpoint,          name='markups_endpoint'),
+    url(r'^api/markups/(?P<markup_id>\d+)$',              markups_endpoint,          name='markups_endpoint'),
 )
 

@@ -163,18 +163,13 @@ def get_markup_whitelist():
     """ Returns whitelisted Markup attributes
 
     All names should be common to both the django Model and the
-    backbone.js model"""
+    ember data model"""
 
     return [
         'left',
         'top',
-        'left',
-        'top',
         'width',
         'height',
-        'color',
-        'color_name',
-        'border_style',
         'description' ]
 
 

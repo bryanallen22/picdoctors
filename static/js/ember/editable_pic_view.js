@@ -17,6 +17,9 @@ newMarkupStartX: null,
 newMarkupStartY: null,
 
 mouseDown: function(e){
+  this.get('picsMarkups').forEach(function(markup){
+    console.log(markup.get('pic'));
+  });
   if(e.which === 1){
     this.set('drawing', true);
     var offset = this.get('picSpan').offset(),
@@ -40,7 +43,6 @@ mouseDown: function(e){
         pic:              this.get('content')
     });
 
-    console.log(newMarkup.get('pic'));
 
     this.set('newMarkup', newMarkup);
     this.set('newMarkupStartX', displayLeft);
@@ -149,7 +151,7 @@ mouseDown: function(e){
     //weird hackary for a sec while I figure out ember data.
     newMarkup.set('pic', pic.get('id'));
     // note it reloads the model based on the results
-    // so I need to return the model back so it reloads correctly!
+  // so I need to return the model back so it reloads correctly!
     newMarkup.save().then(function(){
       newMarkup.set('pic', pic);
     });

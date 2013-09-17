@@ -35,15 +35,18 @@ Pd.Pic = DS.Model.extend({
 
 Pd.Markup = DS.Model.extend({
   pic: belongsTo('pic'),
-  border_style: attr(),
-  color: attr(),
-  color_name: attr(),
   description: attr(),
   height: attr(),
   left: attr(),
   pic: attr(),
   top: attr(),
-  width: attr()
+  width: attr(),
+
+  toStringExtension: function(){
+    return this.get('description');
+  }
+
+
 
 });
 
