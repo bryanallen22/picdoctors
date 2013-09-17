@@ -134,7 +134,7 @@
       <div class='markup_desc_container'>
         {{#each markup in this}}
         <div class="markup_desc">
-          <p class="desc_title" {{bind-attr style="descStyle"}}>some color instructions:</p>
+          <p class="desc_title" {{bind-attr style="descStyle"}}>{{markup.markupStyle.name}} instructions:</p>
           <div class="dyn_instruction">
             {{render 'markupDescriptionEdit' markup}}
           </div>

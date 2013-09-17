@@ -62,9 +62,8 @@ Pd.MarkupDescriptionEditController = Ember.ObjectController.extend({
 
   actions: {
     saveMeFocus: function(){
-      var self = this;
       // only save after 20 milliseconds of not focus outing
-      Ember.run.debounce(this, function(){ self._save();}, 20);
+      Ember.run.debounce(this, this._save, 20);
     },
     saveMeKeyUp: function(){
       var self = this;

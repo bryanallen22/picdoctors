@@ -25,6 +25,7 @@ Pd.EditablePicView = Ember.View.extend({
       this.set('drawing', true);
       var offset = this.get('offset'),
       store = this.get('controller.store'),
+      markupStyle = store.find('markupStyle', this.get('content.markups.length')+1),
       initialSize = 10;
 
       /* The -6 magic here is:
@@ -43,6 +44,8 @@ Pd.EditablePicView = Ember.View.extend({
         width:            initialSize,
         pic:              this.get('content')
       });
+      // can I put this in above? probably...
+      newMarkup.set('markupStyle', markupStyle);
 
 
       this.set('newMarkup', newMarkup);
