@@ -29,7 +29,10 @@ $(function(){
 
   var users_entered_data = true;
 
-  $("#feedback_link").click( function() {
+  $("#feedback_link").click( function(e) {
+    // stop it from navigating
+    e.preventDefault();
+
     current_popup_state += 1;
 
     //console.log('feedback');
@@ -174,7 +177,7 @@ $(function(){
     }
   }
 
-  $("#cart_link").click( function() {
+  $("#cart_link").click( function(e) {
       var el = $(this);
       var template = $('#cart_form').html().trim();
       //el.attr('data-set', users_entered_data);
@@ -187,6 +190,8 @@ $(function(){
       $.getJSON( url, function( json ) {
         create_cart(json.url, json.pics);
       });
+      // stop it from navigating to the href
+      e.preventDefault();
   });
 
 });
