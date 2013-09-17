@@ -45,11 +45,15 @@ Pd.Markup = DS.Model.extend({
   toStringExtension: function(){
     return this.get('description');
   }
-
-
-
 });
 
 Pd.Markup.reopen({
-  selected: false
+  selected: false,
+  markupStyle: null
+});
+
+Pd.MarkupStyle = DS.Model.extend({
+  name: attr(),
+  color: attr(),
+  border_style:attr()
 });

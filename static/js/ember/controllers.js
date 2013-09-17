@@ -75,18 +75,21 @@ Pd.MarkupDescriptionEditController = Ember.ObjectController.extend({
 
 });
 Pd.EditableMarkupController = Ember.ObjectController.extend({
-  markupStyle: function(){
+  markupStyleCss: function(){
     var left = this.get('left'),
         top = this.get('top'),
         height = this.get('height'),
         width = this.get('width'),
-        style = "border: 4px green;";
+        markupStyle = this.get('markupStyle'),
+        color = markupStyle.get('color'),
+        style = "border: 4px " + color + ";",
+        borderStyle = markupStyle.get('border_style');
 
     style += "left: " + left + "px;";
     style += "height: " + height + "px;";
     style += "width: " + width + "px;";
     style += "top: " + top + "px;";
-    style += "border-style: solid;";
+    style += "border-style: " + borderStyle + ";" ;
     return style;
   }.property('left', 'top', 'height')
 })
@@ -143,4 +146,3 @@ Pd.MarkupNavigationController = Ember.ObjectController.extend({
   }.property('controllers.application.isLoggedIn')
 
 });
-
