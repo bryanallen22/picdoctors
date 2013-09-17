@@ -332,8 +332,11 @@ PIPELINE_JS = {
             ###################
             # Our Ember Stuff #
             ###################
-            'js/ember/application.js',
             'js/ember/*.js',
+            'js/ember/models/*.js',
+            'js/ember/routes/*.js',
+            'js/ember/controllers/*.js',
+            'js/ember/views/*.js',
 
         ),
         'output_filename': 'compressed/all.js',

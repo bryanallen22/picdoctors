@@ -1,56 +1,7 @@
-Pd.ApplicationController = Ember.ObjectController.extend({});
-
-Pd.AlbumsController = Ember.ArrayController.extend({});
-Pd.AlbumController = Ember.ObjectController.extend({});
-
-Pd.GroupsController = Ember.ArrayController.extend({});
-Pd.GroupController = Ember.ObjectController.extend({});
-
-Pd.PicsController = Ember.ArrayController.extend({});
-Pd.PicsEditController = Ember.ArrayController.extend({
-  itemController: 'pic',
-});
-
-Pd.PicController = Ember.ObjectController.extend({
-  picStyle: function(){
-    var url = this.get('preview_url'),
-        width = this.get('width'),
-        height = this.get('height'),
-        uuid = this.get('uuid'),
-        backgroundStyle = "background: url('" + url + "');",
-        style = "no-repeat;";
-
-    style += backgroundStyle;
-    style += "width:" + width + "px;";
-    style += "height:" + height + "px;";
-
-    return style;
-  }.property('preview_url', 'width', 'height', 'uuid'),
-
-  _save: function(){
-    var model = this.get('model');
-    if(model.get('isDirty')){
-      model.save();
-    }
-  },
-
-  actions: {
-    saveMeFocus: function(){
-      // only save after 20 milliseconds of not focus outing
-      Ember.run.debounce(this,  this._save, 20);
-    },
-    saveMeKeyUp: function(){
-      // only save after 10 seconds of not typing
-      Ember.run.debounce(this,  this._save, 10000);
-    }
-  }
-
-});
-
 Pd.MarkupsController = Ember.ArrayController.extend({});
-Pd.EditableCommentsController = Ember.ArrayController.extend({
 
-});
+// TODO think up a better name for this
+Pd.EditableCommentsController = Ember.ArrayController.extend({});
 
 Pd.MarkupDescriptionEditController = Ember.ObjectController.extend({
   _save: function(){
@@ -73,6 +24,7 @@ Pd.MarkupDescriptionEditController = Ember.ObjectController.extend({
   }
 
 });
+
 Pd.EditableMarkupController = Ember.ObjectController.extend({
   markupStyleCss: function(){
     var left = this.get('left'),
