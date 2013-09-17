@@ -473,6 +473,10 @@
   width: 762px;
   text-align: center;
 }
+.workflow-buttons {
+  display: block;
+  margin-top: 120px;
+}
 /*****************************
   Job page
 ******************************/

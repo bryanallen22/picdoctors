@@ -12,8 +12,8 @@ def get_job_summary(job):
     pics = Pic.objects.filter(album=job.album).order_by('group')
 
     for pic in pics:
-        if pic.general_instructions:
-            ret = pic.general_instructions
+        if pic.description:
+            ret = pic.description
             break
 
     return ret or "No description available"

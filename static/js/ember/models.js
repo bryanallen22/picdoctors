@@ -27,7 +27,7 @@ Pd.Group = DS.Model.extend({
 Pd.Pic = DS.Model.extend({
   group: belongsTo('group'),
   markups: hasMany('markup'),
-  general_instructions: attr(),
+  description: attr(),
   preview_url: attr(),
   width: attr(),
   height: attr()

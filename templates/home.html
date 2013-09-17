@@ -68,27 +68,27 @@
     <!-- on narrow monitors -->
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
       {{#if previousGroup}}
-      {{#link-to 'pics.edit' previousGroup }}
-      <span id='previous' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Previous</span>
+      {{#link-to 'pics.edit' previousGroup class='btn btn-primary btn-large workflow-buttons' }}
+      Previous
       {{/link-to}}
       {{else}}
-        {{#link-to 'album.upload'}}
-          <span id='previous' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Upload</span>
+        {{#link-to 'album.upload' class='btn btn-primary btn-large workflow-buttons'}}
+        Upload
         {{/link-to}}
       {{/if}}
 
       {{#if nextGroup}}
-      {{#link-to 'pics.edit' nextGroup}}
-      <span id='next' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Next</span>
+      {{#link-to 'pics.edit' nextGroup class='btn btn-primary btn-large workflow-buttons'}}
+      Next
       {{/link-to}}
       {{else}}
         {{#if isLoggedIn}}
-          {{#link-to 'album.pay'}}
-            <span id='next' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Pay</span>
+          {{#link-to 'album.pay' class='btn btn-primary btn-large workflow-buttons'}}
+          Pay
           {{/link-to}}
         {{else}}
-          {{#link-to 'signinToPay'}}
-            <span id='next' class='btn btn-primary btn-large' style='display: block; margin-top: 120px;'>Sign In</span>
+        {{#link-to 'signinToPay' class='btn btn-primary btn-large workflow-buttons'}}
+        Sign In
           {{/link-to}}
         {{/if}}
       {{/if}}
@@ -122,7 +122,7 @@
         <div class="markup_desc">
           <p class="desc_title">General instructions:</p>
           <div class="instruction">
-            {{view Pd.AutoGrowTextArea class="desc" eventDelegateBinding="controller" focusOutEvent="saveMeFocus" keyUpEvent="saveMeKeyUp" valueBinding="pic.general_instructions"}}
+            {{view Pd.AutoGrowTextArea class="desc" eventDelegateBinding="controller" focusOutEvent="saveMeFocus" keyUpEvent="saveMeKeyUp" valueBinding="pic.description"}}
 
           </div>
           <div class="imaginary_instruction_for_tour"></div>

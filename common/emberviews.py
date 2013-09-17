@@ -127,7 +127,7 @@ def pics_endpoint(request, pic_id=None):
         pic = Pic.objects.get(id=pic_id)
 
         if can_modify_pic(request, pic):
-            pic.general_instructions = data['general_instructions']
+            pic.description= data['description']
             pic.save()
             result = {}
 
@@ -170,7 +170,7 @@ def prepPics(album):
             model = {
                  'id': pic.id,
                  'group': group.id,
-                 'general_instructions': pic.general_instructions,
+                 'description': pic.description,
                  'preview_url': pic.get_preview_url(),
                  'width': pic.preview_width,
                  'height': pic.preview_height,

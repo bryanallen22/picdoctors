@@ -208,7 +208,7 @@ class Pic(DeleteMixin):
     path_owner           = models.CharField(max_length = 5, blank=False, default="user")
     watermark            = models.BooleanField(blank=False, default=False)
 
-    general_instructions = models.TextField(blank=True)
+    description          = models.TextField(blank=True)
 
     # Getting these later requires fetching the picture.
     # That's oh so very bad. Don't do that.

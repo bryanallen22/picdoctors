@@ -1,72 +1,65 @@
 Pd.EditablePicView = Ember.View.extend({
   templateName: 'pic_span',
-didInsertElement: function() {
-  this._super();
-},
+  didInsertElement: function() {
+    this._super();
+  },
 
-picsMarkups: function(){
-  return this.get('content.markups');
-}.property('content.markups'),
+  picsMarkups: function(){
+    return this.get('content.markups');
+  }.property('content.markups'),
 
-picSpan: function(){
-  return this.$().find('.markup_pic_container');
-}.property('content'),
+  picSpan: function(){
+    return this.$().find('.markup_pic_container');
+  }.property('content'),
 
-newMarkup: null,
-newMarkupStartX: null,
-newMarkupStartY: null,
+  offset: function(){
+    return this.get('picSpan').offset();
+  }.property('picSpan'),
 
-mouseDown: function(e){
-  this.get('picsMarkups').forEach(function(markup){
-    console.log(markup.get('pic'));
-  });
-  if(e.which === 1){
-    this.set('drawing', true);
-    var offset = this.get('picSpan').offset(),
-        store = this.get('controller.store'),
-        initialSize = 10;
+  newMarkup: null,
+  newMarkupStartX: null,
+  newMarkupStartY: null,
 
-    /* The -6 magic here is:
-     *       4px  (border width on one side
-     *     + 2px  (half the border width on the other side
-     *     = 6px
-     *  This leaves us square in the middle of the lower right
-     *  corner of our initial div size */
-    var displayLeft = e.pageX - offset.left - initialSize - 6;
-    var displayTop = e.pageY - offset.top - initialSize - 6;
+  mouseDown: function(e){
+    if(e.which === 1){
+      this.set('drawing', true);
+      var offset = this.get('offset'),
+      store = this.get('controller.store'),
+      initialSize = 10;
 
-    var newMarkup = store.createRecord(Pd.Markup, {
-      left:             displayLeft,
+      /* The -6 magic here is:
+       *       4px  (border width on one side
+       *     + 2px  (half the border width on the other side
+       *     = 6px
+       *  This leaves us square in the middle of the lower right
+       *  corner of our initial div size */
+      var displayLeft = e.pageX - offset.left - initialSize - 6;
+      var displayTop = e.pageY - offset.top - initialSize - 6;
+
+      var newMarkup = store.createRecord(Pd.Markup, {
+        left:             displayLeft,
         top:              displayTop,
         height:           initialSize,
         width:            initialSize,
         pic:              this.get('content')
-    });
+      });
 
 
-    this.set('newMarkup', newMarkup);
-    this.set('newMarkupStartX', displayLeft);
-    this.set('newMarkupStartY', displayTop);
+      this.set('newMarkup', newMarkup);
+      this.set('newMarkupStartX', displayLeft);
+      this.set('newMarkupStartY', displayTop);
 
-    this.get('picsMarkups').pushObject(newMarkup);
-  }
+      this.get('picsMarkups').pushObject(newMarkup);
+    }
 
-},
+  },
 
   mouseMove: function(e){
     if(!this.get('drawing')) return;
 
     var img = this.get('picSpan'),
-        img_offset = img.offset(),
-        newMarkup = this.get('newMarkup');
-
-
-    /*
-       console.log( "limits: X:[", img_offset.left, "..",
-       img_offset.left + img.width(), "]   Y:[",
-       img_offset.top, "..",
-       img_offset.top  + img.height(), "]" );
-       */
+    img_offset = this.get('offset'),
+    newMarkup = this.get('newMarkup');
 
     /* Sometimes I get events that are outside of the div. Me no likey. Fix
      * that here.
@@ -112,9 +105,12 @@ mouseDown: function(e){
       height = y1 - y2;
     }
 
-    newMarkup.setProperties( { left: left, top: top, width: width, height: height } );
-
-
+    newMarkup.setProperties( {
+      left: left,
+      top: top, 
+      width: width, 
+      height: height 
+    });
 
   },
 
@@ -133,30 +129,28 @@ mouseDown: function(e){
     this.set('drawing', false);
 
     var img = this.get('picSpan'),
-        img_offset = img.offset(),
-        newMarkup = this.get('newMarkup'),
-        store = this.get('controller.store'),
-        x = e.pageX - img_offset.left,
-        y = e.pageY - img_offset.top,
-        minimum_size = 25;
+    img_offset = img.offset(),
+    newMarkup = this.get('newMarkup'),
+    store = this.get('controller.store'),
+    x = e.pageX - img_offset.left,
+    y = e.pageY - img_offset.top,
+    minimum_size = 25;
 
     // If the markup is too small, get rid of it
     if( (Math.abs(x - this.get('newMarkupStartX')) < minimum_size) ||
-        (Math.abs(y - this.get('newMarkupStartY')) < minimum_size) ) {
-       newMarkup.destroy();
-       this.get('picsMarkups').removeObject(newMarkup);
-       return;
+       (Math.abs(y - this.get('newMarkupStartY')) < minimum_size) ) {
+      newMarkup.destroy();
+    this.get('picsMarkups').removeObject(newMarkup);
+    return;
     }
     var pic = newMarkup.get('pic');
     //weird hackary for a sec while I figure out ember data.
     newMarkup.set('pic', pic.get('id'));
     // note it reloads the model based on the results
-  // so I need to return the model back so it reloads correctly!
+    // so I need to return the model back so it reloads correctly!
     newMarkup.save().then(function(){
       newMarkup.set('pic', pic);
     });
-
-
   }
 
 });
