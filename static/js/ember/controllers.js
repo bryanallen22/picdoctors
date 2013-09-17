@@ -27,6 +27,26 @@ Pd.PicController = Ember.ObjectController.extend({
     return style;
   }.property('preview_url', 'width', 'height', 'uuid'),
 
+  _save: function(){
+    var model = this.get('model');
+    if(model.get('isDirty')){
+      model.save();
+    }
+  },
+
+  actions: {
+    saveMeFocus: function(){
+      var self = this;
+      // only save after 20 milliseconds of not focus outing
+      Ember.run.debounce(this, function(){ self._save();}, 20);
+    },
+    saveMeKeyUp: function(){
+      var self = this;
+      // only save after 10 seconds of not typing
+      Ember.run.debounce(this,  this._save, 10000);
+    }
+  }
+
 });
 
 Pd.MarkupsController = Ember.ArrayController.extend({});

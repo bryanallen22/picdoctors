@@ -197,7 +197,6 @@ def markup_to_dict(markup):
     whitelist.append('id')
 
     d = { k : getattr(markup, k) for k in whitelist }
-    d['pic_uuid'] = markup.pic.uuid
     return d
 
 # TODO: Should ALL markup_handler things go through here? Probably...

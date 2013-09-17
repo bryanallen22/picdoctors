@@ -326,7 +326,7 @@ class Pic(DeleteMixin):
         from skaa.models import Markup
         from skaa.markupviews import markup_to_dict
         if self.uuid is not None:
-            markups = Markup.objects.filter(pic__uuid__exact=self.uuid)
+            markups = Markup.objects.filter(pic__id=self.id)
             result = [ markup_to_dict(m) for m in markups ]
         else:
             result = []

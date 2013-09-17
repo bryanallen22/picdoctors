@@ -56,7 +56,7 @@ def can_modify_markup(request, markup_id=None):
     else:
         data = simplejson.loads(request.body)
         try:
-            pic = Pic.objects.get(uuid__exact=data['markup']['pic'])
+            pic = Pic.objects.get(id=data['markup']['pic'])
         except: 
             return False
 
@@ -73,13 +73,13 @@ def can_modify_markup(request, markup_id=None):
 
 
 def markups_endpoint(request, markup_id=None):
-    # POST /markups_handler/ -- create a new markup
+    # POST /markups_endpoint/ -- create a new markup
+    result = {}
     if request.method == 'POST':
         if can_modify_markup(request):
             data = simplejson.loads(request.body)
             data = data['markup']
-            pic = Pic.objects.get(uuid__exact=data['pic'])
-
+            pic = Pic.objects.get(id=data['pic'])
 
             markup = Markup()
             markup.pic = pic
@@ -90,22 +90,8 @@ def markups_endpoint(request, markup_id=None):
             markup.save()
 
             m = markup_to_dict(markup)
-            clientMarkupModify(m)
+            m["pic"] = pic.id
             return json_result({'markup': m})
-
-
-    # GET /markups_handler/1234/
-    elif request.method == 'GET' and markup_id is not None:
-        result = {}
-
-    # GET /markups_handler/?uuid='blah'
-    elif request.method == 'GET' and markup_id is None:
-        uuid = request.GET.get('uuid', None)
-        if uuid is not None:
-            markups = Markup.objects.filter(pic__uuid__exact=uuid)
-            result = [ markup_to_dict(m) for m in markups ]
-        else:
-            result = {}
 
     elif request.method == 'PUT':
         if can_modify_markup(request):
@@ -113,18 +99,37 @@ def markups_endpoint(request, markup_id=None):
             data = data['markup']
             markup = Markup.objects.get(id=markup_id)
 
-            album = Album.get_unfinished(request)
-            album_id = album.id if album else None
-            if album_id and markup.pic.album_id == album_id:
-                markup.description = data['description']
-                markup.save()
+            markup.description = data['description']
+            markup.save()
 
             result = {}
+
     elif request.method == 'DELETE':
         m = Markup.objects.get(id=markup_id)
         if can_modify_markup( request, markup_id):
             m.delete()
         result = {}
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
+
+def can_modify_pic(request, pic):
+   album = Album.get_unfinished(request)
+   album_id = album.id if album else None
+   return album_id and pic.album_id == album_id
+
+
+def pics_endpoint(request, pic_id=None):
+    # POST /pics_endpoint/ -- create a new markup
+    if request.method == 'PUT':
+        data = simplejson.loads(request.body)
+        data = data['pic']
+        pic = Pic.objects.get(id=pic_id)
+
+        if can_modify_pic(request, pic):
+            pic.general_instructions = data['general_instructions']
+            pic.save()
+            result = {}
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
@@ -143,7 +148,7 @@ def prepGroups(album):
     groups = Group.get_album_groups(album)
     for group in groups:
         pics = Pic.get_group_pics(group)
-        picIds = [p.uuid for p in pics]
+        picIds = [p.id for p in pics]
         model = {
            'id': group.id, 
            'album': album.id, 
@@ -160,10 +165,10 @@ def prepPics(album):
     for group in groups:
         pics = Pic.get_group_pics(group)
         for pic in pics:
-            markups = Markup.objects.filter(pic__uuid__exact=pic.uuid)
+            markups = Markup.objects.filter(pic__id=pic.id)
             markupIds = [m.id for m in markups]
             model = {
-                 'id': pic.uuid,
+                 'id': pic.id,
                  'group': group.id,
                  'general_instructions': pic.general_instructions,
                  'preview_url': pic.get_preview_url(),
@@ -179,16 +184,13 @@ def prepPics(album):
 def prepMarkups(pics):
     markups = []
     for pic in pics:
-        p = get_object_or_None(Pic, uuid=pic["id"])
+        p = get_object_or_None(Pic, id=pic["id"])
+        # I wanna redo this
         markupList = p.get_markups()
         for m in markupList:
-            clientMarkupModify(m)
-
+            m["pic"] = p.id
 
         markups.extend(markupList)
     return markups
 
-def clientMarkupModify(m):
-    m["pic"] = m["pic_uuid"]
-    del m["pic_uuid"]
 
