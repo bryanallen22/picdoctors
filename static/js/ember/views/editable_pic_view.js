@@ -150,13 +150,8 @@ Pd.EditablePicView = Ember.View.extend({
       this.get('picsMarkups').removeObject(newMarkup);
       return;
     }
-    var pic = newMarkup.get('pic');
-    //weird hackary for a sec while I figure out ember data.
-    newMarkup.set('pic', pic.get('id'));
-    // note it reloads the model based on the results
-    // so I need to return the model back so it reloads correctly!
     newMarkup.save().then(function(){
-      newMarkup.set('pic', pic);
+      // yay it saved!
     },
     function(){
       // awwwww snap, it failed to save!

@@ -7,7 +7,6 @@ Pd.Markup = DS.Model.extend({
   description: attr(),
   height: attr(),
   left: attr(),
-  pic: attr(),
   top: attr(),
   width: attr(),
 
