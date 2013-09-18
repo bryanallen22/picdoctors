@@ -42,7 +42,12 @@ Pd.EditableMarkupController = Ember.ObjectController.extend({
     style += "top: " + top + "px;";
     style += "border-style: " + borderStyle + ";" ;
     return style;
-  }.property('left', 'top', 'height')
+  }.property('left', 'top', 'height'),
+
+  redXUrl: function(){
+    return Pd.rootUrl + "images/redx.png";
+  }.property(),
+
 })
 
 

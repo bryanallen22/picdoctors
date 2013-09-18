@@ -18,7 +18,8 @@ Pd.Markup = DS.Model.extend({
 
 Pd.Markup.reopen({
   selected: false,
-  markupStyle: null
+  markupStyle: null,
+  deletable: true 
 });
 
 Pd.MarkupStyle = DS.Model.extend({

@@ -35,31 +35,6 @@
 </div>
 </script>
 
-<script type="text/x-handlebars" data-template-name="pics">
-  {{outlet}}
-</script>
-
-<script type="text/x-handlebars" data-template-name="pics/edit">
-    <div id="instructions" class="well">
-      <h3>
-        Give some general instructions for what you'd like done
-      </h3>
-      <h3>
-        Click and drag to add instructions for a specific area
-      </h3>
-    </div>
-
-  {{#each pic in controller }}
-    <div class='markup_outer'>
-      {{ view Pd.EditablePicView contentBinding="pic.model"}}
-      {{ partial "generalInstructions"}}
-      {{ render 'editableComments' pic.markups}}
-    </div>
-  {{/each}}
-
-  {{outlet}}
-</script>
-
 <script type="text/x-handlebars" data-template-name="markup_navigation">
   <div class='span2'>
     <!-- This '#anchor' is a hack to make sure that the div has a min width -->
@@ -96,6 +71,31 @@
   </div>
 </script>
 
+<script type="text/x-handlebars" data-template-name="pics">
+  {{outlet}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="pics/edit">
+    <div id="instructions" class="well">
+      <h3>
+        Give some general instructions for what you'd like done
+      </h3>
+      <h3>
+        Click and drag to add instructions for a specific area
+      </h3>
+    </div>
+
+  {{#each pic in controller }}
+    <div class='markup_outer'>
+      {{ view Pd.EditablePicView contentBinding="pic.model"}}
+      {{ partial "generalInstructions"}}
+      {{ render 'editableComments' pic.markups}}
+    </div>
+  {{/each}}
+
+  {{outlet}}
+</script>
+
 
 <script type="text/x-handlebars" data-template-name="pic_span">
   <!-- Do not, under any circumstances, change the padding or margin of  
@@ -114,7 +114,15 @@
  Note: if you change the border width here from 4px, you'll probably 
  want to fix the math in the *createMarkup* method in markup.js      -->
 <script type="text/x-handlebars" data-template-name="editable_markup">
-  <div class="markup" {{bind-attr style="markupStyleCss"}}></div> 
+  <div class="markup" {{bind-attr style="markupStyleCss"}}>
+  {{#if id}}
+     {{ view Pd.EditableMarkupView }}
+  {{/if}}
+  </div> 
+</script>
+
+<script type="text/x-handlebars" id="markup_redx">
+  <img class="markup-redx" {{bind-attr src="redXUrl" }}>
 </script>
 
 <script type="text/x-handlebars" data-template-name="_general_instructions">
@@ -147,15 +155,12 @@
    {{view Pd.AutoGrowTextArea class="desc" focusOutEvent="saveMeFocus" keyUpEvent="saveMeKeyUp" eventDelegateBinding="controller" valueBinding="description"}}
 </script>
 
-<!-- Used to put the red X on a markup element -->
-<script type="text/x-handlebars" id="markup-template-redx">
-  <img class="markup-redx" src="{{ STATIC_URL }}images/redx.png">
-</script>
 
 {% endverbatim %}
 
 {% endblock %}
 
 {% block scripts %}
+
 {% endblock %}
 

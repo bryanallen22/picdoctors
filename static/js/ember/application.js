@@ -1,6 +1,7 @@
 window.Pd = Pd = Ember.Application.create({
   rootElement: '#ember-container',
-  LOG_TRANSITIONS: true
+  LOG_TRANSITIONS: true,
+  rootUrl: picDocRootUrl
 });
 
 Pd.RestAdapter = DS.RESTAdapter.extend({
