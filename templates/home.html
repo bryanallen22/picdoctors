@@ -116,13 +116,9 @@
 <script type="text/x-handlebars" data-template-name="editable_markup">
   <div class="markup" {{bind-attr style="markupStyleCss"}}>
   {{#if id}}
-     {{ view Pd.EditableMarkupView }}
+     {{ view Pd.RedXView }}
   {{/if}}
   </div> 
-</script>
-
-<script type="text/x-handlebars" id="markup_redx">
-  <img class="markup-redx" {{bind-attr src="redXUrl" }}>
 </script>
 
 <script type="text/x-handlebars" data-template-name="_general_instructions">
