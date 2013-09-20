@@ -34,19 +34,6 @@ def users_endpoint(request, user_id):
 
     return json_result({"user":user})
 
-def albums_endpoint(request, album_id):
-    if not belongs_on_this_markup_page(request, album_id,-1):
-        return HttpResponse('Unauthorized', status=401)
-    
-    album = get_object_or_None(Album, pk=album_id)
-
-    response = {}
-    response["album"] = prepAlbum(album)
-    response["groups"] = prepGroups(album)
-    response["pics"] = prepPics(album)
-    response["markups"] = prepMarkups(response["pics"])
-    return json_result(response)
-
 def can_modify_markup(request, markup_id=None):
     pic = None
     if markup_id:
@@ -133,6 +120,21 @@ def pics_endpoint(request, pic_id=None):
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
+
+def albums_endpoint(request, album_id):
+    if not belongs_on_this_markup_page(request, album_id,-1):
+        return HttpResponse('Unauthorized', status=401)
+    
+    album = get_object_or_None(Album, pk=album_id)
+    #make sure the sequences are set here :)
+    album.set_sequences()
+
+    response = {}
+    response["album"] = prepAlbum(album)
+    response["groups"] = prepGroups(album)
+    response["pics"] = prepPics(album)
+    response["markups"] = prepMarkups(response["pics"])
+    return json_result(response)
 
 def prepAlbum(album):
     groups = Group.get_album_groups(album)

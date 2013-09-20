@@ -1,7 +1,23 @@
 Pd.MarkupsController = Ember.ArrayController.extend({});
 
 // TODO think up a better name for this
-Pd.EditableCommentsController = Ember.ArrayController.extend({});
+Pd.EditableCommentsController = Ember.ArrayController.extend({
+  itemController: 'editableComment'
+});
+
+Pd.EditableCommentController = Ember.ObjectController.extend({
+  descStyle: function(){
+
+    var markupStyle = this.get('markupStyle'),
+        color = markupStyle.get('color'),
+        style = "border: 4px " + color + ";",
+        borderStyle = markupStyle.get('border_style');
+
+    style += "border-style: " + borderStyle + ";" ;
+    return style;
+  }.property('markupStyle')
+
+});
 
 Pd.MarkupDescriptionEditController = Ember.ObjectController.extend({
   _save: function(){

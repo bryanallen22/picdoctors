@@ -154,6 +154,7 @@ Pd.EditablePicView = Ember.View.extend({
       // yay it saved!
     },
     function(){
+      console.log('aww snap, it failed to save');
       // awwwww snap, it failed to save!
     });
   }

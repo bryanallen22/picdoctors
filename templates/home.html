@@ -136,11 +136,11 @@
 
 <script type="text/x-handlebars" data-template-name="editable_comments">
       <div class='markup_desc_container'>
-        {{#each markup in this}}
+        {{#each markup in controller}}
         <div class="markup_desc">
-          <p class="desc_title" {{bind-attr style="descStyle"}}>{{markup.markupStyle.name}} instructions:</p>
+          <p class="desc_title" {{bind-attr style="descStyle"}}>{{markupStyle.name}} instructions:</p>
           <div class="dyn_instruction">
-            {{render 'markupDescriptionEdit' markup}}
+            {{render 'markupDescriptionEdit' markup.model}}
           </div>
         </div>
         {{/each}}

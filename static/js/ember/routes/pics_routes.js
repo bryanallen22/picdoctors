@@ -12,20 +12,20 @@ Pd.PicsRoute = Ember.Route.extend({
     return pics;
   },
 
-  markupsWillChange: function(){
-  },
+  markupsWillChange: function(){  },
 
   markupChanged: function(observedObject, idx, removeCount, addCount){
     this.setupMarkups(observedObject, this.get('store'));
   },
 
   setupMarkups: function(markups, store){
+    // this could easily change to not reset them on delete, but
+    // this is a more realistic view of what they'll see if they refresh
       for(var i = 0,len = markups.get('length'); i< len;i++){
         var markup = markups.objectAt(i);
         markup.set('markupStyle', store.find('markupStyle', i+1));
       }
   }
-
 
 });
 

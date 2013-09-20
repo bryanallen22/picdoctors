@@ -55,6 +55,7 @@ def upload_page(request):
 
     ret = get_progressbar_vars(request, 'upload')
     ret.update( { "pics" : pics, "ungroupedId" :  ungroupedId } )
+    ret.update( { "markup_url" : "/home/#/albums/" + str(album.id) + "/groups/1/pics/edit"})
     return ret
 
 @render_to('need_cookies.html')
