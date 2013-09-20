@@ -9,3 +9,11 @@ Pd.AlbumRoute = Ember.Route.extend({
     return this.get('store').find('album', params.album_id);
   }
 });
+
+Pd.AlbumUploadRoute = Ember.Route.extend({
+  setupController: function(){
+    Ember.run.scheduleOnce('afterRender', function(){
+      window.location.href = "/upload";
+    });
+  }
+});
