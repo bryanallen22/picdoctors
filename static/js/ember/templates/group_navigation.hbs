@@ -4,30 +4,8 @@
     <!-- These buttons are slid down by js. Using 'position:fixed' breaks -->
     <!-- on narrow monitors -->
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
-      {{#if previousGroup}}
-      {{#link-to 'pics.edit' previousGroup class='btn btn-primary btn-large workflow-buttons' }}
-      Previous
-      {{/link-to}}
-      {{else}}
-        {{#link-to 'album.upload' class='btn btn-primary btn-large workflow-buttons'}}
-        Upload
-        {{/link-to}}
-      {{/if}}
-
-      {{#if nextGroup}}
-      {{#link-to 'pics.edit' nextGroup class='btn btn-primary btn-large workflow-buttons'}}
-      Next
-      {{/link-to}}
-      {{else}}
-        {{#if isLoggedIn}}
-          {{#link-to 'album.pay' class='btn btn-primary btn-large workflow-buttons'}}
-          Pay
-          {{/link-to}}
-        {{else}}
-        {{#link-to 'signinToPay' class='btn btn-primary btn-large workflow-buttons'}}
-        Sign In
-          {{/link-to}}
-        {{/if}}
-      {{/if}}
+    
+    <a class='btn btn-primary btn-large workflow-buttons top-navigation-button' {{action 'previous'}}>{{previousLabel}}</a>
+    <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>{{nextLabel}}</a>
     </div>
   </div>

@@ -133,20 +133,25 @@ def albums_endpoint(request, album_id):
     album.set_sequences()
 
     response = {}
-    response["album"] = prepAlbum(album)
+    response["album"] = prepAlbum(album, request)
     response["groups"] = prepGroups(album)
     response["pics"] = prepPics(album)
     response["markups"] = prepMarkups(response["pics"])
     return json_result(response)
 
-def prepAlbum(album):
+def prepAlbum(album, request):
     groups = Group.get_album_groups(album)
     groupings = [g.id for g in groups]
+    owner_id = -1
+
+    if album.userprofile is not None:
+        owner_id = album.userprofile.id
 
     albumJson = {
             'id': album.id, 
             'groups': groupings,
-            'finished': album.finished
+            'finished': album.finished,
+            'owner' : owner_id
             }
 
     return albumJson

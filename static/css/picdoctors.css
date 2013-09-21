@@ -474,7 +474,12 @@
 }
 .workflow-buttons {
   display: block;
+}
+.top-navigation-button {
   margin-top: 120px;
+}
+.bottom-navigation-button {
+  margin-top: 12px;
 }
 /*****************************
   Job page
