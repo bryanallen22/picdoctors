@@ -18,7 +18,11 @@ Pd.Markup = DS.Model.extend({
 Pd.Markup.reopen({
   selected: false,
   markupStyle: null,
-  deletable: true 
+  deletable: true,
+
+  finished: function(){
+    return this.get('pic.finished');
+  }.property('pic.finished')
 });
 
 Pd.MarkupStyle = DS.Model.extend({

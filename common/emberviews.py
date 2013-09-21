@@ -22,7 +22,8 @@ def users_endpoint(request, user_id):
     user = {
             'id': -1,
             'nickname': 'visitor',
-            'email': 'email'
+            'email': 'email',
+            'isLoggedIn': False
            }
 
     profile = request.user
@@ -31,6 +32,7 @@ def users_endpoint(request, user_id):
         user['id'] = profile.id
         user['nickname'] = profile.nickname
         user['email'] = profile.email
+        user['isLoggedIn'] = True
 
     return json_result({"user":user})
 
@@ -50,6 +52,7 @@ def can_modify_markup(request, markup_id=None):
     if not pic:
         return False
 
+    # this gets the only album associated with your session
     album = Album.get_unfinished(request)
 
     #all pics are in a album, all pics are in a grouping
@@ -140,7 +143,11 @@ def prepAlbum(album):
     groups = Group.get_album_groups(album)
     groupings = [g.id for g in groups]
 
-    albumJson = {'id': album.id, 'groups': groupings}
+    albumJson = {
+            'id': album.id, 
+            'groups': groupings,
+            'finished': album.finished
+            }
 
     return albumJson
 

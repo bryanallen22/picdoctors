@@ -103,7 +103,7 @@ def generate_doctor_actions(job):
 
     mark_as_completed = DynamicAction('Mark as Completed', '/mark_job_completed/')
 
-    view_markup_url = reverse('markup_album', args=[job.album.id, 1])
+    view_markup_url = "/home/#/albums/" + str(job.album.id) + "/markupView"
     view_markup = DynamicAction('View Job', view_markup_url, True)
     view_album = DynamicAction('Before & After Album', reverse('album', args=[job.album.id]), True)
     job_price_too_low = DynamicAction('Job Price Too Low', reverse('job_price_too_low', args=[job.id]), True)

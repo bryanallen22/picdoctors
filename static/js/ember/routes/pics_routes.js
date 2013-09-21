@@ -35,6 +35,12 @@ Pd.PicsEditRoute = Ember.Route.extend({
   }
 });
 
+Pd.PicsViewRoute = Ember.Route.extend({
+  model: function(params){
+    return this.modelFor('pics');
+  }
+});
+
 Pd.PicRoute = Ember.Route.extend({
   model: function(params){
     return this.modelFor('pics').findProperty('id', params.pic_id);

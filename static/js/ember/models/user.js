@@ -4,5 +4,6 @@ hasMany = DS.hasMany;
 
 Pd.User = DS.Model.extend({
   nickname: attr(),
-  email: attr()
+  email: attr(),
+  isLoggedIn: attr()
 });

@@ -10,3 +10,9 @@ Pd.Pic = DS.Model.extend({
   width: attr(),
   height: attr()
 });
+
+Pd.Pic.reopen({
+  finished: function(){
+    return this.get('group.finished');
+  }.property('group.finished')
+});

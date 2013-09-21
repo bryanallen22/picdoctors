@@ -89,13 +89,30 @@
     <div class='markup_outer'>
       {{ view Pd.EditablePicView contentBinding="pic.model"}}
       {{ partial "generalInstructions"}}
-      {{ render 'editableComments' pic.markups}}
+      {{ render 'markupComments' pic.markups}}
     </div>
   {{/each}}
 
   {{outlet}}
 </script>
 
+<script type="text/x-handlebars" data-template-name="pics/view">
+    <div id="instructions" class="well">
+      <h3>
+        User's Picture
+      </h3>
+    </div>
+
+  {{#each pic in controller }}
+    <div class='markup_outer'>
+      {{ view Pd.ReadOnlyPicView contentBinding="pic.model"}}
+      {{ partial "generalInstructions"}}
+      {{ render 'markupComments' pic.markups}}
+    </div>
+  {{/each}}
+
+  {{outlet}}
+</script>
 
 <script type="text/x-handlebars" data-template-name="pic_span">
   <!-- Do not, under any circumstances, change the padding or margin of  
@@ -105,7 +122,7 @@
        change them, old markups might appear at the wrong spot -->
        <span class="markup_pic_container" {{bind-attr style="picStyle" uuid="uuid"}}> 
          {{#each markup in markups}}
-           {{ render 'editableMarkup' markup}}
+           {{ render 'picMarkup' markup}}
          {{/each}}
        </span>
 </script>
@@ -113,10 +130,12 @@
 <!-- This template is just the *style* attribute for the markup div      
  Note: if you change the border width here from 4px, you'll probably 
  want to fix the math in the *createMarkup* method in markup.js      -->
-<script type="text/x-handlebars" data-template-name="editable_markup">
+<script type="text/x-handlebars" data-template-name="pic_markup">
   <div class="markup" {{bind-attr style="markupStyleCss"}}>
   {{#if id}}
+    {{#unless finished}}
      {{ view Pd.RedXView }}
+    {{/unless}}
   {{/if}}
   </div> 
 </script>
@@ -126,7 +145,7 @@
         <div class="markup_desc">
           <p class="desc_title">General instructions:</p>
           <div class="instruction">
-            {{view Pd.AutoGrowTextArea class="desc" eventDelegateBinding="controller" focusOutEvent="saveMeFocus" keyUpEvent="saveMeKeyUp" valueBinding="pic.description"}}
+            {{view Pd.AutoGrowTextArea class="desc" disabledBinding="finished" eventDelegateBinding="controller" focusOutEvent="saveMeFocus" keyUpEvent="saveMeKeyUp" valueBinding="pic.description"}}
 
           </div>
           <div class="imaginary_instruction_for_tour"></div>
@@ -134,21 +153,21 @@
       </div>
 </script>
 
-<script type="text/x-handlebars" data-template-name="editable_comments">
+<script type="text/x-handlebars" data-template-name="markup_comments">
       <div class='markup_desc_container'>
         {{#each markup in controller}}
         <div class="markup_desc">
           <p class="desc_title" {{bind-attr style="descStyle"}}>{{markupStyle.name}} instructions:</p>
           <div class="dyn_instruction">
-            {{render 'markupDescriptionEdit' markup.model}}
+            {{render 'markupDescription' markup.model}}
           </div>
         </div>
         {{/each}}
       </div>
 </script>
 
-<script type="text/x-handlebars" id="markup_description_edit">
-   {{view Pd.AutoGrowTextArea class="desc" focusOutEvent="saveMeFocus" keyUpEvent="saveMeKeyUp" eventDelegateBinding="controller" valueBinding="description"}}
+<script type="text/x-handlebars" id="markup_description">
+   {{view Pd.AutoGrowTextArea class="desc" disabledBinding="finished" focusOutEvent="saveMeFocus" keyUpEvent="saveMeKeyUp" eventDelegateBinding="controller" valueBinding="description"}}
 </script>
 
 

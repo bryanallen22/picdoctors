@@ -4,4 +4,5 @@ hasMany = DS.hasMany;
 
 Pd.Album = DS.Model.extend({
   groups: hasMany('group'),
+  finished: attr()
 });
