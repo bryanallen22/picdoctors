@@ -209,7 +209,7 @@ def set_price(request):
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
-        'num_pics'          : album.num_pics,
+        'num_pics'          : album.num_groups,
         'credit_cards'      : user_credit_cards,
     })
     return ret
