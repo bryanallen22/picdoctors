@@ -360,6 +360,7 @@ class Album(DeleteMixin):
     userprofile          = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True,
                                              null=True, db_index=True)
     description          = models.TextField(blank=True)
+    # what is num groups, the number of pictures?
     num_groups           = models.IntegerField(blank=True, null=True, default=0)
 
     # This only becomes true after they've paid (set a hold)

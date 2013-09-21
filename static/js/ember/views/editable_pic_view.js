@@ -2,7 +2,7 @@
 // currently since it's only used once, it's the pic controller (because
 // the picS (note the s) controller has an itemController="pic"
 Pd.EditablePicView = Ember.View.extend({
-  templateName: 'pic_span',
+  templateName: '_pic_span',
   didInsertElement: function() {
     this._super();
   },

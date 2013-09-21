@@ -85,13 +85,7 @@
       </h3>
     </div>
 
-  {{#each pic in controller }}
-    <div class='markup_outer'>
-      {{ view Pd.EditablePicView contentBinding="pic.model"}}
-      {{ partial "generalInstructions"}}
-      {{ render 'markupComments' pic.markups}}
-    </div>
-  {{/each}}
+  {{ partial 'grouping'}}
 
   {{outlet}}
 </script>
@@ -103,18 +97,28 @@
       </h3>
     </div>
 
+  {{ partial 'grouping'}}
+
+  {{outlet}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="_grouping">
+
   {{#each pic in controller }}
     <div class='markup_outer'>
-      {{ view Pd.ReadOnlyPicView contentBinding="pic.model"}}
+      {{#if finished}}
+        {{ partial '_pic_span' }}
+      {{else}}
+        {{ view Pd.EditablePicView contentBinding="pic.model"}}
+      {{/if}}
       {{ partial "generalInstructions"}}
       {{ render 'markupComments' pic.markups}}
     </div>
   {{/each}}
 
-  {{outlet}}
 </script>
 
-<script type="text/x-handlebars" data-template-name="pic_span">
+<script type="text/x-handlebars" data-template-name="_pic_span">
   <!-- Do not, under any circumstances, change the padding or margin of  
        this .markup_pic_container or .pic unless you are 200% certain    
        that you aren't messing things up. Careful calculation of offsets 

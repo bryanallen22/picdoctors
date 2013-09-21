@@ -203,14 +203,13 @@ def set_price(request):
         pass
     str_min_price = "{0:.2f}".format(min_price)
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
-    str_num_pics = "%s" % album.num_groups
 
     ret = get_progressbar_vars(request, 'set_price')
     ret.update({
         'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
         'min_price'         : str_min_price,
         'min_price_per_pic' : str_min_price_per_pic,
-        'num_pics'          : str_num_pics,
+        'num_pics'          : album.num_pics,
         'credit_cards'      : user_credit_cards,
     })
     return ret
