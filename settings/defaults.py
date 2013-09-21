@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'south',
     'pipeline',
     'debug_toolbar',
+    'compressor',
     'seleniumtests',
     'django_extensions',
 ) + TESTABLE_APPS
@@ -268,6 +269,19 @@ ALLOWED_HOSTS = [ 'picdoctors.com', 'www.picdoctors.com' ]
 
 SITE_URL = 'https://www.picdoctors.com'
 
+
+# compiler for Ember templates
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-handlebars', 'node_modules/django-ember-precompile/bin/django-ember-precompile {infile}'),
+)
+# end pre-compiler for ember templates
 
 PIPELINE_CSS = {
     'all_css': {

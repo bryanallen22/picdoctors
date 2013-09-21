@@ -1,0 +1,13 @@
+
+  {{#each pic in controller }}
+    <div class='markup_outer'>
+      {{#if finished}}
+        {{ partial 'picVisual' }}
+      {{else}}
+        {{ view Pd.EditablePicView contentBinding="pic.model"}}
+      {{/if}}
+      {{ partial "picInstruction"}}
+      {{ render 'markupInstructions' pic.markups}}
+    </div>
+  {{/each}}
+

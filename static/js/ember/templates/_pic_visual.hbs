@@ -1,0 +1,10 @@
+  <!-- Do not, under any circumstances, change the padding or margin of  
+       this .markup_pic_container or .pic unless you are 200% certain    
+       that you aren't messing things up. Careful calculation of offsets 
+       for drawing markups at the right location is done, and if you     
+       change them, old markups might appear at the wrong spot -->
+       <span class="markup_pic_container" {{bind-attr style="picStyle" uuid="uuid"}}> 
+         {{#each markup in markups}}
+           {{ render 'markupVisual' markup}}
+         {{/each}}
+       </span>

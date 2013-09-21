@@ -69,6 +69,7 @@ echo "Installing npm, less, shint, recess, and uglify-js..."
 echo "====="
 sudo apt-get install npm -y
 sudo npm install -g less jshint recess uglify-js yuglify
+sudo npm install django-ember-precompile
 
 echo "====="
 echo "Installing a crazy Rabbit Message Q"

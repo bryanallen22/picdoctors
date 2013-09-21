@@ -10,3 +10,5 @@ Pd.GroupRoute = Ember.Route.extend({
     return this.modelFor('groups').findProperty('id', params.group_id);
   }
 });
+
+Pd.GroupNavigationRoute = Ember.Route.extend({});

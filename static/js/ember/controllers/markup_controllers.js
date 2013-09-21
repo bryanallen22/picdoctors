@@ -1,10 +1,10 @@
 Pd.MarkupsController = Ember.ArrayController.extend({});
 
-Pd.MarkupCommentsController = Ember.ArrayController.extend({
-  itemController: 'markupComment'
+Pd.MarkupInstructionsController = Ember.ArrayController.extend({
+  itemController: 'markupInstruction'
 });
 
-Pd.MarkupCommentController = Ember.ObjectController.extend({
+Pd.MarkupInstructionController = Ember.ObjectController.extend({
   descStyle: function(){
 
     var markupStyle = this.get('markupStyle'),
@@ -18,7 +18,9 @@ Pd.MarkupCommentController = Ember.ObjectController.extend({
 
 });
 
-Pd.MarkupDescriptionController = Ember.ObjectController.extend({
+// TODO which one is this one?
+// I mean, I realize it's for saving a markup instruction
+Pd.MarkupInstructionTextBoxController = Ember.ObjectController.extend({
   _save: function(){
     var model = this.get('model');
     if(model.get('isDirty')){
@@ -40,7 +42,7 @@ Pd.MarkupDescriptionController = Ember.ObjectController.extend({
 
 });
 
-Pd.PicMarkupController = Ember.ObjectController.extend({
+Pd.MarkupVisualController = Ember.ObjectController.extend({
   markupStyleCss: function(){
     var left = this.get('left'),
         top = this.get('top'),
@@ -61,54 +63,3 @@ Pd.PicMarkupController = Ember.ObjectController.extend({
 })
 
 
-Pd.MarkupNavigationController = Ember.ObjectController.extend({
-  needs:['application'],
-
-  setupGroups: function(){
-    var current = this.get('model'),
-        currentIdx = 0,
-        groups = current.get('album.groups'),
-        len = groups.get('length'),
-        next,
-        previous = current;
-
-
-    for(var i = 0; i<len; i++){
-      var group = groups.objectAt(i);
-      if(group === current){
-        currentIdx = i;
-        break;
-      }    
-    }
-
-    this.set('_previousGroup', null);
-    this.set('_nextGroup', null);
-
-    if(currentIdx>0){
-      this.set('_previousGroup', groups.objectAt(currentIdx-1));
-    }
-
-    if(currentIdx+1<len){
-      this.set('_nextGroup', groups.objectAt(currentIdx+1));
-    }
-  }.property('model'),
-
-  _nextGroup: null,
-  
-  nextGroup: function(){
-    this.get('setupGroups');
-    return this.get('_nextGroup');    
-  }.property('model', '_nextGroup'),
-
-  _previousGroup: null,
-
-  previousGroup: function(){
-    this.get('setupGroups');
-    return this.get('_previousGroup');    
-  }.property('model', '_previousGroup'),
-
-  isLoggedIn: function(){
-    return this.get('controllers.application.isLoggedIn');
-  }.property('controllers.application.isLoggedIn')
-
-});

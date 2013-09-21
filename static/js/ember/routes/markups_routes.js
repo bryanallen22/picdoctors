@@ -4,7 +4,6 @@ Pd.MarkupsRoute = Ember.Route.extend({
   }
 });
 
-Pd.MarkupNavigationRoute = Ember.Route.extend({});
 
 // there is a way to use a fixture adapter, but I need to find out how to use two different stores, one with
 // a fixture adapter, the other with the rest adapter
