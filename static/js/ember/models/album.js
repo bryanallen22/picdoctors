@@ -5,5 +5,6 @@ hasMany = DS.hasMany;
 Pd.Album = DS.Model.extend({
   groups: hasMany('group'),
   finished: attr(),
-  owner: attr()
+  owner: attr(),
+  doctor: attr()
 });

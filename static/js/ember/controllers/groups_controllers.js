@@ -88,6 +88,13 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
     return ownerId == userId;
   }.property('album.owner', 'controllers.application.id'),
 
+  albumDoctor: function(){
+    var docId = this.get('album.doctor'),
+        userId = this.get('controllers.application.id');
+
+    return docId == userId;
+  }.property('album.owner', 'controllers.application.id'),
+
   isLoggedIn: function(){
     return this.get('controllers.application.isLoggedIn');
   }.property('controllers.application.isLoggedIn'),
@@ -97,24 +104,27 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
       var nextGroup = this.get('nextGroup'),
           finished = this.get('finished'),
           needsPay = this.get('needsPay'),
-          needsSignIn = this.get('needsSignIn');
+          needsSignIn = this.get('needsSignIn'),
+          albumDoctor = this.get('albumDoctor');
 
       if(nextGroup && !finished) this.transitionTo('pics.edit', nextGroup);
       else if(nextGroup && finished) this.transitionTo('pics.view', nextGroup);
       else if(needsPay) this.transitionTo('album.pay');
       else if(needsSignIn) this.transitionTo('signinToPay');
-      else if(finished) this.transitionTo('hell');
+      else if(finished && albumDoctor) this.transitionTo('jobs.docJobs');
+      else if(finished && !albumDoctor) this.transitionTo('jobs.newJobs');
     },
 
     previous: function(){
     var previousGroup = this.get('previousGroup'),
-        finished = this.get('finished');
+        finished = this.get('finished'),
+        albumDoctor = this.get('albumDoctor');
 
     if(previousGroup && !finished) this.transitionTo('pics.edit', previousGroup);
     else if(previousGroup && finished) this.transitionTo('pics.view', previousGroup);
     else if(!finished) this.transitionTo('album.upload');
-    else if(finished) this.transitionTo('yoMomma');
-
+    else if(finished && albumDoctor) this.transitionTo('jobs.docJobs');
+    else if(finished && !albumDoctor) this.transitionTo('jobs.newJobs');
     }
 
   }

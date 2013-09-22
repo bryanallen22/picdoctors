@@ -142,16 +142,23 @@ def albums_endpoint(request, album_id):
 def prepAlbum(album, request):
     groups = Group.get_album_groups(album)
     groupings = [g.id for g in groups]
+    job = album.get_job_or_None()
     owner_id = -1
+    doctor_id = -1
 
     if album.userprofile is not None:
         owner_id = album.userprofile.id
+
+    if job is not None:
+        if job.doctor is not None:
+            doctor_id = job.doctor.id
 
     albumJson = {
             'id': album.id, 
             'groups': groupings,
             'finished': album.finished,
-            'owner' : owner_id
+            'owner' : owner_id,
+            'doctor' : doctor_id
             }
 
     return albumJson

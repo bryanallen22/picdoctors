@@ -25,15 +25,15 @@ Pd.AlbumPayRoute = Ember.Route.extend({
 Pd.AlbumMarkupEditRoute = Ember.Route.extend({
   redirect: function(){
     var firstGroup = this.modelFor('album').get('groups.firstObject');
-    var trans = this.transitionTo('pics.edit', firstGroup);
-    trans.urlMethod = "replace";
+    // replace this route in the history
+    this.replaceWith('pics.edit', firstGroup);
   }
 });
 
 Pd.AlbumMarkupViewRoute = Ember.Route.extend({
   redirect: function(){
     var firstGroup = this.modelFor('album').get('groups.firstObject');
-    var trans = this.transitionTo('pics.view', firstGroup);
-    trans.urlMethod = "replace";
+    // replace this route in the history
+    this.replaceWith('pics.view', firstGroup);
   }
 });

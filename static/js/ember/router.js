@@ -2,6 +2,10 @@
 
 Pd.Router.map(function(){
   this.route('signinToPay');
+  this.resource('jobs', {path: 'jobs'}, function(){
+    this.route('newJobs');
+    this.route('docJobs');
+  });
   this.resource('albums' , { path: 'albums'}, function(){
     this.resource('album', { path: ':album_id'}, function(){
       this.route('pay');
@@ -13,6 +17,7 @@ Pd.Router.map(function(){
           this.resource('pics', {path: 'pics'}, function(){
             this.route('edit');
             this.route('view');
+            this.route('work');
             this.resource('pic', {path: ':pic_id'}, function(){
               this.resource('markups', {path: 'markups'}, function(){
               });
