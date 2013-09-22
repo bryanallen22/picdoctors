@@ -138,6 +138,7 @@ def fill_job_info(job, action_generator, profile):
             job_inf.albumurl = reverse('album', args=[album.id])
         else:
             job_inf.albumurl = reverse('markup_album', args=[job_inf.album, 1])
+            job_inf.albumurl = "/home/#/albums/" + str(job_inf.album) + "/markupView"
 
         job_inf.output_pic_count = album.num_groups
         job_inf.pic_thumbs = generate_pic_thumbs(album, job_complete)
@@ -162,7 +163,8 @@ def generate_pic_thumbs(filter_album, job_complete):
         if job_complete:
             markup_url = reverse('album', args=[filter_album.id])
         else:
-            markup_url= reverse('markup_album', args=[filter_album.id, pic.group.sequence])
+            markup_url = "/home/#/albums/" + str(filter_album.id) + "/groups/" + str(pic.group.id) + "/pics/view"
+
         tup = (pic.get_thumb_url(), markup_url)
         ret.append(tup)
     return ret

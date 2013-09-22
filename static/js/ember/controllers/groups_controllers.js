@@ -7,11 +7,11 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
 
   setupGroups: function(){
     var current = this.get('model'),
-        currentIdx = 0,
-        groups = current.get('album.groups'),
-        len = groups.get('length'),
-        next,
-        previous = current;
+    currentIdx = 0,
+    groups = current.get('album.groups'),
+    len = groups.get('length'),
+    next,
+    previous = current;
 
 
     for(var i = 0; i<len; i++){
@@ -35,7 +35,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
   }.property('model'),
 
   _nextGroup: null,
-  
+
   nextGroup: function(){
     this.get('setupGroups');
     return this.get('_nextGroup');    
@@ -43,9 +43,9 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
 
   nextLabel: function(){
     var nextGroup = this.get('nextGroup'),
-        finished = this.get('finished'),
-        needsPay = this.get('needsPay'),
-        needsSignIn = this.get('needsSignIn');
+    finished = this.get('finished'),
+    needsPay = this.get('needsPay'),
+    needsSignIn = this.get('needsSignIn');
 
     if(nextGroup) return "Next";
     if(needsPay) return "Pay";
@@ -55,13 +55,13 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
 
   needsPay: function(){
     var finished = this.get('finished'),
-        isLoggedIn = this.get('isLoggedIn');
+    isLoggedIn = this.get('isLoggedIn');
     return !finished && isLoggedIn;
   }.property('finished', 'isLoggedIn'),
 
   needsSignIn: function(){
     var finished = this.get('finished'),
-        isLoggedIn = this.get('isLoggedIn');
+    isLoggedIn = this.get('isLoggedIn');
     return !finished && !isLoggedIn;
   }.property('finished', 'isLoggedIn'),
 
@@ -74,23 +74,23 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
 
   previousLabel: function(){
     var previousGroup = this.get('previousGroup'),
-        finished = this.get('finished');
+    finished = this.get('finished');
 
     if(previousGroup) return "Previous";
     if(!finished) return "Upload";
     if(finished) return "Jobs";
-  }.property('previousGroup', 'ownsAlbum'),
+  }.property('previousGroup', 'finished'),
 
-  ownsAlbum: function(){
+  albumOwner: function(){
     var ownerId = this.get('album.owner'),
-        userId = this.get('controllers.application.id');
+    userId = this.get('controllers.application.id');
 
     return ownerId == userId;
   }.property('album.owner', 'controllers.application.id'),
 
   albumDoctor: function(){
     var docId = this.get('album.doctor'),
-        userId = this.get('controllers.application.id');
+    userId = this.get('controllers.application.id');
 
     return docId == userId;
   }.property('album.doctor', 'controllers.application.id'),
@@ -102,29 +102,42 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
   actions:{
     next: function(){
       var nextGroup = this.get('nextGroup'),
-          finished = this.get('finished'),
-          needsPay = this.get('needsPay'),
-          needsSignIn = this.get('needsSignIn'),
-          albumDoctor = this.get('albumDoctor');
+      finished = this.get('finished'),
+      needsPay = this.get('needsPay'),
+      needsSignIn = this.get('needsSignIn'),
+      albumDoctor = this.get('albumDoctor'),
+      albumOwner = this.get('albumOwner');
 
       if(nextGroup && !finished) this.transitionTo('pics.edit', nextGroup);
       else if(nextGroup && finished) this.transitionTo('pics.view', nextGroup);
-      else if(needsPay) this.transitionTo('album.pay');
-      else if(needsSignIn) this.transitionTo('signinToPay');
-      else if(finished && albumDoctor) this.transitionTo('jobs.docJobs');
-      else if(finished && !albumDoctor) this.transitionTo('jobs.newJobs');
+      else if(albumOwner){
+        if(needsPay) this.transitionTo('album.pay');
+        else if(needsSignIn) this.transitionTo('signinToPay');
+        else if(finished) this.transitionTo('job.userJobs');
+      } else if(albumDoctor) {
+        if(finished) this.transitionTo('jobs.docJobs');
+      } else if (!albumDoctor) {
+        if(finished) this.transitionTo('jobs.newJobs');
+      }
+
     },
 
     previous: function(){
-    var previousGroup = this.get('previousGroup'),
-        finished = this.get('finished'),
-        albumDoctor = this.get('albumDoctor');
+      var previousGroup = this.get('previousGroup'),
+      finished = this.get('finished'),
+      albumDoctor = this.get('albumDoctor'),
+      albumOwner = this.get('albumOwner');
 
-    if(previousGroup && !finished) this.transitionTo('pics.edit', previousGroup);
-    else if(previousGroup && finished) this.transitionTo('pics.view', previousGroup);
-    else if(!finished) this.transitionTo('album.upload');
-    else if(finished && albumDoctor) this.transitionTo('jobs.docJobs');
-    else if(finished && !albumDoctor) this.transitionTo('jobs.newJobs');
+      if(previousGroup && !finished) this.transitionTo('pics.edit', previousGroup);
+      else if(previousGroup && finished) this.transitionTo('pics.view', previousGroup);
+      else if (albumOwner){
+        if(finished) this.transitionTo('jobs.userJobs');
+        else this.transitionTo('album.upload');
+      } else if (albumDoctor) {
+        if(finished) this.transitionTo('jobs.docJobs');
+      } else if(!albumDoctor) {
+        if(finished) this.transitionTo('jobs.newJobs');
+      }
     }
 
   }

@@ -11,3 +11,9 @@ Pd.JobsDocJobsRoute = Ember.Route.extend({
     window.location.replace("/doc_jobs");
   }
 });
+
+Pd.JobsUserJobsRoute = Ember.Route.extend({
+  redirect: function(){
+    window.location.replace("/jobs");
+  }
+});
