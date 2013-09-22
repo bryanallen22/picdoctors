@@ -93,7 +93,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
         userId = this.get('controllers.application.id');
 
     return docId == userId;
-  }.property('album.owner', 'controllers.application.id'),
+  }.property('album.doctor', 'controllers.application.id'),
 
   isLoggedIn: function(){
     return this.get('controllers.application.isLoggedIn');
