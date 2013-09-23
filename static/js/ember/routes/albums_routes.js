@@ -11,19 +11,19 @@ Pd.AlbumRoute = Ember.Route.extend({
 });
 
 Pd.AlbumUploadRoute = Ember.Route.extend({
-  redirect: function(){
+  afterModel: function(){
     window.location.replace("/upload");
   }
 });
 
 Pd.AlbumPayRoute = Ember.Route.extend({
-  redirect: function(){
+  afterModel: function(){
     window.location.replace("/set_price");
   }
 });
 
 Pd.AlbumMarkupEditRoute = Ember.Route.extend({
-  redirect: function(){
+  afterModel: function(){
     var firstGroup = this.modelFor('album').get('groups.firstObject');
     // replace this route in the history
     this.replaceWith('pics.edit', firstGroup);
@@ -31,7 +31,7 @@ Pd.AlbumMarkupEditRoute = Ember.Route.extend({
 });
 
 Pd.AlbumMarkupViewRoute = Ember.Route.extend({
-  redirect: function(){
+  afterModel: function(){
     var firstGroup = this.modelFor('album').get('groups.firstObject');
     // replace this route in the history
     this.replaceWith('pics.view', firstGroup);

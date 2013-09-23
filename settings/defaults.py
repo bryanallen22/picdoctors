@@ -352,6 +352,12 @@ PIPELINE_JS = {
             'js/ember/controllers/*.js',
             'js/ember/views/*.js',
 
+            ##########
+            # Logger #
+            ##########
+            
+            'js/logger/*.js'
+
         ),
         'output_filename': 'compressed/all.js',
     }

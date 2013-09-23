@@ -28,8 +28,7 @@ Pd.EditablePicView = Ember.View.extend({
 
     this.set('drawing', true);
     var offset = this.get('offset'),
-        store = this.get('controller.store'),
-        markupStyle = store.find('markupStyle', this.get('content.markups.length')+1),
+        controller = this.get('controller'),
         initialSize = 10;
 
     /* The -6 magic here is:
@@ -41,23 +40,21 @@ Pd.EditablePicView = Ember.View.extend({
     var displayLeft = e.pageX - offset.left - initialSize - 6;
     var displayTop = e.pageY - offset.top - initialSize - 6;
 
-    var newMarkup = store.createRecord(Pd.Markup, {
+
+    var newMarkup = controller.createMarkup();
+    
+    controller.deselectAllMarkups();
+
+    newMarkup.setProperties({
       left:             displayLeft,
       top:              displayTop,
       height:           initialSize,
       width:            initialSize,
-      pic:              this.get('controller.model')
+      selected:         true
     });
-    // can I put this in above? probably...
-    newMarkup.set('markupStyle', markupStyle);
-    //newMarkup.set('deletable', false);
-
 
     this.set('newMarkup', newMarkup);
-    this.set('newMarkupStartX', displayLeft);
-    this.set('newMarkupStartY', displayTop);
-
-    this.get('picsMarkups').addObject(newMarkup);
+    this.setProperties({'newMarkupStartX': displayLeft, 'newMarkupStartY': displayTop});
   },
 
   mouseMove: function(e){
@@ -135,27 +132,27 @@ Pd.EditablePicView = Ember.View.extend({
     this.set('drawing', false);
 
     var img = this.get('picSpan'),
-    img_offset = this.get('offset'),
-    newMarkup = this.get('newMarkup'),
-    store = this.get('controller.store'),
-    x = e.pageX - img_offset.left,
-    y = e.pageY - img_offset.top,
-    xSize = Math.abs(x - this.get('newMarkupStartX')),
-    ySize = Math.abs(y - this.get('newMarkupStartY')),
-    minimum_size = 25;
+        img_offset = this.get('offset'),
+        newMarkup = this.get('newMarkup'),
+        picController = this.get('controller'),
+        x = e.pageX - img_offset.left,
+        y = e.pageY - img_offset.top,
+        xSize = Math.abs(x - this.get('newMarkupStartX')),
+        ySize = Math.abs(y - this.get('newMarkupStartY')),
+        minimum_size = 25;
 
+    picController.selectAllMarkups();
     // If the markup is too small, get rid of it
     if( xSize < minimum_size ||  ySize < minimum_size ) {
-      newMarkup.destroy();
-      this.get('picsMarkups').removeObject(newMarkup);
+      newMarkup.deleteRecord();
       return;
     }
+
     newMarkup.save().then(function(){
-      // yay it saved!
+      Pd.Logger.timestamp('Saved new markup: ' + newMarkup.get('id'), 5); 
     },
     function(){
-      console.log('aww snap, it failed to save');
-      // awwwww snap, it failed to save!
+      Pd.Logger.timestamp('Failed to Save new markup!!!!!', 4); 
     });
   }
 

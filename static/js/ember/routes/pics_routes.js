@@ -6,7 +6,7 @@ Pd.PicsRoute = Ember.Route.extend({
     var pics = this.modelFor('group').get('pics');
     pics.forEach(function(pic){
       var markups = pic.get('markups');
-      self.setupMarkups(markups, store);
+      self.setupMarkups(markups, store, true);
       markups.addArrayObserver(self, { willChange: self.markupsWillChange, didChange: self.markupChanged });
     });
     return pics;
@@ -15,14 +15,15 @@ Pd.PicsRoute = Ember.Route.extend({
   markupsWillChange: function(){  },
 
   markupChanged: function(observedObject, idx, removeCount, addCount){
-    this.setupMarkups(observedObject, this.get('store'));
+    this.setupMarkups(observedObject, this.get('store'), false);
   },
 
-  setupMarkups: function(markups, store){
+  setupMarkups: function(markups, store, selectAll){
     // this could easily change to not reset them on delete, but
     // this is a more realistic view of what they'll see if they refresh
       for(var i = 0,len = markups.get('length'); i< len;i++){
         var markup = markups.objectAt(i);
+        if(selectAll) markup.set('selected', true);
         markup.set('markupStyle', store.find('markupStyle', i+1));
       }
   }
@@ -45,4 +46,5 @@ Pd.PicRoute = Ember.Route.extend({
   model: function(params){
     return this.modelFor('pics').findProperty('id', params.pic_id);
   }
+
 });

@@ -3,6 +3,13 @@ Pd.AutoGrowTextArea = Ember.TextArea.extend({
     Pd.Resize.joinAutoSize(this.$()[0]);
     this._super();
   },
+  focusIn: function(){
+    var focusIn = this.get('focusInEvent'),
+        delegate = this.get('eventDelegate');
+    if(focusIn){
+      delegate.send(focusIn);
+    }
+  },
   focusOut: function(){
     var focusOut = this.get('focusOutEvent'),
         delegate = this.get('eventDelegate');

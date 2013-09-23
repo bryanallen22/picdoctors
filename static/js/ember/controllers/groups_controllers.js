@@ -108,16 +108,16 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
       albumDoctor = this.get('albumDoctor'),
       albumOwner = this.get('albumOwner');
 
-      if(nextGroup && !finished) this.transitionTo('pics.edit', nextGroup);
-      else if(nextGroup && finished) this.transitionTo('pics.view', nextGroup);
+      if(nextGroup && !finished) this.transitionToRoute('pics.edit', nextGroup);
+      else if(nextGroup && finished) this.transitionToRoute('pics.view', nextGroup);
       else if(albumOwner){
-        if(needsPay) this.transitionTo('album.pay');
-        else if(needsSignIn) this.transitionTo('signinToPay');
-        else if(finished) this.transitionTo('job.userJobs');
+        if(needsPay) this.transitionToRoute('album.pay');
+        else if(needsSignIn) this.transitionToRoute('signinToPay');
+        else if(finished) this.transitionToRoute('job.userJobs');
       } else if(albumDoctor) {
-        if(finished) this.transitionTo('jobs.docJobs');
+        if(finished) this.transitionToRoute('jobs.docJobs');
       } else if (!albumDoctor) {
-        if(finished) this.transitionTo('jobs.newJobs');
+        if(finished) this.transitionToRoute('jobs.newJobs');
       }
 
     },
@@ -128,15 +128,15 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
       albumDoctor = this.get('albumDoctor'),
       albumOwner = this.get('albumOwner');
 
-      if(previousGroup && !finished) this.transitionTo('pics.edit', previousGroup);
-      else if(previousGroup && finished) this.transitionTo('pics.view', previousGroup);
+      if(previousGroup && !finished) this.transitionToRoute('pics.edit', previousGroup);
+      else if(previousGroup && finished) this.transitionToRoute('pics.view', previousGroup);
       else if (albumOwner){
-        if(finished) this.transitionTo('jobs.userJobs');
-        else this.transitionTo('album.upload');
+        if(finished) this.transitionToRoute('jobs.userJobs');
+        else this.transitionToRoute('album.upload');
       } else if (albumDoctor) {
-        if(finished) this.transitionTo('jobs.docJobs');
+        if(finished) this.transitionToRoute('jobs.docJobs');
       } else if(!albumDoctor) {
-        if(finished) this.transitionTo('jobs.newJobs');
+        if(finished) this.transitionToRoute('jobs.newJobs');
       }
     }
 

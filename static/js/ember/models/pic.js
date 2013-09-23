@@ -14,5 +14,19 @@ Pd.Pic = DS.Model.extend({
 Pd.Pic.reopen({
   finished: function(){
     return this.get('group.finished');
-  }.property('group.finished')
+  }.property('group.finished'),
+
+
+  deselectAllMarkups: function(){
+    this.get('markups').forEach(function(markup){
+      markup.set('selected', false);
+    });
+  },
+
+  selectAllMarkups: function(){
+    this.get('markups').forEach(function(markup){
+      markup.set('selected', true);
+    });
+  },
+
 });
