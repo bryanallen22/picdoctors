@@ -1,14 +1,10 @@
-Pd.PicsController = Ember.ArrayController.extend({});
-
-Pd.PicsEditController = Ember.ArrayController.extend({
+Pd.DocPicsController = Ember.ArrayController.extend({
   itemController: 'pic'
+
 });
 
-Pd.PicsViewController = Ember.ArrayController.extend({
-  itemController: 'pic'
-});
-
-Pd.PicController = Ember.ObjectController.extend({
+//TODO delete me
+Pd.aPicController = Ember.ObjectController.extend({
 
   createMarkup: function(){
     var store = this.get('store'),

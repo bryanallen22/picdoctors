@@ -2,13 +2,16 @@ attr = DS.attr;
 belongsTo = DS.belongsTo;
 hasMany = DS.hasMany;
 
-Pd.Pic = DS.Model.extend({
-  group: belongsTo('group'),
-  markups: hasMany('markup'),
-  description: attr(),
+Pd.BasePic = DS.Model.extend({
   preview_url: attr(),
   width: attr(),
   height: attr()
+});
+
+Pd.Pic = Pd.BasePic.extend({
+  group: belongsTo('group'),
+  markups: hasMany('markup'),
+  description: attr()
 });
 
 Pd.Pic.reopen({
@@ -29,4 +32,15 @@ Pd.Pic.reopen({
     });
   },
 
+});
+
+Pd.DocPic = Pd.BasePic.extend({
+  group: belongsTo('group'),
+  revision: attr()
+});
+
+Pd.DocPic.reopen({
+  finished: function(){
+    return this.get('group.finished');
+  }.property('group.finished')
 });

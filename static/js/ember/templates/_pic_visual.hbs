@@ -4,7 +4,9 @@
        for drawing markups at the right location is done, and if you     
        change them, old markups might appear at the wrong spot -->
        <span class="markup_pic_container" {{bind-attr style="picStyle" uuid="uuid"}}> 
+       {{#if markups}}
          {{#each markup in markups}}
            {{ render 'markupVisual' markup}}
          {{/each}}
+        {{/if}}
        </span>

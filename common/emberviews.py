@@ -134,8 +134,9 @@ def albums_endpoint(request, album_id):
 
     response = {}
     response["album"] = prepAlbum(album, request)
-    response["groups"] = prepGroups(album)
+    response["groups"] = prepGroups(album, request)
     response["pics"] = prepPics(album)
+    response["docPics"] = prepDocPics(album, request)
     response["markups"] = prepMarkups(response["pics"])
     return json_result(response)
 
@@ -163,24 +164,59 @@ def prepAlbum(album, request):
 
     return albumJson
 
-def prepGroups(album):
+def prepGroups(album, request):
     groupsJson = []
 
     groups = Group.get_album_groups(album)
+    job = album.get_job_or_None()
     for group in groups:
         pics = Pic.get_group_pics(group)
-        picIds = [p.id for p in pics]
+        pic_ids = [p.id for p in pics]
+        doc_pic_ids = []
+
+        if job is not None:
+            doc_pics = group.get_doctor_pics(job, request.user)
+            doc_pic_ids = [dp.get_pic(request.user, job).id for dp in doc_pics]
+
         model = {
            'id': group.id, 
            'album': album.id, 
-           'pics': picIds
+           'pics': pic_ids,
+           'docPics': doc_pic_ids
                 }
         groupsJson.append(model)
 
     return groupsJson
 
+def prepDocPics(album, request):
+    doc_pics = []
+    job = album.get_job_or_None()
+    if job is None:
+        return []
+    
+    groups = Group.get_album_groups(album)
+    # ipdb.set_trace()
+    for group in groups:
+        doc_pic_groups = group.get_doctor_pics(job, request.user)
+        revision = len(doc_pic_groups) + 1
+        for doc_pic_group in doc_pic_groups:
+            revision -= 1
+            pic = doc_pic_group.get_pic(request.user, job)
+            model = {
+                 'id': pic.id,
+                 'group': group.id,
+                 'preview_url': pic.get_preview_url(),
+                 'width': pic.preview_width,
+                 'height': pic.preview_height,
+                 'revision': revision
+                    }
+       
+            doc_pics.append(model)
+
+    return doc_pics
+
 def prepPics(album):
-    picsJson = []
+    pics_ret = []
 
     groups = Group.get_album_groups(album)
     for group in groups:
@@ -198,9 +234,9 @@ def prepPics(album):
                  'markups': markupIds
                     }
        
-            picsJson.append(model)
+            pics_ret.append(model)
 
-    return picsJson 
+    return pics_ret
 
 def prepMarkups(pics):
     markups = []

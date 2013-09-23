@@ -1,6 +1,9 @@
 <div class='row'>
   <div id="markup_app" class='span10'>
+  {{#if hasDocPics}}
+    {{ render 'docPics' model.docPics }}
+  {{/if}}
   {{outlet}}
   </div>
-  {{ render 'groupNavigation' this.model}}
+  {{ render 'groupNavigation' model}}
 </div>
