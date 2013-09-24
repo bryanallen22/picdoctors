@@ -198,22 +198,22 @@ def prepDocPics(album, request):
     # ipdb.set_trace()
     for group in groups:
         doc_pic_groups = group.get_doctor_pics(job, request.user)
-        revision = len(doc_pic_groups) + 1
         for doc_pic_group in doc_pic_groups:
-            revision -= 1
             pic = doc_pic_group.get_pic(request.user, job)
-            model = {
-                 'id': pic.id,
-                 'group': group.id,
-                 'preview_url': pic.get_preview_url(),
-                 'width': pic.preview_width,
-                 'height': pic.preview_height,
-                 'revision': revision
-                    }
-       
+            model = buildDocPic(group, pic)
             doc_pics.append(model)
 
     return doc_pics
+
+def buildDocPic(group, pic):
+    return {
+        'id': pic.id,
+        'group': group.id,
+        'preview_url': pic.get_preview_url(),
+        'width': pic.preview_width,
+        'height': pic.preview_height
+           }
+
 
 def prepPics(album):
     pics_ret = []

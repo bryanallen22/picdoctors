@@ -19,7 +19,7 @@ Pd.UploadButton = Ember.View.extend({
         url: '/doc_upload_handler/', 
         type: 'POST',
         //Ajax events
-        success: function(){ alert('good');},
+        success: function(data){ self.newPicHandler(data);},
         error: function(){ alert('uhoh');},
         // Form data
         data: formData,
@@ -28,6 +28,16 @@ Pd.UploadButton = Ember.View.extend({
         contentType: false,
         processData: false
     });
+  },
+
+  newPicHandler: function(data){
+    var store = this.get('controller.store'),
+        group = this.get('controller.model');
+
+    store.push('docPic', data);
+    var dp = store.find('docPic', data.id);
+    group.get('docPics').insertAt(0, dp);
+
   }
 
 });

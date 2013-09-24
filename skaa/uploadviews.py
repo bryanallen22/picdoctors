@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.utils import simplejson
 
 from django.template import RequestContext
-from annoying.decorators import render_to
+from annoying.decorators import render_to, ajax_request
 from annoying.functions import get_object_or_None
 
 from django.core.files.uploadedfile import UploadedFile
@@ -22,6 +22,7 @@ from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
 from skaa.progressbarviews import get_progressbar_vars
+from common.emberviews import buildDocPic
 
 from PIL import Image
 from StringIO import StringIO
@@ -103,6 +104,7 @@ def has_doc_upload_access(request):
 
 
 @passes_test(has_doc_upload_access, '/')
+@ajax_request
 def doc_upload_handler(request):
     if request.method == 'POST':
         profile = get_profile_or_None(request)
@@ -111,15 +113,21 @@ def doc_upload_handler(request):
         #don't worry, we validate the group_id at the decorator
         group_id = int(request.POST['group_id'])
         group = get_object_or_None(Group, id=group_id )
+        
         # Save this off into the database
         file = request.FILES[u'doc_file']
         if file is not None:
             pickleable_pic = StringIO(file.read())
-            # if you want to use the workers use the line below
+            # if you want to use the workers use the line below, watch out
+            # I'm gonna make this non-asyncable
             # saveWatermark.apply_async(args=[profile.id, group_id, pickleable_pic])
-            saveWatermark(profile.id, group_id, pickleable_pic)
+            dp = saveWatermark(profile.id, group_id, pickleable_pic)
+            
+            job = get_object_or_None(Job, album=group.album.id)
 
+            pic = dp.get_pic(request.user, job)
             log.info('File saving done')
+            return buildDocPic(group, pic)
 
     #redirect to where they came from
     return redirect(request.META['HTTP_REFERER'])

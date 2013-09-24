@@ -53,7 +53,9 @@ def saveWatermark(profile_id, group_id, str_io_pic):
     wm_pic.save()
 
     #create a new entry in the DocPicGroup
-    group.add_doctor_pic(pic, wm_pic)
+    return group.add_doctor_pic(pic, wm_pic)
+    
+    
 
 from celery.task.schedules import crontab
 from celery.task import periodic_task

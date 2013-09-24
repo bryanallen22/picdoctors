@@ -35,8 +35,7 @@ Pd.Pic.reopen({
 });
 
 Pd.DocPic = Pd.BasePic.extend({
-  group: belongsTo('group'),
-  revision: attr()
+  group: belongsTo('group')
 });
 
 Pd.DocPic.reopen({
