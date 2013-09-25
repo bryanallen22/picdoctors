@@ -1,42 +1,72 @@
 Pd.UploadButton = Ember.View.extend({
-  templateName: '_doc_upload_button',
-  didInsertElement: function() {
-    var self = this;
+  tagName: 'input',
+  attributeBindings: ['type'],
+  type: 'file',
+  originalText: 'Upload Finished Product',
+  uploadingText: 'Busy Uploading...',
 
-    // todo figure out how to monitor this with ember
-    $('#doc_file').change( function(e){ self.doc_upload(self,e)} );
-    this._super();
+  newPicHandler: function(data){
+    var store = this.get('controller.store'),
+    group = this.get('controller.model');
+
+    delete data.group;
+    //data.group = group;
+
+    var docPic = store.createRecord('docPic', data);
+    group.get('docPics').insertAt(0, docPic); 
   },
 
-  doc_upload : function(self, e) {
+  textSpan: function(){
+    return $('#doc_upload_text');
+  }.property(),
+
+  preUpload: function(){
+    var me = this.$(),
+        textSpan = this.get('textSpan'),
+        parent = me.parent(),
+        upload = this.get('uploadingText');
+
+      parent.addClass('disabled');
+      textSpan.text(upload);
+      me.css('cursor', 'default');
+      me.attr('disabled', 'disabled');
+  },
+
+  postUpload: function(){
+    var me = this.$(),
+        textSpan = this.get('textSpan'),
+        parent = me.parent(),
+        orig = this.get('originalText');
+
+      parent.removeClass('disabled');
+      textSpan.text(orig);
+      me.css('cursor', 'pointer');
+      me.removeAttr('disabled');
+  },
+
+  change: function(e){
+    var self = this;
     // TODO disable button, change text, upload the docPics in the group
     // TODO this actually worked on the first attempt, I get to quit
     // for the night!!!!
     var formData = new FormData();
-    formData.append('group_id', self.get('group.id'));
-    formData.append('doc_file', $('#doc_file').get(0).files[0]);
+    this.preUpload();
+    formData.append('group_id', this.get('group.id'));
+    formData.append('doc_file', this.$().get(0).files[0]);
     $.ajax({
-        url: '/doc_upload_handler/', 
-        type: 'POST',
-        //Ajax events
-        success: function(data){ self.newPicHandler(data);},
-        error: function(){ alert('uhoh');},
-        // Form data
-        data: formData,
-        //Options to tell jQuery not to process data or worry about content-type.
-        cache: false,
-        contentType: false,
-        processData: false
+      url: '/doc_upload_handler/', 
+      type: 'POST',
+      //Ajax events
+      success: function(data){ self.postUpload(); self.newPicHandler(data);},
+      error: function(){ self.postUpload(); alert('uhoh');},
+      // Form data
+      data: formData,
+      //Options to tell jQuery not to process data or worry about content-type.
+      cache: false,
+      contentType: false,
+      processData: false
     });
-  },
 
-  newPicHandler: function(data){
-    var store = this.get('controller.store'),
-        group = this.get('controller.model');
-
-    store.push('docPic', data);
-    var dp = store.find('docPic', data.id);
-    group.get('docPics').insertAt(0, dp);
 
   }
 

@@ -8,7 +8,7 @@
     <a class='btn btn-primary btn-large workflow-buttons top-navigation-button' {{action 'previous'}}>{{previousLabel}}</a>
     <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>{{nextLabel}}</a>
     {{#if albumDoctor}}
-        {{view Pd.UploadButton groupBinding="model"}}
+        {{partial "docUploadButton"}}
     {{/if}}
     </div>
   </div>
