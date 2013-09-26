@@ -15,8 +15,7 @@ import ipdb
 
 @render_to('home.html')
 def home(request):
-    ret = get_progressbar_vars(request, 'markup')
-    return ret
+    return {}
 
 def users_endpoint(request, user_id):
     user = {

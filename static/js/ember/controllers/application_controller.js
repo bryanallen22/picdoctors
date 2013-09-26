@@ -1,1 +1,6 @@
-Pd.ApplicationController = Ember.ObjectController.extend({});
+Pd.ApplicationController = Ember.ObjectController.extend(
+  Pd.UploadProgress, {
+
+
+});
+

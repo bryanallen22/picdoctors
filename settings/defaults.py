@@ -348,6 +348,7 @@ PIPELINE_JS = {
             # Our Ember Stuff #
             ###################
             'js/ember/*.js',
+            'js/ember/mixins/*.js',
             'js/ember/models/*.js',
             'js/ember/routes/*.js',
             'js/ember/controllers/*.js',

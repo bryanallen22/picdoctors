@@ -1,0 +1,38 @@
+{{#if showProgress}}
+<div class="row progressbar">
+  <div {{bind-attr class="uploadProgress:filled:empty"}}>
+    <div {{bind-attr class="bigArrows:arrow_nosignin:arrow_signin :nav_arrow :span2"}}>
+      <div class="txt">
+        Upload Pics
+      </div>
+    </div>
+  </div>
+
+  <div {{bind-attr class="markupProgress:filled:empty"}}>
+    <div {{bind-attr class="bigArrows:arrow_nosignin:arrow_signin :nav_arrow :span2"}}>
+      <div class="txt">
+        Describe
+      </div>
+    </div>
+  </div>
+
+  {{#unless isLoggedIn}}
+  <div {{bind-attr class="signinProgress:filled:empty"}}>
+    <div {{bind-attr class="bigArrows:arrow_nosignin:arrow_signin :nav_arrow :span2"}}>
+      <div class="txt">
+        Sign In
+      </div>
+    </div>
+  </div>
+  {{/unless}}
+
+  <div {{bind-attr class="setPriceProgress:filled:empty"}}>
+    <div {{bind-attr class="bigArrows:arrow_nosignin:arrow_signin :nav_arrow :span2"}}>
+      <div class="txt">
+        Pay
+      </div>
+    </div>
+  </div>
+
+</div>
+{{/if}}
