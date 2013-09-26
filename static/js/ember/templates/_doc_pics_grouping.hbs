@@ -1,7 +1,14 @@
-  {{#each pic in controller }}
-    <div class='markup_outer'>
+{{#each pic in controller }}
+<div class='markup_outer' style="position:relative">
+  {{ partial 'picVisual' }}
+  <div>
+    <span>
+      <a {{bind-attr href="pic.original_url" download="pic.downloadName"}} class="btn btn-primary">Download Original</a>
+    </span>
+    <span style="float:right">
       Uploaded {{formattedCreated}}
-      {{ partial 'picVisual' }}
-      <br/>
-    </div>
-  {{/each}}
+    </span>
+  </div>
+</div>
+<hr/>
+{{/each}}

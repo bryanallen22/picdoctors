@@ -210,6 +210,7 @@ def buildDocPic(group, pic):
         'id': pic.id,
         'group': group.id,
         'preview_url': pic.get_preview_url(),
+        'original_url': pic.get_original_url(),
         'width': pic.preview_width,
         'height': pic.preview_height,
         'created': pic.created.isoformat(' ')
@@ -230,6 +231,7 @@ def prepPics(album):
                  'group': group.id,
                  'description': pic.description,
                  'preview_url': pic.get_preview_url(),
+                 'original_url': pic.get_original_url(),
                  'width': pic.preview_width,
                  'height': pic.preview_height,
                  'markups': markupIds
