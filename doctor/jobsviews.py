@@ -98,7 +98,7 @@ def generate_doctor_actions(job):
 
     group = job.get_first_unfinished_group()
     group_seq = 1 if not group else group.sequence
-    work_job_url= reverse('markup_album', args=[job.album.id, group_seq])
+    work_job_url = "/home/#/albums/" + str(job.album.id) + "/markupView"
     work_job = DynamicAction('Work on Job', work_job_url, redirect_url)
 
     mark_as_completed = DynamicAction('Mark as Completed', '/mark_job_completed/')
