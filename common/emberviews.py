@@ -211,7 +211,8 @@ def buildDocPic(group, pic):
         'group': group.id,
         'preview_url': pic.get_preview_url(),
         'width': pic.preview_width,
-        'height': pic.preview_height
+        'height': pic.preview_height,
+        'created': pic.created.isoformat(' ')
            }
 
 

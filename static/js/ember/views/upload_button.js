@@ -9,8 +9,8 @@ Pd.UploadButton = Ember.View.extend({
     var store = this.get('controller.store'),
     group = this.get('controller.model');
 
+    // create the association from the group, (so I can insert him at the top)
     delete data.group;
-    //data.group = group;
 
     var docPic = store.createRecord('docPic', data);
     group.get('docPics').insertAt(0, docPic); 

@@ -42,5 +42,10 @@ Pd.DocPic = Pd.BasePic.extend({
 Pd.DocPic.reopen({
   finished: function(){
     return this.get('group.finished');
-  }.property('group.finished')
+  }.property('group.finished'),
+
+  formattedCreated: function(){
+    var created = moment(this.get('created'));
+    return created.calendar();
+  }.property('created')
 });

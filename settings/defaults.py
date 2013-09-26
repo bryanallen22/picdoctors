@@ -329,6 +329,7 @@ PIPELINE_JS = {
             'third_party/bootstrap-tour/deps/jquery.cookie.js',
             'third_party/bootstrap-tour/bootstrap-tour.min.js',
             'third_party/rating/jquery.rating.js',
+            'third_party/moment/moment.min.js',
 
             ###############
             # Ember Stuff #
