@@ -3,6 +3,9 @@
     <div class='markup_outer'>
       {{#if finished}}
         {{ partial 'picVisual' }}
+        {{#if isAlbumDoctor}}
+          {{ partial 'downloadLink' }}
+        {{/if}}
       {{else}}
         {{ view Pd.EditablePicView contentBinding="pic.model"}}
       {{/if}}

@@ -268,6 +268,32 @@ class Pic(DeleteMixin):
         #self.thumb_width  = self.thumbnail.width
         #self.thumb_height = self.thumbnail.height
 
+    def get_view_model(self, include_markups):
+        markupIds = None
+        groupId = None
+            
+        if include_markups:
+            from skaa.models import Markup
+            markups = Markup.objects.filter(pic__id=self.id)
+            markupIds = [m.id for m in markups]
+
+        if self.group is not None:
+            groupId = self.group.id
+
+        model = {
+            'id': self.id,
+            'group': groupId,
+            'description': self.description,
+            'preview_url': self.get_preview_url(),
+            'original_url': self.get_original_url(),
+            'width': self.preview_width,
+            'height': self.preview_height,
+            'markups': markupIds,
+            'created': self.created.isoformat(' ')
+            }
+
+        return model
+
     def get_size(self):
         return self.original.size
 
@@ -560,7 +586,11 @@ class Group(DeleteMixin):
         if not job:
             return []
 
-        if job.is_approved() or job.doctor == profile or profile.has_common_perm('album_approver'):
+        approved = job.is_approved()
+        jobDoctor = job.doctor == profile
+        approver = profile.has_common_perm('album_approver')
+
+        if approved or jobDoctor or approver:
             return DocPicGroup.objects.filter(group=self).order_by('updated').reverse()
 
         return []
@@ -599,6 +629,26 @@ class DocPicGroup(DeleteMixin):
     group           = models.ForeignKey(Group, related_name='doc_pic_group', db_index=True)
     pic             = models.ForeignKey(Pic)
     watermark_pic   = models.ForeignKey(Pic, related_name='watermark_pic')
+
+    def get_view_model(self, profile, job):
+        # if not ( any valid reason to stay )
+        ret = {'id':self.id, 'group': self.group.id, 'pic': None, 'watermark_pic': None}
+        is_doctor = False if not profile else profile.isa('doctor')
+        approver = profile.has_common_perm('album_approver')
+        if not ( job.is_approved() or is_doctor or approver ):
+            return None
+
+        user_accepted = job.skaa == profile and job.is_accepted()
+        job_doctor = job.doctor == profile
+        job_owner = job.skaa == profile
+
+        if job_doctor or approver or user_accepted:
+            ret["pic"] = self.pic.id
+
+        if job_owner or job_doctor:
+            ret["watermark_pic"] = self.watermark_pic.id
+
+        return ret
 
     #I can see me setting a value that flips this from watermark pic to pic
     def get_pic(self, profile, job):

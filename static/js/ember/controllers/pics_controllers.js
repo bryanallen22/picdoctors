@@ -9,6 +9,15 @@ Pd.PicsViewController = Ember.ArrayController.extend({
 });
 
 Pd.PicController = Ember.ObjectController.extend({
+  needs:['album'],
+
+  isAlbumOwner: function(){
+    return this.get('controllers.album.isAlbumOwner');
+  }.property('controllers.album.isAlbumOwner'),
+
+  isAlbumDoctor: function(){
+    return this.get('controllers.album.isAlbumDoctor');
+  }.property('controllers.album.isAlbumDoctor'),
 
   createMarkup: function(){
     var store = this.get('store'),
@@ -16,24 +25,6 @@ Pd.PicController = Ember.ObjectController.extend({
 
     return store.createRecord(Pd.Markup, {pic: pic});
   },
-
-  picStyle: function(){
-    var url = this.get('preview_url'),
-        width = this.get('width'),
-        height = this.get('height'),
-        uuid = this.get('uuid'),
-        backgroundStyle = "background: url('" + url + "');",
-        finished = this.get('finished'),
-        style = "no-repeat;";
-
-    if(!finished) style += "cursor: crosshair;";
-
-    style += backgroundStyle;
-    style += "width:" + width + "px;";
-    style += "height:" + height + "px;";
-
-    return style;
-  }.property('preview_url', 'width', 'height', 'uuid', 'finished'),
 
   deselectAllMarkups: function(){
     this.get('model').deselectAllMarkups();

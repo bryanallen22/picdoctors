@@ -4,7 +4,7 @@ hasMany = DS.hasMany;
 
 Pd.Group = DS.Model.extend({
   pics: hasMany('pic'),
-  docPics: hasMany('docPic'),
+  docPicGroups: hasMany('docPicGroup'),
   album: belongsTo('album')
 });
 
@@ -14,6 +14,6 @@ Pd.Group.reopen({
   }.property('album.finished'),
 
   hasDocPics: function(){
-    return !Ember.isEmpty(this.get('docPics'));
-  }.property('docPics')
+    return !Ember.isEmpty(this.get('docPicGroups'));
+  }.property('docPicGroups')
 });

@@ -1,14 +1,9 @@
-{{#each pic in controller }}
+{{#each docPicGroup in controller }}
 <div class='markup_outer' style="position:relative">
   {{ partial 'picVisual' }}
-  <div>
-    <span>
-      <a {{bind-attr href="pic.original_url" download="pic.downloadName"}} class="btn btn-primary">Download Original</a>
-    </span>
-    <span style="float:right">
-      Uploaded {{formattedCreated}}
-    </span>
-  </div>
+  {{#if isAlbumDoctor}}
+    {{ partial 'downloadLink' }}
+  {{/if}}
 </div>
 <hr/>
 {{/each}}

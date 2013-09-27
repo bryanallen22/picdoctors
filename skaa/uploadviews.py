@@ -22,7 +22,6 @@ from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
 from skaa.progressbarviews import get_progressbar_vars
-from common.emberviews import buildDocPic
 
 from PIL import Image
 from StringIO import StringIO
@@ -127,7 +126,7 @@ def doc_upload_handler(request):
 
             pic = dp.get_pic(request.user, job)
             log.info('File saving done')
-            return buildDocPic(group, pic)
+            return pic.get_view_model(False)
 
     #redirect to where they came from
     return redirect(request.META['HTTP_REFERER'])

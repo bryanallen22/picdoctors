@@ -6,7 +6,7 @@ from django.http import HttpResponse
 
 from django.utils import simplejson
 
-from common.models import Job, Album, Group, Pic
+from common.models import Job, Album, Group, Pic, DocPicGroup
 from common.functions import json_result
 from skaa.markupviews import can_modify_markup
 from annoying.functions import get_object_or_None
@@ -109,7 +109,7 @@ def can_modify_pic(request, pic):
 
 
 def pics_endpoint(request, pic_id=None):
-    # POST /pics_endpoint/ -- create a new markup
+    # POST /pics_endpoint/ -- add pic description
     if request.method == 'PUT':
         data = simplejson.loads(request.body)
         data = data['pic']
@@ -131,11 +131,14 @@ def albums_endpoint(request, album_id):
     #make sure the sequences are set here :)
     album.set_sequences()
 
+    # So we you might be wondering why this is going down like this
+    # well, it's easier to just match the format ember data expects
     response = {}
     response["album"] = prepAlbum(album, request)
     response["groups"] = prepGroups(album, request)
-    response["pics"] = prepPics(album)
-    response["docPics"] = prepDocPics(album, request)
+    pics = prepPics(album)
+    response["docPicGroups"] = dpg = prepDocPicGroups(album, request)
+    response["pics"] = pics + prepDocPics(dpg, request)
     response["markups"] = prepMarkups(response["pics"])
     return json_result(response)
 
@@ -174,47 +177,50 @@ def prepGroups(album, request):
         doc_pic_ids = []
 
         if job is not None:
-            doc_pics = group.get_doctor_pics(job, request.user)
-            doc_pic_ids = [dp.get_pic(request.user, job).id for dp in doc_pics]
+            doc_pic_groups = group.get_doctor_pics(job, request.user)
+            doc_pic_group_ids = [dp.id for dp in doc_pic_groups]
 
         model = {
            'id': group.id, 
            'album': album.id, 
            'pics': pic_ids,
-           'docPics': doc_pic_ids
+           'docPicGroups': doc_pic_group_ids
                 }
         groupsJson.append(model)
 
     return groupsJson
 
-def prepDocPics(album, request):
-    doc_pics = []
+def prepDocPics(doc_pic_groups, request):
+    pics = []
+    
+#    ipdb.set_trace()
+    for dpg in doc_pic_groups:
+        dpg_record = get_object_or_None(DocPicGroup, id=dpg["id"])
+        #ipdb.set_trace()
+
+        if dpg['pic'] is not None:
+            pics.append(dpg_record.pic.get_view_model(False))
+
+        if dpg['watermark_pic'] is not None:
+            pics.append(dpg_record.watermark_pic.get_view_model(False))
+
+    return pics
+
+def prepDocPicGroups(album, request):
+    doc_pic_groups_ret = []
     job = album.get_job_or_None()
     if job is None:
         return []
     
     groups = Group.get_album_groups(album)
-    # ipdb.set_trace()
     for group in groups:
         doc_pic_groups = group.get_doctor_pics(job, request.user)
         for doc_pic_group in doc_pic_groups:
-            pic = doc_pic_group.get_pic(request.user, job)
-            model = buildDocPic(group, pic)
-            doc_pics.append(model)
+            dpg = doc_pic_group.get_view_model(request.user, job)
+            if dpg is not None:
+                doc_pic_groups_ret.append(dpg)
 
-    return doc_pics
-
-def buildDocPic(group, pic):
-    return {
-        'id': pic.id,
-        'group': group.id,
-        'preview_url': pic.get_preview_url(),
-        'original_url': pic.get_original_url(),
-        'width': pic.preview_width,
-        'height': pic.preview_height,
-        'created': pic.created.isoformat(' ')
-           }
-
+    return doc_pic_groups_ret
 
 def prepPics(album):
     pics_ret = []
@@ -223,20 +229,7 @@ def prepPics(album):
     for group in groups:
         pics = Pic.get_group_pics(group)
         for pic in pics:
-            markups = Markup.objects.filter(pic__id=pic.id)
-            markupIds = [m.id for m in markups]
-            model = {
-                 'id': pic.id,
-                 'group': group.id,
-                 'description': pic.description,
-                 'preview_url': pic.get_preview_url(),
-                 'original_url': pic.get_original_url(),
-                 'width': pic.preview_width,
-                 'height': pic.preview_height,
-                 'markups': markupIds
-                    }
-       
-            pics_ret.append(model)
+            pics_ret.append(pic.get_view_model(True))
 
     return pics_ret
 
