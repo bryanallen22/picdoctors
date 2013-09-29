@@ -8,7 +8,9 @@
     <a class='btn btn-primary btn-large workflow-buttons top-navigation-button' {{action 'previous'}}>{{previousLabel}}</a>
     <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>{{nextLabel}}</a>
     {{#if albumDoctor}}
+      <form id="fake_form_for_reset">
         {{partial "docUploadButton"}}
+      </form>
     {{/if}}
     </div>
   </div>

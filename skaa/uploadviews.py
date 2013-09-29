@@ -23,6 +23,8 @@ from common.models import ungroupedId
 from common.decorators import passes_test
 from skaa.progressbarviews import get_progressbar_vars
 
+from common.emberviews import get_pic_view_models
+
 from PIL import Image
 from StringIO import StringIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -126,7 +128,10 @@ def doc_upload_handler(request):
 
             pic = dp.get_pic(request.user, job)
             log.info('File saving done')
-            return pic.get_view_model(False)
+            ret = {}
+            ret["docPicGroup"] = dpg = dp.get_view_model(profile, job)
+            ret["pics"] = get_pic_view_models(dpg)
+            return ret
 
     #redirect to where they came from
     return redirect(request.META['HTTP_REFERER'])

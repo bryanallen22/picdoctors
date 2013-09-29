@@ -7,13 +7,32 @@ Pd.UploadButton = Ember.View.extend({
 
   newPicHandler: function(data){
     var store = this.get('controller.store'),
-    group = this.get('controller.model');
+        group = this.get('controller.model.docPicGroups');
 
-    // create the association from the group, (so I can insert him at the top)
-    delete data.group;
+    // there has got to be some way to hook this up
+    // using ember data, without having to manually sideload it piece
+    // by piece
+    var dpg = data.docPicGroup,
+        pics = data.pics;
 
-    var docPic = store.createRecord('docPic', data);
-    group.get('docPics').insertAt(0, docPic); 
+    // remove the group, and manually add later
+    // for some reason it knows its parent when we create the
+    // record below, but the parent doesn't know it
+    // (some sort of lazy load from the parent's point of view)
+    // and then when I try and insert it into the parent at 0
+    // it gets confused, and removes it from its old parent (at 0)
+    // and rejoins at the end of the list...
+    // I might just do an ordered computed property version of the doc pics
+    // then I wouldn't have to worry about all of that
+    delete dpg.group;
+
+    pics.forEach(function(pic){
+      store.push('pic', pic);
+    });
+
+    var dp = store.push('docPicGroup', dpg);
+
+    group.insertAt(0, dp);
   },
 
   textSpan: function(){
@@ -23,7 +42,7 @@ Pd.UploadButton = Ember.View.extend({
   preUpload: function(){
     var me = this.$(),
         textSpan = this.get('textSpan'),
-        parent = me.parent(),
+        parent = me.closest('.fileupload-addbutton'),
         upload = this.get('uploadingText');
 
       parent.addClass('disabled');
@@ -35,20 +54,19 @@ Pd.UploadButton = Ember.View.extend({
   postUpload: function(){
     var me = this.$(),
         textSpan = this.get('textSpan'),
-        parent = me.parent(),
+        parent = me.closest('.fileupload-addbutton'),
+        form = parent.closest('#fake_form_for_reset')[0],
         orig = this.get('originalText');
 
       parent.removeClass('disabled');
       textSpan.text(orig);
       me.css('cursor', 'pointer');
       me.removeAttr('disabled');
+      form.reset();
   },
 
   change: function(e){
     var self = this;
-    // TODO disable button, change text, upload the docPics in the group
-    // TODO this actually worked on the first attempt, I get to quit
-    // for the night!!!!
     var formData = new FormData();
     this.preUpload();
     formData.append('group_id', this.get('group.id'));
@@ -58,7 +76,7 @@ Pd.UploadButton = Ember.View.extend({
       type: 'POST',
       //Ajax events
       success: function(data){ self.postUpload(); self.newPicHandler(data);},
-      error: function(){ self.postUpload(); alert('uhoh');},
+      error: function(){ self.postUpload(); alert('Failure');},
       // Form data
       data: formData,
       //Options to tell jQuery not to process data or worry about content-type.

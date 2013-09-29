@@ -15,7 +15,9 @@ Pd.Pic = DS.Model.extend({
 Pd.Pic.reopen({
   
   finished: function(){
-    return this.get('group.finished') || true;
+    var finished = this.get('group.finished');
+    if(Ember.isEmpty(finished)) return true;
+    return finished;
   }.property('group.finished'),
 
   formattedCreated: function(){

@@ -15,5 +15,5 @@ Pd.Group.reopen({
 
   hasDocPics: function(){
     return !Ember.isEmpty(this.get('docPicGroups'));
-  }.property('docPicGroups')
+  }.property('docPicGroups', 'docPicGroups.length')
 });

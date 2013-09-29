@@ -1,6 +1,5 @@
 Pd.DocPicsController = Ember.ArrayController.extend({
   itemController: 'docPicGroup'
-
 });
 
 Pd.DocPicGroupController = Ember.ObjectController.extend({

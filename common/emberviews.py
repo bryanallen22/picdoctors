@@ -175,6 +175,7 @@ def prepGroups(album, request):
         pics = Pic.get_group_pics(group)
         pic_ids = [p.id for p in pics]
         doc_pic_ids = []
+        doc_pic_group_ids = None
 
         if job is not None:
             doc_pic_groups = group.get_doctor_pics(job, request.user)
@@ -195,16 +196,24 @@ def prepDocPics(doc_pic_groups, request):
     
 #    ipdb.set_trace()
     for dpg in doc_pic_groups:
-        dpg_record = get_object_or_None(DocPicGroup, id=dpg["id"])
         #ipdb.set_trace()
-
-        if dpg['pic'] is not None:
-            pics.append(dpg_record.pic.get_view_model(False))
-
-        if dpg['watermark_pic'] is not None:
-            pics.append(dpg_record.watermark_pic.get_view_model(False))
+        pics = pics + get_pic_view_models(dpg)
 
     return pics
+
+def get_pic_view_models(doc_pic_view_model):
+    pics = []
+
+    dpg_record = get_object_or_None(DocPicGroup, id=doc_pic_view_model["id"])
+
+    if doc_pic_view_model['pic'] is not None:
+        pics.append(dpg_record.pic.get_view_model(False))
+
+    if doc_pic_view_model['watermark_pic'] is not None:
+        pics.append(dpg_record.watermark_pic.get_view_model(False))
+
+    return pics
+
 
 def prepDocPicGroups(album, request):
     doc_pic_groups_ret = []
