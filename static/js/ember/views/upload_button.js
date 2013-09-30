@@ -84,8 +84,5 @@ Pd.UploadButton = Ember.View.extend({
       contentType: false,
       processData: false
     });
-
-
   }
-
 });
