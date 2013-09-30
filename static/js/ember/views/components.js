@@ -5,21 +5,21 @@ Pd.AutoGrowTextArea = Ember.TextArea.extend({
   },
   focusIn: function(){
     var focusIn = this.get('focusInEvent'),
-        delegate = this.get('eventDelegate');
+    delegate = this.get('eventDelegate');
     if(focusIn){
       delegate.send(focusIn);
     }
   },
   focusOut: function(){
     var focusOut = this.get('focusOutEvent'),
-        delegate = this.get('eventDelegate');
+    delegate = this.get('eventDelegate');
     if(focusOut){
       delegate.send(focusOut);
     }
   },
   keyUp: function(){
     var keyUp = this.get('keyUpEvent'),
-        delegate = this.get('eventDelegate');
+    delegate = this.get('eventDelegate');
     if(keyUp){
       delegate.send(keyUp);
     }
@@ -29,22 +29,28 @@ Pd.AutoGrowTextArea = Ember.TextArea.extend({
 
 Pd.Resize = {
 
+  // resize a textarea
   textAreaResize: function(text) {
-    // save scrol location so we can restore it
-    var scrollTop = $('body').scrollTop();
+
+    // save scroll location so we can restore it
+    var scrollTop = $('body').scrollTop(),
 
     //for some reason chrome sends as event, ff sends the target item
     text = text.target || text;
 
+    var jText = $(text);
+    jText.css('overflowY', 'hidden');
+
     var isDisabled = true;
 
-    if($(text).attr('disabled') === undefined){
+    if(jText.attr('disabled') === undefined){
       isDisabled = false;
     }
     var min_height = 0;
-    if($(text).attr('auto-minheight') !== undefined){
-      min_height = parseInt($(text).attr('auto-minheight'));
+    if(jText.attr('auto-minheight') !== undefined){
+      min_height = parseInt(jText.attr('auto-minheight'));
     }
+
 
     if(text.value === '') {
       text.style.height = Math.max(20, min_height) + 'px';
@@ -52,7 +58,7 @@ Pd.Resize = {
     }
 
     text.style.height = 'auto';
-    var adder = isDisabled ? -20 : 0;
+    var adder = isDisabled ? -10 : 0;
     var total = text.scrollHeight+adder;
 
     total = Math.max(total, min_height);

@@ -45,6 +45,11 @@ Pd.Pic.reopen({
     });
   },
 
+  /*  Do not, under any circumstances, change the padding or margin of  
+       this .markup_pic_container or .pic unless you are 200% certain    
+       that you aren't messing things up. Careful calculation of offsets 
+       for drawing markups at the right location is done, and if you     
+       change them, old markups might appear at the wrong spot */
   picStyle: function(){
     var url = this.get('preview_url'),
         width = this.get('width'),

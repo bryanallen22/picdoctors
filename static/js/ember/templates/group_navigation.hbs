@@ -6,7 +6,9 @@
     <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
     
     <a class='btn btn-primary btn-large workflow-buttons top-navigation-button' {{action 'previous'}}>{{previousLabel}}</a>
+{{#unless sameButtons}}
     <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>{{nextLabel}}</a>
+{{/unless}}
     {{#if albumDoctor}}
       <form id="fake_form_for_reset">
         {{partial "docUploadButton"}}

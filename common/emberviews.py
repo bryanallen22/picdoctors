@@ -147,7 +147,7 @@ def prepAlbum(album, request):
     groupings = [g.id for g in groups]
     job = album.get_job_or_None()
     owner_id = -1
-    doctor_id = -1
+    doctor_id = -2
 
     if album.userprofile is not None:
         owner_id = album.userprofile.id

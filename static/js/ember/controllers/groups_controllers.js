@@ -81,6 +81,10 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
     if(finished) return "Jobs";
   }.property('previousGroup', 'finished'),
 
+  sameButtons: function(){
+    return this.get('previousLabel') === this.get('nextLabel');
+  }.property('previousLabel', 'nextLabel'),
+
   albumOwner: function(){
     var ownerId = this.get('album.owner'),
     userId = this.get('controllers.application.id');

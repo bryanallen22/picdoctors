@@ -1,4 +1,32 @@
-Pd.MarkupsController = Ember.ArrayController.extend({});
+Pd.MarkupsController = Ember.ArrayController.extend({
+  itemController: 'markup',
+
+  hasMarkups: function(){
+    return this.get('length') > 0;
+  }.property('length')
+});
+
+Pd.MarkupController = Ember.ObjectController.extend({
+  markupStyleCss: function(){
+    var left = this.get('left'),
+        top = this.get('top'),
+        height = this.get('height'),
+        width = this.get('width'),
+        markupStyle = this.get('markupStyle'),
+        color = markupStyle.get('color'),
+        style = "border: 4px " + color + ";",
+        selected = this.get('selected'),
+        borderStyle = markupStyle.get('border_style');
+
+    style += "left: " + left + "px;";
+    style += "opacity: " + (selected?"1":"0.3") + ";";
+    style += "height: " + height + "px;";
+    style += "width: " + width + "px;";
+    style += "top: " + top + "px;";
+    style += "border-style: " + borderStyle + ";" ;
+    return style;
+  }.property('left', 'top', 'height', 'markupStyle', 'selected')
+});
 
 Pd.MarkupInstructionsController = Ember.ArrayController.extend({
   itemController: 'markupInstruction'
@@ -56,27 +84,3 @@ Pd.MarkupInstructionTextBoxController = Ember.ObjectController.extend({
   }
 
 });
-
-Pd.MarkupVisualController = Ember.ObjectController.extend({
-  markupStyleCss: function(){
-    var left = this.get('left'),
-        top = this.get('top'),
-        height = this.get('height'),
-        width = this.get('width'),
-        markupStyle = this.get('markupStyle'),
-        color = markupStyle.get('color'),
-        style = "border: 4px " + color + ";",
-        selected = this.get('selected'),
-        borderStyle = markupStyle.get('border_style');
-
-    style += "left: " + left + "px;";
-    style += "opacity: " + (selected?"1":"0.3") + ";";
-    style += "height: " + height + "px;";
-    style += "width: " + width + "px;";
-    style += "top: " + top + "px;";
-    style += "border-style: " + borderStyle + ";" ;
-    return style;
-  }.property('left', 'top', 'height', 'markupStyle', 'selected')
-});
-
-
