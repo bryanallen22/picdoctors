@@ -26,6 +26,11 @@ Pd.EditablePicView = Ember.View.extend({
   mouseDown: function(e){
     if(e.which !== 1) return false;
 
+    if(this.get('drawing')) { 
+      this.finishMarkup(e);
+      return;
+    }
+
     this.set('drawing', true);
     var offset = this.get('offset'),
         controller = this.get('controller'),
