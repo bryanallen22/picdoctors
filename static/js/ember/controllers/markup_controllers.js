@@ -49,8 +49,14 @@ Pd.MarkupInstructionController = Ember.ObjectController.extend({
 });
 
 Pd.MarkupInstructionTextBoxController = Ember.ObjectController.extend({
+
+  // this method is only called from the debounce, 
+  // it's sets the context of the call to the model
+  // this allows us to not worry about some race condition
+  // of switching the page, and the model being different etc
+  // we want to save this model!  but we want to debounce it
   _save: function(){
-    var model = this.get('model');
+    var model = this;
     if(model.get('isDirty')){
       Pd.Logger.timestamp('Saving markup: ' + model.get('id'), 5); 
       model.save().then(function(){
@@ -73,13 +79,12 @@ Pd.MarkupInstructionTextBoxController = Ember.ObjectController.extend({
     saveMeFocusOut: function(){
       this.get('model.pic').selectAllMarkups();
       // only save after 200 milliseconds of not focus outing
-      Ember.run.debounce(this, this._save, 200);
+      Ember.run.debounce(this.get('model'),  this._save, 200);
     },
 
     saveMeKeyUp: function(){
-      var self = this;
       // only save after 10 seconds of not typing
-      Ember.run.debounce(this,  this._save, 10000);
+      Ember.run.debounce(this.get('model'),  this._save, 10000);
     }
   }
 

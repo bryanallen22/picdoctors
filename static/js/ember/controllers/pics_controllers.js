@@ -34,8 +34,13 @@ Pd.PicController = Ember.ObjectController.extend({
     this.get('model').selectAllMarkups();
   },
 
+  // this method is only called from the debounce, 
+  // it's sets the context of the call to the model
+  // this allows us to not worry about some race condition
+  // of switching the page, and the model being different etc
+  // we want to save this model!  but we want to debounce it
   _save: function(){
-    var model = this.get('model');
+    var model = this; 
     // only save if dirty
     if(model.get('isDirty')){
       model.save().then(function(){
@@ -50,11 +55,11 @@ Pd.PicController = Ember.ObjectController.extend({
   actions: {
     saveMeFocus: function(){
       // only save after 200 milliseconds of not focus outing(or typing)
-      Ember.run.debounce(this,  this._save, 200);
+      Ember.run.debounce(this.get('model'),  this._save, 200);
     },
     saveMeKeyUp: function(){
       // only save after 10 seconds of not typing
-      Ember.run.debounce(this,  this._save, 10000);
+      Ember.run.debounce(this.get('model'),  this._save, 10000);
     }
   }
 
