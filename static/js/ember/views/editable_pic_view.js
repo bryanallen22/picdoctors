@@ -3,6 +3,7 @@
 // the picS (note the s) controller has an itemController="pic"
 Pd.EditablePicView = Ember.View.extend({
   templateName: '_pic_visual',
+
   didInsertElement: function() {
     this._super();
   },
@@ -32,9 +33,12 @@ Pd.EditablePicView = Ember.View.extend({
     }
 
     this.set('drawing', true);
-    var offset = this.get('offset'),
+    var img = this.get('picSpan'),
+        offset = this.get('offset'),
         controller = this.get('controller'),
         initialSize = 10;
+
+    this.fixPageEventOffset(e, img, offset);
 
     /* The -6 magic here is:
      *       4px  (border width on one side
@@ -69,22 +73,8 @@ Pd.EditablePicView = Ember.View.extend({
     img_offset = this.get('offset'),
     newMarkup = this.get('newMarkup');
 
-    /* Sometimes I get events that are outside of the div. Me no likey. Fix
-     * that here.
-     *
-     * I'm modifying the e.pageXY attributes directly. How evil am I? */
-    if( e.pageX < img_offset.left ) {
-      e.pageX = img_offset.left;
-    }
-    if( e.pageX > img_offset.left + img.width() - 6 ) {
-      e.pageX = img_offset.left + img.width() - 6;
-    }
-    if( e.pageY < img_offset.top ) {
-      e.pageY = img_offset.top;
-    }
-    if( e.pageY > img_offset.top + img.height() - 6 ) {
-      e.pageY = img_offset.top + img.height() - 6;
-    }
+    this.fixPageEventOffset(e, img, img_offset);
+
 
     /* Okay, time to actually resize stuff */
     var x1 = e.pageX - img_offset.left;
@@ -119,6 +109,26 @@ Pd.EditablePicView = Ember.View.extend({
       width: width, 
       height: height 
     });
+
+  },
+
+  fixPageEventOffset: function(e, img, img_offset){
+    /* Sometimes I get events that are outside of the div. Me no likey. Fix
+     * that here.
+     *
+     * I'm modifying the e.pageXY attributes directly. How evil am I? */
+    if( e.pageX < img_offset.left ) {
+      e.pageX = img_offset.left;
+    }
+    if( e.pageX > img_offset.left + img.width() - 6 ) {
+      e.pageX = img_offset.left + img.width() - 6;
+    }
+    if( e.pageY < img_offset.top ) {
+      e.pageY = img_offset.top;
+    }
+    if( e.pageY > img_offset.top + img.height() - 6 ) {
+      e.pageY = img_offset.top + img.height() - 6;
+    }
 
   },
 
