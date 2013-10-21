@@ -53,6 +53,14 @@ def privacy_policy(request):
 def terms_of_service(request):
     return {}
 
+@render_to('doc_terms_of_service.html')
+def doc_terms_of_service(request):
+    return {}
+
+@render_to('dmca.html')
+def dmca(request):
+    return {}
+
 def error():
     tb =  traceback.format_exception(sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])
     return tb[len(tb)-1].replace('\n','')
