@@ -12,7 +12,6 @@ Pd.UploadButton = Ember.View.extend({
     // there has got to be some way to hook this up
     // using ember data, without having to manually sideload it piece
     // by piece
-    var dp = store.pushPayload('docPicGroup', data);
     var dpg = data.docPicGroup,
         pics = data.pics;
 
@@ -25,8 +24,7 @@ Pd.UploadButton = Ember.View.extend({
     // and rejoins at the end of the list...
     // I might just do an ordered computed property version of the doc pics
     // then I wouldn't have to worry about all of that
-    /*
-        delete dpg.group;
+    delete dpg.group;
 
     pics.forEach(function(pic){
       store.push('pic', pic);
@@ -35,7 +33,7 @@ Pd.UploadButton = Ember.View.extend({
     var dp = store.push('docPicGroup', dpg);
 
     group.insertAt(0, dp);
-    */
+    
   },
 
   textSpan: function(){
