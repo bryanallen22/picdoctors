@@ -7,8 +7,8 @@
 
 
 
-// Version: v1.0.0-beta.3-2-ga9091a4
-// Last commit: a9091a4 (2013-09-28 19:41:57 -0700)
+// Version: v1.0.0-beta.3-2-ga01195b
+// Last commit: a01195b (2013-10-01 19:41:06 -0700)
 
 
 (function() {
@@ -64,7 +64,7 @@ var define, requireModule;
 
 if ('undefined' === typeof DS) {
   DS = Ember.Namespace.create({
-    VERSION: '1.0.0-beta.2'
+    VERSION: '1.0.0-beta.3'
   });
 
   if ('undefined' !== typeof window) {
@@ -75,6 +75,7 @@ if ('undefined' === typeof DS) {
     Ember.libraries.registerCoreLibrary('Ember Data', DS.VERSION);
   }
 }
+
 })();
 
 
@@ -6995,8 +6996,6 @@ DS.RESTAdapter = DS.Adapter.extend({
     This method will be called with the parent record and `/posts/1/comments`.
 
     It will make an Ajax request to the originally specified URL.
-    If the URL is host-relative (starting with a single slash), the
-    request will use the host specified on the adapter (if any).
 
     @method findHasMany
     @see RESTAdapter/buildURL
@@ -7007,13 +7006,8 @@ DS.RESTAdapter = DS.Adapter.extend({
     @returns Promise
   */
   findHasMany: function(store, record, url) {
-    var host = get(this, 'host'),
-        id   = get(record, 'id'),
+    var id   = get(record, 'id'),
         type = record.constructor.typeKey;
-
-    if (host && url.charAt(0) === '/' && url.charAt(1) !== '/') {
-      url = host + url;
-    }
 
     return this.ajax(this.urlPrefix(url, this.buildURL(type, id)), 'GET');
   },
