@@ -147,24 +147,26 @@ def webserver_config():
     """
     Set up nginx and uwsgi
     """
+    print "Setting up nginx and uwsgi"
     inst = get_instance()
     deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
 
+    print "Making directories and setting ownership"
     sudo('mkdir -p /etc/uwsgi/apps-available')
     sudo('mkdir -p /etc/uwsgi/apps-enabled')
     sudo('mkdir -p /var/log/uwsgi')
     sudo('mkdir -p /var/log/celeryd')
     sudo('chown %s:%s /var/log/uwsgi'  % (cfg.deploy_user, cfg.deploy_user))
 
-    # move over uwsgi/nginx config files
+    print "move over uwsgi/nginx config files"
     put(LocalConfig.remote_uwsgi_picdocini,
          '/etc/uwsgi/apps-available/picdoctorsapp.ini', use_sudo=True)
     remote_picapp = '/etc/nginx/sites-available/picdoctorsapp'
     put(LocalConfig.remote_nginx_picdocconf, remote_picapp, use_sudo=True)
     put(LocalConfig.remote_nginx_htpasswd, '/etc/nginx/htpasswd', use_sudo=True)
 
-    # update the redirect for http paths for sandbox and test
+    print "update the redirect for http paths for sandbox and test"
     if deploy_type == 'test' or deploy_type =='sandbox':
         sudo("sed -i 's/rewrite_redirect_host/" + inst['ip_address'].replace(".",r"\.") + "/g' " + remote_picapp)
         sudo("sed -i 's/COMMENT_OUT_IF_DEBUG/#/g' " + remote_picapp)
@@ -172,7 +174,7 @@ def webserver_config():
         sudo("sed -i 's/rewrite_redirect_host/www\.picdoctors\.com/g' " + remote_picapp)
         sudo("sed -i 's/COMMENT_OUT_IF_DEBUG//g' " + remote_picapp)
 
-    # Tell uwsgi to start with the appropriate settings file
+    print "Tell uwsgi to start with the appropriate settings file"
     sudo('echo "env = DJANGO_SETTINGS_MODULE=settings.%s" >> '\
          '/etc/uwsgi/apps-available/picdoctorsapp.ini' % deploy_type)
 
@@ -192,13 +194,13 @@ def webserver_config():
         sudo("useradd celery")
         sudo("usermod -a -G www-data celery") # add to www-data, so it can open the logfile
 
-    # Supervisord
+    print "Supervisord"
     put(LocalConfig.remote_supervisord_cfg, '/etc/supervisord.conf', use_sudo=True)
     dst = '/etc/init.d/supervisord'
     put(LocalConfig.remote_supervisord_init, dst, use_sudo=True)
     sudo('chmod +x %s' % dst)
     sudo('update-rc.d supervisord defaults')
-    # kill any previous things related to supervisord
+    print "kill any previous things related to supervisord"
     with settings(warn_only=True):
         sudo('mkdir -p /var/log/supervisor/')
         sudo('unlink /tmp/supervisor.sock')
@@ -536,13 +538,13 @@ def setup_packages():
     sudo('touch /var/log/django/picdoctors.log')
     sudo('chown %s:%s /var/log/django' % (cfg.deploy_user, cfg.deploy_user))
     sudo('chown %s:%s /var/log/django/picdoctors.log' % (cfg.deploy_user, cfg.deploy_user))
-    sudo('chmod   664 /var/log/django/picdoctors.log')
+    sudo('chmod 664 /var/log/django/picdoctors.log')
 
 def collect_static():
     deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
 
-    # Collect static files
+    print "Collect static files"
     venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
 
 @task
