@@ -16,6 +16,7 @@ sudo apt-get install python2.7-dev -y
 
 # Used for mysql (and python)
 sudo apt-get install python-mysqldb libmysqlclient-dev -y
+sudo apt-get install libpq-dev postgresql-contrib postgresql -y
 
 # Used for django-extensions
 sudo apt-get install libgraphviz-dev graphviz pkg-config
@@ -69,7 +70,7 @@ echo "Installing npm, less, shint, recess, and uglify-js..."
 echo "====="
 sudo apt-get install npm -y
 sudo npm install -g less jshint recess uglify-js yuglify
-sudo npm install django-ember-precompile
+sudo npm install -g django-ember-precompile
 
 echo "====="
 echo "Installing a crazy Rabbit Message Q"

@@ -27,3 +27,7 @@ python-software-properties
 graphviz
 libgraphviz-dev
 pkg-config
+
+libpq-dev
+postgresql-contrib
+postgresql
