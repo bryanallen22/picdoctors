@@ -138,7 +138,6 @@ class SandboxConfig(RemoteConfig):
 
 class TestConfig(RemoteConfig):
     do_size_name = '1GB'
-    deploy_only_production_branch = False ### TODO: REMOVE THIS!
     do_region_id = 3 # sf - closer to us
 
 class ProductionConfig(RemoteConfig):
