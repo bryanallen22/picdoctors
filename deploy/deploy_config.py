@@ -83,8 +83,10 @@ class LocalConfig():
 class RemoteConfig():
     do_size_name = None # make children specify
 
-    # DigitalOcean image id -- Ubuntu 12.04 x64
-    do_image_id = 284203
+    # DigitalOcean image id -- Ubuntu 12.04.3 x64
+    # NOTE: as security changes happen, these become unavailable. Do a GET on /images
+    # to see the choices.
+    do_image_id = 1505447
 
     # DigitalOcean region id
     do_region_id = None # make children override

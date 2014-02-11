@@ -24,7 +24,7 @@ def handle_url(url, params=None):
     ret = simplejson.loads(request.text)
     if ret['status'] != 'OK':
         print "ERROR: ", ret['error_message']
-        print "  requested url was: ", req.url
+        print "  requested url was: ", request.url
     request.raise_for_status() # Just to double check
     return ret
 
