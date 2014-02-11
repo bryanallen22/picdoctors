@@ -120,7 +120,6 @@ def do_alphadb(force, delete_migration=True):
 
         if confirm("Are you sure you want to delete your database and migrations and start anew", force):
             print Fore.GREEN + "Blasting away and recreating your DB" + Fore.WHITE
-            do_cmd("mysql -h localhost -u root -pasdf picdoctors -e 'DROP DATABASE picdoctors;CREATE DATABASE picdoctors'")
             if delete_migration:
                 delete_migrations()
             gen_new_db()

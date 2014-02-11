@@ -18,12 +18,12 @@ AWS_STORAGE_BUCKET_NAME = 'picdoctors_media'
 
 DATABASES = {
     'default': {
-        'ENGINE'   : 'django.db.backends.mysql',
-        'HOST'     : 'production.c9b9prnejh0e.us-east-1.rds.amazonaws.com',
-        'PORT'     : '3306',
+        'ENGINE'   : 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'HOST'     : 'picdoc-pg-production.c9b9prnejh0e.us-east-1.rds.amazonaws.com',
+        'PORT'     : '5432',
         'NAME'     : 'picdoctors', # db name
         'USER'     : 'picdoctors',
-        'PASSWORD' : 'cm9vJ2KUBjh8KQJ7',
+        'PASSWORD' : 'b8vHqpgLcegYA5cV',
     }
 }
 

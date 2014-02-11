@@ -548,7 +548,7 @@ def collect_static():
     venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
 
 @task
-def setup_local_mysql():
+def setup_local_postgres():
     """
     Set up mysql locally. This had better not be production
     """
@@ -559,17 +559,20 @@ def setup_local_mysql():
     if deploy_type == "production":
         abort("I don't think you want to do this on production.")
 
-    # Set up root password as 'asdf' (if you don't do this, it prompts you, and we want this scriptable)
-    sudo("debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password asdf'")
-    sudo("debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password asdf'")
-    # Actually install mysql
-    sudo("apt-get install mysql-server -y -q")
+    # set postgres user password
+    sudo('echo -e "echo\necho" | passwd postgres')
 
-    # Start (or restart) mysql
-    sudo("service mysql restart", pty=False)
+    # Create a lambda for running this as the 'postgres' user
+    run_pg = lambda query: sudo('umask 002; ' + query, user='postgres')
 
-    sudo("""mysql -u root --password=asdf <<< "CREATE DATABASE IF NOT EXISTS picdoctors; GRANT ALL PRIVILEGES ON picdoctors.* TO 'django'@'localhost' IDENTIFIED BY 'asdf';" """);
+    with settings(warn_only=True):
+        run_pg(""" dropdb picdoctors """)
+        run_pg(""" dropuser picdoctors """)
 
+    run_pg(""" createdb picdoctors """)
+    run_pg(""" echo "CREATE USER picdoctors WITH PASSWORD 'asdf';" | psql """)
+    run_pg(""" echo "GRANT ALL PRIVILEGES ON DATABASE picdoctors TO picdoctors; " | psql """)
+    
     venv_run_user('./db.py -deploy -f', cfg)
 
 @task
@@ -588,7 +591,7 @@ def setup_db():
     if deploy_type == "sandbox":
         venv_run_user('./db.py -deploy -f', cfg)
     elif deploy_type == "test":
-        setup_local_mysql()
+        setup_local_postgres()
     elif deploy_type == "production":
         print "Learn what to do with ./db.py here. Or make daniel teach me."
         pass

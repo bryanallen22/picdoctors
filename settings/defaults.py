@@ -279,7 +279,7 @@ STATICFILES_FINDERS = (
 )
 
 COMPRESS_PRECOMPILERS = (
-    ('text/x-handlebars', 'node_modules/django-ember-precompile/bin/django-ember-precompile {infile}'),
+    ('text/x-handlebars', 'django-ember-precompile {infile}'),
 )
 # end pre-compiler for ember templates
 
