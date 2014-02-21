@@ -6,7 +6,7 @@ Werkzeug==0.9.4
 amqplib==1.0.2
 anyjson==0.3.3
 argparse==1.2.1
-balanced==0.9.0
+balanced==0.11.15
 billiard==2.7.3.17
 boto==2.6.0
 celery==3.0.11
@@ -33,7 +33,7 @@ pycrypto==2.6
 pygraphviz==1.2
 python-dateutil==1.5
 pytz==2012g
-requests==0.13.2
+requests==1.2.3
 selenium==2.31.0
 simplejson==2.3.2
 six==1.3.0
