@@ -17,8 +17,8 @@ uwsgi
 uwsgi-plugin-http
 uwsgi-plugin-python
 
-python-mysqldb
-libmysqlclient-dev
+#python-mysqldb
+#libmysqlclient-dev
 
 fail2ban
 

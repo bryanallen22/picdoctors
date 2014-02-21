@@ -15,7 +15,7 @@ sudo apt-get install gcc -y
 sudo apt-get install python2.7-dev -y
 
 # Used for mysql (and python)
-sudo apt-get install python-mysqldb libmysqlclient-dev -y
+#sudo apt-get install python-mysqldb libmysqlclient-dev -y
 sudo apt-get install libpq-dev postgresql-contrib postgresql -y
 
 # Used for django-extensions
