@@ -42,4 +42,4 @@ urlpatterns = patterns('',
     url(r'^terms_of_service/$',     terms_of_service,      name='terms_of_service'),
     url(r'^doc_terms_of_service/$', doc_terms_of_service,  name='doc_terms_of_service'),
     url(r'^dmca/$',                 dmca,                  name='dmca'),
-) + static('/static/', document_root=settings.STATIC_SERVING)
+) + static('/static/', document_root=settings.STATIC_ROOT)
