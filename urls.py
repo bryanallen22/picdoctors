@@ -5,6 +5,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from views import privacy_policy, terms_of_service
 
 from common.functions import raise_error
+from django.conf.urls.static import static
 
 import settings
 
@@ -41,8 +42,4 @@ urlpatterns = patterns('',
     url(r'^terms_of_service/$',     terms_of_service,      name='terms_of_service'),
     url(r'^doc_terms_of_service/$', doc_terms_of_service,  name='doc_terms_of_service'),
     url(r'^dmca/$',                 dmca,                  name='dmca'),
-)
-
-if settings.DEBUG:
-    urlpatterns += staticfiles_urlpatterns() # development only!
-
+) + static('/static/', document_root=settings.STATIC_SERVING)

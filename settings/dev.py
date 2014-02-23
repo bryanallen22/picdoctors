@@ -1,7 +1,11 @@
 from defaults import *
 
 DEPLOY_TYPE='DEV' # useful for logs, stack traces
-DEBUG = True
+DEBUG = True 
+
+# COMPRESS_ENABLED = True
+STATIC_SERVING=os.path.join(PROJECT_ROOT, 'static_out'),
+
 IS_PRODUCTION = False # used to toggle things that don't go on the non-live site
 BALANCED_API_KEY_SECRET = '959cf402989b11e29955026ba7c1aba6'
 BALANCED_MARKETPLACE_URI = '/v1/marketplaces/TEST-MP4yysJEaaWktNOnJGlPwHnc'

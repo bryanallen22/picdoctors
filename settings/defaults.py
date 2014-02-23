@@ -305,6 +305,8 @@ PIPELINE_CSS = {
     },
 }
 
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.slimit.SlimItCompressor'
+
 PIPELINE_JS = {
     'all_js': {
         'source_filenames': (
@@ -334,7 +336,8 @@ PIPELINE_JS = {
             ###############
             # Ember Stuff #
             ###############
-            'third_party/js/handlebars-v1.2.1.js',
+            'third_party/js/handlebars-v1.3.0.js',
+            'third_party/js/handlebars-fix.js',
             # this is the debug build, I want a way to say in debug use this
             'third_party/js/ember.js',
             'third_party/js/ember-data.js',
