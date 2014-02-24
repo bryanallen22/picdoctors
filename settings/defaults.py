@@ -140,6 +140,7 @@ PD_APPS = (
     'tasks',
     'notifications',
     'emailer',
+    'handlebars_compiler'
 )
 
 # These are apps whose tests must pass before we can deploy.
@@ -165,6 +166,7 @@ INSTALLED_APPS = (
     'compressor',
     'seleniumtests',
     'django_extensions',
+    'handlebars_compiler',
 ) + TESTABLE_APPS
 
 
@@ -367,6 +369,10 @@ PIPELINE_JS = {
         'output_filename': 'compressed/all.js',
     }
 }
+
+HANDLEBARS_FOLDER = os.path.join(PROJECT_ROOT, 'static/js/ember/templates/')
+print PROJECT_ROOT
+print HANDLEBARS_FOLDER
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 

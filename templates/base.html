@@ -165,31 +165,9 @@
     {% load staticfiles %}
     {% load compress %}
 
-    {% compress js %}
+    {% load precompiler %}
+    {% insert_templates %}
 
-      <script src="{{STATIC_URL}}js/ember/templates/application.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/album.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/albums.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/groups.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/group.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/group_navigation.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/_upload_progress.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/doc_pics.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/_doc_pics_grouping.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/_doc_upload_button.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/pics.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/pics/view.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/pics/edit.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/_pics_grouping.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/_pic_visual.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/_pic_instruction.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/_download_link.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/markups.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/markup_visual.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/markup_instructions.hbs" type="text/x-handlebars"></script>      
-      <script src="{{STATIC_URL}}js/ember/templates/markup_instruction_text_box.hbs" type="text/x-handlebars"></script>      
-
-    {% endcompress %}
 
     <script type="text/template" id="feedback_form">
       <div>
