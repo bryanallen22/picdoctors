@@ -371,8 +371,6 @@ PIPELINE_JS = {
 }
 
 HANDLEBARS_FOLDER = os.path.join(PROJECT_ROOT, 'static/js/ember/templates/')
-print PROJECT_ROOT
-print HANDLEBARS_FOLDER
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
