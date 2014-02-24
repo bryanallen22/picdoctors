@@ -3,5 +3,6 @@
 *.cfg
 *.out
 *.log
+*.swp
 
 static_out
