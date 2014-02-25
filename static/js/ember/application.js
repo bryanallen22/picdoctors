@@ -4,6 +4,11 @@ window.Pd = Pd = Ember.Application.create({
   rootUrl: picDocRootUrl
 });
 
+// AKA don't start the app cause aint nothing to hook up to
+if($('#ember-container').length==0){
+  Pd.deferReadiness();
+}
+
 Pd.RestAdapter = DS.RESTAdapter.extend({
   namespace: 'api'
 });
