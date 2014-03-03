@@ -9,8 +9,8 @@ IS_PRODUCTION = True # used to toggle things that don't go on the non-live site
 PRODUCTION_TESTING = True # used to add debug code to production when it isn't really production. ugh. confusing.
 
 # TODO: Use debug keys with live keys:
-BALANCED_API_KEY_SECRET = '959cf402989b11e29955026ba7c1aba6'
-BALANCED_MARKETPLACE_URI = '/v1/marketplaces/TEST-MP4yysJEaaWktNOnJGlPwHnc'
+BALANCED_API_KEY_SECRET = 'ak-test-1MjuXmDfjhvI5VevnXBL9jsmSbaQwDXCu'
+BALANCED_MARKETPLACE_URI = '/v1/marketplaces/TEST-MP4dltaHHyJdwcMGTDAHbed4'
 
 AWS_ACCESS_KEY_ID = 'AKIAJ5JN3Q5MTH5LX6QQ'
 AWS_SECRET_ACCESS_KEY = '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'
