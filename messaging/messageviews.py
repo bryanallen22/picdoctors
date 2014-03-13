@@ -120,7 +120,6 @@ def message_handler(request):
             job.last_communicator = profile
             job.save()
 
-
             generate_message_email(request, job, profile, msg)
 
 
@@ -137,7 +136,9 @@ def generate_message_email(request, job, profile, message):
         from_whom = job.skaa.nickname
         to_peeps = get_doctors(job, message)
     else:
-        from_whom = job.doctor.nickname
+        # Can't user job.doctor here, because people can comment who haven't
+        # (yet) accepted the job
+        from_whom = profile.nickname
         to_peeps = [job.skaa]
 
     if len(to_peeps) == 0:
@@ -145,16 +146,13 @@ def generate_message_email(request, job, profile, message):
 
     job_no = str(job.id).rjust(8, '0')
 
+    subject = from_whom + ' commented on job #' + job_no
     if job_message:
-        subject = 'Comment on job #' + job_no
         site_path = reverse('contact', args=[job.id])
     elif group_message:
-        subject = 'Comment on a picture in job #' + job_no
         site_path = reverse('album', args=[job.album.id])
 
-    the_message = from_whom + " said '" + message.message + "'"
-
-    notify(request, Notification.JOB_MESSAGE, subject,  the_message, to_peeps, site_path)
+    notify(request, Notification.JOB_MESSAGE, subject, message.message, to_peeps, site_path, job)
 
 def get_doctors(job, message):
     ret = []

@@ -8,6 +8,20 @@ from emailer.emailfunctions import send_email
 from common.models import Job
 
 def notify(request, notification_type, description, notification, recipients, url, job):
+    """
+    Send an in-site notification as well as an email
+
+    request           -- obvious
+    notification_type -- corresponds to the top of Notification class -- e.g. JOB_STATUS_CHANGE
+    description       -- a few words of title
+    notification      -- a one liner that tells the story
+    recipients        -- a list of profiles
+    url               -- to what url is this notification directing the user?
+    job               -- obvious
+    """
+
+    log.debug("notify() called : notification=" + notification)
+
     # who am I supposed to notify if recipients is None????
     if recipients is None:
         log.error("attempted to send notification '%s' without recipient" % notification)
@@ -83,14 +97,25 @@ def send_notification_email(request, notification):
 
     if notification.notification_type == Notification.JOB_STATUS_CHANGE:
         send_jobstatus_email(request, notification, url)
-    # TODO: elif for other types?
-    else:
-        send_email(request,
-                   email_address=notification.recipient.email,
-                   template_name='notification_email.html',
-                   template_args = { 'message'   : message,
-                                     'site_path' : url },
+    elif notification.notification_type == Notification.JOB_MESSAGE:
+        send_email(
+                      request=request,
+                      email_address=notification.recipient.email,
+                      template_name='contact_email.html',
+                      template_args={ 'job' : notification.job, 'comments'  : notification.notification }
                   )
+    elif notification.notification_type == Notification.JOBS_AVAILABLE:
+        log.error("email for JOB_STATUS_CHANGE not yet implemented!")
+        assert(False)
+    elif notification.notification_type == Notification.JOBS_NEED_APPROVAL:
+        log.error("email for JOB_STATUS_CHANGE not yet implemented!")
+        assert(False)
+    elif notification.notification_type == Notification.JOB_REMINDER:
+        log.error("email for JOB_STATUS_CHANGE not yet implemented!")
+        assert(False)
+    else:
+        log.error("Notification type unknown!")
+        assert(False);
 
 def i_want_this_email(profile, notification_type):
 

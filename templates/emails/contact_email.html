@@ -1,0 +1,29 @@
+{% extends 'base_email.html' %}
+
+{% block subject %}
+{{ request.user.nickname }} has commented on your job
+{% endblock %}
+
+
+{% block plain %}
+{{ request.user.nickname }} has said the following regarding your job:
+
+{{ comments }}
+
+To respond, please visit {{ request.SITE_URL }}{% url 'contact' job_id=job.id %}
+
+Thanks for using PicDoctors!
+{% endblock %}
+
+
+
+{% block html %}
+{{ request.user.nickname }} has said the following regarding your job:<br/><br/>
+
+{{ comments }}<br/><br/>
+
+To respond, please click <a href="{{ request.SITE_URL }}{% url 'contact' job.id %}">here</a>.<br/><br/>
+
+Thanks for using PicDoctors!
+{% endblock %}
+
