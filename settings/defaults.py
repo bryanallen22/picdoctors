@@ -225,7 +225,7 @@ LOGGING = {
             'propagate': False,
         },
         'pd': {
-            'handlers': ['console', 'logfile'],
+            'handlers': ['console', 'logfile', 'mail_admins'],
             'level': 'DEBUG',
         },
     }

@@ -108,7 +108,7 @@ def get_merchant_account(request, profile=None):
                     # TODO - invalidate existing things on this account?
                 else:
                     raise KeyError("Duplicate email address %s... this should have been saved under " \
-                                   "profile.bp_account..." % email_address)
+                                   "profile.bp_account..." % account.email_address)
         wrapper = BPAccount(uri=account.uri)
         wrapper.save()
         profile.bp_account = wrapper
