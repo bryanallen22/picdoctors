@@ -14,6 +14,7 @@ ADMINS = (
     ('Bryan', 'bryan@picdoctors.com'),
     ('Daniel', 'daniel@picdoctors.com'),
 )
+SERVER_EMAIL='django@picdoctors.com'
 
 MANAGERS = ADMINS
 
@@ -215,7 +216,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers':['console'],
+            'handlers':['console', 'logfile', 'mail_admins'],
             'propagate': True,
             'level':'WARN',
         },
@@ -362,7 +363,6 @@ PIPELINE_JS = {
             ##########
             # Logger #
             ##########
-            
             'js/logger/*.js'
 
         ),
