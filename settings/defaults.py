@@ -223,7 +223,7 @@ LOGGING = {
         'django.db.backends': {
             'handlers': ['console'],
             'level': 'DEBUG',
-            'propagate': False,
+            'propagate': True,
         },
         'pd': {
             'handlers': ['console', 'logfile', 'mail_admins'],
