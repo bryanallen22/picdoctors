@@ -1,0 +1,25 @@
+{% extends 'base_email.html' %}
+
+{% load picdoctags %}
+
+{% block subject %}
+We'd like you to change a few more things on job #{{ job.id }}
+{% endblock %}
+
+{% block plain %}
+We'd like to ask you to change a few more things on job #{{ job.id }} before we send it along to them.
+
+{{ comments }}
+
+You can see the job here:
+{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{% endblock %}
+
+{% block html %}
+We'd like to ask you to change a few more things on job #{{ job.id }} before we send it along to them.<br/><br/>
+
+{{ comments }}<br/><br/>
+
+You can see the job by clicking <a href="{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
+{% endblock %}
+

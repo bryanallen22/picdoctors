@@ -23,6 +23,7 @@ class Notification(DeleteMixin):
         (JOBS_NEED_APPROVAL, 'Jobs need approval'),
         (JOB_REMINDER,       'Job waiting on you'),
         (JOB_MESSAGE,        'You have received a message about your job'),
+        (JOB_REJECTION,      'Please fix a few more things on your job'),
     )
 
     # max_length refers to the shorthand versions above
@@ -30,11 +31,8 @@ class Notification(DeleteMixin):
                                                choices=NOTIFICATION_TYPES,
                                                db_index=True)
 
-    # the notification to send to the recipient
-    notification        = models.CharField(max_length=256, blank=True)
-
     # a short description of this notification (useful for email subjects, and notification drop downs)
-    description         = models.CharField(max_length=32, blank=True)
+    description         = models.CharField(max_length=64, blank=True)
 
     # the recipient of the notification
     recipient           = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
