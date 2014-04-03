@@ -9,12 +9,8 @@ if($('#ember-container').length==0){
   Pd.deferReadiness();
 }
 
-Pd.RestAdapter = DS.RESTAdapter.extend({
+Pd.ApplicationAdapter = DS.RESTAdapter.extend({
   namespace: 'api'
-});
-
-Pd.Store = DS.Store.extend({
-  adapter: 'Pd.RestAdapter'
 });
 
 // hack to inject the csrf token
