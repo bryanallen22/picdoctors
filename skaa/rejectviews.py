@@ -37,6 +37,18 @@ def switch_doctor(request, job_id):
             'is_refund'     : False,
             }
 
+def notify_doctor_of_rejection(request, job, recipient, comments):
+    doc_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
+    #
+    notify(request=request,
+           notification_type=Notification.JOB_REJECTION,
+           description='Please fix a few more things on job ' + job.id,
+           recipients=recipient,
+           url=doc_path,
+           job=job,
+           email_args={ 'comments' : comments }
+          )
+
 # you don't need to be skaa or doctor to have the album_approver permission, maybe I should revisit this
 # TODO above comment
 @require_login_as(['album_approver'])
@@ -57,13 +69,11 @@ def mod_reject_work(request, job_id):
             job.status = Job.DOCTOR_ACCEPTED
             job.save()
 
-            text = request.POST['comment']
+            comments = request.POST['comment']
 
             # send a message to doctor
-            send_job_status_change(request, job, job.skaa, "  Feedback: " + text)
-
-            # send a message to skaa
-            send_job_status_change(request, job, job.doctor, "  The job needed more work and was returned to the doctor.")
+            #send_job_status_change(request, job, job.skaa, "  Feedback: " + comments)
+            notify_doctor_of_rejection(request, job, job.skaa, comments)
 
             return redirect(reverse('album_approval_page'))
         else:

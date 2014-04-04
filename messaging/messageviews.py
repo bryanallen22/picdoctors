@@ -155,11 +155,18 @@ def generate_message_email(request, job, profile, message):
 
     subject = from_whom + ' commented on job #' + job_no
     if job_message:
-        site_path = reverse('contact', args=[job.id])
+        url = reverse('contact', args=[job.id])
     elif group_message:
-        site_path = reverse('album', args=[job.album.id])
+        url = reverse('album', args=[job.album.id])
 
-    notify(request, Notification.JOB_MESSAGE, subject, message.message, to_peeps, site_path, job)
+    email_args = { 'comments'  : message.message }
+    notify(request,
+            Notification.JOB_MESSAGE,
+            subject,
+            to_peeps,
+            url,
+            job,
+            email_args)
 
 def get_doctors(job, message):
     ret = []
