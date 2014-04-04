@@ -1,10 +1,24 @@
-Hello Mate, I'm the comments, here's what your scope is {{this}}
+There are {{length}} comments 
+{{#if length}}
+  (<a href {{action 'openClose'}}>{{openCloseText}}</a>)
+{{/if}}
 
-There are {{length}} comment
-<ul>
-{{#each message in controller}}
-<li>
-Message says: {{message.message}} from: {{message.commentor}}
-  </li>
-{{/each}}
-</ul>
+{{#if showingComments}}
+  <ul>
+  {{#each message in controller}}
+    <li>
+    <section class='message'>
+      <div class='top'>
+        <span {{bind-attr class=':commentor message.is_owner:my_comment'}}>{{message.commentor}}:</span>
+        <span class='comment'>{{message.message}}</span>
+      </div>
+      <div class='bottom'>
+        <span class='time'>
+          {{message.created}}
+        </span>
+      </div>
+    </section>
+    </li>
+  {{/each}}
+  </ul>
+{{/if}}

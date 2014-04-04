@@ -552,6 +552,18 @@
   color: black;
   font-size: 22px;
 }
+/**********************
+  new message css
+**********************/
+.message div.top .commentor {
+  font-weight: bold;
+}
+.message div.top .my_comment {
+  color: darkred;
+}
+.message div.bottom .time {
+  color: #777;
+}
 /*****************************
   Set price page
 ******************************/

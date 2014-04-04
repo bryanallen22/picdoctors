@@ -4,5 +4,7 @@ hasMany = DS.hasMany;
 
 Pd.Message = DS.Model.extend({
   message: attr(),
-  commentor: attr()
+  commentor: attr(),
+  created: attr(),
+  is_owner: attr()
 });
