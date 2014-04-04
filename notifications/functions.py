@@ -20,8 +20,6 @@ def notify(request, notification_type, description, recipients, url, job, email_
     email_args        -- arguments handed over to the email (more may be added below this call in send_notification_email)
     """
 
-    log.debug("notify() called : notification=" + notification)
-
     # who am I supposed to notify if recipients is None????
     if recipients is None:
         log.error("attempted to send notification '%s' without any recipients!")
