@@ -30,13 +30,6 @@
 #footer p a {
   color: #777777;
 }
-#loading-content-wrapper {
-  background: url(../images/loading.gif) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
 /*****************************
   Index page
 ******************************/
@@ -936,4 +929,8 @@
  * *************************************************************/
 #privacy blockquote {
   margin-bottom: 0px;
+}
+.top_loader {
+  margin-top: 200px;
+  margin-bottom: 200px;
 }

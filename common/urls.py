@@ -12,7 +12,7 @@ from common.account_settings_views import change_password, change_profile_settin
 from common.account_settings_views import update_roles
 from common.permissionfunctions import permission_denied
 from common.navbarviews import async_album_info
-from common.emberviews import home, albums_endpoint, users_endpoint, markups_endpoint, pics_endpoint
+from common.ember_endpoints import home, albums_endpoint, users_endpoint, markups_endpoint, pics_endpoint
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin

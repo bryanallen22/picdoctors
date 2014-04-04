@@ -117,7 +117,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
       else if(albumOwner){
         if(needsPay) this.transitionToRoute('album.pay');
         else if(needsSignIn) this.transitionToRoute('signinToPay');
-        else if(finished) this.transitionToRoute('job.userJobs');
+        else if(finished) this.transitionToRoute('jobs.userJobs');
       } else if(albumDoctor) {
         if(finished) this.transitionToRoute('jobs.docJobs');
       } else if (!albumDoctor) {

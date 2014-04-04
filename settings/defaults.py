@@ -301,6 +301,7 @@ PIPELINE_CSS = {
             # Our stuff
             ###########
             'css/picdoctors.css',
+            'css/spinner.css',
             'css/isotope.css',
             'css/qbeforeafter.css'
         ),

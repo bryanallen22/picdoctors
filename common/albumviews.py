@@ -59,7 +59,7 @@ def album(request, album_id):
     for group in groups:
         picco = Combination()
         picco.user_pics = Pic.get_group_pics(group)
-        picco.messages = prep_messages(GroupMessage.get_messages(group), job)
+        picco.messages = prep_messages(GroupMessage.get_messages(group), profile)
         for x in picco.user_pics:
             picco.max_height = max(picco.max_height, x.preview_height)
             picco.max_width = max(picco.max_width, x.preview_width)
