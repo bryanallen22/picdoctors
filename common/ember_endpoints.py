@@ -11,6 +11,9 @@ from common.functions import json_result
 from skaa.markupviews import can_modify_markup
 from annoying.functions import get_object_or_None
 
+from messaging.models import JobMessage, GroupMessage
+from messaging.messageviews import build_messages
+
 import ipdb
 
 @render_to('home.html')
@@ -140,6 +143,7 @@ def albums_endpoint(request, album_id):
     response["docPicGroups"] = dpg = prepDocPicGroups(album, request)
     response["pics"] = pics + prepDocPics(dpg, request)
     response["markups"] = prepMarkups(response["pics"])
+    response["messages"] = prepMessages(response["groups"], album, request)
     return json_result(response)
 
 def prepAlbum(album, request):
@@ -241,6 +245,28 @@ def prepPics(album):
             pics_ret.append(pic.get_view_model(True))
 
     return pics_ret
+
+def prepMessages(groups, album, request):
+    messages_ret = []
+    profile = request.user
+    job = album.get_job_or_None()
+
+    # TODO make sure this is valid, what if profile is null
+    # and userprofile is null, hmmmm????????
+    can_view_messages = profile == album.userprofile or \
+                        (job and profile == job.doctor) or \
+                        (profile and profile.isa('moderator'))
+
+    if can_view_messages:
+        for group in groups:
+            message_ids = group['messages'] = []
+            messages =  build_messages(GroupMessage.get_messages(group['id']), profile)
+
+            for message in messages:
+                message_ids.append(message['id'])
+                messages_ret.append(message)
+
+    return messages_ret
 
 def prepMarkups(pics):
     markups = []

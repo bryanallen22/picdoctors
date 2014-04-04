@@ -6,7 +6,7 @@ Pd.Group = DS.Model.extend({
   pics: hasMany('pic'),
   docPicGroups: hasMany('docPicGroup'),
   album: belongsTo('album'),
-  comments: hasMany('comment')
+  messages: hasMany('message')
 });
 
 Pd.Group.reopen({

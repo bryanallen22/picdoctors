@@ -34,16 +34,23 @@ class PicComment():
         self.group_id = -1
         self.sequence = 0
 
-def prep_messages(base_messages, job):
-    """ get the information from either the job or the group message  """
+def build_messages(base_messages, user):
+
     messages = []
     for msg in base_messages:
         message = Message()
         message.commentor = msg.commentor.nickname
         message.message = msg.message
         message.created = get_time_string(msg.created)
-        message.is_owner = msg.commentor == job.skaa
+        message.is_owner = msg.commentor == user 
+        message.id = msg.id
         messages.append(message.__dict__)
+
+    return messages
+
+def prep_messages(base_messages, user):
+    """ get the information from either the job or the group message  """
+    messages = build_messages(base_messages, user) 
 
     return simplejson.dumps(messages)
 
@@ -66,7 +73,7 @@ def contact(request, job_id):
     #############################
     #############################
 
-    job_messages = prep_messages(JobMessage.get_messages(job), job)
+    job_messages = prep_messages(JobMessage.get_messages(job), profile)
 
     return {'job_id': job.id, 'is_owner': (profile == job.skaa), 'job_messages' : job_messages}
 
