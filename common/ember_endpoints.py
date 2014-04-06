@@ -12,7 +12,8 @@ from skaa.markupviews import can_modify_markup
 from annoying.functions import get_object_or_None
 
 from messaging.models import JobMessage, GroupMessage
-from messaging.messageviews import build_messages
+from messaging.messageviews import build_messages, generate_message
+from common.decorators import require_login_as
 
 import ipdb
 
@@ -138,6 +139,7 @@ def albums_endpoint(request, album_id):
     # well, it's easier to just match the format ember data expects
     response = {}
     response["album"] = prepAlbum(album, request)
+    response["jobs"] = prepJobs(response["album"])
     response["groups"] = prepGroups(album, request)
     pics = prepPics(album)
     response["docPicGroups"] = dpg = prepDocPicGroups(album, request)
@@ -152,11 +154,13 @@ def prepAlbum(album, request):
     job = album.get_job_or_None()
     owner_id = -1
     doctor_id = -2
+    job_id = None
 
     if album.userprofile is not None:
         owner_id = album.userprofile.id
 
     if job is not None:
+        job_id = job.id
         if job.doctor is not None:
             doctor_id = job.doctor.id
 
@@ -165,10 +169,18 @@ def prepAlbum(album, request):
             'groups': groupings,
             'finished': album.finished,
             'owner' : owner_id,
-            'doctor' : doctor_id
+            'doctor' : doctor_id,
+            'job': job_id
             }
 
     return albumJson
+
+def prepJobs(album):
+    job_id = album['job']
+    job_json = []
+    if job_id is not None:
+        job_json.append({'id': job_id })
+    return job_json
 
 def prepGroups(album, request):
     groupsJson = []
@@ -281,3 +293,20 @@ def prepMarkups(pics):
     return markups
 
 
+@require_login_as(['skaa', 'doctor'])
+def messages_endpoint(request):
+    result = {}
+    if request.method == 'POST':
+        original_json = simplejson.loads(request.body)
+        data = original_json['message']
+
+
+        message = data['message'].strip()
+        job_val = data['job'].strip()
+        group_val = data['group'].strip()
+        profile = request.user
+        msg = generate_message(profile, message, job_val, group_val)
+        data['id'] = msg.id
+        result = original_json
+
+    return json_result(result)

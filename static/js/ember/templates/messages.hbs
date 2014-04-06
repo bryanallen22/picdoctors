@@ -1,11 +1,12 @@
-{{commentsText}}
-{{#if length}}
+<div class='messages'>
+  {{commentsText}}
+  {{#if messages.length}}
   (<a href {{action 'openClose'}}>{{openCloseText}}</a>)
-{{/if}}
+  {{/if}}
 
-{{#if showingComments}}
+  {{#if showingComments}}
   <ul>
-  {{#each message in controller}}
+    {{#each message in messages}}
     <li>
     <section class='message'>
       <div class='top'>
@@ -19,6 +20,11 @@
       </div>
     </section>
     </li>
-  {{/each}}
+    {{/each}}
   </ul>
-{{/if}}
+  {{/if}}
+  <div class='new_message'>
+    {{view Pd.SubmitTextField value=newMessage enter='sendThatMessage'}}
+    <button {{action 'sendThatMessage'}}>Send That Message</button>
+  </div>
+</div>

@@ -77,11 +77,9 @@ def contact(request, job_id):
 
     return {'job_id': job.id, 'is_owner': (profile == job.skaa), 'job_messages' : job_messages}
 
-def can_add_message(request, job):
+def can_add_message(profile, job):
     if not job:
         return False
-
-    profile = get_profile_or_None(request)
 
     if job.skaa == profile:
         return True
@@ -99,39 +97,41 @@ def message_handler(request):
     result = {}
     if request.method == 'POST':
         data = simplejson.loads(request.body)
+
         message = data['message'].strip()
-
         job_val = data['job_id'].strip()
-        job = get_object_or_None(Job, id=int(job_val))
-
-        if can_add_message(request, job) and message != '':
-            profile = get_profile_or_None(request)
-            msg = None
-            group_val = data['group_id'].strip()
-
-            job_msg = False
-
-            if group_val != '':
-                group_val = int(group_val)
-                group = get_object_or_None(Group, id=group_val)
-                msg = GroupMessage()
-                msg.group = group
-            else:
-                msg = JobMessage()
-
-            msg.job = job
-            msg.message = message
-            msg.commentor = profile
-            msg.save()
-
-            job.last_communicator = profile
-            job.save()
-
-            generate_message_email(request, job, profile, msg)
-
+        group_val = data['group_id'].strip()
+        profile = get_profile_or_None(request)
+        msg = generate_message(profile, message, job_val, group_val)
 
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
+
+def generate_message(profile, message, job_id, group_id):
+    job = get_object_or_None(Job, id=int(job_id))
+
+    if can_add_message(profile, job) and message != '':
+        msg = None
+
+        if group_id != '':
+            group_id = int(group_id)
+            group = get_object_or_None(Group, id=group_id)
+            msg = GroupMessage()
+            msg.group = group
+        else:
+            msg = JobMessage()
+
+        msg.job = job
+        msg.message = message
+        msg.commentor = profile
+        msg.save()
+
+        job.last_communicator = profile
+        job.save()
+        
+        return msg
+    return None
+        
 
 
 def generate_message_email(request, job, profile, message):
