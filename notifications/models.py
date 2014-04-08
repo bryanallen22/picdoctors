@@ -16,7 +16,7 @@ class Notification(DeleteMixin):
     JOBS_NEED_APPROVAL = 'jb_need_app'   # jobs need approval (for spamming moderators)
     JOB_REMINDER       = 'jb_remind'     # If a job is waiting on you, remind the user/doctor
     JOB_MESSAGE        = 'jb_msg'        # A message from a doc/user to user/doc about a job
-    JOB_REJECTION      = 'jb_rejection'  # Doctor'st work has been rejected by a mod
+    JOB_REJECTION      = 'jb_rejection'  # Doctor's work has been rejected by a mod
 
     NOTIFICATION_TYPES = (
         (JOB_STATUS_CHANGE,  'Job status has changed'),

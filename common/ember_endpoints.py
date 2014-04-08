@@ -30,7 +30,7 @@ def users_endpoint(request, user_id):
            }
 
     profile = request.user
-  
+
     if profile.is_authenticated():
         user['id'] = profile.id
         user['nickname'] = profile.nickname
@@ -49,7 +49,7 @@ def can_modify_markup(request, markup_id=None):
         data = simplejson.loads(request.body)
         try:
             pic = Pic.objects.get(id=data['markup']['pic'])
-        except: 
+        except:
             return False
 
     if not pic:
@@ -130,7 +130,7 @@ def pics_endpoint(request, pic_id=None):
 def albums_endpoint(request, album_id):
     if not belongs_on_this_markup_page(request, album_id,-1):
         return HttpResponse('Unauthorized', status=401)
-    
+
     album = get_object_or_None(Album, pk=album_id)
     #make sure the sequences are set here :)
     album.set_sequences()
@@ -165,7 +165,7 @@ def prepAlbum(album, request):
             doctor_id = job.doctor.id
 
     albumJson = {
-            'id': album.id, 
+            'id': album.id,
             'groups': groupings,
             'finished': album.finished,
             'owner' : owner_id,
@@ -198,8 +198,8 @@ def prepGroups(album, request):
             doc_pic_group_ids = [dp.id for dp in doc_pic_groups]
 
         model = {
-           'id': group.id, 
-           'album': album.id, 
+           'id': group.id,
+           'album': album.id,
            'pics': pic_ids,
            'docPicGroups': doc_pic_group_ids
                 }
@@ -209,7 +209,7 @@ def prepGroups(album, request):
 
 def prepDocPics(doc_pic_groups, request):
     pics = []
-    
+
 #    ipdb.set_trace()
     for dpg in doc_pic_groups:
         #ipdb.set_trace()
@@ -236,7 +236,7 @@ def prepDocPicGroups(album, request):
     job = album.get_job_or_None()
     if job is None:
         return []
-    
+
     groups = Group.get_album_groups(album)
     for group in groups:
         doc_pic_groups = group.get_doctor_pics(job, request.user)
@@ -302,7 +302,9 @@ def messages_endpoint(request):
 
 
         message = data['message'].strip()
-        job_val = data['job'].strip()
+        job_val = data['job']
+        if job_val != None:
+            job_val = job_val.strip()
         group_val = data['group'].strip()
         profile = request.user
         msg = generate_message(profile, message, job_val, group_val)
