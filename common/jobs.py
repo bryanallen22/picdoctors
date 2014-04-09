@@ -4,7 +4,7 @@ from django.utils import simplejson
 
 from common.models import Pic, Job
 from common.calculations import calculate_job_payout
-from messaging.models import JobMessage, GroupMessage
+from messaging.models import GroupMessage
 
 import ipdb
 from copy import deepcopy

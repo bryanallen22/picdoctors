@@ -8,7 +8,7 @@ from annoying.functions import get_object_or_None
 
 from common.models import Job, Album, Group, Pic
 from messaging.messageviews import prep_messages
-from messaging.models import JobMessage, GroupMessage
+from messaging.models import GroupMessage
 from common.functions import get_profile_or_None, get_time_string
 from django.utils.html import strip_tags
 from common.decorators import require_login_as

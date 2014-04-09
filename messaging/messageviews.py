@@ -54,29 +54,6 @@ def prep_messages(base_messages, user):
 
     return simplejson.dumps(messages)
 
-@require_login_as(['skaa', 'doctor'])
-@render_to('contact.html')
-def contact(request, job_id):
-    #SECURITY (Move to Decorator)
-    #############################
-    profile = get_profile_or_None(request)
-
-    job = get_object_or_None(Job, pk=job_id)
-
-    if not job:
-        return redirect('/')
-
-    if not (job.skaa == profile or job.doctor == profile or
-        ( profile.isa('doctor') and job.status == Job.IN_MARKET)):
-        return redirect('/')
-
-    #############################
-    #############################
-
-    job_messages = prep_messages(JobMessage.get_messages(job), profile)
-
-    return {'job_id': job.id, 'is_owner': (profile == job.skaa), 'job_messages' : job_messages}
-
 def can_add_message(profile, job):
     if not job:
         return False
@@ -132,22 +109,4 @@ def generate_message(profile, message, job_id, group_id):
 
         return msg
     return None
-
-
-
-
-def get_doctors(job, message):
-    ret = []
-    # if there is a job doctor, only reply to him
-    if job.doctor:
-        ret.append(job.doctor)
-    # no job doctor yet, reply to all doctors who have commented
-    else:
-        jms = JobMessage.objects.filter(job=job)
-        for jm in jms:
-            # skip users, and only add unique doctors
-            if jm.commentor != job.skaa and jm.commentor not in ret:
-                ret.append(jm.commentor)
-
-    return ret
 
