@@ -11,7 +11,7 @@ from common.functions import json_result
 from skaa.markupviews import can_modify_markup
 from annoying.functions import get_object_or_None
 
-from messaging.models import JobMessage, GroupMessage
+from messaging.models import GroupMessage
 from messaging.messageviews import build_messages, generate_message
 from common.decorators import require_login_as
 

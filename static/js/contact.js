@@ -1,5 +1,6 @@
+/*
 $(function(){
-  
+
   if( $('.contact_arena').length > 0 ) {
     var true_sync_func = Backbone.sync;
     var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
@@ -22,7 +23,7 @@ $(function(){
           is_owner  : false,
         };
       },
-      
+
       initialize : function() {
       },
 
@@ -33,7 +34,7 @@ $(function(){
     });
 
     var MessageView = Backbone.View.extend({
-      
+
       className: 'message_row',
 
       template:  _.template($('#message_template').html().trim()),
@@ -67,9 +68,9 @@ $(function(){
 
     });
     var hard_code_blank = 'Write your message here';
-    
+
     var MessageInput = Backbone.View.extend({
-      
+
       events: {
         'keypress    .message_input': 'checkKey',
         'blur        .message_input': 'onblur',
@@ -93,13 +94,13 @@ $(function(){
 
       onblur: function(ev){
         var el = ev.target;
-        if(el.value=='') 
+        if(el.value=='')
           el.value=hard_code_blank;
       },
 
       onfocus: function(ev){
         var el = ev.target;
-        if(el.value==hard_code_blank) 
+        if(el.value==hard_code_blank)
           el.value='';
       },
 
@@ -169,7 +170,7 @@ $(function(){
         this.message_input.message_list = this.message_list;
         var prev = this.$el.find('.previous_messages').html();
         this.message_list.reset( jQuery.parseJSON( prev ) );
-        
+
       },
     });
 
@@ -178,4 +179,4 @@ $(function(){
     });
   }
 });
-
+*/

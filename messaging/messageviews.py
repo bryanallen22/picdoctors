@@ -42,7 +42,7 @@ def build_messages(base_messages, user):
         message.commentor = msg.commentor.nickname
         message.message = msg.message
         message.created = get_time_string(msg.created)
-        message.is_owner = msg.commentor == user 
+        message.is_owner = msg.commentor == user
         message.id = msg.id
         messages.append(message.__dict__)
 
@@ -50,7 +50,7 @@ def build_messages(base_messages, user):
 
 def prep_messages(base_messages, user):
     """ get the information from either the job or the group message  """
-    messages = build_messages(base_messages, user) 
+    messages = build_messages(base_messages, user)
 
     return simplejson.dumps(messages)
 
@@ -119,7 +119,8 @@ def generate_message(profile, message, job_id, group_id):
             msg = GroupMessage()
             msg.group = group
         else:
-            msg = JobMessage()
+            log.error("JobMessage() is not ready for prime time any more...")
+            #msg = JobMessage()
 
         msg.job = job
         msg.message = message
@@ -128,45 +129,12 @@ def generate_message(profile, message, job_id, group_id):
 
         job.last_communicator = profile
         job.save()
-        
+
         return msg
     return None
-        
 
 
-def generate_message_email(request, job, profile, message):
-    job_message = isinstance(message, JobMessage)
-    group_message = isinstance(message, GroupMessage)
-    to_peeps = None
 
-    if message.commentor == job.skaa:
-        from_whom = job.skaa.nickname
-        to_peeps = get_doctors(job, message)
-    else:
-        # Can't user job.doctor here, because people can comment who haven't
-        # (yet) accepted the job
-        from_whom = profile.nickname
-        to_peeps = [job.skaa]
-
-    if len(to_peeps) == 0:
-        return
-
-    job_no = str(job.id).rjust(8, '0')
-
-    subject = from_whom + ' commented on job #' + job_no
-    if job_message:
-        url = reverse('contact', args=[job.id])
-    elif group_message:
-        url = reverse('album', args=[job.album.id])
-
-    email_args = { 'comments'  : message.message }
-    notify(request,
-            Notification.JOB_MESSAGE,
-            subject,
-            to_peeps,
-            url,
-            job,
-            email_args)
 
 def get_doctors(job, message):
     ret = []

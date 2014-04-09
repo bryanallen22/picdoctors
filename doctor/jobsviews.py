@@ -94,7 +94,6 @@ def generate_doctor_actions(job):
     redirect_url = True
 
     # boring actions used by multiple cases belowg below
-    contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), True)
 
     group = job.get_first_unfinished_group()
     group_seq = 1 if not group else group.sequence
@@ -112,7 +111,6 @@ def generate_doctor_actions(job):
 
     if job.status == Job.IN_MARKET:
         ret.append(view_markup)
-        ret.append(contact)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(job_price_too_low)
         ret.append(quit_job)
@@ -121,16 +119,13 @@ def generate_doctor_actions(job):
         ret.append(work_job)
         ret.append(view_album)
         ret.append(mark_as_completed)
-        ret.append(contact)
         ret.append(quit_job)
 
     elif job.status == Job.MODERATOR_APPROVAL_NEEDED:
         ret.append(view_album)
-        ret.append(contact)
         ret.append(quit_job)
 
     elif job.status == Job.DOCTOR_SUBMITTED:
-        ret.append(contact)
         ret.append(view_album)
         ret.append(quit_job)
 

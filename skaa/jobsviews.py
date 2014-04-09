@@ -81,7 +81,7 @@ def generate_skaa_actions(job):
     url_redirect=True
 
     #boring always created actions for populating below
-    contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), url_redirect)
+    #contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), url_redirect)
     view_markup_url = "/home/#/albums/" + str(job.album.id) + "/markupView"
     view_markup = DynamicAction('View Markups', view_markup_url, url_redirect)
     view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), url_redirect)
@@ -94,26 +94,26 @@ def generate_skaa_actions(job):
     unshare_album = DynamicAction('Unshare Album', reverse('make_album_unshareable', args=[job.id]))
 
     if job.status == Job.IN_MARKET:
-        ret.append(contact)
+        #ret.append(contact)
         ret.append(view_album)
         ret.append(increase_price)
         ret.append(refund)
 
     elif job.status == Job.DOCTOR_ACCEPTED:
-        ret.append(contact)
+        #ret.append(contact)
         ret.append(view_album)
         ret.append(switch_doc) # in case the doc takes too long
         ret.append(refund)
 
     elif job.status == Job.MODERATOR_APPROVAL_NEEDED:
-        ret.append(contact)
+        #ret.append(contact)
         ret.append(view_album)
         #ret.append(switch_doc) -- bryan removed: they haven't seen his work yet, let's not let them reject this guy yet
         ret.append(refund)
 
     elif job.status == Job.DOCTOR_SUBMITTED:
         ret.append(accept_album)
-        ret.append(contact)
+        #ret.append(contact)
         ret.append(view_album)
         ret.append(switch_doc)
         ret.append(refund)
@@ -182,27 +182,27 @@ def set_groups_locks(album_to_lock, state):
         group.is_locked = state
         group.save()
 
-@require_login_as(['skaa'])
-def request_modification(request):
-    profile = get_profile_or_None(request)
-    data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
-
-    actions = Actions()
-    actions.add('alert', AlertData('There was an error processing your request.', 'error'))
-    if job and profile and job.skaa == profile:
-        actions.clear()
-        actions.add('alert', AlertData('The user has requested modification', 'success'))
-        redir_url = reverse('contact', args=[job.id])
-        r =  RedirectData(redir_url,'The Communication Page')
-        actions.add('action_button', r)
-        job.status = Job.USER_REQUESTS_MODIFICATION
-        job.save()
-        send_job_status_change(request, job, profile)
-        job_info = fill_job_info(job, generate_skaa_actions, profile)
-        actions.addJobInfo(job_info)
-
-    return HttpResponse(actions.to_json(), mimetype='application/json')
+#@require_login_as(['skaa'])
+#def request_modification(request):
+#    profile = get_profile_or_None(request)
+#    data = simplejson.loads(request.body)
+#    job = get_object_or_None(Job, id=data['job_id'])
+#
+#    actions = Actions()
+#    actions.add('alert', AlertData('There was an error processing your request.', 'error'))
+#    if job and profile and job.skaa == profile:
+#        actions.clear()
+#        actions.add('alert', AlertData('The user has requested modification', 'success'))
+#        redir_url = reverse('contact', args=[job.id])
+#        r =  RedirectData(redir_url,'The Communication Page')
+#        actions.add('action_button', r)
+#        job.status = Job.USER_REQUESTS_MODIFICATION
+#        job.save()
+#        send_job_status_change(request, job, profile)
+#        job_info = fill_job_info(job, generate_skaa_actions, profile)
+#        actions.addJobInfo(job_info)
+#
+#    return HttpResponse(actions.to_json(), mimetype='application/json')
 
 
 @require_login_as(['skaa'])
