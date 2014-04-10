@@ -1,5 +1,8 @@
 from django import template
 from django.core.urlresolvers import reverse
+
+from common.emberurls import get_ember_url
+
 import locale
 
 register = template.Library()
@@ -28,5 +31,9 @@ def currency_cents(value):
     value = float(value)
     value = value / 100
     return locale.currency(value, grouping=True)
+
+@register.simple_tag(name='ember_url')
+def ember_url(name, **kwargs):
+    return get_ember_url(name, **kwargs)
 
 # If you are trying to figure out someone's permissions in a tag in the tempalte just use if perms.PERMISSION (see base.html)
