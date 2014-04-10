@@ -17,6 +17,7 @@ from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
 from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction
 from common.jobs import send_job_status_change, fill_job_info
 from common.decorators import require_login_as
+from common.emberurls import get_ember_url
 from datetime import timedelta
 import datetime
 from django.utils.timezone import utc
@@ -81,10 +82,7 @@ def generate_skaa_actions(job):
     url_redirect=True
 
     #boring always created actions for populating below
-    #contact = DynamicAction('Job Questions', reverse('contact', args=[job.id]), url_redirect)
-    view_markup_url = "/home/#/albums/" + str(job.album.id) + "/markupView"
-    view_markup = DynamicAction('View Markups', view_markup_url, url_redirect)
-    view_album = DynamicAction('View Album', reverse('album', args=[job.album.id]), url_redirect)
+    view_album = DynamicAction('View Album', get_ember_url('album_markupview', album_id=str(job.album.id)), url_redirect)
     accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), url_redirect)
     refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), url_redirect)
     switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), url_redirect)

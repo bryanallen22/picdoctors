@@ -18,6 +18,7 @@ from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
 from common.jobs import Actions, Action, RedirectData, AlertData, DynamicAction
 from common.jobs import send_job_status_change, fill_job_info
 from common.decorators import require_login_as
+from common.emberurls import get_ember_url
 from datetime import timedelta
 import datetime
 from django.utils.timezone import utc
@@ -97,12 +98,12 @@ def generate_doctor_actions(job):
 
     group = job.get_first_unfinished_group()
     group_seq = 1 if not group else group.sequence
-    work_job_url = "/home/#/albums/" + str(job.album.id) + "/markupView"
+    work_job_url = get_ember_url('album_markupview', album_id=str(job.album.id))
     work_job = DynamicAction('Work on Job', work_job_url, redirect_url)
 
     mark_as_completed = DynamicAction('Mark as Completed', '/mark_job_completed/')
 
-    view_markup_url = "/home/#/albums/" + str(job.album.id) + "/markupView"
+    view_markup_url = get_ember_url('album_markupview', album_id=str(job.album.id))
     view_markup = DynamicAction('View Job', view_markup_url, True)
     view_album = DynamicAction('Before & After Album', reverse('album', args=[job.album.id]), True)
     job_price_too_low = DynamicAction('Job Price Too Low', reverse('job_price_too_low', args=[job.id]), True)

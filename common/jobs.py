@@ -5,6 +5,7 @@ from django.utils import simplejson
 from common.models import Pic, Job
 from common.calculations import calculate_job_payout
 from messaging.models import GroupMessage
+from common.emberurls import get_ember_url
 
 import ipdb
 from copy import deepcopy
@@ -137,8 +138,7 @@ def fill_job_info(job, action_generator, profile):
         if job_complete:
             job_inf.albumurl = reverse('album', args=[album.id])
         else:
-            job_inf.albumurl = reverse('markup_album', args=[job_inf.album, 1])
-            job_inf.albumurl = "/home/#/albums/" + str(job_inf.album) + "/markupView"
+            job_inf.albumurl = get_ember_url('album_markupview', album_id=str(job_inf.album))
 
         job_inf.output_pic_count = album.num_groups
         job_inf.pic_thumbs = generate_pic_thumbs(album, job_complete)
@@ -163,7 +163,7 @@ def generate_pic_thumbs(filter_album, job_complete):
         if job_complete:
             markup_url = reverse('album', args=[filter_album.id])
         else:
-            markup_url = "/home/#/albums/" + str(filter_album.id) + "/groups/" + str(pic.group.id) + "/pics/view"
+            markup_url = get_ember_url('album_view', album_id=str(filter_album.id), group_id=str(pic.group.id))
 
         tup = (pic.get_thumb_url(), markup_url)
         ret.append(tup)

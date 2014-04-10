@@ -25,9 +25,9 @@ def generate_carousel_imgs(filter_album):
         # So, this is unlikely to happen, but I'm a perfectionist. If they skip the markup
         # page, pic.group will be None.
         if pic.group:
-            markup_url = "/home/#/albums/" + str(filter_album.id) + "/groups/" + str(pic.group.sequence) + "/pics/view"
+            markup_url = get_ember_url('album_view', album_id=str(filter_album.id), group_id=str(pic.group.sequence))
         else:
-            markup_url = "/home/#/albums/" + str(filter_album.id) + "/markupView"
+            markup_url = get_ember_url('album_markupview', album_id=str(filter_album.id))
         tup = CarouselPic(pic.get_thumb_url(), markup_url)
         ret.append(tup)
     return ret

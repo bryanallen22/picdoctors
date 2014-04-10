@@ -21,6 +21,7 @@ from common.models import Group
 from common.models import Job
 from common.models import ungroupedId
 from common.decorators import passes_test
+from common.emberurls import get_ember_url
 from skaa.progressbarviews import get_progressbar_vars
 
 from common.emberviews import get_pic_view_models
@@ -58,7 +59,7 @@ def upload_page(request):
     ret = get_progressbar_vars(request, 'upload')
     ret.update( { "pics" : pics, "ungroupedId" :  ungroupedId } )
     # we do weird stuff, we don't know groups until later
-    ret.update( { "markup_url" : "/home/#/albums/" + str(album.id) + "/markupEdit"})
+    ret.update( { "markup_url" : get_ember_url('album_markupview', album_id=str(album.id)) })
     return ret
 
 @render_to('need_cookies.html')
