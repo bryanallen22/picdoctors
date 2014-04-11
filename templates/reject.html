@@ -20,7 +20,9 @@
       <br />
       <br />
 
-      <a class="btn btn-large btn-primary" job_id="{{job_id}}"  href="{% url 'contact' job_id %}">Contact Doctor</a>
+      {# TODO: Could I add some kind ember link that highlights the comment functionality? #}
+      {% load picdoctags %}
+      <a class="btn btn-large btn-primary" job_id="{{job_id}}"  href="{% ember_url 'album_view' album_id=album_id group_id=first_group %}">Contact Doctor</a>
       <br />
       <br />
 

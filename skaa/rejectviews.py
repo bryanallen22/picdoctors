@@ -1,16 +1,17 @@
 from annoying.decorators import render_to
-from common.models import Group
-from django.utils import simplejson
 from annoying.functions import get_object_or_None
-from common.functions import get_profile_or_None
-from common.models import Job
-from common.jobs import send_job_status_change
+
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from common.decorators import require_login_as
+from django.utils import simplejson
 
-import ipdb
+from common.decorators import require_login_as
+from common.functions import get_profile_or_None
+from common.models import Job, Pic, Album, Group
+from common.jobs import send_job_status_change
+
+import logging; log = logging.getLogger('pd')
 
 @require_login_as(['skaa'])
 @render_to("reject.html")
@@ -19,8 +20,14 @@ def refund(request, job_id):
     if not reject_belongs(request, job_id):
         return redirect( reverse('permission_denied') )
 
+    job = get_object_or_None(Job, id=job_id)
+
+    first_group = min([pic.group_id for pic in Pic.objects.filter(album=job.album)])
+
     return  {
             'job_id'        : job_id,
+            'album_id'      : job.album.id,
+            'first_group'   : first_group,
             'is_refund'     : True,
             }
 
