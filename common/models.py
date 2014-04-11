@@ -437,7 +437,7 @@ class Album(DeleteMixin):
         """
 
         if not force and self.groups_last_modified < self.sequences_last_set:
-            log.info("Album.set_sequences bailing out early - no groups have been modified")
+            #log.info("Album.set_sequences bailing out early - no groups have been modified")
             return
 
         pics = Pic.objects.filter( album=self )

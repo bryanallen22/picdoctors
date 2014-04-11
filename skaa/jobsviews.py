@@ -82,14 +82,14 @@ def generate_skaa_actions(job):
     url_redirect=True
 
     #boring always created actions for populating below
-    view_album = DynamicAction('View Album', get_ember_url('album_markupview', album_id=str(job.album.id)), url_redirect)
-    accept_album = DynamicAction('Accept Work', reverse('accept_work', args=[job.id]), url_redirect)
-    refund = DynamicAction('Request Refund', reverse('refund', args=[job.id]), url_redirect)
-    switch_doc = DynamicAction('Switch Doctor', reverse('switch_doctor', args=[job.id]), url_redirect)
-    increase_price = DynamicAction('Increase Price', reverse('increase_price', args=[job.id]), url_redirect)
-    place_back_in_market = DynamicAction('Return to Market', reverse('increase_price', args=[job.id]), url_redirect)
-    share_album = DynamicAction('Share Album', reverse('make_album_shareable', args=[job.id]))
-    unshare_album = DynamicAction('Unshare Album', reverse('make_album_unshareable', args=[job.id]))
+    view_album           = DynamicAction('View Album',       get_ember_url('album_markupview', album_id=str(job.album.id)), url_redirect)
+    accept_album         = DynamicAction('Accept Work',      reverse('accept_work',            args=[job.id]), url_redirect)
+    refund               = DynamicAction('Request Refund',   reverse('refund',                 args=[job.id]), url_redirect)
+    switch_doc           = DynamicAction('Switch Doctor',    reverse('switch_doctor',          args=[job.id]), url_redirect)
+    increase_price       = DynamicAction('Increase Price',   reverse('increase_price',         args=[job.id]), url_redirect)
+    place_back_in_market = DynamicAction('Return to Market', reverse('increase_price',         args=[job.id]), url_redirect)
+    share_album          = DynamicAction('Share Album',      reverse('make_album_shareable',   args=[job.id]))
+    unshare_album        = DynamicAction('Unshare Album',    reverse('make_album_unshareable', args=[job.id]))
 
     if job.status == Job.IN_MARKET:
         #ret.append(contact)

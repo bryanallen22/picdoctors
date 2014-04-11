@@ -53,7 +53,7 @@ def upload_page(request):
         else:
             return redirect( redirect_url )
 
-    log.info('album.id is %d' % album.id)
+    #log.info('album.id is %d' % album.id)
     pics = Pic.objects.filter( album__exact=album.id );
 
     ret = get_progressbar_vars(request, 'upload')
