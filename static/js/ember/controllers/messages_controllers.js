@@ -32,7 +32,7 @@ Pd.MessagesController = Em.ObjectController.extend({
         is_owner: true,
         created: 'Just Now',
         group: this.get('model'),
-        job: job 
+        job: job
       });
 
       newRecord.save();
