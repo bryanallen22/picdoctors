@@ -4,7 +4,7 @@
     {{ render 'docPics' model.docPicGroups }}
   {{/if}}
   {{outlet}}
-  {{#if showMessage}}
+  {{#if album.job}}
     {{ render 'messages' model}}
   {{/if}}
   </div>

@@ -1,10 +1,6 @@
 Pd.GroupsController = Ember.ArrayController.extend({});
 
-Pd.GroupController = Ember.ObjectController.extend({
-  showMessage : function() {
-    return this.get('album.job') != null;
-  }.property(),
-});
+Pd.GroupController = Ember.ObjectController.extend({ });
 
 Pd.GroupNavigationController = Ember.ObjectController.extend({
   needs:['application'],
