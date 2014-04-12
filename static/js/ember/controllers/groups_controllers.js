@@ -1,6 +1,10 @@
 Pd.GroupsController = Ember.ArrayController.extend({});
 
-Pd.GroupController = Ember.ObjectController.extend({});
+Pd.GroupController = Ember.ObjectController.extend({
+  showMessage : function() {
+    return this.get('album.job') != null;
+  }.property(),
+});
 
 Pd.GroupNavigationController = Ember.ObjectController.extend({
   needs:['application'],
@@ -19,7 +23,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
       if(group === current){
         currentIdx = i;
         break;
-      }    
+      }
     }
 
     this.set('_previousGroup', null);
@@ -38,7 +42,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
 
   nextGroup: function(){
     this.get('setupGroups');
-    return this.get('_nextGroup');    
+    return this.get('_nextGroup');
   }.property('model', '_nextGroup'),
 
   nextLabel: function(){
@@ -69,7 +73,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
 
   previousGroup: function(){
     this.get('setupGroups');
-    return this.get('_previousGroup');    
+    return this.get('_previousGroup');
   }.property('model', '_previousGroup'),
 
   previousLabel: function(){

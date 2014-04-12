@@ -4,7 +4,9 @@
     {{ render 'docPics' model.docPicGroups }}
   {{/if}}
   {{outlet}}
-  {{ render 'messages' model}}
+  {{#if showMessage}}
+    {{ render 'messages' model}}
+  {{/if}}
   </div>
   {{ render 'groupNavigation' model}}
 </div>
