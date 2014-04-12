@@ -299,15 +299,12 @@ def messages_endpoint(request):
     if request.method == 'POST':
         original_json = simplejson.loads(request.body)
         data = original_json['message']
-
-
         message = data['message'].strip()
         job_val = data['job']
         if job_val != None:
             job_val = job_val.strip()
         group_val = data['group'].strip()
-        profile = request.user
-        msg = generate_message(profile, message, job_val, group_val)
+        msg = generate_message(request, message, job_val, group_val)
         data['id'] = msg.id
         result = original_json
 

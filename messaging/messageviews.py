@@ -54,51 +54,40 @@ def prep_messages(base_messages, user):
 
     return simplejson.dumps(messages)
 
-def can_add_message(profile, job):
-    if not job:
+def can_add_message(profile, job, group):
+    if not profile or not job or not group:
         return False
 
-    if job.skaa == profile:
-        return True
-
-    if job.doctor == profile:
-        return True
-
-    if job.doctor == None and profile.isa('doctor'):
+    if job.skaa == profile or job.doctor == profile:
         return True
 
     return False
 
-@require_login_as(['skaa', 'doctor'])
-def message_handler(request):
-    result = {}
-    if request.method == 'POST':
-        data = simplejson.loads(request.body)
+# Part of the old messages system
+#@require_login_as(['skaa', 'doctor'])
+#def message_handler(request):
+#    result = {}
+#    if request.method == 'POST':
+#        data = simplejson.loads(request.body)
+#
+#        message = data['message'].strip()
+#        job_val = data['job_id'].strip()
+#        group_val = data['group_id'].strip()
+#        profile = get_profile_or_None(request)
+#        msg = generate_message(profile, message, job_val, group_val)
+#
+#    response_data = simplejson.dumps(result)
+#    return HttpResponse(response_data, mimetype='application/json')
 
-        message = data['message'].strip()
-        job_val = data['job_id'].strip()
-        group_val = data['group_id'].strip()
-        profile = get_profile_or_None(request)
-        msg = generate_message(profile, message, job_val, group_val)
-
-    response_data = simplejson.dumps(result)
-    return HttpResponse(response_data, mimetype='application/json')
-
-def generate_message(profile, message, job_id, group_id):
+def generate_message(request, message, job_id, group_id):
     job = get_object_or_None(Job, id=int(job_id))
+    group = get_object_or_None(Group, id=int(group_id))
+    profile = request.user
 
-    if can_add_message(profile, job) and message != '':
-        msg = None
-
-        if group_id != '':
-            group_id = int(group_id)
-            group = get_object_or_None(Group, id=group_id)
-            msg = GroupMessage()
-            msg.group = group
-        else:
-            log.error("JobMessage() is not ready for prime time any more...")
-            #msg = JobMessage()
-
+    if can_add_message(profile, job, group) and message != '':
+        log.info('Creating message <%s>' % message)
+        msg = GroupMessage()
+        msg.group = group
         msg.job = job
         msg.message = message
         msg.commentor = profile
@@ -106,6 +95,8 @@ def generate_message(profile, message, job_id, group_id):
 
         job.last_communicator = profile
         job.save()
+
+        # TODO: notify and send email
 
         return msg
     return None
