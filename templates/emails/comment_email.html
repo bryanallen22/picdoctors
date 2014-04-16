@@ -1,4 +1,5 @@
 {% extends 'base_email.html' %}
+{% load picdoctags %}
 
 {% block subject %}
 {{ request.user.nickname }} has commented on your job
@@ -6,11 +7,11 @@
 
 
 {% block plain %}
-{{ request.user.nickname }} has said the following regarding your job:
+{{ request.user.nickname }} has commented the following:
 
 {{ comments }}
 
-To respond, please visit {{ request.SITE_URL }}{% url 'contact' job_id=job.id %}
+To respond, please visit {{ request.SITE_URL }}{% ember_url 'album_view' album_id=job.album.id group_id=comment_group_id %}
 
 Thanks for using PicDoctors!
 {% endblock %}
@@ -22,7 +23,7 @@ Thanks for using PicDoctors!
 
 {{ comments }}<br/><br/>
 
-To respond, please click <a href="{{ request.SITE_URL }}{% url 'contact' job.id %}">here</a>.<br/><br/>
+To respond, please click <a href="{{ request.SITE_URL }}{% ember_url 'album_view' album_id=job.album.id group_id=comment_group_id %}">here</a>.<br/><br/>
 
 Thanks for using PicDoctors!
 {% endblock %}

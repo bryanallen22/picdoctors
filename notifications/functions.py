@@ -95,14 +95,13 @@ def send_notification_email(request, notification, email_args):
     if notification.notification_type == Notification.JOB_STATUS_CHANGE:
         send_jobstatus_email(request, notification, url)
     elif notification.notification_type == Notification.JOB_MESSAGE:
-        log.error("Notification.JOB_MESSAGE deprecated!")
-        #email_args['job'] = notification.job
-        #send_email(
-        #              request=request,
-        #              email_address=notification.recipient.email,
-        #              template_name='contact_email.html',
-        #              template_args=email_args
-        #          )
+        email_args['job'] = notification.job
+        send_email(
+                      request=request,
+                      email_address=notification.recipient.email,
+                      template_name='comment_email.html',
+                      template_args=email_args
+                  )
     elif notification.notification_type == Notification.JOBS_AVAILABLE:
         log.error("email for JOB_STATUS_CHANGE not yet implemented!")
         assert(False)

@@ -9,6 +9,7 @@ from annoying.functions import get_object_or_None
 from common.decorators import require_login_as
 from common.functions import get_profile_or_None, get_time_string
 from common.models import Job, Album, Group
+from common.emberurls import get_ember_url
 from messaging.models import JobMessage, GroupMessage
 from notifications.functions import notify
 from notifications.models import Notification
@@ -96,7 +97,23 @@ def generate_message(request, message, job_id, group_id):
         job.last_communicator = profile
         job.save()
 
-        # TODO: notify and send email
+        send_to = job.doctor if profile == job.skaa else job.skaa
+
+        # Send a notification/email
+        if send_to is not None:
+            site_path = get_ember_url('album_view', album_id=group.album.id, group_id=group_id)
+            email_args = {
+                'comments' : message,
+                'comment_group_id' : group_id,
+            }
+
+            notify(request=request,
+                    notification_type=Notification.JOB_MESSAGE,
+                    description="%s commented on your picture" % profile.nickname,
+                    recipients=send_to,
+                    url=site_path,
+                    job=job,
+                    email_args=email_args)
 
         return msg
     return None
