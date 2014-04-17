@@ -579,6 +579,28 @@
 #setprice_app #table_header {
   text-align: center;
 }
+#setprice_app .newcc_collapsible {
+  display: none;
+}
+#setprice_app #payment .card_choice {
+  border-radius: 5px;
+  position: relative;
+  margin: 4px 4px 4px 0px;
+  padding: 8px;
+  background-color: #eeeeee;
+}
+#setprice_app #payment .card_choice input.expanded_radio {
+  display: inline;
+  margin-left: -30px;
+  margin-top: 30px;
+  position: absolute;
+}
+#setprice_app #payment .card_choice input.collapsed_radio {
+  display: inline;
+  margin-left: -30px;
+  margin-top: 10px;
+  position: absolute;
+}
 /*****************************
   Merge page
 ******************************/
@@ -703,25 +725,9 @@
   /* Opera */
 
 }
-/*****************************
-  Set Price page
-******************************/
-#payment .card_choice {
-  border-radius: 5px;
-  position: relative;
-  margin: 4px 4px 4px 0px;
-  padding: 8px;
-  background-color: #eeeeee;
-}
-#payment .card_choice .radio {
-  display: inline;
-  margin-left: -30px;
-  margin-top: 30px;
-  position: absolute;
-}
 /********************************
     Toggle Buttons
-    Made with Internet 4.1 
+    Made with Internet 4.1
     http://proto.io/freebies/onoff/
 ********************************/
 .onoffswitch {
@@ -800,7 +806,7 @@
 }
 /********************************
     Email Toggle Buttons
-    Made with Internet 4.1 
+    Made with Internet 4.1
     http://proto.io/freebies/onoff/
 ********************************/
 .onoffemailswitch {
@@ -950,6 +956,10 @@
  * Home / Ember stuff
  ***************************************************************/
 /* Messages under albums */
+.new_message {
+  /* Make sure it lines up with the button to send the message */
+
+}
 .new_message input {
   margin: 0;
 }

@@ -75,7 +75,7 @@
 
                 {% for card in credit_cards %}
                 <div class="card_choice span4">
-                  <input class="radio existing" type="radio" name="card_radio_group" value="myval"
+                  <input class="expanded_radio existing" type="radio" name="card_radio_group" value="some_existing"
                   {% if forloop.first %}
                     checked
                   {% endif %}
@@ -86,15 +86,15 @@
                   <div class='uri' style='display:none;'>{{ card.uri }}</div>
                 </div>
                 {% endfor %}
-                
+
                 {# Enter a card #}
                 <div class="card_choice new_card span4">
 
                   {% if credit_cards|length > 0 %}
-                    <input class="radio" type="radio" name="card_radio_group" value="myval">
+                    <input id="new_card_radio" class="collapsed_radio" type="radio" name="card_radio_group" value="new_card">
                   {% endif %}
                   <p><strong>Enter new credit card information</strong></p>
-                  <div class="row">
+                  <div class="row newcc_collapsible">
                     <div id="card_div" class="span2">
                       <label for="card_number">Card Number:</label>
                       <input id="card_number" type="text" name="card_number"><br/>
@@ -102,7 +102,7 @@
                     </div>
                   </div>
 
-                  <div class="row">
+                  <div class="row newcc_collapsible">
                     <div class="span2">
                       <label for="expiration_month">Expiration:</label>
                       <input id="expiration_month" type="text" name="expiration_month" class="span1" > /

@@ -147,6 +147,13 @@ $(function(){
       }
     });
 
+    $("#new_card_radio").click( function() {
+      if ($(this).is(':checked'))
+      {
+        $(".newcc_collapsible").show();
+      }
+    });
+
     $("#price").focusout( function() {
       /* minimum_price is set directly in the html page above this script */
       if( parseFloat($("#price").val()) < minimum_price ) {
@@ -175,7 +182,7 @@ $(function(){
       });
     });
 
-    /* 
+    /*
      * This magic method is a copy paste from here:
      *
      * http://stackoverflow.com/questions/149055/how-can-i-format-numbers-as-money-in-javascript
@@ -184,7 +191,7 @@ $(function(){
      * thousands_sep: char used as thousands separator, it defaults to ',' when omitted
      */
     Number.prototype.toMoney = function(decimals, decimal_sep, thousands_sep)
-    { 
+    {
       var n = this,
           // How many decimals to show
           c = isNaN(decimals) ? 2 : Math.abs(decimals),
@@ -197,13 +204,13 @@ $(function(){
           sign = (n < 0) ? '-' : '',
 
           //extracting the absolute value of the integer part of the number and converting to string
-          i = parseInt(n = Math.abs(n).toFixed(c)) + '', 
+          i = parseInt(n = Math.abs(n).toFixed(c)) + '',
 
-          j = ((j = i.length) > 3) ? j % 3 : 0; 
+          j = ((j = i.length) > 3) ? j % 3 : 0;
 
       return sign + (j ? i.substr(0, j) + t : '')
         + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t)
-        + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : ''); 
+        + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : '');
     }
 
   }

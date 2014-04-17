@@ -650,6 +650,39 @@
   #table_header {
     text-align:center;
   }
+
+  .newcc_collapsible {
+    display:none;
+  }
+
+  #payment {
+    .card_choice {
+      //border-style: solid;
+      //border-color: black;
+      //border-width: 3px;
+      border-radius: 5px;
+      position:relative;
+      margin:4px 4px 4px 0px;
+      padding:8px;
+      background-color: #eeeeee;
+
+      input.expanded_radio {
+        display: inline;
+        margin-left: -30px;
+        margin-top: 30px;
+        position:absolute;
+      }
+
+      input.collapsed_radio {
+        display: inline;
+        margin-left: -30px;
+        margin-top: 10px;
+        position:absolute;
+
+      }
+    }
+  }
+
 }
 
 /*****************************
@@ -771,30 +804,6 @@
     -moz-transform:rotate(180deg); /* Firefox */
     -webkit-transform:rotate(180deg); /* Safari and Chrome */
     -o-transform:rotate(180deg); /* Opera */
-}
-
-/*****************************
-  Set Price page
-******************************/
-#payment {
-  .card_choice {
-    //border-style: solid;
-    //border-color: black;
-    //border-width: 3px;
-    border-radius: 5px;
-    position:relative;
-    margin:4px 4px 4px 0px;
-    padding:8px;
-    background-color: #eeeeee;
-
-    .radio {
-      display: inline;
-      margin-left: -30px;
-      margin-top: 30px;
-      position:absolute;
-    }
-
-  }
 }
 
 
