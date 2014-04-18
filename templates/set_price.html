@@ -94,7 +94,11 @@
                     <input id="new_card_radio" class="collapsed_radio" type="radio" name="card_radio_group" value="new_card">
                   {% endif %}
                   <p><strong>Enter new credit card information</strong></p>
-                  <div class="row newcc_collapsible">
+                  <div class="row
+                    {% if credit_cards|length > 0 %}
+                    newcc_collapsible
+                    {% endif %}
+                    ">
                     <div id="card_div" class="span2">
                       <label for="card_number">Card Number:</label>
                       <input id="card_number" type="text" name="card_number"><br/>
@@ -102,7 +106,11 @@
                     </div>
                   </div>
 
-                  <div class="row newcc_collapsible">
+                  <div class="row
+                    {% if credit_cards|length > 0 %}
+                    newcc_collapsible
+                    {% endif %}
+                    ">
                     <div class="span2">
                       <label for="expiration_month">Expiration:</label>
                       <input id="expiration_month" type="text" name="expiration_month" class="span1" > /
