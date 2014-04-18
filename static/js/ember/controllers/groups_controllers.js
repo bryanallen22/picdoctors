@@ -89,7 +89,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
     var ownerId = this.get('album.owner'),
     userId = this.get('controllers.application.id');
 
-    return ownerId == userId;
+    return (ownerId == userId) || (userId == -1 && ownerId == null);;
   }.property('album.owner', 'controllers.application.id'),
 
   albumDoctor: function(){

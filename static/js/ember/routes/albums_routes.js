@@ -7,6 +7,13 @@ Pd.AlbumsRoute = Ember.Route.extend({
 Pd.AlbumRoute = Ember.Route.extend({
   model: function(params){
     return this.get('store').find('album', params.album_id);
+  },
+  actions: {
+    error: function(reason) {
+      if(reason && reason.responseText === 'Unauthorized'){
+        window.location.href = '/';
+      }
+    }
   }
 });
 

@@ -24,7 +24,7 @@ from common.decorators import passes_test
 from common.emberurls import get_ember_url
 from skaa.progressbarviews import get_progressbar_vars
 
-from common.emberviews import get_pic_view_models
+from common.ember_endpoints import get_pic_view_models
 
 from PIL import Image
 from StringIO import StringIO

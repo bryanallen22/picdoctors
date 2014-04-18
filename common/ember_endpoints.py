@@ -267,7 +267,7 @@ def prepMessages(groups, album, request):
     # and userprofile is null, hmmmm????????
     can_view_messages = profile == album.userprofile or \
                         (job and profile == job.doctor) or \
-                        (profile and profile.isa('moderator'))
+                        (profile and hasattr(profile, 'isa') and profile.isa('moderator'))
 
     if can_view_messages:
         for group in groups:
