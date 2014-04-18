@@ -240,7 +240,7 @@ def mark_job_completed(request):
             plural_to_be = 'are' if plural else 'is'
             plural_s = 's' if plural else ''
             actions.add('alert', AlertData(str(unfinished_count) + ' group' + plural_s + ' ' + plural_to_be + ' missing a doctored picture.', 'error'))
-            redir_url = reverse('markup_album', args=[job.album.id, missing_group.sequence])
+            redir_url = get_ember_url('album_view', album_id=job.album.id, group_id=missing_group.id)
             r =  RedirectData(redir_url,'Go to the first missing picture')
             actions.add('action_button', r)
     return HttpResponse(actions.to_json(), mimetype='application/json')
