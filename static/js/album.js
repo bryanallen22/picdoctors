@@ -39,7 +39,8 @@ $(function(){
       },
 
       approve_all: function(){
-
+        /* Disable button */
+        $('.btn_approve_all').attr("disabled", "disabled");
         var json_data = JSON.stringify(
           {
             "job_id" : this.$el.attr('job_id'),
@@ -54,6 +55,8 @@ $(function(){
           url:  '/approve_album/',
           data: json_data,
           success : function(data, textStatus) {
+            /* Enable button - probably unnecessary, but useful if redirect fails */
+            $('.btn_approve_all').removeAttr("disabled");
             console.log(data);
             console.log(textStatus);
             location.href = data.redirect;
