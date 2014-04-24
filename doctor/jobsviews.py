@@ -114,7 +114,6 @@ def generate_doctor_actions(job):
         ret.append(view_markup)
         ret.append(DynamicAction('Apply for Job', '/apply_for_job/'))
         ret.append(job_price_too_low)
-        ret.append(quit_job)
 
     elif job.status == Job.DOCTOR_ACCEPTED:
         ret.append(work_job)
