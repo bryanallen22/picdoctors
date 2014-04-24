@@ -75,7 +75,7 @@
 
                 {% for card in credit_cards %}
                 <div class="card_choice span4">
-                  <input class="expanded_radio existing" type="radio" name="card_radio_group" value="some_existing"
+                  <input class="expanded_radio existing radio" type="radio" name="card_radio_group" value="some_existing"
                   {% if forloop.first %}
                     checked
                   {% endif %}
@@ -91,7 +91,7 @@
                 <div class="card_choice new_card span4">
 
                   {% if credit_cards|length > 0 %}
-                    <input id="new_card_radio" class="collapsed_radio" type="radio" name="card_radio_group" value="new_card">
+                    <input id="new_card_radio" class="radio collapsed_radio" type="radio" name="card_radio_group" value="new_card">
                   {% endif %}
                   <p><strong>Enter new credit card information</strong></p>
                   <div class="row
