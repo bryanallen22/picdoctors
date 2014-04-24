@@ -203,8 +203,8 @@ def has_rights_to_act(profile, job):
 @require_login_as(['doctor'])
 def mark_job_completed(request):
     profile = get_profile_or_None(request)
-    data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
+    job_id = request.POST['job_id']
+    job = get_object_or_None(Job, id=job_id)
 
     actions = Actions()
     actions.add('alert', AlertData('There was an error processing your request.', 'error'))

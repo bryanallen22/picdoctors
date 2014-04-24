@@ -1,7 +1,8 @@
 window.Pd = Pd = Ember.Application.create({
   rootElement: '#ember-container',
   LOG_TRANSITIONS: true,
-  rootUrl: picDocRootUrl
+  rootUrl: picDocRootUrl,
+  token: $('input[name="csrfmiddlewaretoken"]').val()
 });
 
 // AKA don't start the app cause aint nothing to hook up to

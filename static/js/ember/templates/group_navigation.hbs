@@ -1,18 +1,23 @@
-  <div class='span2'>
-    <!-- This '#anchor' is a hack to make sure that the div has a min width -->
-    <div id="anchor" style="width:180px; height:1px;"></div>
-    <!-- These buttons are slid down by js. Using 'position:fixed' breaks -->
-    <!-- on narrow monitors -->
-    <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
-    
+<div class='span2'>
+  <!-- This '#anchor' is a hack to make sure that the div has a min width -->
+  <div id="anchor" style="width:180px; height:1px;"></div>
+  <!-- These buttons are slid down by js. Using 'position:fixed' breaks -->
+  <!-- on narrow monitors -->
+  <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
+
     <a class='btn btn-primary btn-large workflow-buttons top-navigation-button' {{action 'previous'}}>{{previousLabel}}</a>
     {{#unless sameButtons}}
-      <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>{{nextLabel}}</a>
+    <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>{{nextLabel}}</a>
     {{/unless}}
     {{#if albumDoctor}}
-      <form id="fake_form_for_reset">
-        {{partial "docUploadButton"}}
-      </form>
-    {{/if}}
+    <form id="fake_form_for_reset">
+      {{partial "docUploadButton"}}
+    </form>
+    <div class='btn btn-success btn-large workflow-buttons fileupload-addbutton bottom-navigation-button'>
+      <span {{action 'completeJob'}} id="doc_upload_text">Mark Job as Complete</span>
     </div>
+
+    {{/if}}
   </div>
+</div>
+

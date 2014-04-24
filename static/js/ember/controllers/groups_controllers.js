@@ -3,7 +3,7 @@ Pd.GroupsController = Ember.ArrayController.extend({});
 Pd.GroupController = Ember.ObjectController.extend({ });
 
 Pd.GroupNavigationController = Ember.ObjectController.extend({
-  needs:['application'],
+  needs:['application', 'album'],
 
   setupGroups: function(){
     var current = this.get('model'),
@@ -104,6 +104,19 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
   }.property('controllers.application.isLoggedIn'),
 
   actions:{
+    completeJob: function(){
+      var job = this.get('controllers.album.model.job.id');
+      $.ajax({
+        type:'POST',
+        url:"/mark_job_completed/",
+        data:{job_id:job}
+      }).then(function(results){
+        console.log(results);
+      },function(){
+        alert('there was an error marking the job as completed');
+      });
+    },
+
     next: function(){
       var nextGroup = this.get('nextGroup'),
       finished = this.get('finished'),
