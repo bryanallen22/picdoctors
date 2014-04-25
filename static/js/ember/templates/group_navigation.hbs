@@ -13,9 +13,11 @@
     <form id="fake_form_for_reset">
       {{partial "docUploadButton"}}
     </form>
-    <div class='btn btn-success btn-large workflow-buttons fileupload-addbutton bottom-navigation-button'>
-      <span {{action 'completeJob'}} id="doc_upload_text">Mark Job as Complete</span>
-    </div>
+    {{#if canFinishJob}}
+      <div class='btn btn-success btn-large workflow-buttons fileupload-addbutton bottom-navigation-button'>
+        <span {{action 'completeJob'}} id="doc_upload_text">Mark Job as Complete</span>
+      </div>
+    {{/if}}
 
     {{/if}}
   </div>

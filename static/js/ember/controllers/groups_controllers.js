@@ -103,6 +103,25 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
     return this.get('controllers.application.isLoggedIn');
   }.property('controllers.application.isLoggedIn'),
 
+  canFinishJob: function(){
+    console.log("canFinishJob");
+    // User can't finish the job
+    if(!this.get('albumDoctor')) {
+      return false;
+    }
+
+    var ret = true;
+    this.get('model.album.groups').forEach( function(item) {
+      if(Ember.isEmpty(item.get('docPicGroups'))) {
+        // If any of the the groups has no corresponding docPicGroup
+        // then the doctor can't finish this job
+        ret = false;
+      }
+    });
+    return ret;
+  }.property('model.album.groups@each.docPicGroups', 'albumDoctor'),
+
+
   actions:{
     completeJob: function(){
       var job = this.get('controllers.album.model.job.id');
