@@ -4,6 +4,7 @@ from annoying.decorators import render_to
 from common.models import Album
 from common.models import Pic
 from common.models import Group
+from common.emberurls import get_ember_url
 from common.functions import get_profile_or_None
 from common.functions import get_time_string
 from django.core.urlresolvers import reverse
