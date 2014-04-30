@@ -321,7 +321,6 @@ class Pic(DeleteMixin):
     # not totally understood yet. Whee for copy paste google code!
     # (ducks his head in shame)
     def create_thumbnail(self, file, width, height):
-        log.info('got to %s' % __name__)
         try:
             size = width, height
             tmp_file = StringIO() # We'll return this as an image

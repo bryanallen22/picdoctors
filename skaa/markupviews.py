@@ -179,7 +179,6 @@ def apply_markup_whitelist(markup, data):
     for attr in get_markup_whitelist():
         setattr(markup, attr, data[attr])
 
-    #ipdb.set_trace()
     pic = Pic.objects.get(uuid__exact=data['pic_uuid'])
     markup.pic = pic
 
@@ -283,7 +282,6 @@ def can_modify_pic(request, pic):
 
 # TODO return error when it doesn't save
 def pic_instruction_handler(request):
-    #ipdb.set_trace()
     data = simplejson.loads(request.body)
     pic = Pic.objects.get(uuid=data['uuid'])
     if can_modify_pic(request, pic):

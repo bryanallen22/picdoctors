@@ -13,7 +13,6 @@ import settings
 import datetime
 
 import ipdb
-#ipdb.set_trace()
 
 from skaa.jobsviews import create_job, update_job_hold
 
@@ -188,6 +187,7 @@ def rehold_if_necessary(job):
         hold = job.bp_hold.fetch()
         place_hold(job, job.album, job.skaa, job.bp_hold.cents, hold.source.uri)
         job = get_object_or_None(Job, id=job.id)
+        log.info("Issued a rehold on older job (id=%d) for %d cents" % (job.id, job.bp_hold.cents))
 
     return job
 
@@ -216,6 +216,7 @@ def do_debit(request, profile, job):
     except balanced.exc.HTTPError as ex:
         return False, ex
 
+    log.info("Doing debit on job %d for %d cents " % (job.id, job.bp_hold.cents))
     # Create a wrapper in our local db
     bp_debit = BPDebit(uri=debit.uri, associated_hold=job.bp_hold)
     bp_debit.save()

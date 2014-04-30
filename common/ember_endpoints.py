@@ -210,9 +210,7 @@ def prepGroups(album, request):
 def prepDocPics(doc_pic_groups, request):
     pics = []
 
-#    ipdb.set_trace()
     for dpg in doc_pic_groups:
-        #ipdb.set_trace()
         pics = pics + get_pic_view_models(dpg)
 
     return pics
