@@ -22,7 +22,7 @@ def notify(request, notification_type, description, recipients, url, job, email_
 
     # who am I supposed to notify if recipients is None????
     if recipients is None:
-        log.error("attempted to send notification '%s' without any recipients!")
+        log.error("attempted to send notification '%s' without any recipients! (job %d)" % (description, job.id))
         return
 
     # don't feel like sending [profile] be lazy and send profile
@@ -103,13 +103,13 @@ def send_notification_email(request, notification, email_args):
                       template_args=email_args
                   )
     elif notification.notification_type == Notification.JOBS_AVAILABLE:
-        log.error("email for JOB_STATUS_CHANGE not yet implemented!")
+        log.error("email for JOBS_AVAILABLE not yet implemented!")
         assert(False)
     elif notification.notification_type == Notification.JOBS_NEED_APPROVAL:
-        log.error("email for JOB_STATUS_CHANGE not yet implemented!")
+        log.error("email for JOBS_NEED_APPROVAL not yet implemented!")
         assert(False)
     elif notification.notification_type == Notification.JOB_REMINDER:
-        log.error("email for JOB_STATUS_CHANGE not yet implemented!")
+        log.error("email for JOB_REMINDER not yet implemented!")
         assert(False)
     elif notification.notification_type == Notification.JOB_REJECTION:
         send_email(
@@ -118,6 +118,14 @@ def send_notification_email(request, notification, email_args):
                       template_name='job_rejection_email.html',
                       template_args=email_args
                   )
+    elif notification.notification_type == Notification.JOB_SWITCHED:
+        send_email(
+                      request=request,
+                      email_address=notification.recipient.email,
+                      template_name='doc_switched_email.html',
+                      template_args=email_args
+                  )
+
     else:
         log.error("Notification type unknown!")
         assert(False);

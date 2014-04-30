@@ -17,6 +17,7 @@ class Notification(DeleteMixin):
     JOB_REMINDER       = 'jb_remind'     # If a job is waiting on you, remind the user/doctor
     JOB_MESSAGE        = 'jb_msg'        # A message from a doc/user to user/doc about a job
     JOB_REJECTION      = 'jb_rejection'  # Doctor's work has been rejected by a mod
+    JOB_SWITCHED       = 'jb_switched'   # User chose to switch doctors
 
     NOTIFICATION_TYPES = (
         (JOB_STATUS_CHANGE,  'Job status has changed'),
@@ -25,6 +26,7 @@ class Notification(DeleteMixin):
         (JOB_REMINDER,       'Job waiting on you'),
         (JOB_MESSAGE,        'You have received a message about your job'),
         (JOB_REJECTION,      'Please fix a few more things on your job'),
+        (JOB_SWITCHED,       'A user has chosen to switch doctors'),
     )
 
     # max_length refers to the shorthand versions above

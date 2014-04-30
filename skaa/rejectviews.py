@@ -10,6 +10,8 @@ from common.decorators import require_login_as
 from common.functions import get_profile_or_None
 from common.models import Job, Pic, Album, Group
 from common.jobs import send_job_status_change
+from notifications.functions import notify
+from notifications.models import Notification
 
 import logging; log = logging.getLogger('pd')
 
@@ -39,21 +41,25 @@ def switch_doctor(request, job_id):
     if not reject_belongs(request, job_id):
         return redirect( reverse('permission_denied') )
 
+    job = get_object_or_None(Job, id=job_id)
+    first_group = min([pic.group_id for pic in Pic.objects.filter(album=job.album)])
+
     return  {
             'job_id'        : job_id,
+            'album_id'      : job.album.id,
+            'first_group'   : first_group,
             'is_refund'     : False,
             }
 
-def notify_doctor_of_rejection(request, job, recipient, comments):
+def notify_doctor_of_mod_rejection(request, job, recipient, comments):
     doc_path = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
-    #
     notify(request=request,
            notification_type=Notification.JOB_REJECTION,
-           description='Please fix a few more things on job ' + job.id,
+           description='Please fix a few more things on job ' + str(job.id) + ' - see email',
            recipients=recipient,
            url=doc_path,
            job=job,
-           email_args={ 'comments' : comments }
+           email_args={ 'comments' : comments, 'job' : job }
           )
 
 # you don't need to be skaa or doctor to have the album_approver permission, maybe I should revisit this
@@ -80,7 +86,7 @@ def mod_reject_work(request, job_id):
 
             # send a message to doctor
             #send_job_status_change(request, job, job.skaa, "  Feedback: " + comments)
-            notify_doctor_of_rejection(request, job, job.skaa, comments)
+            notify_doctor_of_mod_rejection(request, job, job.doctor, comments)
 
             return redirect(reverse('album_approval_page'))
         else:
@@ -122,6 +128,24 @@ def refund_user_endpoint(request):
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
+def notify_doc_of_switch(request, job):
+    """
+    Let the doctor associated with a job know that the user
+    has chosen to 'switch' doctors, so they are out. Bummer.
+    """
+
+    job_url = reverse('doc_job_page_with_page_and_id', args=[1, job.id])
+
+    notify(
+            request=request,
+            notification_type=Notification.JOB_SWITCHED,
+            description="%s has chosen to switch doctors" % job.skaa.nickname,
+            recipients=job.doctor,
+            url=job_url,
+            job=job,
+            email_args={ 'job' : job },
+          )
+
 @require_login_as(['skaa'])
 def switch_doctor_endpoint(request):
     profile = get_profile_or_None(request)
@@ -129,9 +153,8 @@ def switch_doctor_endpoint(request):
     job = get_object_or_None(Job, id=int(data['job_id']))
 
     if job and job.skaa == profile:
+        notify_doc_of_switch(request, job)
         remove_previous_doctor(job)
-    # TODO do we send the doctor an email saying they are out????
-    #send_job_status_change(request, job, profile)
 
     result = { 'relocate' : reverse('job_page') }
     response_data = simplejson.dumps(result)
