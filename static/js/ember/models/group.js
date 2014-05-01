@@ -6,7 +6,9 @@ Pd.Group = DS.Model.extend({
   pics: hasMany('pic'),
   docPicGroups: hasMany('docPicGroup'),
   album: belongsTo('album'),
-  messages: hasMany('message')
+  messages: hasMany('message'),
+
+  hasDocPic: Ember.computed.gt('docPicGroups.length', 0)
 });
 
 Pd.Group.reopen({

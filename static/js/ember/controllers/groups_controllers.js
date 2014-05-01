@@ -103,34 +103,29 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
     return this.get('controllers.application.isLoggedIn');
   }.property('controllers.application.isLoggedIn'),
 
-  canFinishJob: function(){
-    console.log("canFinishJob");
-    // User can't finish the job
-    if(!this.get('albumDoctor')) {
-      return false;
-    }
+  allPicsUploaded: function(){
+    var ret = true,
+        groups = this.get('album.groups');
 
-    var ret = true;
-    this.get('model.album.groups').forEach( function(item) {
-      if(Ember.isEmpty(item.get('docPicGroups'))) {
-        // If any of the the groups has no corresponding docPicGroup
-        // then the doctor can't finish this job
-        ret = false;
-      }
-    });
-    return ret;
-  }.property('model.album.groups@each.docPicGroups', 'albumDoctor'),
+    return groups.isEvery('hasDocPic');
+  }.property('album.groups.@each.hasDocPic'),
 
+  canFinishJob: Ember.computed.and('albumDoctor', 'allPicsUploaded', 'album.job.isDoctorAccepted'),
 
   actions:{
     completeJob: function(){
-      var job = this.get('controllers.album.model.job.id');
+      var job = this.get('album.job');
       $.ajax({
         type:'POST',
         url:"/mark_job_completed/",
-        data:{job_id:job}
+        data:{job_id:job.get('id')}
       }).then(function(results){
-        console.log(results);
+        var status = Em.get(results, 'job_info.status');
+        if(status == 'Work Submitted, Pending Approval'){
+          job.set('status', 'mod_need');
+        } else if(status == 'Doctor Submitted, Pending Approval'){
+          job.set('status', 'doctor_sub');
+        }
       },function(){
         alert('there was an error marking the job as completed');
       });

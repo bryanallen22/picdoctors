@@ -139,7 +139,7 @@ def albums_endpoint(request, album_id):
     # well, it's easier to just match the format ember data expects
     response = {}
     response["album"] = prepAlbum(album, request)
-    response["jobs"] = prepJobs(response["album"])
+    response["jobs"] = prepJobs(album)
     response["groups"] = prepGroups(album, request)
     pics = prepPics(album)
     response["docPicGroups"] = dpg = prepDocPicGroups(album, request)
@@ -176,10 +176,10 @@ def prepAlbum(album, request):
     return albumJson
 
 def prepJobs(album):
-    job_id = album['job']
+    job = album.get_job_or_None()
     job_json = []
-    if job_id is not None:
-        job_json.append({'id': job_id })
+    if job is not None:
+        job_json.append({'id': job.id, 'status': job.status })
     return job_json
 
 def prepGroups(album, request):
