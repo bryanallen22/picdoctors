@@ -142,7 +142,7 @@ def notify_doc_of_switch(request, job):
     notify(
             request=request,
             notification_type=Notification.JOB_SWITCHED,
-            description="%s has chosen to switch doctors" % job.skaa.nickname,
+            description="%s has chosen to switch doctors on job %d" % (job.skaa.nickname, job.id),
             recipients=job.doctor,
             url=job_url,
             job=job,
