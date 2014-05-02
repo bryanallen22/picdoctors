@@ -118,7 +118,10 @@ def refund_user_endpoint(request):
     job = get_object_or_None(Job, id=data['job_id'])
 
     if job and profile and job.skaa == profile:
-        #TODO Refund User
+        # Don't actually have to refund them, because they
+        job.bp_hold.delete()
+        job.bp_hold.save()
+
         job.status = Job.REFUND
         job.save()
 
