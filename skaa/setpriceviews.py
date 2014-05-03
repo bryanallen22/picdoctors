@@ -98,32 +98,35 @@ def create_hold_handler(request):
         ret['status'] = 400
         ret['next'] = ''
     else:
-       min_price = min_price_per_pic * album.num_groups
+        min_price = min_price_per_pic * album.num_groups
 
-       # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
-       # convert it to cents and validate that it's an acceptable amount
-       cents = currency_to_cents( request.POST['price'] )
+        # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
+        # convert it to cents and validate that it's an acceptable amount
+        try:
+            cents = currency_to_cents( request.POST['price'] )
+            if cents >= min_price * 100:
+                # job can be None here, it'd be totally cool, we don't build anything based on the job, unless updating. It will be created (if necessary) in place_hold
 
-       if cents >= min_price * 100:
-           # job can be None here, it'd be totally cool, we don't build anything based on the job, unless updating. It will be created (if necessary) in place_hold
+                job = place_hold(job, album, request.user, cents, request.POST['card_uri'])
 
-           job = place_hold(job, album, request.user, cents, request.POST['card_uri'])
+                # Remove any previous doctor information, this essentially happens when they go from
+                # refund to back in market
+                remove_previous_doctor(job)
 
-           # Remove any previous doctor information, this essentially happens when they go from
-           # refund to back in market
-           remove_previous_doctor(job)
+                send_newjob_email(request, job)
 
-           send_newjob_email(request, job)
+                ret['status'] = 200
+                ret['next'] = reverse('job_page')
 
-           ret['status'] = 200
-           ret['next'] = reverse('job_page')
-
-       else:
-           # TODO - do I bother to display an error on the client? If they got here, it's probably
-           # because they used a debugger to go under the client side min, and I don't feel any
-           # particular need to be UI friendly to them. Perhaps I'll just ignore them?
-           ret['status'] = 402 # Payment required
-           ret['next'] = ''
+            else:
+                # TODO - do I bother to display an error on the client? If they got here, it's probably
+                # because they used a debugger to go under the client side min, and I don't feel any
+                # particular need to be UI friendly to them. Perhaps I'll just ignore them?
+                ret['status'] = 402 # Payment required
+                ret['next'] = ''
+        except:
+            ret['status'] = 400 # bad request
+            ret['next'] = ''
 
     #return HttpResponse('[ ]', mimetype='application/json')
     response_data = simplejson.dumps(ret)

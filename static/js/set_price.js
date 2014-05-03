@@ -30,6 +30,11 @@ $(function(){
             // Okay, payment accepted, let's move off this page
             document.location.href = data.next;
           }
+          else {
+            $('#bad-price-msg').show();
+            $('.submit-button').removeAttr("disabled");
+            debugger
+          }
         },
       });
     }
