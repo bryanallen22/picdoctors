@@ -117,11 +117,9 @@ $(function(){
         return;
       }
 
-      var json_data = JSON.stringify(
-        {
+      var json_data = {
           "job_id" : this.model.get('job_id'),
-        }
-      );
+        };
       var this_model = this.model;
       
       $.ajax({
@@ -146,8 +144,6 @@ $(function(){
       });
 
     },
-
-
   });
 
   function dynamicReaction(data, model) {

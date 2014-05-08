@@ -141,14 +141,14 @@ def generate_doctor_actions(job):
 
 @require_login_as(['doctor'])
 def apply_for_job(request):
-    data = simplejson.loads(request.body)
-    job = get_object_or_None(Job, id=data['job_id'])
+    job_id = request.POST['job_id']
+    job = get_object_or_None(Job, id=job_id)
     profile = get_profile_or_None(request)
     result = []
 
     actions = Actions()
     actions.add('alert', AlertData('This job is no longer available', 'error'))
-    actions.add('remove_job_row', data['job_id'])
+    actions.add('remove_job_row', job_id)
     r = RedirectData(reverse("new_job_page"), 'available jobs')
     actions.add('action_button', r)
 
@@ -165,7 +165,7 @@ def apply_for_job(request):
                 if db_cnt > 0:
                     actions = Actions()
                     actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
-                    actions.add('remove_job_row', data['job_id'])
+                    actions.add('remove_job_row', job_id)
                     r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
                     actions.add('action_button', r)
                 else:
@@ -202,6 +202,7 @@ def has_rights_to_act(profile, job):
 @require_login_as(['doctor'])
 def mark_job_completed(request):
     profile = get_profile_or_None(request)
+    #data = simplejson.loads(request.body)
     job_id = request.POST['job_id']
     job = get_object_or_None(Job, id=job_id)
 
