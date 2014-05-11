@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% load picdoctags %}
+
+{% block main %}
+<div id='doc_faq' class='row faq'>
+
+  <h3>Pic Doctor Frequently Asked Questions</h3>
+
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>Who can become a Pic Doctor?</p>
+      <p class='answer'>
+      Due to restrictions from our payments provider, you must be a US resident with a bank account to become
+      a Pic Doctor. We hope that this changes in the coming months!
+      </p>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>How does it work?</p>
+      <p class='answer'>
+      We've got a full page to answer that question <strong><a href="{% url 'howitworks' %}">here</a></strong>.
+      </p>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>How am I protected as a Doctor?</p>
+      <p class='answer'>
+      As a doctor we protect you by watermarking your images until a user has accepted your work as
+      valid and complete.  Likewise we've put a hold on the user's account to verify that they can pay
+      for the work.
+      </p>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>What is a merchant account, and why do I need it?</p>
+      <p class='answer'>
+       For an in depth look at merchant accounts
+       <u><a href='http://en.wikipedia.org/wiki/Merchant_account'>view the wikipedia page here.</a></u>
+       Essentially a merchant account allows you to accept payment from a user.  This is how you as a
+       doctor will receive your payments.  It's fully integrated into our site so you don't have to
+       navigate between our site and our payment processing partner.
+      </p>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>Who can see my work?</p>
+      <p class='answer'>
+      Right now, the job can only be seen if the user allows sharing.
+      </p>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>What happens if the user isn't happy with my work?</p>
+      <p class='answer'>
+      We encourage users to request modifications to your work, but they have the option of
+      returning the job to the market. If this happens, you won't be paid. We hope it doesn't
+      happen often!
+      </p>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>Can I communicate with the user?</p>
+      <p class='answer'>
+      Yep. Just use the 'comments' below the pictures, and we'll notify them.
+      </p>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>How do I withdraw my earnings?</p>
+      <p class='answer'>
+      Just visit <a href="{% url 'withdraw' %}">the withdraw page</a> and have
+      the money transferred to your account. The minimum amount that you can
+      withdraw at a time is {{ minimum_withdraw | currency_dollars }}.
+      </p>
+    </div>
+  </div>
+
+  <div class="alert alert-info">
+    <h4>
+      How am I paid as a Doctor?
+    </h4>
+    Doctor's are given a base pay of 50% with a possible maximum of 70%.  Your possible payout is
+    calculated when you take a job.  The calculated value depends on the amount of accepted pictures
+    you've had in the last 30 days and your overall rating as a doctor(Tier 2 and above). When the user accepts your
+    work the possible payout is then credited to your merchant account.
+    <br/>
+    <h5>
+      Payment Scenario (Tier 2 + 5 Star rating):
+    </h5>
+    <ul>
+      <li> User lists a simple job worth $2 on the market.</li>
+      <li> Your take: $ 1.2</li>
+      <li> Bank Fees: $ 0.36</li>
+      <li> PicDoctor Fees: $ 0.44</li>
+    </ul>
+    <h5>
+      Payment Scenario (Tier 4 + 5 Star rating):
+    </h5>
+    <ul>
+      <li> User lists a simple job worth $2 on the market.</li>
+      <li> Your take: $ 1.4</li>
+      <li> Bank Fees: $ 0.36</li>
+      <li> PicDoctor Fees: $ 0.24</li>
+    </ul>
+    <h5>
+      <table class="table table-striped">
+        <thead>
+          <tr><td>Tier</td><td>Images Accepted</td><td>Payout Percent</td><td>Plus Doctor Approval
+              Rating</td><td>Maximum Possible Payout</td></tr>
+        </thead>
+        <tbody>
+          <tr><td>Tier 1</td><td>0-19    </td><td>50%</td><td></td><td>50%</td></tr>
+          <tr><td>Tier 2</td><td>20-39  </td><td>55%</td><td>0-5%</td><td>60%</td></tr>
+          <tr><td>Tier 3</td><td>40-69  </td><td>60%</td><td>0-5%</td><td>65%</td></tr>
+          <tr><td>Tier 4</td><td>70+  </td><td>65%</td><td>0-5%</td><td>70%</td></tr>
+        </tbody>
+    </table>
+    </h5>
+  </div>
+  <h2> Job Statuses </h2>
+  <a name="js1"></a>
+  <div class="alert alert-info">
+    <h4>
+      Available in Market
+   </h4>
+   The job has been placed in the marketplace for doctor's to view and accept.
+  </div>
+  <a name="js2"></a>
+  <div class="alert alert-info">
+    <h4>
+      Job not taken, consider upping price
+   </h4>
+   The job has been sitting in the market too long and no doctor has accepted the job.  The job price may be too low, consider upping the price.
+  </div>
+  <a name="js3"></a>
+  <div class="alert alert-info">
+    <h4>
+      Doctor Accepted Job
+   </h4>
+   The job has been placed in the marketplace for doctor's to view and take.
+  </div>
+  <a name="js4"></a>
+  <div class="alert alert-info">
+    <h4>
+      Doctor Submitted
+   </h4>
+   The doctor has submitted work awaiting the User to accept their work.
+  </div>
+  <a name="js5"></a>
+  <div class="alert alert-info">
+    <h4>
+      Work Submitted, Approval Pending
+   </h4>
+   The Doctor has submitted work, but since the Doctor is new to Pic Doctors their work must be approved by a moderator first.
+  </div>
+  <a name="js6"></a>
+  <div class="alert alert-info">
+    <h4>
+      User Accepted Work
+   </h4>
+   The user has accepted the Doctor's Work.  At this point the hold on the user's credit card is charged and the doctor's account is credited.
+  </div>
+  <a name="js7"></a>
+  <div class="alert alert-info">
+    <h4>
+      Job Refunded
+   </h4>
+   The user has chosen to get a refund and not charge their credit card.  Note after the user has viewed the doctor's work and accepted the job, they can no longer request a refund.
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

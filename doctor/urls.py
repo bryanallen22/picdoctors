@@ -7,6 +7,8 @@ from doctor.jobsviews import mark_job_completed, quit_job, quit_job_endpoint
 from doctor.jobpricetoolowviews import job_price_too_low
 from doctor.withdrawviews import withdraw
 from doctor.doctorprofileviews import doctor_profile
+from doctor.faqviews import doc_faq
+
 from skaa.uploadviews import doc_upload_handler
 
 # Uncomment the next two lines to enable the admin:
@@ -14,6 +16,7 @@ from skaa.uploadviews import doc_upload_handler
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^doc_faq/$',                                  doc_faq,             name='doc_faq'),
     url(r'^doc_jobs/$',                                 doc_job_page,        name='doc_job_page'),
     url(r'^doc_jobs/(?P<page>\d+)$',                    doc_job_page,        name='doc_job_page_with_page'),
     url(r'^doc_jobs/(?P<page>\d+)/(?P<job_id>\d+)/$',   doc_job_page,        name='doc_job_page_with_page_and_id'),

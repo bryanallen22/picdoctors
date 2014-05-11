@@ -271,7 +271,7 @@ class Pic(DeleteMixin):
     def get_view_model(self, include_markups):
         markupIds = None
         groupId = None
-            
+
         if include_markups:
             from skaa.models import Markup
             markups = Markup.objects.filter(pic__id=self.id)

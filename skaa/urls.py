@@ -8,6 +8,7 @@ from skaa.setpriceviews import set_price, increase_price, create_hold_handler
 from skaa.mergealbumsviews import merge_albums
 from skaa.accept_workviews import accept_work
 from skaa.rejectviews import refund, switch_doctor, switch_doctor_endpoint, refund_user_endpoint, mod_reject_work
+from skaa.faqviews import faq
 
 # Uncomment the next two lines to enable the admin:
 # Uncomment the next two lines to enable the admin:
@@ -15,6 +16,7 @@ from skaa.rejectviews import refund, switch_doctor, switch_doctor_endpoint, refu
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^faq/$',                                         faq,                      name='faq'),
     url(r'^markup/(?P<sequence>\d+)/$',                    markup_page,              name='markup'),
     url(r'^markup/(?P<album_id>\d+)/(?P<sequence>\d+)/$',  markup_page_album,        name='markup_album'),
     url(r'^markups_handler/$',                             markups_handler,          name='markups_handler'),

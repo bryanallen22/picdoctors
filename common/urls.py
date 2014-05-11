@@ -5,7 +5,6 @@ from common.resetpasswordviews import reset_password
 from common.albumviews import album, approve_album
 from common.feedbackviews import feedback
 from common.album_approvalviews import album_approval_page
-from common.faqviews import faq
 from common.howitworksviews import howitworks
 from common.account_settings_views import account_settings, account_settings_delete_card
 from common.account_settings_views import change_password, change_profile_settings
@@ -30,7 +29,6 @@ urlpatterns = patterns('',
     url(r'^album_approval_page/(?P<page>\d+)$',         album_approval_page,          name='album_approval_page_with_page'),
     url(r'^account_settings/$',                         account_settings,             name='account_settings'),
     url(r'^account_settings_delete_card/$',             account_settings_delete_card, name='account_settings_delete_card'),
-    url(r'^faq/$',                                      faq,                          name='faq'),
     url(r'^howitworks/$',                               howitworks,                   name='howitworks'),
     url(r'^change_password/$',                          change_password,              name='change_password'),
     url(r'^change_profile_settings/$',                  change_profile_settings,      name='change_profile_settings'),

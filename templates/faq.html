@@ -1,234 +1,60 @@
 {% extends 'base.html' %}
 
 {% block main %}
-<div class='row'>
-  <H2> Users </H2>
-  <ul class="nav nav-pills nav-stacked">
-    <li>
-    <a href="#u1">
-      1. Who can see my pictures?
-    </a>
-    </li>
-    <li>
-    <a href="#u2">
-      2. Can I get a refund? 
-    </a>
-    </li>
-    <li>
-    <a href="#u3">
-      3. Can I share my pictures with friends and family? 
-    </a>
-    </li>
-  </ul>
-  <H2> Doctors </H2>
-  <ul class="nav nav-pills nav-stacked">
-    <li>
-    <a href="#d1">
-      1. How am I paid as a Doctor?
-    </a>
-    </li>
-    <li>
-    <a href="#d2">
-      2. How am I protected as a Doctor? 
-    </a>
-    </li>
-    <li>
-    <a href="#d3">
-     3. What is a merchant account, and why do I need it? 
-    </a>
-    </li>
-  </ul>
-  <H2> Job Statuses </H2>
-  <ul class="nav nav-pills nav-stacked">
-    <li>
-    <a href="#js1">
-     1. Availble in Market
-    </a>
-    </li>
-    <li>
-    <a href="#js2">
-     2. Job not taken, consider upping price
-    </a>
-    </li>
-    <li>
-    <a href="#js3">
-     3. Doctor Accepted Job
-    </a>
-    </li>
-    <li>
-    <a href="#js4">
-      4. Doctor Submitted Work
-    </a>
-    </li>
-    <li>
-    <a href="#js5">
-      5. Work Submitted, Approval Pending
-    </a>
-    </li>
-    <li>
-    <a href="#js6">
-      6. User Accepted Work
-    </a>
-    </li>
-    <li>
-    <a href="#js7">
-      7. Job Refunded
-    </a>
-    </li>
-  </ul>
-  <H2> How Does it Work? </H2>
-  <ul class="nav nav-pills nav-stacked">
-    <li>
-    <a href="{% url 'howitworks' %}">
-      1. Go to How It Works page.
-    </a>
-    </li>
-  </ul>
-  <H2> Users </H2>
+<div id='doc_faq' class='row faq'>
 
-  <a name="u1"></a>
-  <div class="alert alert-info">
-    <h4>
-      Who can see my pictures?
-    </h4>
-    At PicDoctors.com we understand how important privacy is.  When you upload your pictures they
-    are visible to our Pic Doctors.  Once a Pic Doctor has taken on your job, your pictures are only
-    visible to that Pic Doctor and you.  
+  <h3>Frequently Asked Questions</h3>
+
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>How does it work?</p>
+      <p class='answer'>
+      We've got a entire page to answer that question <a href="{% url 'howitworks' %}">here</a>.
+      </p>
+    </div>
   </div>
-  <a name="u2"></a>
-  <div class="alert alert-info">
-    <h4>
-      Can I get a refund?
-    </h4>
-    Yes!  We want you to be completely satisfied.  You can get a refund all the way until you accept
-    the Doctor's work.  Once the Doctor's work has been accepted your payment is released to the
-    Doctor.  
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>Who can see my pictures?</p>
+      <p class='answer'>
+      At PicDoctors.com we understand how important privacy is.  When you upload your pictures they
+      are visible to our Pic Doctors.  Once a Pic Doctor has taken on your job, your pictures are only
+      visible to that Pic Doctor and you.
+      </p>
+    </div>
   </div>
-  <a name="u3"></a>
-  <div class="alert alert-info">
-    <h4>
-      Can I share my pictures with friends and family? 
-    </h4>
-    Yes!  We want you to be able to share and allow others to enjoy the work that's been done to your images.  Not only is it fun for you, but it shows off the skills of your doctor which is greatly appreciated.  By default we block your album from being viewed by anyone other than you and the Pic Doctor.  There are three places where you can make your album shareable.  
-    <li> When you accept the doctor's work you are given the opportunity to allow your album to be shared (checkbox).</li>
-    <li> From the job's page, you can choose share album. </li>
-    <li> From the album page there is a link beside the social media links at the bottom of each image which will allow you to share the album</li>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>Can I get a refund?</p>
+      <p class='answer'>
+      Yes!  We want you to be completely satisfied.  You can get a refund all the way until you accept
+      the Doctor's work.  Once the Doctor's work has been accepted your payment is released to the
+      Doctor.
+      </p>
+    </div>
   </div>
-  <H2> Doctors </H2>
-  <a name="d1"></a>
-  <div class="alert alert-info">
-    <h4>
-      How am I paid as a Doctor?
-    </h4>
-    Doctor's are given a base pay of 50% with a possible maximum of 70%.  Your possible payout is
-    calculated when you take a job.  The calculated value depends on the amount of accepted pictures
-    you've had in the last 30 days and your overall rating as a doctor(Tier 2 and above). When the user accepts your
-    work the possible payout is then credited to your merchant account. 
-    <br/>
-    <h5>
-      Payment Scenario (Tier 2 + 5 Star rating):
-    </h5>
-    <ul>
-      <li> User lists a simple job worth $2 on the market.</li>
-      <li> Your take: $ 1.2</li>
-      <li> Bank Fees: $ 0.36</li>
-      <li> PicDoctor Fees: $ 0.44</li>
-    </ul>
-    <h5>
-      Payment Scenario (Tier 4 + 5 Star rating):
-    </h5>
-    <ul>
-      <li> User lists a simple job worth $2 on the market.</li>
-      <li> Your take: $ 1.4</li>
-      <li> Bank Fees: $ 0.36</li>
-      <li> PicDoctor Fees: $ 0.24</li>
-    </ul>
-    <h5> 
-      <table class="table table-striped">
-        <thead>
-          <tr><td>Tier</td><td>Images Accepted</td><td>Payout Percent</td><td>Plus Doctor Approval
-              Rating</td><td>Maximum Possible Payout</td></tr>
-        </thead>
-        <tbody>
-          <tr><td>Tier 1</td><td>0-19    </td><td>50%</td><td></td><td>50%</td></tr> 
-          <tr><td>Tier 2</td><td>20-39  </td><td>55%</td><td>0-5%</td><td>60%</td></tr>
-          <tr><td>Tier 3</td><td>40-69  </td><td>60%</td><td>0-5%</td><td>65%</td></tr>
-          <tr><td>Tier 4</td><td>70+  </td><td>65%</td><td>0-5%</td><td>70%</td></tr>
-        </tbody>
-    </table>
-    </h5>
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>How can I communicate with the Pic Doctor?</p>
+      <p class='answer'>
+      Both your Pic Doctor and you can comment below the pictures,
+      and your Pic Doctor will be notified.
+      </p>
+    </div>
   </div>
-  <a name="d2"></a>
-  <div class="alert alert-info">
-    <h4>
-     How am I protected as a Doctor? 
-    </h4>
-    As a doctor we protect you by watermarking your images until a user has accepted your work as
-    valid and complete.  Likewise we've put a hold on the user's account to verify that they can pay
-    for the work.
+  <div class='row'>
+    <div class='span8'>
+      <p class='question'>Can I share my pictures with friends and family?</p>
+      <div class='answer'>
+        <p>Yes!  We want you to be able to share and allow others to enjoy the work that's been done to your images.  Not only is it fun for you, but it shows off the skills of your doctor which is greatly appreciated.  By default we block your album from being viewed by anyone other than you and the Pic Doctor.  There are three places where you can make your album shareable.</p>
+        <li> When you accept the doctor's work you are given the opportunity to allow your album to be shared (checkbox).</li>
+        <li> From the job's page, you can choose share album. </li>
+        <li> From the album page there is a link beside the social media links at the bottom of each image which will allow you to share the album</li>
+        </p>
+      </div>
+    </div>
   </div>
-  <a name="d3"></a>
-  <div class="alert alert-info">
-    <h4>
-     What is a merchant account, and why do I need it? 
-   </h4>
-   For an in depth look at merchant accounts 
-   <u><a href='http://en.wikipedia.org/wiki/Merchant_account'>view the wikipedia page here.</a></u>
-   Essentially a merchant account allows you to accept payment from a user.  This is how you as a
-   doctor will receive your payments.  It's fully integrated into our site so you don't have to
-   navigate between our site and our payment processing partner.
-  </div>
-  <H2> Job Statuses </H2>
-  <a name="js1"></a>
-  <div class="alert alert-info">
-    <h4>
-      Available in Market
-   </h4>
-   The job has been placed in the marketplace for doctor's to view and accept.
-  </div>
-  <a name="js2"></a>
-  <div class="alert alert-info">
-    <h4>
-      Job not taken, consider upping price
-   </h4>
-   The job has been sitting in the market too long and no doctor has accepted the job.  The job price may be too low, consider upping the price.
-  </div>
-  <a name="js3"></a>
-  <div class="alert alert-info">
-    <h4>
-      Doctor Accepted Job
-   </h4>
-   The job has been placed in the marketplace for doctor's to view and take.
-  </div>
-  <a name="js4"></a>
-  <div class="alert alert-info">
-    <h4>
-      Doctor Submitted
-   </h4>
-   The doctor has submitted work awaiting the User to accept their work.
-  </div>
-  <a name="js5"></a>
-  <div class="alert alert-info">
-    <h4>
-      Work Submitted, Approval Pending
-   </h4>
-   The Doctor has submitted work, but since the Doctor is new to Pic Doctors their work must be approved by a moderator first.
-  </div>
-  <a name="js6"></a>
-  <div class="alert alert-info">
-    <h4>
-      User Accepted Work
-   </h4>
-   The user has accepted the Doctor's Work.  At this point the hold on the user's credit card is charged and the doctor's account is credited.
-  </div>
-  <a name="js7"></a>
-  <div class="alert alert-info">
-    <h4>
-      Job Refunded
-   </h4>
-   The user has chosen to get a refund and not charge their credit card.  Note after the user has viewed the doctor's work and accepted the job, they can no longer request a refund.
-  </div>
-</div>
+
 {% endblock %}
 
 {% block scripts %}

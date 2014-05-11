@@ -48,6 +48,9 @@
             <ul class="nav nav-pills">
               <!-- <li><a href="{% url 'howitworks' %}"><i class="icon-picture"></i> How It Works</a></li>-->
               <li><a href="{% url 'faq' %}"><i class="icon-info-sign"></i> FAQ</a></li>
+              {% if perms.common.doctor %}
+              <li><a href="{% url 'doc_faq' %}"><i class="icon-info-sign"></i> Doctor FAQ</a></li>
+              {% endif %}
               <li><a id='feedback_link'
                      class="feedback" 
                      data-original-title="Enter your feedback:"
@@ -155,7 +158,10 @@
 
       <hr>
       <footer id="footer">
-        <p>&copy; PicDoctors LLC - <a href="{% url 'privacy_policy' %}">Privacy Policy</a> - <a href="{% url 'terms_of_service' %}">Terms of Service</a> 
+      <p>
+        &copy; PicDoctors LLC - <a href="{% url 'privacy_policy' %}">Privacy Policy</a> -
+        <a href="{% url 'terms_of_service' %}">Terms of Service</a> -
+        <a href="{% url 'doc_home' %}">For Doctors</a>
         {% if not request.IS_PRODUCTION%}
         <span style="color:hotpink;background-color:black;">This is a {{ request.DEPLOY_TYPE}} instance, not a production server. </span>
         {% endif %}
