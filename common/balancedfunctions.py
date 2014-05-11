@@ -239,7 +239,7 @@ def get_withdraw_jobs(doc_profile):
     # figure out a way to do both steps at once
     jobs = Job.objects.filter(doctor=doc_profile, approved=True)
 
-    return [job for job in jobs if job.bp_debit.associated_credit is None]
+    return [job for job in jobs if job.bp_debit and job.bp_debit.associated_credit is None]
 
 def credit_doctor(doc_profile):
     """
