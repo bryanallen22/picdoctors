@@ -23,15 +23,17 @@ minimum_withdraw = 10.00
 
 WithdrawRow = namedtuple('WithdrawRow', 'album_url, album_img_url, date, doc_earnings')
 
-def generate_rows(withdraw_jobs):
+def generate_withdraw_rows(withdraw_jobs):
     """
     Generate rows for the withdraw page
     """
     ret = []
     for wj in withdraw_jobs:
         # Use the first pic of the job as thumbnail
-        pic_url = Pic.objects.get(album=wj.album, group__sequence__exact=1) \
-                            .get_thumb_url()
+        pics = Pic.objects.filter(album=wj.album, group__sequence__exact=1)
+
+        # I'm going to assume I find at least 1
+        pic_url = pics[0].get_thumb_url()
 
         ret.append( WithdrawRow(
             album_url=reverse('markup_album', args=[wj.album.id, 1]),
@@ -61,7 +63,7 @@ def withdraw(request):
         for job in withdraw_jobs:
             total += job.payout_price_cents
 
-        rows = generate_rows(withdraw_jobs)
+        rows = generate_withdraw_rows(withdraw_jobs)
 
         return {
             'valid'            : valid,
