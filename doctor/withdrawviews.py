@@ -36,7 +36,7 @@ def generate_withdraw_rows(withdraw_jobs):
         pic_url = pics[0].get_thumb_url()
 
         ret.append( WithdrawRow(
-            album_url=reverse('markup_album', args=[wj.album.id, 1]),
+            album_url=reverse('album', args=[wj.album.id]),
             album_img_url=pic_url,
             date=wj.created,
             doc_earnings=wj.payout_price_cents,
@@ -73,9 +73,21 @@ def withdraw(request):
         }
 
     elif request.method == "POST":
-        amount = credit_doctor(profile)
-        return {
-            'transfer_complete' : True,
-            'amount'            : amount,
-        }
+        withdraw_jobs = get_withdraw_jobs(profile)
+
+        total = 0
+        for job in withdraw_jobs:
+            total += job.payout_price_cents
+
+        if float(total)/100 > minimum_withdraw:
+            amount = credit_doctor(profile)
+            return {
+                'transfer_complete' : True,
+                'amount'            : amount,
+            }
+        else:
+            return {
+                'transfer_complete' : False,
+                'amount'            : 0,
+            }
 

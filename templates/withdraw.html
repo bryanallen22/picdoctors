@@ -19,7 +19,7 @@
           <a href="{% url 'account_settings' %}#merchant_tab">merchant information.</a>
         </p>
       </div>
-    {% else %} {% if balance >= minimum_withdraw %}
+    {% else %}
 
       <div class="row">
         <div class="span3"> &nbsp; </div>
@@ -47,6 +47,7 @@
         <div class="span2 text-center"> <strong>{{ balance|currency_dollars }}</strong> </div>
       </div>
 
+    {% if balance >= minimum_withdraw %}
       <div class="row">
         <form method="POST" class="span3">
           {% csrf_token %}
