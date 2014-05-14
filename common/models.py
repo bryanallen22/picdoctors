@@ -755,15 +755,16 @@ class Job(DeleteMixin):
         return self.status == Job.USER_ACCEPTED
 
     def __unicode__(self):
-        out = "Owner: " + self.skaa.email
-        out += " -- Doctor: "
+        out = "id:" + str(self.id)
+        out += " Owner: " + self.skaa.email
+        out += " Doctor: "
         if self.doctor is None:
             out += "None"
         else:
             out += self.doctor.email
 
-        out += " -- price cents: " + str(self.bp_hold.cents)
-        out += " -- status: " + self.status
+        out += " Price (cents): " + str(self.bp_hold.cents)
+        out += " Status: " + self.status
         return out
 
 # Keep track of who said the job was too low

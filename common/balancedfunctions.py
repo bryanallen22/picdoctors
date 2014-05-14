@@ -12,8 +12,6 @@ import balanced
 import settings
 import datetime
 
-import ipdb
-
 from skaa.jobsviews import create_job, update_job_hold
 
 ################################################################################
@@ -237,7 +235,7 @@ def get_withdraw_jobs(doc_profile):
     # This could be slow some day if a doctor has a bajillion jobs, we'd hate
     # to pull them all into memory just to find the unfinished ones, but I can't
     # figure out a way to do both steps at once
-    jobs = Job.objects.filter(doctor=doc_profile, approved=True)
+    jobs = Job.objects.filter(doctor=doc_profile)
 
     return [job for job in jobs if job.bp_debit and job.bp_debit.associated_credit is None]
 
