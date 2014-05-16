@@ -204,9 +204,22 @@ def webserver_config():
     with settings(warn_only=True):
         sudo('mkdir -p /var/log/supervisor/')
         sudo('unlink /tmp/supervisor.sock')
-    sudo('service supervisord restart', pty=False)
-    sudo('supervisorctl start all')
-    sudo('service nginx restart')
+
+        # only start supervisord if it isn't alive already
+        ret = sudo('pgrep supervisord')
+        if ret.failed: # if it's not already running
+            sudo('service supervisord restart', pty=False)
+
+    sudo('supervisorctl start all') # if already started, this won't start new ones
+    sudo('kill -HUP `cat /tmp/supervisord.pid`') # reload uwsgi gracefully
+
+    with settings(warn_only=True):
+        # only start nginx if it isn't alive already
+        ret = sudo('pgrep nginx')
+        if ret.failed: # if it's not already running
+            sudo('service nginx restart')
+        else:
+            sudo('nginx -s reload') # gracefully reload
 
 @task
 def getcode(force_push=False):
