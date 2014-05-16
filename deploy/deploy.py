@@ -318,7 +318,10 @@ def getcode(force_push=False):
         with cd(cfg.code_dir):
             # Prevent hypothetical race condition by using head_sha in case
             # origin/master has moved
-            run_user('git checkout %s' % head_sha, cfg)
+
+            # THIS WILL STOMP LOCAL CHANGES. (Which you shouldn't be making on production, moron.)
+            run_user('git reset --hard %s' % head_sha, cfg)
+            run_user('git clean -df', cfg) # clean locally uncommitted files, including directories
 
     # Save the sha to an easily accessible file
     local('echo %s > /tmp/sha.txt' % head_sha)
