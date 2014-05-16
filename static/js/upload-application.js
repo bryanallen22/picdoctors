@@ -59,6 +59,7 @@ $(function () {
       downloadTemplate: $('#template-download'),
       dataType: 'json',
       add: function(e, data){
+        Pd.Logger.timestamp('Adding image: ' + data.files[0].name, 5); 
         var that = uploadHelper.getFileUpload(this);
         data.isValid = uploadHelper.validate(data.files);
 
@@ -84,9 +85,9 @@ $(function () {
         if (!data.isValid) {
           return false;
         }
+        Pd.Logger.timestamp('Sending image: ' + data.files[0].name, 5); 
         if (data.context && data.dataType &&
             data.dataType.substr(0, 6) === 'iframe') {
-          console.log('doing iframe');
         // Iframe Transport does not support progress events.
         // In lack of an indeterminate progress bar, we set
         // the progress to 100%, showing the full animated bar:
@@ -99,6 +100,7 @@ $(function () {
           data.context.each(function (index) {
             var file = ($.isArray(data.result) &&
                         data.result[index]) || {error: 'emptyResult'};
+            Pd.Logger.timestamp('Sending image: ' + file.name, 5); 
 
             /******************************/
             /* ballen -- isotope gets upset when I swap the entire 

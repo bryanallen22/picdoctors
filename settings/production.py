@@ -6,7 +6,7 @@ DEPLOY_TYPE='PRODUCTION' # useful for logs, stack traces
 DEBUG = False
 IS_PRODUCTION = True # used to toggle things that don't go on the non-live site
 # TODO: When we go live, get rid of this.
-PRODUCTION_TESTING = True # used to add debug code to production when it isn't really production. ugh. confusing.
+PRODUCTION_TESTING = False # used to add debug code to production when it isn't really production. ugh. confusing.
 
 # TODO: Use debug keys with live keys:
 BALANCED_API_KEY_SECRET = 'ak-test-1MjuXmDfjhvI5VevnXBL9jsmSbaQwDXCu'
