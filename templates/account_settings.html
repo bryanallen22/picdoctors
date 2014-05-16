@@ -91,7 +91,7 @@
             <div class="control-group">
               <label class="control-label" for="doc_profile_desc" >Profile Description</label>
               <div class="controls">
-                <textarea id="doc_profile_desc" name="doc_profile_desc" class="autosize-textarea">{{ doc_profile_desc }}</textarea>
+                <textarea id="doc_profile_desc" name="doc_profile_desc" class="autosize-textarea" auto-minheight=22>{{ doc_profile_desc }}</textarea>
                 <button id="doc_profile_submit" type="submit" class="btn btn-primary">Submit</button>
               </div>
             </div>
@@ -269,7 +269,7 @@
             </div>
             <div class="span2">
               <div class="onoffswitch">
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide" 
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide"
                 id="userswitch" {% if perms.common.skaa %} checked {% endif %} >
                 <label class="onoffswitch-label" for="userswitch">
                   <div class="onoffswitch-inner"></div>
@@ -285,7 +285,7 @@
             </div>
             <div class="span2">
               <div class="onoffswitch">
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide" 
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide"
                 id="approvalswitch" {% if perms.common.album_approver %} checked {% endif %} >
                 <label class="onoffswitch-label" for="approvalswitch">
                   <div class="onoffswitch-inner"></div>
@@ -302,7 +302,7 @@
             </div>
             <div class="span2">
               <div class="onoffswitch">
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide" 
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hide"
                 id="admin" {% if perms.common.admin %} checked {% endif %} >
                 <label class="onoffswitch-label" for="admin">
                   <div class="onoffswitch-inner"></div>
@@ -656,7 +656,7 @@
   {# see it. Even if someone found it, these cards won't work in production #}
   <script src="{{STATIC_URL}}js/debug/set_price_debugbank.js"></script>
   {% endif %}
-  
+
   <script type="text/template" id="notification_template">
       <div class="span4">
         <%=description%> <br/>
