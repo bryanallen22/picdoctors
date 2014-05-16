@@ -76,7 +76,7 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     # has this doctor proven they are worthy of being auto approved (no need to be moderated?)
     auto_approve                = models.BooleanField(default=False)
 
-    # is this doctor any good?
+    # Is this doctor any good? (Average rating based on stars, so between 1 and 5)
     rating                      = models.FloatField(default=0.0)
 
     # how many pics have been approved in the last X days (currently 30)
@@ -133,6 +133,9 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         return self.is_merchant() and self.has_bank_account()
 
     def get_approval_count(self, invalidate=False):
+        """
+        Return the number of approved pictures in the last <x> days (currently 30)
+        """
         from common.functions import get_datetime
         now = get_datetime()
         yesterday = now - timedelta(days=1)

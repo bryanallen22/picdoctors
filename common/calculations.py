@@ -10,6 +10,7 @@ def calculate_job_payout(job, profile):
     doctors_cut = .5
     rating = profile.rating / 100.0
 
+    # Get the number of pictures the doctor has produced in the last 30 days
     cnt = profile.get_approval_count()
     if cnt < 19:
         doctors_cut = .5

@@ -942,9 +942,18 @@
   font-size: 18px;
   margin-left: 20px;
 }
+.faq ul.answer {
+  margin-left: 60px;
+}
 .faq .answer {
   display: none;
   margin-left: 40px;
+}
+.faq .answer td {
+  text-align: center;
+}
+.faq .answer ul {
+  margin-left: 60px;
 }
 /****************************************************************
  * Home / Ember stuff
