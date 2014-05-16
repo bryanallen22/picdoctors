@@ -57,8 +57,6 @@ $(function(){
           success : function(data, textStatus) {
             /* Enable button - probably unnecessary, but useful if redirect fails */
             $('.btn_approve_all').removeAttr("disabled");
-            console.log(data);
-            console.log(textStatus);
             location.href = data.redirect;
           }
         });

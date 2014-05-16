@@ -110,7 +110,7 @@ $(function(){
       var postback_url = $(event.target).attr('postback_url');
       var redir_val = $(event.target).attr('redir').toLowerCase();
 
-      console.log('execute dynamic action: ' + postback_url);
+      Pd.Logger.timestamp('execute dynamic action ' + postback_url); 
 
       if(redir_val == 'true') {
         location.href = postback_url;
@@ -130,15 +130,12 @@ $(function(){
         url:  postback_url ,
         data: json_data,
         success : function(data, textStatus) {
-          console.log(data);
-          console.log(textStatus);
-      //    location.href = "/jobs";
           dynamicReaction(data, this_model);
         },
         failure : function(jqXHR, textStatus, errorThrown) {
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
+          //console.log(jqXHR);
+          //console.log(textStatus);
+          //console.log(errorThrown);
         }
 
       });

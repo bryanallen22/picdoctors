@@ -16,8 +16,6 @@ function CallHome(url, csrf, job_id){
         url:  url,
         data: json_data,
         success : function(data, textStatus) {
-          console.log(data);
-          console.log(textStatus);
           location.href = data.relocate;
         },
 

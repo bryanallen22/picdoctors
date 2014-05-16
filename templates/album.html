@@ -82,22 +82,6 @@
     </div>
   {% endif %}
 
-  {% if can_view_comments %}
-  <div class='span10 contact_arena'>
-    <script type='application/json' class='previous_messages'>
-      {{group.messages|safe}}
-    </script>
-    <div class='row'>
-      <div class='message_arena'>
-      </div>
-      <br />
-      <div class='message_input_arena span10'>
-        <textarea class='message_input autosize-textarea span9 center' style="margin-left:auto" username='{{ request.user.nickname }}' group_id='{{ group.group_id }}' job_id='{{job_id}}' >Write your message here</textarea>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
   {% if shareable %}
   <div style="float:right;padding-top:20px;">
     {% if not is_public %}

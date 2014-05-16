@@ -36,8 +36,6 @@ $(function(){
         data: obj,
         success : function(data) {
           if ( data.success ) {
-            // reload the page (on this tab)
-            console.log('reloaaaad!');
             // TODO - use window.location.reload if we are already here?
             window.location = window.location.pathname + "#bank_tab";
             window.location.reload()
@@ -126,8 +124,6 @@ $(function(){
         success : function(data) {
           if ( data.success ) {
             // reload the page (on this tab)
-            console.log('reloaaaad!');
-            // TODO - use window.location.reload if we are already here?
             window.location = window.location.pathname + "#bank_tab";
             window.location.reload()
           }
