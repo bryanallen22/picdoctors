@@ -25,12 +25,12 @@ import requests
 ######################
 # Helper functions
 ######################
-def run_user(str, cfg):
-    sudo('umask 002; ' + str, user=cfg.deploy_user)
+def run_user(s, cfg):
+    sudo('umask 002; HOME=' + cfg.deploy_user_home_dir + ' && ' + s, user=cfg.deploy_user)
 
-def venv_run_user(str, cfg):
+def venv_run_user(s, cfg):
     with cd(cfg.code_dir):
-        run_user(cfg.venv_activate + ' && ' + str, cfg)
+        run_user(cfg.venv_activate + ' && ' + s, cfg)
 
 def get_all_instances():
     """
@@ -572,7 +572,7 @@ def setup_local_postgres():
     run_pg(""" createdb picdoctors """)
     run_pg(""" echo "CREATE USER picdoctors WITH PASSWORD 'asdf';" | psql """)
     run_pg(""" echo "GRANT ALL PRIVILEGES ON DATABASE picdoctors TO picdoctors; " | psql """)
-    
+
     venv_run_user('./db.py -deploy -f', cfg)
 
 @task
