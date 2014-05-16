@@ -143,12 +143,6 @@ $(function () {
       // Callback for upload progress events:
       progress: function (e, data) {
         if (data.context) {
-          /*
-             data.context.find('.ui-progressbar').progressbar(
-             'value',
-             parseInt(data.loaded / data.total * 100, 10)
-             );
-             */
           var val = parseInt(data.loaded / data.total * 100, 10);
           data.context.find(".progress .bar").css("width", (val + "%"));
           if(val >= 100) {
@@ -158,11 +152,6 @@ $(function () {
       },
       // Callback for global upload progress events:
       progressall: function (e, data) {
-        //$(this).find('.fileupload-progressbar').progressbar(
-        //    'value',
-        //    parseInt(data.loaded / data.total * 100, 10)
-        //);
-
         var val = parseInt(data.loaded / data.total * 100, 10);
         var bar = $('#totalprogress');
       },
@@ -173,23 +162,6 @@ $(function () {
       },
       stop: function () {
         $(this).find('.fileupload-progressbar').fadeOut();
-      },
-      // Callback for file deletion:
-      destroy: function (e, data) {
-        var that = $(this).data('fileupload');
-        if (data.url) {
-          $.ajax(data)
-          .success(function () {
-            that._adjustMaxNumberOfFiles(1);
-            $(this).fadeOut(function () {
-              $(this).remove();
-            });
-          });
-        } else {
-          data.context.fadeOut(function () {
-            $(this).remove();
-          });
-        }
       }
 
     });
