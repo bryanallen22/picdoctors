@@ -32,7 +32,7 @@ $(function(){
   var SwitchDoctorView = Backbone.View.extend({
 
     events: {
-      'click                      ': 'switch_doc',
+      'click': 'switch_doc',
     },
 
     switch_doc: function(){
@@ -43,11 +43,23 @@ $(function(){
   var RefundView = Backbone.View.extend({
 
     events: {
-      'click                      ': 'refund',
+      'click': 'refund',
     },
 
     refund: function(){
       CallHome('/refund_user/', CSRF_TOKEN, this.$el.attr('job_id'));
+    },
+
+  });
+
+  var IncreaseView = Backbone.View.extend({
+
+    events: {
+      'click' : 'increase',
+    },
+
+    increase: function(){
+      CallHome('/increase_price_ep/', CSRF_TOKEN, this.$el.attr('job_id'));
     },
 
   });
@@ -58,5 +70,7 @@ $(function(){
   var ref_el = $(".btn_refund");
   var ref = new RefundView({el:ref_el});
 
+  var inc_el = $(".btn_increase");
+  var ref = new IncreaseView({el:inc_el});
 
 });

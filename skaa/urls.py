@@ -7,7 +7,7 @@ from skaa.jobsviews import make_album_shareable, make_album_unshareable
 from skaa.setpriceviews import set_price, increase_price, create_hold_handler
 from skaa.mergealbumsviews import merge_albums
 from skaa.accept_workviews import accept_work
-from skaa.rejectviews import refund, switch_doctor, switch_doctor_endpoint, refund_user_endpoint, mod_reject_work
+from skaa.rejectviews import *
 from skaa.faqviews import faq
 
 # Uncomment the next two lines to enable the admin:
@@ -44,6 +44,7 @@ urlpatterns = patterns('',
     url(r'^mod_reject_work/(?P<job_id>\d+)$',              mod_reject_work,          name='mod_reject_work'),
     url(r'^refund_user/$',                                 refund_user_endpoint,     name='refund_user_endpoint'),
     url(r'^switch_doctor/$',                               switch_doctor_endpoint,   name='switch_doctor_endpoint'),
+    url(r'^increase_price_ep/$',                           increase_price_ep,        name='increase_price_ep'),
     url(r'^make_album_shareable/(?P<job_id>\d+)/$',        make_album_shareable,     name='make_album_shareable'),
     url(r'^make_album_unshareable/(?P<job_id>\d+)/$',      make_album_unshareable,   name='make_album_unshareable'),
 

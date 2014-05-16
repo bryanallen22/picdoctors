@@ -13,10 +13,10 @@
     </legend>
 
     <div>
-      Before giving up, can we convince you to consider the following options?
-
-      If you like your pic doctor's work, but still thought their was room for improvement would you
-      consider contacting the doctor?
+      <h4>Can we convince you to consider one of the following options first?</h4>
+      <br/>
+      {% if doctor %}
+      If you like your pic doctor's work, but still thought their was room for improvement you can contact the doctor.
       <br />
       <br />
 
@@ -25,37 +25,40 @@
       <a class="btn btn-large btn-primary" job_id="{{job_id}}"  href="{% ember_url 'album_view' album_id=album_id group_id=first_group %}">Contact Doctor</a>
       <br />
       <br />
-
+      {% endif %}
       {% if is_refund %}
-      If you are unsatisfied with your doctor's work, or they are taking too long to complete their
-      work would you consider placing the job back on the market and allowing a different doctor to
-      work on it?
-      <br />
-      <br />
+        {% if doctor %}
+          If you are unsatisfied with your doctor's work, or they are taking too long to complete their
+          work, you can place the job back on the market.  This will allow a different doctor to
+          work on it.
+          <br />
+          <br />
+          <button class="btn btn_switch btn-large btn-primary" job_id="{{job_id}}" type="button">Switch Doctor</button>
+          {% else %}
+            If doctors haven't taken your job yet, it may be because you're price is too low.
+            {% if suggest %}
+            The suggested price is ${{suggest}}.
+            {% endif %}
+            <br />
+            <br />
+            <button class="btn btn_increase btn-primary btn-large" job_id="{{job_id}}" type="button">Increase Price</button>
 
+          {% endif%}
+        <br />
+        <br />
 
-      <button class="btn btn_switch btn-large btn-primary" job_id="{{job_id}}" type="button">Switch Doctor</button>
-      <br />
-      <br />
-
-      If you are completely unsatisfied and would still like to continue with the refund process
-      press the Refund Job button below.
+        If you are still unsatisfied and would like to process the refund click the link below.
       {% else %}
-      If you are still unsatisfied and would still like to continue with the switching doctor process
-      press the Switch Doctor button below.
-
+        If you are still unsatisfied and would like to switch the doctor click the button below.
       {% endif %}
 
     </div>
     <br />
-    <br />
     {% if is_refund %}
-    <button class="btn btn_refund btn-large" job_id="{{job_id}}" type="button">Refund job</button>
+      <a href='#' class="btn_refund" job_id="{{job_id}}" >Continue with refund</a>
     {% else %}
-    <button class="btn btn_switch btn-large" job_id="{{job_id}}" type="button">Switch Doctor</button>
+      <button class="btn btn_switch btn-large" job_id="{{job_id}}" type="button">Switch Doctor</button>
     {% endif %}
-
-
   </div>
 </div>
 {% endblock %}

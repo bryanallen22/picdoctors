@@ -8,7 +8,7 @@ from django.utils import simplejson
 
 from common.decorators import require_login_as
 from common.functions import get_profile_or_None
-from common.models import Job, Pic, Album, Group
+from common.models import Job, Pic, Album, Group, PriceTooLowContributor
 from common.jobs import send_job_status_change
 from notifications.functions import notify
 from notifications.models import Notification
@@ -22,13 +22,23 @@ def refund(request, job_id):
     if not reject_belongs(request, job_id):
         return redirect( reverse('permission_denied') )
 
+    suggest = 0
     job = get_object_or_None(Job, id=job_id)
-
+    if not job.doctor and job.price_too_low_count:
+        too_low = PriceTooLowContributor.objects.filter(job=job.id)
+        for tl in too_low:
+            suggest = suggest + tl.price
+        suggest = suggest / 100 # to dollars
+        suggest = suggest / job.price_too_low_count # average
+        suggest = '{:0,.2f}'.format(suggest)
+        
     first_group = min([pic.group_id for pic in Pic.objects.filter(album=job.album)])
 
     return  {
             'job_id'        : job_id,
             'album_id'      : job.album.id,
+            'doctor'        : job.doctor,
+            'suggest'       : suggest,
             'first_group'   : first_group,
             'is_refund'     : True,
             }
@@ -130,6 +140,22 @@ def refund_user_endpoint(request):
     result = { 'relocate' : reverse('job_page') }
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
+
+@require_login_as(['skaa'])
+def increase_price_ep(request):
+    profile = get_profile_or_None(request)
+    data = simplejson.loads(request.body)
+    job = get_object_or_None(Job, id=data['job_id'])
+
+    if job and profile and job.skaa == profile:
+        result = { 'relocate' : reverse('increase_price', args=[job.id]) }
+        response_data = simplejson.dumps(result)
+    else:
+        result = { 'relocate' : reverse('job_page') }
+        response_data = simplejson.dumps(result)
+
+    return HttpResponse(response_data, mimetype='application/json')
+
 
 def notify_doc_of_switch(request, job):
     """
