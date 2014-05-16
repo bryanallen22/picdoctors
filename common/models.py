@@ -208,7 +208,7 @@ class Pic(DeleteMixin):
     preview              = models.ImageField(upload_to = pic_previews_path)
     thumbnail            = models.ImageField(upload_to = pic_thumbnails_path)
     #The next two fields are used for generating the path
-    path_owner           = models.CharField(max_length = 5, blank=False, default="user")
+    path_owner           = models.CharField(max_length=16, blank=False, default="user")
     watermark            = models.BooleanField(blank=False, default=False)
 
     description          = models.TextField(blank=True)
