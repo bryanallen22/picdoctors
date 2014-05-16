@@ -3,6 +3,12 @@ import os
 import djcelery
 import sys
 
+def ReplaceJsFile(items, old, new):
+    for index, obj in enumerate(items):
+        if obj == old:
+            items[index] = new
+            break
+
 # PROJECT_ROOT is up a directory ( use dirname on this file twice )
 PROJECT_ROOT = os.path.abspath( os.path.dirname(os.path.dirname(__file__)) )
 
@@ -313,7 +319,7 @@ PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.slimit.SlimItCompressor'
 
 PIPELINE_JS = {
     'all_js': {
-        'source_filenames': (
+        'source_filenames': [
             # Paths are relative to settings.STATICFILES_DIRS!
 
             ###########
@@ -368,7 +374,7 @@ PIPELINE_JS = {
             ##########
             'js/logger/*.js'
 
-        ),
+        ],
         'output_filename': 'compressed/all.js',
     }
 }

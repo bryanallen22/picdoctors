@@ -1,6 +1,6 @@
 window.Pd = Pd = Ember.Application.create({
   rootElement: '#ember-container',
-  LOG_TRANSITIONS: true,
+  LOG_TRANSITIONS: !picDocProduction,
   rootUrl: picDocRootUrl,
   token: $('input[name="csrfmiddlewaretoken"]').val()
 });
@@ -22,4 +22,3 @@ if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
       xhr.setRequestHeader("X-CSRFToken", token);
     }
 });
-

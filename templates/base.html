@@ -29,12 +29,18 @@
     <script>
       // intentionall global
       var picDocRootUrl = "{{ STATIC_URL }}";
+      {% if request.IS_PRODUCTION%}
+        var picDocProduction = true;  
+      {% else %}
+        var picDocProduction = false;  
+      {% endif %}
+      
+
     </script>
 
   </head>
 
   <body>
-    <div id="pdlog" name="pdlog" content="true"></div>
     <div class="container">
       <div id="navbar" class="row">
         <div class="span12" style="line-height: 20px">

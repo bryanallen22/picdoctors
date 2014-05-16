@@ -14,7 +14,7 @@ Pd.Logger = {
 
   on: function () {
     if (this._on === null)
-      this._on = ($("#pdlog").attr("content") === "true" && typeof console !== "undefined" && typeof console.log !== "undefined");
+      this._on = (!picDocProduction && typeof console !== "undefined" && typeof console.log !== "undefined");
     return this._on;
   },
 
