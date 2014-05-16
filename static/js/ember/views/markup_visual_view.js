@@ -9,15 +9,14 @@ Pd.MarkupVisualView = Ember.View.extend({
 
 
     var description = markup.get('description'),
-        markupStyle = markup.get('markupStyle'),
-        colorName = markupStyle.get('name'),
+        colorName = markup.get('markupStyle.name'),
         title = colorName + ' area instructions';
 
     if(Ember.isEmpty(description)){
       description = "No instruction";
     }
 
-    this.$().popover(
+    this.$('.markup').popover(
       {
          placement :"right",
          title : title,

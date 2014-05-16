@@ -100,7 +100,7 @@ $(function () {
           data.context.each(function (index) {
             var file = ($.isArray(data.result) &&
                         data.result[index]) || {error: 'emptyResult'};
-            Pd.Logger.timestamp('Sending image: ' + file.name, 5); 
+            Pd.Logger.timestamp('Sent image: ' + file.name, 5); 
 
             /******************************/
             /* ballen -- isotope gets upset when I swap the entire 
