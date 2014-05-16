@@ -9,10 +9,10 @@ $(function(){
       for(var i = 0; i < answers.length; i++) {
         var answer = $(answers[i]);
         if(answer.is(':visible')) {
-          answer.fadeOut();
+          answer.hide();
         }
         else {
-          answer.fadeIn();
+          answer.fadeIn(150);
         }
       }
     });
