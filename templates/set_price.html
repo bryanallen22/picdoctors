@@ -63,7 +63,11 @@
                         <br/>
                     </div>
                     <p id="min-price-msg" class="label label-important" style="display:none;">
+                      {% if increase_price %}
+                        You must offer at least ${{ min_price }} ($1 more than before)
+                      {% else %}
                         You must offer at least ${{ min_price }} (${{ min_price_per_pic }} per picture)
+                      {% endif %}
                     </p>
                     <p id="bad-price-msg" class="label label-important" style="display:none;">
                         Invalid price
@@ -171,6 +175,10 @@
                   <tr>
                     <td>Simple lighting changes</td>
                     <td>$2.00</td>
+                  </tr>
+                  <tr>
+                    <td>Complex lighting changes (recreating skin tones)</td>
+                    <td>$10.00</td>
                   </tr>
                   <tr>
                     <td>Adding border</td>

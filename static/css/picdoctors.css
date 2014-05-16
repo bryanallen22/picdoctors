@@ -35,7 +35,9 @@
 ******************************/
 #indexapp {
   /* Make carousel transitions as fades (default is a slider) */
+
   /* Move the buttons down a bit */
+
 }
 #indexapp .photo {
   position: relative;
@@ -263,6 +265,7 @@
   margin: 0px;
   padding: 10px;
   /* This needs to match BorderGroups.padding */
+
   min-height: 320px;
   /*
   .rounded {
@@ -272,9 +275,11 @@
     border-style: solid;
   }
   */
+
 }
 #isocontainer img {
   /* Don't allow accidental selection */
+
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
@@ -288,6 +293,7 @@
   margin: 2px;
   position: relative;
   /*border-style: solid;*/
+
 }
 #isocontainer .pic_container .preview {
   display: block;
@@ -316,6 +322,7 @@
 }
 #isocontainer .upload_error {
   /* What does a pic_container look like when it has an error? */
+
   background-color: red;
   color: white;
 }
@@ -375,6 +382,7 @@
     margin: 6px;
   }
   */
+
 }
 .doc_pics {
   margin-top: 10px;
@@ -409,6 +417,7 @@
          you aren't messing things up. Careful calculation of offsets
          for drawing markups at the right location is done, and if you
          change them, old markups might appear at the wrong spot */
+
   display: block;
   position: relative;
   -webkit-user-select: none;
@@ -452,6 +461,7 @@
   margin-bottom: 10px;
   width: 700px;
   /* height: 55px;*/
+
   max-width: 700px;
   display: block;
   margin-left: 40px;
@@ -459,6 +469,7 @@
 #markup_app #instructions {
   /* Picture is 800 px wide. The margins on the well are 19px.
        762 + 19*2 = 800 */
+
   width: 762px;
   text-align: center;
 }
@@ -689,23 +700,31 @@
   transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   /* IE 9 */
+
   -moz-transform: rotate(90deg);
   /* Firefox */
+
   -webkit-transform: rotate(90deg);
   /* Safari and Chrome */
+
   -o-transform: rotate(90deg);
   /* Opera */
+
 }
 .rotate_180 {
   transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   /* IE 9 */
+
   -moz-transform: rotate(180deg);
   /* Firefox */
+
   -webkit-transform: rotate(180deg);
   /* Safari and Chrome */
+
   -o-transform: rotate(180deg);
   /* Opera */
+
 }
 /********************************
     Toggle Buttons
@@ -968,6 +987,7 @@
 /* Messages under albums */
 .new_message {
   /* Make sure it lines up with the button to send the message */
+
 }
 .new_message input {
   margin: 0;
