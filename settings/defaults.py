@@ -328,6 +328,7 @@ PIPELINE_JS = {
             'third_party/js/jquery-ui.min.js',
             'third_party/js/jquery.tmpl.min.js',
             'third_party/js/json2.js',
+            'third_party/jquery-file-upload/jquery.ui.widget.js',
             'third_party/jquery-file-upload/jquery.fileupload.js',
             'third_party/jquery-file-upload/jquery.fileupload-ui.js',
             'third_party/jquery-file-upload/jquery.iframe-transport.js',

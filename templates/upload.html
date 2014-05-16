@@ -43,7 +43,7 @@
       <form id="upload_form" action="{% url 'upload_handler' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <div class="btn btn-primary btn-large fileupload-addbutton">
           Add Pictures
-          <input id='fileinput' type="file" name="files[]" multiple >
+          <input id='fileinput' style='width:1px;' type="file" name="files[]" multiple >
         </div>
         <div id="group" class="btn btn-primary btn-large" href="#" style="display : block; margin-top: 12px;">Group</div>
         <div id="upload_tour" class="btn btn-info btn-large" style="display : block;margin-top:12px;">Help Me</div>
