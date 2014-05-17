@@ -109,9 +109,12 @@ fi
 
 ### PicDoctors customizations
 alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'
-alias pdmysql='mysql -u picdoctors -P 3306 -h production.c9b9prnejh0e.us-east-1.rds.amazonaws.com -pcm9vJ2KUBjh8KQJ7'
 alias pds='python manage.py shell'
 # I can't ever remember the syntax for this command, so I'm adding an alias which I can easily check
-alias updown='sudo supervisorctl restart all'
+alias downup='sudo supervisorctl restart all'
+alias pddb='psql -h pd-production.c9b9prnejh0e.us-east-1.rds.amazonaws.com -p 5432 -U picdoctors -d picdoctors'
+# Gracefully reload uwsgi and nginx
+alias reload_app='kill -HUP `cat /tmp/supervisord.pid`'
+
 export EDITOR=vim
 
