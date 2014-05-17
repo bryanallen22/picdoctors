@@ -90,7 +90,7 @@ def merchant_info(request):
                 'street_address' : request.POST['street_address'],
                 'postal_code'    : request.POST['postal_code'],
                 'phone_number'   : request.POST['phone_number'],
-                'dob'            : request.POST['birth_year'] + '-' + required.POST['birth_month'],
+                'dob'            : request.POST['birth_year'] + '-' + request.POST['birth_month'],
             }
         }
 
