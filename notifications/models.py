@@ -35,7 +35,7 @@ class Notification(DeleteMixin):
                                                db_index=True)
 
     # a short description of this notification (useful for email subjects, and notification drop downs)
-    description         = models.CharField(max_length=64, blank=True)
+    description         = models.CharField(max_length=128, blank=True)
 
     # the recipient of the notification
     recipient           = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True)
