@@ -108,7 +108,6 @@ fi
 
 
 ### PicDoctors customizations
-alias pd='cd /code/picdoctors; source /srv/venvs/django-picdoc/bin/activate'
 alias pds='python manage.py shell'
 # I can't ever remember the syntax for this command, so I'm adding an alias which I can easily check
 alias downup='sudo supervisorctl restart all'
@@ -118,3 +117,20 @@ alias reload_app='kill -HUP `cat /tmp/supervisord.pid`'
 
 export EDITOR=vim
 
+# This is kinda confusing.
+#   - I want the same bashrc in /root and /var/www -- one less thing to keep track of
+#   - when I type 'pd' I want to become www-data and be in my venv,
+#     at the root of our code. That should be the case if I am root OR www-data already
+function pd () {
+	if [ $(whoami) == 'root' ]; then
+		su www-data # let him finish -- see below
+	else
+		cd /code/picdoctors
+		source /srv/venvs/django-picdoc/bin/activate
+	fi
+}
+# www-data defaults to being in our venv
+if [ $(whoami) == 'www-data' ]; then
+    cd /code/picdoctors
+    source /srv/venvs/django-picdoc/bin/activate
+fi

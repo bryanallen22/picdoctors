@@ -43,8 +43,8 @@ class LocalConfig():
     remote_nginx_htpasswd = os.path.join(pd_settings.PROJECT_ROOT,
                                'deploy/configs/nginx_htpasswd')
 
-    remote_bashrc = os.path.join(pd_settings.PROJECT_ROOT,
-                               'deploy/configs/bashrc')
+    remote_dotfiles = os.path.join(pd_settings.PROJECT_ROOT,
+                         'deploy/configs/dotfiles/.[A-Za-z]*') # use glob syntax
 
     remote_supervisord_cfg = os.path.join(pd_settings.PROJECT_ROOT,
                             'deploy/configs/supervisord.conf')

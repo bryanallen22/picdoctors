@@ -624,7 +624,14 @@ def setup_remote_conveniences():
     deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
 
-    put(LocalConfig.remote_bashrc, '~/.bashrc', use_sudo=True)
+    # Move convenience dotfiles to root dir...
+    instance_name = env.host_string;
+    local('scp %s %s:~/' % (LocalConfig.remote_dotfiles, instance_name))
+    # ... and add them for the www-data as well
+    local('scp %s %s:%s' %
+            (LocalConfig.remote_dotfiles, instance_name, cfg.deploy_user_home_dir))
+    sudo('chown -R %s:%s %s'
+            % (cfg.deploy_user, cfg.deploy_user, cfg.deploy_user_home_dir))
 
 @task
 def deploy(force_push=False, update=True, fast=False):
