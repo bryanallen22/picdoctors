@@ -9,6 +9,10 @@
     {{#unless sameButtons}}
     <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>{{nextLabel}}</a>
     {{/unless}}
+    {{#if showHelp}}
+      <a class='btn btn-info btn-large workflow-buttons bottom-navigation-button' {{action 'helpMe'}}>Help Me</a>
+      
+    {{/if}}
     {{#if albumDoctor}}
     <form id="fake_form_for_reset">
       {{partial "docUploadButton"}}

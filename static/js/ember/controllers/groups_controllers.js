@@ -53,6 +53,10 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
     if(finished) return "Jobs";
   }.property('nextGroup','finished', 'needsPay', 'needsSignIn'),
 
+  notFinished: Ember.computed.not('finished'),
+
+  showHelp: Ember.computed.and('albumOwner', 'notFinished'),
+
   needsPay: function(){
     var finished = this.get('finished'),
     isLoggedIn = this.get('isLoggedIn');
@@ -105,12 +109,53 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
 
   allPicsUploaded: function(){
     var ret = true,
-        groups = this.get('album.groups');
+    groups = this.get('album.groups');
 
     return groups.isEvery('hasDocPic');
   }.property('album.groups.@each.hasDocPic'),
 
   canFinishJob: Ember.computed.and('albumDoctor', 'allPicsUploaded', 'album.job.isDoctorAccepted'),
+
+  setupTour: function(){
+    var tour = this.get('tour');
+    if(tour) return tour;
+    tour = new Tour();
+
+    tour.addStep({
+      element: ".markup_outer", 
+      title: "Add Markups", 
+      content: "Click and drag on the image to mark an area.",
+      placement:"top",
+    });
+
+    tour.addStep({
+      element: ".instruction:eq(0)", 
+      title: "Add Instructions", 
+      content: "Add instructions for the marked area.",
+      placement:"top",
+    });
+
+    tour.addStep({
+      element: ".markup_outer", 
+      title: "Repeat", 
+      content: "Continue adding markups until you've sufficiently described the work you'd like done on your pictures.",
+      placement:"top",
+    });
+
+    var continueButton,
+        bottomCount = $('.bottom-navigation-button').length;
+
+    continueButton = bottomCount > 1 ? '.bottom-navigation-button:eq(0)' : '.top-navigation-button'; 
+
+    tour.addStep({
+      element: continueButton , 
+      title: "Next",
+      content: "When finished, click here to move on.",
+      placement:"bottom",
+    });
+    this.set('tour', tour);
+    return tour;
+  },
 
   actions:{
     completeJob: function(){
@@ -169,6 +214,10 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
       } else if(!albumDoctor) {
         if(finished) this.transitionToRoute('jobs.newJobs');
       }
+    },
+    helpMe: function(){
+      var tour = this.setupTour();
+      tour.restart();
     }
 
   }
