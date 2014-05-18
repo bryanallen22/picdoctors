@@ -59,7 +59,7 @@ $(function () {
       downloadTemplate: $('#template-download'),
       dataType: 'json',
       add: function(e, data){
-        Pd.Logger.timestamp('Adding image: ' + data.files[0].name, 5); 
+        Pd.Logger.timestamp('Adding image: ' + data.files[0].name, 5);
         var that = uploadHelper.getFileUpload(this);
         data.isValid = uploadHelper.validate(data.files);
 
@@ -85,7 +85,7 @@ $(function () {
         if (!data.isValid) {
           return false;
         }
-        Pd.Logger.timestamp('Sending image: ' + data.files[0].name, 5); 
+        Pd.Logger.timestamp('Sending image: ' + data.files[0].name, 5);
         if (data.context && data.dataType &&
             data.dataType.substr(0, 6) === 'iframe') {
         // Iframe Transport does not support progress events.
@@ -100,28 +100,41 @@ $(function () {
           data.context.each(function (index) {
             var file = ($.isArray(data.result) &&
                         data.result[index]) || {error: 'emptyResult'};
-            Pd.Logger.timestamp('Sent image: ' + file.name, 5); 
 
-            /******************************/
-            /* ballen -- isotope gets upset when I swap the entire 
-             * element out, so I just swap out the stuff below the parent element */
-            var $this = $(this);
-            var dl_templ = that._renderDownload([file]);
-            var contents = dl_templ.find('.contents');
-            var target = $this.find('.contents').get();
-            // Don't swap in the element until the replacement image has loaded
-            contents.find( '.preview img' ).load( function() {
-              var pbar =  $('.bar', target);
-              if(pbar){ 
-                pbar.data('progressbar')._destroy = function(){};
-              }
-              contents.replaceAll( target );
-            });
-            /* Since we just swapped out the contents, we'll manually add the uuid
-             * from the download template */
-            var uuid = dl_templ.attr("uuid");
-            $this.attr("uuid", uuid);
-            IsoWrapper.picDownloaded($this);
+            if (file.error) {
+              // probably wasn't an image file
+
+              // Note that this isn't ever hidden while they are on the 
+              // page -- uploads aren't serial, so we have to leave it up.
+              $('#upload_error').show();
+
+              // TODO: I can't use 'remove' here cause the jQuery data dies
+              // with a null ptr exception. Weird.
+              $(this).detach();
+            }
+            else {
+              Pd.Logger.timestamp('Sent image: ' + file.name, 5);
+              /******************************/
+              /* ballen -- isotope gets upset when I swap the entire
+               * element out, so I just swap out the stuff below the parent element */
+              var $this = $(this);
+              var dl_templ = that._renderDownload([file]);
+              var contents = dl_templ.find('.contents');
+              var target = $this.find('.contents').get();
+              // Don't swap in the element until the replacement image has loaded
+              contents.find( '.preview img' ).load( function() {
+                var pbar =  $('.bar', target);
+                if(pbar){
+                  pbar.data('progressbar')._destroy = function(){};
+                }
+                contents.replaceAll( target );
+              });
+              /* Since we just swapped out the contents, we'll manually add the uuid
+               * from the download template */
+              var uuid = dl_templ.attr("uuid");
+              $this.attr("uuid", uuid);
+              IsoWrapper.picDownloaded($this);
+            }
 
             /* If all the pictures have uuids, that means that they
              * all have been downloaded. If so, let's enable

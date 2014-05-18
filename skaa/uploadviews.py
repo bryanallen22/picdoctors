@@ -149,29 +149,33 @@ def upload_handler(request):
         # Save this off into the database
         file = request.FILES[u'files[]']
         if file is not None:
-            log.info(file.name)
-            pic = Pic()
-            pic.set_file(file)
-            album = Album.get_unfinished(request)
-            pic.album = album if album else Album.create_album(request)
-            pic.save()
+            try:
+                log.info(file.name)
+                pic = Pic()
+                pic.set_file(file)
+                album = Album.get_unfinished(request)
+                pic.album = album if album else Album.create_album(request)
+                pic.save()
 
-            prof = request.user
-            # If they aren't a skaa already, they are now...
-            if prof.is_authenticated() and prof.isa('skaa') == False:
-                prof.add_permission('skaa')
+                prof = request.user
+                # If they aren't a skaa already, they are now...
+                if prof.is_authenticated() and prof.isa('skaa') == False:
+                    prof.add_permission('skaa')
 
-            log.info('File saving done')
+                log.info('File saving done')
 
-            result = []
-            result.append(pic_json(pic))
+                result = []
+                result.append(pic_json(pic))
 
-            album = Album.get_unfinished(request)
-            album.kick_groups_modified()
+                album = Album.get_unfinished(request)
+                album.kick_groups_modified()
 
-            response_data = simplejson.dumps(result)
-            #log.info(response_data)
-            return HttpResponse(response_data, mimetype='application/json')
+                response_data = simplejson.dumps(result)
+                #log.info(response_data)
+                return HttpResponse(response_data, mimetype='application/json')
+            except:
+                log.debug("Exception in handling uploaded file. Probably not a picture?")
+                return HttpResponse('[ ]', mimetype='application/json')
         else:
             log.error("file is None. How did we get here?")
             return HttpResponse('[ ]', mimetype='application/json')
