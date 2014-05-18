@@ -561,7 +561,7 @@ def collect_static():
     cfg = get_config(deploy_type)
 
     print "Collect static files"
-    venv_run_user('python manage.py collectstatic --noinput -v0', cfg)
+    venv_run_user('python manage.py collectstatic --noinput -v3', cfg)
 
 @task
 def setup_local_postgres():
