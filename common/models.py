@@ -123,7 +123,7 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         if len(perms) > 0:
             perms = perms[:-1]
 
-        return "Email: " + self.email + " - Permissions [" + perms + "]"
+        return "id: " + str(self.id) + " Email: " + self.email + " - Permissions [" + perms + "]"
 
     def update_approval_count(self):
         self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
@@ -223,7 +223,7 @@ class Pic(DeleteMixin):
     thumb_height         = models.SmallIntegerField(blank=True, null=True)
 
     def __unicode__(self):
-        return self.title
+        return "id: " + str(self.id) + " " + self.title
 
     def set_file(self, myfile,
             thumb_width=default_thumb_width, thumb_height=default_thumb_height,
@@ -563,9 +563,9 @@ class Album(DeleteMixin):
 
     def __unicode__(self):
         if self.userprofile is not None:
-            return "Album # " + str(self.id) + " -- owned by: " + self.userprofile.email
+            return "id " + str(self.id) + " -- owned by: " + self.userprofile.email
         else:
-            return "Album # " + str(self.id) + " -- owned by the internet"
+            return "id " + str(self.id) + " -- owned by the internet"
 
 ################################################################################
 # Group
@@ -622,7 +622,7 @@ class Group(DeleteMixin):
         return Group.get_album_groups(job.album)
 
     def __unicode__(self):
-        return "Group # " + str(self.id) + " -- is_locked: " + str(self.is_locked)
+        return "id " + str(self.id) + " -- is_locked: " + str(self.is_locked)
 
 
 # Doc Pic Group allows us to keep track of all pictures uploaded
