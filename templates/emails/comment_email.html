@@ -21,7 +21,7 @@ Thanks for using PicDoctors!
 {% block html %}
 {{ request.user.nickname }} has said the following regarding your job:<br/><br/>
 
-{{ comments }}<br/><br/>
+<em>{{ comments }}</em><br/><br/>
 
 To respond, please click <a href="{{ request.SITE_URL }}{% ember_url 'album_view' album_id=job.album.id group_id=comment_group_id %}">here</a>.<br/><br/>
 

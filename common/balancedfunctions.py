@@ -212,6 +212,7 @@ def do_debit(request, profile, job):
             appears_on_statement_as = 'PicDoctors',
         )
     except balanced.exc.HTTPError as ex:
+        log.error("Failed to debit on hold %s!" % job.bp_hold.id)
         return False, ex
 
     log.info("Doing debit on job %d for %d cents " % (job.id, job.bp_hold.cents))
