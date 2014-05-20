@@ -75,7 +75,7 @@
       <input type="password" id="confirm_password" class="span4" name="confirm_password"
         placeholder="Confirm Password">
       <label class="checkbox" id="tos">
-        <input type="checkbox" id="agree_tos" name="agree_tos" value="1" checked>
+        <input type="checkbox" id="agree_tos" name="agree_tos" value="1" {% if not need_tos %}checked{% endif %}>
         I agree to the Terms of Service
       </label>
       <label class="checkbox">
@@ -87,7 +87,7 @@
         <div id="nickError"></div>
       </div>
       <button id="btnsubmit" type="submit" name="submit" class="btn btn-info btn-block">Sign in</button>
-    </form>    
+    </form>
     <a href="/reset_password/" style="position: relative; left: 165px;">Forgot your password?</a>
 
   </div>
