@@ -203,7 +203,7 @@ def webserver_config():
     print "kill any previous things related to supervisord"
     with settings(warn_only=True):
         sudo('mkdir -p /var/log/supervisor/')
-        sudo('unlink /tmp/supervisor.sock')
+        #sudo('unlink /tmp/supervisor.sock')
 
         # only start supervisord if it isn't alive already
         ret = sudo('pgrep supervisord')
