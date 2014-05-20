@@ -86,6 +86,12 @@ def create_user(request, email, nickname, password, confirm_password, usertype):
     # you shouldn't be able to create two different users with different emails
     # just based on capitalization
     email = email.lower()
+    email_reg = re.compile('.+\@.+\..+')
+    match = email_reg.match(email)
+
+    # This just verifies a@a.a
+    if not match:
+        return ( None, { 'bad_email_or_password' : True } )
 
     # make sure the nickname only has a-zA-Z0-9
     valid_chars = "_%s%s" % (string.ascii_letters, string.digits)
@@ -144,7 +150,7 @@ def signin(request, usertype='user'):
     if profile and ( profile.isa('doctor') or profile.isa('skaa') ):
         if 'next' in request.GET:
             return redirect( request.GET['next'] )
-        else
+        else:
             return redirect('/')
 
     # Set defaults here. Overridden below if necessary
