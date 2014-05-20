@@ -9,6 +9,7 @@ from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
 from common.functions import json_result
+from common.functions import get_profile_or_None
 
 from common.models import Album, Profile
 from common.account_settings_views import legit_password
@@ -138,6 +139,13 @@ def signin(request, usertype='user'):
 
     usertype should be 'user' or 'doc'
     """
+    # if you're already logged in you shouldn't be here
+    profile = get_profile_or_None(request)
+    if profile and ( profile.isa('doctor') or profile.isa('skaa') ):
+        if 'next' in request.GET:
+            return redirect( request.GET['next'] )
+        else
+            return redirect('/')
 
     # Set defaults here. Overridden below if necessary
     ret = { 'usertype' : usertype , 'create_checked' : 'checked'}
@@ -229,6 +237,7 @@ def skaa_signin(request):
     return signin(request, usertype='user')
 
 def doc_signin(request):
+
     return signin(request, usertype='doc')
 
 
