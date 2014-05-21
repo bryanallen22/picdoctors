@@ -2,8 +2,11 @@
 $(function(){
 
   var prefetchImage = function(url) {
-    var im = new Image();
-    im.src = url;
+    if(url) {
+      var im = new Image();
+      im.src = url;
+      Pd.Logger.timestamp('Prefetching image: ' + url);
+    }
   }
 
   var getUrlFromBackground = function(el) {
@@ -15,6 +18,7 @@ $(function(){
         return results[1];
       }
     }
+    return null;
   }
 
   $('#myCarousel').carousel({
@@ -30,20 +34,8 @@ $(function(){
      */
     var nextImageEl = $(e.relatedTarget).next().find('.photo');
     prefetchImage(getUrlFromBackground(nextImageEl));
-
-    //var nextImageCss = $(e.relatedTarget).next().find('.photo').css('background');
-    //if(nextImageCss) {
-    //  /* Extract the url from the background */
-    //  var urlregex = /url\((.*)\)/;
-    //  var results = urlregex.exec(nextImageCss);
-    //  if(results.length >= 2) {
-    //    prefetchImage(results[1]);
-    //  }
-    //}
   });
 
   var secondPic = $('.active.item').next().find('.photo');
-  var url = getUrlFromBackground(secondPic);
-  prefetchImage(url);
-
+  prefetchImage(getUrlFromBackground(secondPic));
 });
