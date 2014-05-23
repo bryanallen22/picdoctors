@@ -27,5 +27,13 @@ Pd.Router.map(function(){
       });
     });
   });
+  this.resource('settings', function(){
+    this.route('profile');
+    this.route('password');
+    this.route('notifications');
+    this.route('roles');
+    this.route('bank_account');
+    this.route('merchant_info');
+  });
 });
 
