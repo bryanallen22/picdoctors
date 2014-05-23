@@ -16,7 +16,11 @@ Pd.SettingsPasswordRoute = Em.Route.extend({
 
 });
 
-Pd.SettingsNotificationsRoute = Em.Route.extend({
+Pd.SettingsEmailConfigRoute = Em.Route.extend({
   model : function() {
+    var blah = this.modelFor('settings').get('emailConfig');
+    console.log(blah);
+    debugger;
+    return this.modelFor('settings').get('emailConfig');
   }
 });

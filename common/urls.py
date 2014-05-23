@@ -11,7 +11,7 @@ from common.account_settings_views import change_password, change_profile_settin
 from common.account_settings_views import update_roles
 from common.permissionfunctions import permission_denied
 from common.navbarviews import async_album_info
-from common.ember_endpoints import home, albums_endpoint, users_endpoint, markups_endpoint, messages_endpoint, pics_endpoint
+from common.ember_endpoints import *
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -46,5 +46,6 @@ urlpatterns = patterns('',
     url(r'^api/markups/(?P<markup_id>\d+)$',            markups_endpoint,             name='markups_endpoint'),
     url(r'^api/pics/(?P<pic_id>\d+)$',                  pics_endpoint,                name='pics_endpoint'),
     url(r'^api/messages$',                              messages_endpoint,            name='messages_endpoint'),
+    url(r'^api/emailConfigs/(?P<user_id>\d+)$',         email_config_endpoint,        name='email_config_endpoint'),
 )
 

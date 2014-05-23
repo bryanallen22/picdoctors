@@ -36,6 +36,7 @@ def users_endpoint(request, user_id):
         user['nickname'] = profile.nickname
         user['email'] = profile.email
         user['isLoggedIn'] = True
+        user['emailConfig'] = profile.id # He uses the profile id as a key to get the notifications to ignore
 
     return json_result({"user":user})
 
@@ -307,3 +308,20 @@ def messages_endpoint(request):
         result = original_json
 
     return json_result(result)
+
+@require_login_as(['skaa', 'doctor'])
+def email_config_endpoint(request, user_id):
+    result = {
+        'emailConfig' : {
+            'id':                 request.user.id,
+            'job_status_change':  True,
+            'jobs_available':     True,
+            'jobs_need_approval': False,
+            'job_reminder':       True,
+            'job_message':        True,
+            'job_rejection':      True,
+            'job_switched':       True,
+        }
+    }
+    return json_result(result)
+
