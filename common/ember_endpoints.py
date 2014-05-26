@@ -22,23 +22,54 @@ def home(request):
     return {}
 
 def users_endpoint(request, user_id):
+    profile = request.user
+
+    if not profile.is_authenticated():
+        return unauthenticated_user()
+
+    user = {}
+    user['id'] = profile.id
+    user['nickname'] = profile.nickname
+    user['email'] = profile.email
+    user['isLoggedIn'] = True
+    user['emailConfig'] = profile.id # He uses the profile id as a key to get the notifications to ignore
+
+    roles = get_roles(profile)
+
+    return json_result({
+        "user":user,
+        "roles": roles
+        })
+
+def unauthenticated_user():
     user = {
             'id': -1,
             'nickname': 'visitor',
             'email': 'email',
-            'isLoggedIn': False
+            'isLoggedIn': False,
+            'roles': [-1]
            }
 
-    profile = request.user
+    return json_result({
+        "user":user,
+        "roles": [
+            {
+                "id" : -1,
+                "name": "isDoctor"
+            }
+            ]
+        })
 
-    if profile.is_authenticated():
-        user['id'] = profile.id
-        user['nickname'] = profile.nickname
-        user['email'] = profile.email
-        user['isLoggedIn'] = True
-        user['emailConfig'] = profile.id # He uses the profile id as a key to get the notifications to ignore
-
-    return json_result({"user":user})
+def get_roles(profile):
+    ret = []
+    permissions = profile.user_permissions.all()
+    for perm in permissions:
+        p = {
+                'id': perm.id,
+                'name': perm.codename
+            }
+        ret.append(p)
+    return ret
 
 def can_modify_markup(request, markup_id=None):
     pic = None

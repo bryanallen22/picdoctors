@@ -1,3 +1,4 @@
+{% load picdoctags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -149,6 +150,7 @@
                     <li><a href="{% url 'withdraw' %}"><i class="icon-shopping-cart"></i> Withdraw Earnings</a></li>
                     {% endif %}
                     <li><a href="{% url 'account_settings' %}"><i class="icon-cog"></i> Account Settings</a></li>
+                    <li><a href="{% ember_url 'account_settings' %}"><i class="icon-cog"></i> Account Settings (New)</a></li>
                     <li><a href="{% url 'signout' %}"><i class="icon-user"></i> Log Out</a></li>
                   </ul>
                 </li>
