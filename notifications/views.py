@@ -1,12 +1,13 @@
 # Create your views here.
 
-from common.functions import get_profile_or_None
+from common.functions import get_profile_or_None, get_datetime
 from annoying.functions import get_object_or_None
 from django.shortcuts import redirect
 from notifications.models import Notification, NotificationToIgnore
 from django.utils import simplejson
 from django.http import HttpResponse
 from common.decorators import require_login_as
+from annoying.decorators import ajax_request
 
 import ipdb
 
@@ -24,6 +25,16 @@ def notification_redirecter(request, notification_id):
         return redirect(notification.url)
 
     return redirect('/')
+
+@ajax_request
+@require_login_as(['skaa', 'doctor'])
+def clear_notifications(request, notification_id):
+    now = get_datetime()
+    Notification.objects.filter(pk__lte=notification_id, recipient=request.user, viewed=False).update(viewed=True, updated=now)
+
+    return {
+        'ok': True
+    }
 
 
 @require_login_as(['skaa', 'doctor'])

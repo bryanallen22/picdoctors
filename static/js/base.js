@@ -194,5 +194,31 @@ $(function(){
       e.preventDefault();
   });
 
+
 });
 
+/*
+ * Notification stuff
+ */
+$(function(){
+  $('#clearAllNotifications').on('click', function(){
+    var notifications = $('.notification-class'),
+        top = $(notifications[0]).data('notification_id'),
+        call;
+
+    call = $.ajax('/clear_notifications/' + top);
+    call.done(function(results){
+      if(results && results.ok){
+        $('.notification-class.unread').removeClass('unread');
+        $('#notification_count').text("");
+        $('.clearAllNotifications').remove();
+      } else {
+        alert('an error has occurred');
+      }
+    });
+
+    call.fail(function(){
+        alert('an error has occurred');
+    });
+  });
+});

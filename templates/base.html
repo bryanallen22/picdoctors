@@ -123,14 +123,18 @@
                     {% if request.new_notification_cnt > 0 %}
                     style="color:red;"
                     {% endif %}>
-                    <i class="icon-envelope"></i> ({{ request.new_notification_cnt }})<b class="caret"></b>
+                    <i class="icon-envelope"></i> <span id='notification_count'>({{ request.new_notification_cnt }})</span><b class="caret"></b>
                   </a>
                     <ul class="dropdown-menu">
+                    {% if request.new_notification_cnt > 0 %}
+                      <li class='clearAllNotifications'><a href="#" id='clearAllNotifications'>Mark all as read</a></li>
+                    {% endif %}
+                      
                   {% for n in request.notifications %}
                     {% if n.viewed %}
-                      <li><a href="{% url 'notification_redirecter' n.id %}">{{n.description}}</a></li>
+                    <li><a class='notification-class' data-notification_id='{{n.id}}' href="{% url 'notification_redirecter' n.id %}">{{n.description}}</a></li>
                     {% else %}
-                      <li><a style="background-color:lightcyan" href="{% url 'notification_redirecter' n.id %}">{{n.description}}</a></li>
+                      <li><a class='notification-class unread' data-notification_id='{{n.id}}' href="{% url 'notification_redirecter' n.id %}">{{n.description}}</a></li>
                     {% endif %}
                   {% endfor %}
                     </ul>
