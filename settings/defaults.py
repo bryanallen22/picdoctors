@@ -325,7 +325,7 @@ PIPELINE_JS = {
             ###########
             # Libraries
             ###########
-            'third_party/js/jquery.1.7.2.min.js',
+            'third_party/js/jquery-1.11.1.js',
             'third_party/js/underscore.min.js',
             'third_party/js/animatedcollapse.js',
             'third_party/js/backbone.min.js',

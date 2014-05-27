@@ -1,4 +1,3 @@
-from annoying.decorators import render_to
 from skaa.progressbarviews import get_progressbar_vars
 from skaa.markupviews import belongs_on_this_markup_page, markup_to_dict
 from skaa.models import Markup
@@ -16,60 +15,6 @@ from messaging.messageviews import build_messages, generate_message
 from common.decorators import require_login_as
 
 import ipdb
-
-@render_to('home.html')
-def home(request):
-    return {}
-
-def users_endpoint(request, user_id):
-    profile = request.user
-
-    if not profile.is_authenticated():
-        return unauthenticated_user()
-
-    user = {}
-    user['id'] = profile.id
-    user['nickname'] = profile.nickname
-    user['email'] = profile.email
-    user['isLoggedIn'] = True
-    user['emailConfig'] = profile.id # He uses the profile id as a key to get the notifications to ignore
-
-    roles = get_roles(profile)
-
-    return json_result({
-        "user":user,
-        "roles": roles
-        })
-
-def unauthenticated_user():
-    user = {
-            'id': -1,
-            'nickname': 'visitor',
-            'email': 'email',
-            'isLoggedIn': False,
-            'roles': [-1]
-           }
-
-    return json_result({
-        "user":user,
-        "roles": [
-            {
-                "id" : -1,
-                "name": "isDoctor"
-            }
-            ]
-        })
-
-def get_roles(profile):
-    ret = []
-    permissions = profile.user_permissions.all()
-    for perm in permissions:
-        p = {
-                'id': perm.id,
-                'name': perm.codename
-            }
-        ret.append(p)
-    return ret
 
 def can_modify_markup(request, markup_id=None):
     pic = None
@@ -338,21 +283,5 @@ def messages_endpoint(request):
         data['id'] = msg.id
         result = original_json
 
-    return json_result(result)
-
-@require_login_as(['skaa', 'doctor'])
-def email_config_endpoint(request, user_id):
-    result = {
-        'emailConfig' : {
-            'id':                 request.user.id,
-            'job_status_change':  True,
-            'jobs_available':     True,
-            'jobs_need_approval': False,
-            'job_reminder':       True,
-            'job_message':        True,
-            'job_rejection':      True,
-            'job_switched':       True,
-        }
-    }
     return json_result(result)
 

@@ -48,4 +48,45 @@ Pd.SettingsPasswordController = Ember.Controller.extend({
   }
 });
 
+Pd.SettingsRolesController = Ember.ObjectController.extend({
+  availableRoles: ['doctor', 'user'],
 
+});
+
+Pd.RoleController = Ember.ObjectController.extend({
+  needs: ['settingsRoles'],
+
+  roles: Ember.computed.alias('controllers.settingsRoles.roles'),
+
+  userRole: function(){
+    var name = this.get('model'),
+    role = this.get('roles').findBy('name', name);
+    return role;
+  }.property('roles.@each.name'),
+
+  actions:{
+    remove: function(role){
+      var roles = this.get('roles');
+      role.deleteRecord();
+      role.save().then(function(){
+       // alert('saved');
+      }, function(){
+        //failed to save, do we alert them?
+        role.rollback();
+        roles.pushObject(role);
+      });
+    },
+    add: function(roleName){
+      var user = this.get('controllers.settingsRoles.model'),
+          record = this.store.createRecord('role', {name:roleName, user:user}),
+          roles = this.get('roles');
+
+      alert('I didn\'t implement this endpoint!!!');
+
+      record.save().then(function(result){
+
+        //roles.addRecord('roles');
+      });
+    }
+  }
+});

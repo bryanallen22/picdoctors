@@ -7,7 +7,7 @@ Pd.User = DS.Model.extend({
   email:       attr(),
   isLoggedIn:  attr(),
   roles:       hasMany('role'),
-  isDoctor:    attr(),
-  isUser:      attr(),
   emailConfig: belongsTo('emailConfig', { async: true }),
+  isDoctor: Ember.computed.filterBy('roles', 'name', 'doctor'),
+  isUser: Ember.computed.filterBy('roles', 'name', 'user'),
 });

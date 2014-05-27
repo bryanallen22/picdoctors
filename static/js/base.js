@@ -63,7 +63,7 @@ $(function(){
     el.popover('toggle');
   });
 
-  $(".feedback_submit").live('click', function() {
+  $(".feedback_submit").on('click', function() {
     //console.log('submit_feedback');
     var cur_input = $('#feedback_textarea');
     var cur_from = $('#feedback_from_textarea');

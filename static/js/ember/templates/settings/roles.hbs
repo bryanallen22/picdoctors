@@ -1,11 +1,14 @@
 
 <ul>
-  <li>
-{{input type="checkbox" checked=isDoctor}} Be a doctor
-  </li>
-  <li>
-{{input type="checkbox" checked=isUser}} Be a user
-  </li>
+  {{#each role in availableRoles itemController='role'}}
+    <li>
+      {{#if userRole}}
+        <button {{action 'remove' userRole}}>Remove {{role.model}}</button>
+      {{else}}
+        <button {{action 'add' role.model}}>Add {{role.model}}</button>
+      {{/if}}
+    </li>
+  {{/each}}
 </ul>
 
 
