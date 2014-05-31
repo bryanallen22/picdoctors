@@ -104,6 +104,20 @@ def create_hold_handler(request):
 
                 job = place_hold(job, album, request.user, cents, request.POST['card_uri'])
 
+                # Generate exciting email if this is in production.
+                # TODO: get enough customers that this becomes spammy and has to be removed
+                if settings.IS_PRODUCTION:
+                    send_email(
+                        request=request,
+                        email_address=['admin@picdoctors.com'],
+                        template_name='tell_admins_hold_placed.html',
+                        template_args={
+                            'user_email_address': profile.email,
+                            'cents':              cents,
+                            'job':                job,
+                        }
+                    )
+
                 # Remove any previous doctor information, this essentially happens when they go from
                 # refund to back in market
                 remove_previous_doctor(job)
@@ -119,7 +133,7 @@ def create_hold_handler(request):
                 # particular need to be UI friendly to them. Perhaps I'll just ignore them?
                 ret['status'] = 402 # Payment required
                 ret['next'] = ''
-        except e:
+        except Exception as e:
             log.error("Failed to place hold on album.id=%s! card_uri=%s, price=%s" %
                         (album.id, request.POST['card_uri'], request.POST['price']))
             ret['status'] = 400 # bad request

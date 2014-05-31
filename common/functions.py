@@ -97,6 +97,16 @@ def get_unfinished_album(request):
 
     return (album, redirect_url)
 
+def get_all_album_approvers():
+    """
+    Returns a list of Profile objects of all people with 'album_approver' permission
+    """
+    from django.contrib.auth.models import Permission
+    from django.db.models import Q
+    from common.models import Profile
+    perm = Permission.objects.get(codename='album_approver')
+    approvers = Profile.objects.filter(Q(groups__permissions=perm) | Q(user_permissions=perm) ).distinct()
+    return approvers
 
 def get_referer_view_and_id(request, default=None):
 

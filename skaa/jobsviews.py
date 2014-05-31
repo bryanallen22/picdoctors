@@ -25,6 +25,8 @@ from django.utils.timezone import utc
 import math
 import ipdb
 
+import logging; log = logging.getLogger('pd')
+
 
 
 @require_login_as(['skaa', 'doctor'])
@@ -33,7 +35,11 @@ def job_page(request, page=1, job_id=None):
     ### get a list of the jobs by this user ###
     if request.user.is_authenticated():
         if job_id:
-            jobs = Job.objects.filter(skaa=request.user).filter(id=job_id).order_by('created').reverse()
+            # Admins can see anything
+            if request.user.isa('admin'):
+                jobs = Job.objects.filter(id=job_id).order_by('created').reverse()
+            else:
+                jobs = Job.objects.filter(skaa=request.user).filter(id=job_id).order_by('created').reverse()
         else:
             jobs = Job.objects.filter(skaa=request.user).order_by('created').reverse()
     else:

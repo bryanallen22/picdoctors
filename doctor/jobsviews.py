@@ -11,7 +11,7 @@ from common.models import Pic
 from common.models import DocBlock
 from common.models import PriceTooLowContributor
 from common.calculations import calculate_job_payout
-from common.functions import get_profile_or_None, get_datetime
+from common.functions import get_profile_or_None, get_datetime, get_all_album_approvers
 from skaa.rejectviews import remove_previous_doctor
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
@@ -22,6 +22,9 @@ from common.emberurls import get_ember_url
 from datetime import timedelta
 import datetime
 from django.utils.timezone import utc
+from emailer.emailfunctions import send_email
+
+import settings
 import ipdb
 
 @require_login_as(['doctor'])
@@ -230,6 +233,23 @@ def mark_job_completed(request):
                 job.status = Job.DOCTOR_SUBMITTED
             else:
                 job.status = Job.MODERATOR_APPROVAL_NEEDED
+                # Generate email to tell us to hurry up and respond to this
+                # TODO: get enough customers that this becomes spammy and has to be removed
+                if settings.IS_PRODUCTION:
+                    to_emails = [p.email for p in get_all_album_approvers()]
+                    send_email(
+                        request=request,
+                        email_address=to_emails,
+                        template_name='tell_mods_approval_needed.html',
+                        template_args={
+                            'user_email_address': profile.email,
+                            'job':                job,
+                        }
+                    )
+
+
+
+
 
             job.save()
             send_job_status_change(request, job, profile)

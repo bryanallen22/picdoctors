@@ -1,0 +1,16 @@
+{% extends 'base_email.html' %}
+
+{% load picdoctags %}
+
+{% block subject %}
+{{ user_email_address }} placed a hold for {{ cents|currency_cents }}!
+{% endblock %}
+
+{% block plain %}
+Aint that cool!? Go check it out at: {{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}
+{% endblock %}
+
+{% block html %}
+Aint that cool!? Go check it out at: {{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}
+{% endblock %}
+

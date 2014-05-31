@@ -1,0 +1,16 @@
+{% extends 'base_email.html' %}
+
+{% load picdoctags %}
+
+{% block subject %}
+Go approve/reject album {{ job.album.id }} for {{ user_email_address }}
+{% endblock %}
+
+{% block plain %}
+Hurry up and go approve or reject it here: {{ request.SITE_URL }}{% url 'album' job.album.id %}
+{% endblock %}
+
+{% block html %}
+Hurry up and go approve or reject it here: {{ request.SITE_URL }}{% url 'album' job.album.id %}
+{% endblock %}
+
