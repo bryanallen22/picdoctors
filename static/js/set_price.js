@@ -12,7 +12,11 @@ $(function(){
 
     var createHold = function(card_uri, price)
     {
-      var obj = { "card_uri" : card_uri, 'price' : price };
+      var obj = {
+        'card_uri': card_uri,
+        'price':    price,
+        'album_id': album_id,
+      };
 
       $.ajax({
         headers: {
@@ -33,7 +37,6 @@ $(function(){
           else {
             $('#bad-price-msg').show();
             $('.submit-button').removeAttr("disabled");
-            debugger
           }
         },
       });

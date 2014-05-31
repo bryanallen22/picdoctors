@@ -17,7 +17,6 @@ from skaa.progressbarviews import get_progressbar_vars
 from skaa.rejectviews import remove_previous_doctor
 from emailer.emailfunctions import send_email
 
-import ipdb
 import logging; log = logging.getLogger('pd')
 
 import settings
@@ -79,18 +78,13 @@ def create_hold_handler(request):
     album = None
     job = None
 
-    # do we update a current job, or create a new job?
-    view, job_id = get_referer_view_and_id(request)
-    if view == 'increase_price':
-        job_id = int(job_id)
-        job = get_object_or_None(Job, id=job_id)
-        profile = get_profile_or_None(request)
+    profile = get_profile_or_None(request)
 
-        # check permissions and state
-        if job and job.skaa == profile and \
-                (job.status == Job.IN_MARKET or job.status == Job.OUT_OF_MARKET or job.status == Job.REFUND ):
-            album = job.album
-
+    if 'album_id' in request.POST and request.POST['album_id'] is not None:
+        album = get_object_or_None(Album, id=request.POST['album_id'])
+        job = album.get_job_or_None()
+        if job is not None and job.skaa != profile:
+            album = None # Not their album. Handled below
     else:
         album, _ = get_unfinished_album(request)
 
@@ -105,7 +99,8 @@ def create_hold_handler(request):
         try:
             cents = currency_to_cents( request.POST['price'] )
             if cents >= min_price * 100:
-                # job can be None here, it'd be totally cool, we don't build anything based on the job, unless updating. It will be created (if necessary) in place_hold
+                # job can be None here, it'd be totally cool, we don't build anything based on
+                # the job, unless updating. It will be created (if necessary) in place_hold
 
                 job = place_hold(job, album, request.user, cents, request.POST['card_uri'])
 
@@ -124,11 +119,12 @@ def create_hold_handler(request):
                 # particular need to be UI friendly to them. Perhaps I'll just ignore them?
                 ret['status'] = 402 # Payment required
                 ret['next'] = ''
-        except:
+        except e:
+            log.error("Failed to place hold on album.id=%s! card_uri=%s, price=%s" %
+                        (album.id, request.POST['card_uri'], request.POST['price']))
             ret['status'] = 400 # bad request
             ret['next'] = ''
 
-    #return HttpResponse('[ ]', mimetype='application/json')
     response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')
 
@@ -152,10 +148,9 @@ def increase_price(request, job_id):
 
 
 
-    original_price = (job.bp_hold.cents / 100)
+    # Use float here -- /100 truncates, but /100. is cool
+    original_price = (job.bp_hold.cents / 100.)
     min_price = original_price + 1
-    if request.method == 'GET':
-        pass
     str_min_price = "{0:.2f}".format(min_price)
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
     str_num_pics = "%s" % job.album.num_groups
@@ -170,15 +165,27 @@ def increase_price(request, job_id):
         'credit_cards'      : user_credit_cards,
         'increase_price'    : True,
         'original_price'    : str_original_price,
+        'album_id'          : job.album.id,
     })
     return ret
 
 @require_login_as(['skaa'])
 @render_to('set_price.html')
-def set_price(request):
-    album, redirect_url = get_unfinished_album(request)
-    if not album:
-        return redirect(redirect_url)
+def set_price(request, album_id=None):
+    # On normal uploads, album should be None, but we retrieve it with get_unfinished_album
+    # However, if comes from a job that was refunded and returned to the market, the album
+    # can be passed in directly
+    if album_id is None:
+        album, redirect_url = get_unfinished_album(request)
+        if not album:
+            return redirect(redirect_url)
+    else:
+        album = get_object_or_None(Album, id=album_id)
+        if not album:
+            return redirect(reverse('upload'))
+        if album.userprofile != request.user:
+            return redirect(reverse('permission_denied'))
+
     if album.num_groups == 0:
         return redirect(reverse('upload'))
 
@@ -214,6 +221,7 @@ def set_price(request):
         'min_price_per_pic' : str_min_price_per_pic,
         'num_pics'          : album.num_groups,
         'credit_cards'      : user_credit_cards,
+        'album_id'          : album.id,
     })
     return ret
 
