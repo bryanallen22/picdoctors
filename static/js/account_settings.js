@@ -231,14 +231,17 @@ $(function(){
         'state'   : on,
       };
 
+      var element = $(this);
+
       postTo('/update_roles/', obj, function(data) {
         if ( data.success ) {
               window.location.hash = "#roles_tab";
               window.location.reload(true);
         } else {
-          alert('There was an error!');
+          // Re-enable it (with animation and all)
+          element.attr('checked', 'checked')
+          $("#role_error").show().text(data.error_msg);
         }
-        
       });
     });
 
@@ -263,7 +266,7 @@ $(function(){
           enabled              : false,
         };
       },
-      
+
       initialize : function() {
       },
 
@@ -282,7 +285,7 @@ $(function(){
       url: '/notification_handler/',
 
       initialize: function() {
-        this.container = null; 
+        this.container = null;
         this.bind('reset', this.setup, this);
       },
 
@@ -303,7 +306,7 @@ $(function(){
     });
 
     var NotificationView = Backbone.View.extend({
-      
+
       className: 'row',
 
       template:  '',
@@ -321,7 +324,7 @@ $(function(){
 
       render: function(){
         // Compile the template using underscore
-        
+
         this.$el.html(this.template(
           {
             type                : this.model.get('type'),
@@ -341,7 +344,7 @@ $(function(){
 
 
     var ProfileView = Backbone.View.extend({
-      
+
       el: $('#profile-form'),
 
       template:  '',

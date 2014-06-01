@@ -212,15 +212,20 @@ def update_roles(request):
         return # break on them, I don't care
 
     state = request.POST['state'] == 'true'
-    ret = { "success": False }
+    ret = {"success": False, "error_msg": "Unknown" }
 
-    if profile:
+    if profile and role:
         if state:
             profile.add_permission(role)
+            ret['success'] = True
         else:
-            profile.remove_permission(role)
-
-    ret = { "success" : True }
+            all_perms = profile.get_all_permissions()
+            if len(all_perms) > 1:
+                profile.remove_permission(role)
+                ret['success'] = True
+            else:
+                ret['success'] = False # set again for clarity
+                ret['error_msg'] = 'You must have at least 1 role!'
 
     response_data = simplejson.dumps(ret)
     return HttpResponse(response_data, mimetype='application/json')
