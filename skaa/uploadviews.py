@@ -221,8 +221,8 @@ def delete_pic_handler(request):
         data = simplejson.loads(request.body)
         pic  = Pic.objects.get(uuid__exact=data['uuid']);
         if pic:
-            delete_groupings(request)
             pic.delete()
+            delete_groupings(request)
             return HttpResponse('{ "success" : true }', mimetype='application/json')
     return HttpResponse('{ "success" : false }', mimetype='application/json')
 
