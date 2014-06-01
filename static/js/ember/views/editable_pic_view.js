@@ -16,10 +16,6 @@ Pd.EditablePicView = Ember.View.extend({
     return this.$().find('.markup_pic_container');
   }.property('content'),
 
-  offset: function(){
-    return this.get('picSpan').offset();
-  }.property('picSpan'),
-
   newMarkup: null,
   newMarkupStartX: null,
   newMarkupStartY: null,
@@ -34,7 +30,7 @@ Pd.EditablePicView = Ember.View.extend({
 
     this.set('drawing', true);
     var img = this.get('picSpan'),
-        offset = this.get('offset'),
+        offset = img.offset(),
         controller = this.get('controller'),
         initialSize = 10;
 
@@ -69,8 +65,15 @@ Pd.EditablePicView = Ember.View.extend({
   mouseMove: function(e){
     if(!this.get('drawing')) return;
 
+    //Ember.run.throttle(this, this.move, e, 15);
+    this.move(e);
+  },
+
+  move: function(e){
+
+    console.log('move');
     var img = this.get('picSpan'),
-    img_offset = this.get('offset'),
+    img_offset = img.offset(),
     newMarkup = this.get('newMarkup');
 
     this.fixPageEventOffset(e, img, img_offset);
@@ -147,7 +150,7 @@ Pd.EditablePicView = Ember.View.extend({
     this.set('drawing', false);
 
     var img = this.get('picSpan'),
-        img_offset = this.get('offset'),
+        img_offset = img.offset(),
         newMarkup = this.get('newMarkup'),
         picController = this.get('controller'),
         x = e.pageX - img_offset.left,
