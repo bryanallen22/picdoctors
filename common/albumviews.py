@@ -77,9 +77,11 @@ def album(request, album_id):
     can_view_comments = profile == job.skaa or \
                         profile == job.doctor or \
                         (profile and profile.isa('moderator'))
+    share_url = 'https://www.picdoctors.com/album/' + str(job.album.id)
 
     return  {
             'job_id'            : job.id,
+            'share_url'         : share_url,
             'user_acceptable'   : user_acceptable,
             'is_owner'          : (profile == job.skaa),
             'can_view_comments' : can_view_comments,
