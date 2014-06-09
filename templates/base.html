@@ -144,8 +144,9 @@
                 <li class="dropdown">
                   <a class="dropdown-toggle"
                      data-toggle="dropdown"
-                     href="#">
-                      <i class="icon-user"></i> {{user.email }}
+                     href="#" 
+                     title='{{user.nickname}}'>
+                      <i class="icon-user"></i> {{user.nickname|truncatechars:10}}
                       <b class="caret"></b>
                     </a>
                   <ul class="dropdown-menu">
