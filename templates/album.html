@@ -24,19 +24,38 @@
 <div id="album_parent">
   {% for group in groupings %}
   <div class='row hero-unit combination'>
+    <a name='{{group.group_id}}'></a>
 
     <!-- so if we stick more stuff in the remote control then I'll push the group.doc_pic stuff around the download link -->
     {% if group.doc_pic and user.is_authenticated %}
     <div class='row remote_control'>
-      <div class='span2'> &nbsp; </div>
-      <div class='span1'> &nbsp; </div>
-      <div class='span4' style="text-align:center">
-        <div class='download_links'>
+      <div class='float-left'>
+        <div class='download_links center'>
           <a class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}' download='PicDoctorsOriginal-{{ group.doc_pic.uuid|slice:":7" }}.jpg'>Download Doctored Image</a>
         </div>
       </div>
-      <div class='span1'> &nbsp; </div>
-      <div class='span2' style="text-align:right"> &nbsp; </div>
+      <div class='float-right' > 
+      
+      {% if shareable %}
+        <div >
+          {% if not is_public %}
+            <a class='gallery_not_public' style="cursor:pointer" onclick="make_album_shareable(this, {{ job_id }})">Click here to make album public (for sharing)</a>
+            <span id="gallery_now_public"></span>
+          {% endif %}
+          <div class='tw-share-crap float-right'>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-text="Doctored Images" data-url="{{share_url}}#{{group.group_id}}" data-via="picdoctors">Tweet</a>
+          </div>
+          <div class='fb-share-crap float-right'>
+            <div class="fb-like" data-href="{{share_url}}#{{group.group_id}}" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
+          </div>
+          <div class='pin-share-crap float-right'>
+            <a href="//www.pinterest.com/pin/create/button/?url={{share_url}}#{{group.group_id}}&media={{pic.get_preview_url}}&description=PicDoctors" data-pin-do="buttonPin" data-pin-config="beside"><img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_gray_20.png" /></a>
+          </div>
+        </div>
+      {% endif %}
+      
+      
+      </div>
     </div>
     {% endif %}
 
@@ -76,30 +95,11 @@
           {% else %}
           onclick="replace_fancy_user_pic(this, 'userpicdiv{{ group.group_id}}')"
           {% endif %}
-          data-height="pic.preview_height" data-pic="{{pic.get_preview_url }}" > </div>
+          data-height="pic.preview_height" data-pic="{{pic.get_preview_url }}" > 
+        </div>
 
         {% endfor %}
       </div>
-      {% endif %}
-
-      {% if shareable %}
-      <div style="float:right;padding-top:20px;">
-        {% if not is_public %}
-        <a class='gallery_not_public' style="cursor:pointer" onclick="make_album_shareable(this, {{ job_id }})">Click here to make album public (for sharing)</a>
-        <span id="gallery_now_public"></span>
-        {% endif %}
-        <div class='fb-share-crap'>
-          <div class="fb-like" data-href="{{share_url}}" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
-        </div>
-        <div class='tw-share-crap'>
-          <a href="https://twitter.com/share" class="twitter-share-button" data-text="Doctored Images" data-via="picdoctors">Tweet</a>
-        </div>
-        <div class='pin-share-crap'>
-<a href="//www.pinterest.com/pin/create/button/?url={{share_url}}&media={{pic.get_preview_url}}&description=PicDoctors" data-pin-do="buttonPin" data-pin-config="beside"><img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_gray_20.png" /></a>
-
-      </div>
-
-
       {% endif %}
 
     </div>
@@ -130,12 +130,6 @@ fjs.parentNode.insertBefore(js, fjs);
 
   <script>
 var is_owner = {{ is_owner|lower }};
-  </script>
-  <script type="text/template" id="message_template">
-<div class='message_message'><span ><%= message %></span></div>
-  <div class='message_commentor'><%= commentor %> </div><div class='message_created'><%=created%></div>
-
-  <div style='clear:both'></div>
   </script>
   {% endblock %}
 
