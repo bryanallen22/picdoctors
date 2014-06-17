@@ -41,3 +41,5 @@ ssh==1.7.14
 virtualenv==1.6.4
 wsgiref==0.1.2
 slimit==0.8.1
+newrelic==2.20.1.18
+
