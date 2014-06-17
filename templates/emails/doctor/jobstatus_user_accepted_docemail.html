@@ -11,7 +11,7 @@
 {% url 'withdraw' %}
 
 {% if job.album.allow_publicly %}
-{{ job.skaa.nickname }} has also allowed this job to be publicly. You can see it on your public profile page, here:
+{{ job.skaa.nickname }} has also allowed this job to be publicly viewable. You can see it on your public profile page, here:
 {% url 'album' job.album.id %}
 {# weird spacing since the plaintext is literal #}
 {% endif %}
@@ -25,7 +25,7 @@ If you'd like to look for another job, look here:
 {{ job.skaa.nickname }} has accepted job #{{ job.id }}. That means the job is now complete. <strong>{{ job.payout_price_cents|currency_cents }}</strong> is now available for you to <a href="{{ request.SITE_URL}}{% url 'withdraw' %}">withdraw</a> to your bank account.<br/><br/>
 
 {% if job.album.allow_publicly %}
-{{ job.skaa.nickname }} has also allowed this job to be publicly. You can see it on your <a href="{{ request.SITE_URL }}{% url 'album' job.album.id %}">public profile page</a>.<br/><br/>
+{{ job.skaa.nickname }} has also allowed this job to be publicly viewable. You can see it on your <a href="{{ request.SITE_URL }}{% url 'album' job.album.id %}">public profile page</a>.<br/><br/>
 {% endif %}
 
 Thank you for your excellent work!<br/><br/>
