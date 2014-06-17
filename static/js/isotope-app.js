@@ -335,7 +335,7 @@ $(function(){
   // When someone clicks a pic, highlight it. I like mousedown
   // better than click, because it was too easy to highlight
   // a picture (browser select, not my select)
-  $('.pic_container').live('click', function(evt) {
+  $('.pic_container').on('click', function(evt) {
     if( (evt.which == 1 ) && ( $(this).find('.error').size() == 0 ) ){ // left click
       var groupId = $(this).attr("group_id");
       if( groupId < ungroupedId ) {
@@ -378,19 +378,19 @@ $(function(){
     }
   });
 
-  $('.pic_container').live('mouseenter', function(evt) {
+  $('.pic_container').on('mouseenter', function(evt) {
     if($(this).attr("group_id") == ungroupedId) {
       $(this).find('.del_pic').show();
     }
   });
 
-  $('.pic_container').live('mouseleave', function(evt) {
+  $('.pic_container').on('mouseleave', function(evt) {
     if($(this).attr("group_id") == ungroupedId) {
       $(this).find('.del_pic').hide();
     }
   });
 
-  $('.del_pic').live('click', function(evt) {
+  $('.del_pic').on('click', function(evt) {
     var pic_container = $(this).parent().parent();
     var uuid = pic_container.attr("uuid");
 

@@ -224,6 +224,9 @@ $(function(){
 
   var job_list = new JobList();
   job_list.container = $("#jobs_rows");
+  
+  if(!$('.job_infos').length) return;
+
   var job_infos =  jQuery.parseJSON( $('.job_infos').html());
   job_list.reset(job_infos);
 });

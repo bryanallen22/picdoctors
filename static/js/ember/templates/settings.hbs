@@ -1,0 +1,10 @@
+{{link-to 'Profile' 'settings.profile'}}
+{{link-to 'Password' 'settings.password'}}
+{{link-to 'Email Config' 'settings.emailConfig'}}
+{{link-to 'Roles' 'settings.roles'}}
+{{#if isDoctor}}
+  {{link-to 'Bank Account' 'settings.bank_account'}}
+  {{link-to 'Merchant Info' 'settings.merchant_info'}}
+{{/if}}
+
+{{outlet}}

@@ -1,4 +1,3 @@
-from annoying.decorators import render_to
 from skaa.progressbarviews import get_progressbar_vars
 from skaa.markupviews import belongs_on_this_markup_page, markup_to_dict
 from skaa.models import Markup
@@ -16,28 +15,6 @@ from messaging.messageviews import build_messages, generate_message
 from common.decorators import require_login_as
 
 import ipdb
-
-@render_to('home.html')
-def home(request):
-    return {}
-
-def users_endpoint(request, user_id):
-    user = {
-            'id': -1,
-            'nickname': 'visitor',
-            'email': 'email',
-            'isLoggedIn': False
-           }
-
-    profile = request.user
-
-    if profile.is_authenticated():
-        user['id'] = profile.id
-        user['nickname'] = profile.nickname
-        user['email'] = profile.email
-        user['isLoggedIn'] = True
-
-    return json_result({"user":user})
 
 def can_modify_markup(request, markup_id=None):
     pic = None
@@ -307,3 +284,4 @@ def messages_endpoint(request):
         result = original_json
 
     return json_result(result)
+

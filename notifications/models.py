@@ -11,6 +11,7 @@ from common.basemodels import *
 # Stuff that the user says should change about their picture
 ################################################################################
 class Notification(DeleteMixin):
+    # If you change these, you should really change the ember stuff that matches
     JOB_STATUS_CHANGE  = 'jb_status_chg' # job status change
     JOBS_AVAILABLE     = 'jb_ava'        # jobs are available (for spamming doctors)
     JOBS_NEED_APPROVAL = 'jb_need_app'   # jobs need approval (for spamming moderators)
