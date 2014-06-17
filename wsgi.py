@@ -19,7 +19,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 import newrelic.agent
 
-newrelic.agent.initialize('deploy/configs/newrelic.ini')
+newrelic.agent.initialize('/code/picdoctors/deploy/configs/newrelic.ini')
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
