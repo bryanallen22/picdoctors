@@ -3,8 +3,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}Custom Retouching - PicDoctors{% endblock %}</title>
-    <meta name="description" content="Custom Retouching">
+    <title>{% block title %}Custom Photo Retouching - PicDoctors{% endblock %}</title>
+    <meta name="description" content="Custom Photo Retouching">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
@@ -27,6 +27,7 @@
       ga('send', 'pageview');
 
     </script>
+
     <script>
       // intentionall global
       var picDocRootUrl = "{{ STATIC_URL }}";
@@ -35,8 +36,6 @@
       {% else %}
         var picDocProduction = false;  
       {% endif %}
-      
-
     </script>
 
   </head>
@@ -51,6 +50,7 @@
             </div>
           </div>
 
+          {% block navpills %}
           <div style="float:right; display:inline;">
             <ul class="nav nav-pills">
               <!-- <li><a href="{% url 'howitworks' %}"><i class="icon-picture"></i> How It Works</a></li>-->
@@ -86,9 +86,14 @@
               </li>
               {% endif %}
 
+              {% comment %}
+              ballen 06/03/2014 -- we have a link at the bottom, and I think that's enough. Doctors
+              will look around for the link -- they do it pretty well on other comparable sites. I think
+              it's worth removing the distraction for users. I'll A/B test it later.
               {% if not user.is_authenticated %}
               <li><a href="{% url 'doc_home' %}"><i class="icon-edit"></i> Become a Pic Doctor</a></li>
               {% endif %}
+              {% endcomment %}
 
               {% if not user.is_authenticated %}
                 <li><a href="{% url 'skaa_signin' %}"><i class="icon-user"></i> Log In</a></li>
@@ -163,6 +168,7 @@
               {% endif %}
             </ul>
           </div>
+          {% endblock %} {# navpills #}
         </div>
       </div>
 
@@ -172,13 +178,18 @@
       <hr>
       <footer id="footer">
       <p>
-        &copy; PicDoctors LLC - <a href="{% url 'privacy_policy' %}">Privacy Policy</a> -
+        &copy; PicDoctors LLC
+        {% block bottomlinks %}
+        - {# Dash to separate #}
+        <a href="{% url 'privacy_policy' %}">Privacy Policy</a> -
         <a href="{% url 'terms_of_service' %}">Terms of Service</a> -
         <a href="{% url 'doc_home' %}">For Doctors</a>
+        {% endblock %} {# bottomlinks #}
+
         {% if not request.IS_PRODUCTION%}
         <span style="color:hotpink;background-color:black;">This is a {{ request.DEPLOY_TYPE}} instance, not a production server. </span>
         {% endif %}
-        </p>
+      </p>
       </footer>
     </div>
 
