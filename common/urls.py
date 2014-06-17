@@ -13,6 +13,7 @@ from common.permissionfunctions import permission_denied
 from common.navbarviews import async_album_info
 from common.ember_album_endpoints import *
 from common.ember_profile_endpoints import *
+from common.alive_endpoints import *
 from common.ember_home import *
 
 # Uncomment the next two lines to enable the admin:
@@ -49,7 +50,7 @@ urlpatterns = patterns('',
     url(r'^api/pics/(?P<pic_id>\d+)$',                  pics_endpoint,                name='pics_endpoint'),
     url(r'^api/messages$',                              messages_endpoint,            name='messages_endpoint'),
     url(r'^api/emailConfigs/(?P<user_id>\d+)$',         email_config_endpoint,        name='email_config_endpoint'),
-    url(r'^api/roles/(?P<role_id>\d+)$',                 remove_role,
-        name='remove_role'),
+    url(r'^api/roles/(?P<role_id>\d+)$',                remove_role,                  name='remove_role'),
+    url(r'^api/SkaaLiveOn$',                            skaa_live_on,                 name='skaa_live_on')
 )
 
