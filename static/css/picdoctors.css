@@ -48,99 +48,149 @@
 /*****************************
   Index page
 ******************************/
-#indexapp {
+.landing {
   /* Make carousel transitions as fades (default is a slider) */
 
   /* Move the buttons down a bit */
 
 }
-#indexapp .photo {
+.landing h1.header {
+  text-align: center;
+  margin-bottom: 2px;
+}
+.landing h4.header {
+  text-align: center;
+  margin-top: 0px;
+}
+.landing .landing_instructions img {
+  opacity: 0.7;
+  display: block;
+  margin-left: 30%;
+}
+.landing .photo {
   position: relative;
   width: 100%;
   height: 635px;
-  background-size: 100%;
+  background-size: 100% auto;
 }
-#indexapp .positioner {
+.landing .small_photo {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background-size: 100% auto;
+}
+.landing .positioner {
   position: absolute;
 }
-#indexapp .hero-unit {
+.landing .hero-unit {
   position: absolute;
   padding: 15px;
   width: 340px;
   background-color: rgba(222, 222, 222, 0.72);
   z-index: 100;
 }
-#indexapp .hero-unit h3 {
+.landing .hero-unit h3 {
   margin-top: 0px;
   margin-bottom: 0px;
 }
-#indexapp #photo1 {
+.landing #photo1 {
   background: url('/static/images/sm_botanical_before.jpg');
 }
-#indexapp #photo1_markup {
+.landing #photo1_markup {
   left: 0px;
   top: 0px;
   height: 100%;
   width: 100%;
   background: url('/static/images/sm_botanical_before_markup.png');
 }
-#indexapp #photo2 {
+.landing #photo2 {
   background: url('/static/images/sm_botanical_after.jpg');
 }
-#indexapp #photo3 {
+.landing #photo3 {
   background: url('/static/images/restoration_before.jpg');
 }
-#indexapp #photo3_markup {
+.landing #photo3_markup {
   left: 0px;
   top: 0px;
   height: 100%;
   width: 100%;
   background: url('/static/images/restoration_before_markup.png');
 }
-#indexapp #photo4 {
+.landing #photo4 {
   background: url('/static/images/restoration_after.jpg');
 }
-#indexapp #photo5 {
+.landing #photo5 {
   background: url('/static/images/gr_before.jpg');
 }
-#indexapp #photo5_markup {
+.landing #photo5_markup {
   left: 0px;
   top: 0px;
   height: 100%;
   width: 100%;
   background: url('/static/images/gr_markup.png');
 }
-#indexapp #photo6 {
+.landing #photo6 {
   background: url('/static/images/gr_after.jpg');
 }
-#indexapp .carousel .item {
+.landing #bridal_photo {
+  background: url('/static/images/landings/bride.jpg');
+  background-repeat: no-repeat;
+  height: 500px;
+}
+.landing #family_photo {
+  background: url('/static/images/landings/family.jpg');
+  background-position-x: 80%;
+  background-repeat: no-repeat;
+  height: 400px;
+}
+.landing #restoration_photo {
+  background: url('/static/images/landings/restoration.jpg');
+  background-position: -10%;
+  height: 400px;
+}
+.landing #restoration_photo .hero-unit {
+  background-color: #dedede;
+}
+.landing #retouching_photo {
+  background: url('/static/images/landings/retouching.jpg');
+  background-position-x: 0%;
+  background-position-y: 25%;
+  background-repeat: no-repeat;
+}
+.landing #wedding_photo {
+  background: url('/static/images/landings/wedding.jpg');
+  background-position-y: 60%;
+  background-repeat: no-repeat;
+  height: 550px;
+}
+.landing .carousel .item {
   -webkit-transition: opacity 3s;
   -moz-transition: opacity 3s;
   -ms-transition: opacity 3s;
   -o-transition: opacity 3s;
   transition: opacity 3s;
 }
-#indexapp .carousel .active.left {
+.landing .carousel .active.left {
   left: 0;
   opacity: 0;
   z-index: 2;
 }
-#indexapp .carousel .next {
+.landing .carousel .next {
   left: 0;
   opacity: 1;
   z-index: 1;
 }
-#indexapp .carousel .active.right {
+.landing .carousel .active.right {
   left: 0;
   opacity: 0;
   z-index: 2;
 }
-#indexapp .carousel .prev {
+.landing .carousel .prev {
   left: 0;
   opacity: 1;
   z-index: 1;
 }
-#indexapp .carousel-control {
+.landing .carousel-control {
   top: 60%;
 }
 /*****************************

@@ -1,28 +1,44 @@
 {% extends 'base.html' %}
 
 {% block navpills %}
-  {# Leave no navigation pills up top #}
+{# Leave no navigation pills up top #}
 {% endblock %}
 
 {% block bottomlinks %}
-  {# Leave no bottomlinks #}
+{# Leave no bottomlinks #}
 {% endblock %}
 
 {% block main %}
 
-<div class="landing_page">
-
+<div class="landing landing_page">
   <div class="row">
-    <div class="span8">
-      <img src="{{ STATIC_URL }}images/restoration_after.jpg">
-    </div>
-    <div class="span4">
-      <h3>heading</h3>
-      <p>
-      lorem ipsum
-      </p>
+    <h1 class="header">Easy Photo Restoration</h1>
+    <h4 class="header">Find someone to restore your pictures immediately!</h4>
+  </div>
+
+  <div class="row" >
+    <div id="restoration_photo" class="span12 small_photo">
+      <div class="positioner" style="left: 20px; top: 30px;">
+        <div class="hero-unit">
+          <h3>Expert Photo Restoration</h3>
+          <ul>
+            <li>Don't pay until you're happy</li>
+            <li>Prompt results</li>
+          </ul>
+          <p>
+            <a id="upload_button" class="btn btn-primary btn-large" href="/upload/">Upload a Picture »</a>
+            <a class="btn btn-large" href="/howitworks/">Learn More »</a>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="row">
+    &nbsp; {# spacing #}
+  </div>
+
+  {% include 'landing-instructions.html' %}
 
 </div>
 

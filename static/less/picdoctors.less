@@ -72,14 +72,41 @@
 /*****************************
   Index page
 ******************************/
-#indexapp {
+.landing {
+  h1.header {
+    text-align:center;
+    margin-bottom: 2px;
+  }
+
+  h4.header {
+    text-align:center;
+    margin-top:0px;
+  }
+
+  .landing_instructions {
+    img {
+      opacity: 0.7;
+      display:block;
+      margin-left:30%;
+    }
+  }
+
   .photo {
     position: relative;
 
     width: 100%;
     height: 635px;
-    background-size: 100%;
+    background-size: 100% auto;
   }
+
+  .small_photo {
+    position: relative;
+
+    width: 100%;
+    height: 500px;
+    background-size: 100% auto;
+  }
+
   .positioner {
     position: absolute;
   }
@@ -132,6 +159,40 @@
   }
   #photo6 {
     background: url('/static/images/gr_after.jpg');
+  }
+
+  #bridal_photo {
+    background: url('/static/images/landings/bride.jpg');
+    background-repeat: no-repeat;
+    height: 500px;
+  }
+  #family_photo {
+    background: url('/static/images/landings/family.jpg');
+    background-position-x: 80%;
+    //background-position-y: 25%;
+    background-repeat: no-repeat;
+    height: 400px;
+  }
+  #restoration_photo {
+    background: url('/static/images/landings/restoration.jpg');
+    background-position: -10%;
+    .hero-unit {
+      background-color: rgba(222, 222, 222, 1.0);
+    }
+    height: 400px;
+  }
+  #retouching_photo {
+    background: url('/static/images/landings/retouching.jpg');
+    background-position-x: 0%;
+    background-position-y: 25%;
+    background-repeat: no-repeat;
+  }
+  #wedding_photo {
+    background: url('/static/images/landings/wedding.jpg');
+    //background-position-x: 0%;
+    background-position-y: 60%;
+    background-repeat: no-repeat;
+    height: 550px;
   }
 
   /* Make carousel transitions as fades (default is a slider) */

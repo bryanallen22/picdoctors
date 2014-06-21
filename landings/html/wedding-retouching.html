@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block navpills %}
+{# Leave no navigation pills up top #}
+{% endblock %}
+
+{% block bottomlinks %}
+{# Leave no bottomlinks #}
+{% endblock %}
+
+{% block main %}
+
+<div class="landing landing_page">
+  <div class="row">
+    <h1 class="header">Wedding Photo Retouching</h1>
+    <h4 class="header">Find someone to retouch your wedding pictures immediately!</h4>
+  </div>
+
+  <div class="row" >
+    <div id="wedding_photo" class="span12 small_photo">
+      <div class="positioner" style="left: 540px; top: 30px;">
+        <div class="hero-unit">
+          <h3>Wedding Photo Retouching</h3>
+          <ul>
+            <li>Don't pay until you're happy</li>
+            <li>Prompt results</li>
+          </ul>
+          <p>
+            <a id="upload_button" class="btn btn-primary btn-large" href="/upload/">Upload a Picture »</a>
+            <a class="btn btn-large" href="/howitworks/">Learn More »</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    &nbsp; {# spacing #}
+  </div>
+
+  {% include 'landing-instructions.html' %}
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

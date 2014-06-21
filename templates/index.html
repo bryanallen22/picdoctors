@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
-  <div id="indexapp" class="row">
+  <div id="indexapp" class="row landing">
 
     <div id="myCarousel" class="carousel slide">
       {% comment %}
@@ -61,23 +61,7 @@
       &nbsp; {# spacing #}
     </div>
 
-    <div class="row">
-      <div class="span4">
-        <img class="icon" src="{{ STATIC_URL }}images/upload.png">
-        <h2>1. Upload your pics</h2>
-        <p>Then describe how you want the final image to look. We make it easy to mark up and describe specific areas of your photo.</p>
-      </div>
-      <div class="span4">
-        <img class="icon" src="{{ STATIC_URL }}images/credit_card.png">
-        <h2>2. Set a price</h2>
-        <p>You choose how much. We'll hold the money, but you get 100% back if you aren't satisfied with your results.</p>
-      </div>
-      <div class="span4">
-        <img class="icon" src="{{ STATIC_URL }}images/approve.png">
-        <h2>3. Approve</h2>
-        <p>We let you know when your pictures are ready. If it isn't what you wanted, just ask for modifications.</p>
-     </div>
-    </div>
+    {% include 'landing-instructions.html' %}
 
   </div>
 {% endblock %}
