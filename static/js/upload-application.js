@@ -19,8 +19,7 @@ $(function () {
 
   if( $("#fileupload").length > 0 ) {
 
-    window.uploadHelper = {
-
+    var tmpHelper = {
       disableNext: function(disabled){
 
         var next_button = $('#next');
@@ -46,6 +45,8 @@ $(function () {
       }
     };
 
+    $.extend(window.UploadHelper, tmpHelper);
+
     $('#fileupload').fileupload({
       autoUpload : true,
       limitConcurrentUploads : 3,
@@ -60,8 +61,8 @@ $(function () {
       dataType: 'json',
       add: function(e, data){
         Pd.Logger.timestamp('Adding image: ' + data.files[0].name, 5);
-        var that = uploadHelper.getFileUpload(this);
-        data.isValid = uploadHelper.validate(data.files);
+        var that = UploadHelper.getFileUpload(this);
+        data.isValid = UploadHelper.validate(data.files);
 
         if(!data.isValid){
           alert('invalid files');
@@ -79,7 +80,7 @@ $(function () {
         data.jqXHR = data.submit();
 
         $('#isocontainer .instructions').hide();
-        uploadHelper.disableNext(true);
+        UploadHelper.disableNext(true);
       },
       send: function (e, data) {
         if (!data.isValid) {
@@ -95,7 +96,7 @@ $(function () {
         }
       },
       done: function (e, data) {
-        var that = uploadHelper.getFileUpload(this);
+        var that = UploadHelper.getFileUpload(this);
         if (data.context) {
           data.context.each(function (index) {
             var file = ($.isArray(data.result) &&
@@ -134,13 +135,14 @@ $(function () {
               var uuid = dl_templ.attr("uuid");
               $this.attr("uuid", uuid);
               IsoWrapper.picDownloaded($this);
+              UploadHelper.hookupListeners();
             }
 
             /* If all the pictures have uuids, that means that they
              * all have been downloaded. If so, let's enable
              * that #next button */
             if( $('.pic_container').length == $('.pic_container[uuid]').length ) {
-              uploadHelper.disableNext(false);
+              UploadHelper.disableNext(false);
             }
             /******************************/
           });

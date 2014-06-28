@@ -23,25 +23,25 @@ var BorderGroups = (function ($) {
 
   function _drawBorders() {
     //_dumpBorders(borders);
-        
+
     // Get rid of all existing borders
     $(".group_border").remove();
 
     for( var groupId in borders)
-    {
-      if( groupId < ungroupedId )
       {
-        var border = $("<div id='border" + groupId.toString() + "' class='group_border' >");
-        border.width(  borders[groupId]['width'] );
-        border.height( borders[groupId]['height'] );
-        border.css({ left: (borders[groupId]['x']+padding),
-                      top: (borders[groupId]['y']+padding) });
-        border.attr("group_id", groupId.toString());
-        border.appendTo($isocontainer);
+        if( groupId < ungroupedId )
+          {
+            var border = $("<div id='border" + groupId.toString() + "' class='group_border' >");
+            border.width(  borders[groupId]['width'] );
+            border.height( borders[groupId]['height'] );
+            border.css({ left: (borders[groupId]['x']+padding),
+                       top: (borders[groupId]['y']+padding) });
+                       border.attr("group_id", groupId.toString());
+                       border.appendTo($isocontainer);
+          }
       }
-    }
   }
-  
+
   my.start = function() {
     borders = {}
   }
@@ -54,30 +54,30 @@ var BorderGroups = (function ($) {
   my.addElement = function (groupId, x, y, width, height) {
     // Update existing
     if( groupId in borders )
-    {
-      borders[groupId]['x']      = Math.min( borders[groupId]['x'],      x );
-      borders[groupId]['y']      = Math.min( borders[groupId]['y'],      y );
-      borders[groupId]['width']  = Math.max( borders[groupId]['width'],
-          (x + width - borders[groupId]['x']) );
-      borders[groupId]['height'] = Math.max( borders[groupId]['height'], 
-          (y + height - borders[groupId]['y']) );
-    }
-    else // Create new
-    {
-      borders[groupId] = { 'x' : x,
-        'y' : y,
-        'width' : width,
-        'height' : height };
-    }
+      {
+        borders[groupId]['x']      = Math.min( borders[groupId]['x'],      x );
+        borders[groupId]['y']      = Math.min( borders[groupId]['y'],      y );
+        borders[groupId]['width']  = Math.max( borders[groupId]['width'],
+                                              (x + width - borders[groupId]['x']) );
+                                              borders[groupId]['height'] = Math.max( borders[groupId]['height'], 
+                                                                                    (y + height - borders[groupId]['y']) );
+      }
+      else // Create new
+        {
+          borders[groupId] = { 'x' : x,
+            'y' : y,
+            'width' : width,
+            'height' : height };
+        }
   }
-  
+
   return my;
 }(jQuery) );
 
 
 // categoryRows custom layout mode
 $.extend( $.Isotope.prototype, {
-  
+
   extraHeight : 320,
 
   _categoryRowsReset : function() {
@@ -91,12 +91,12 @@ $.extend( $.Isotope.prototype, {
 
   _categoryRowsLayout : function( $elems ) {
     var instance = this,
-        containerWidth = this.element.width(),
-        sortBy = this.options.sortBy,
-        props = this.categoryRows;
+    containerWidth = this.element.width(),
+    sortBy = this.options.sortBy,
+    props = this.categoryRows;
 
     BorderGroups.start();
-    
+
     /* Decrease extra height once we get items -- we just
        need some space at the beginning */
     if($elems.size()) {
@@ -105,10 +105,10 @@ $.extend( $.Isotope.prototype, {
 
     $elems.each( function() {
       var $this = $(this),
-          atomW = $this.outerWidth(true),
-          atomH = $this.outerHeight(true),
-          category = $.data( this, 'isotope-sort-data' )[ sortBy ],
-          x, y;
+      atomW = $this.outerWidth(true),
+      atomH = $this.outerHeight(true),
+      category = $.data( this, 'isotope-sort-data' )[ sortBy ],
+      x, y;
 
       if ( category !== props.currentCategory ) {
         // new category, new row
@@ -124,18 +124,18 @@ $.extend( $.Isotope.prototype, {
         //props.x = instance.options.categoryRows.gutterX;
         props.y = props.height;
       }
-      
+
       BorderGroups.addElement(  $this.attr("group_id"),
-                                 props.x,
-                                 props.y,
-                                 atomW,
-                                 atomH );
+                              props.x,
+                              props.y,
+                              atomW,
+                              atomH );
 
-        // position the atom
-      instance._pushPosition( $this, props.x, props.y );
+                              // position the atom
+                              instance._pushPosition( $this, props.x, props.y );
 
-      props.height = Math.max( props.y + atomH, props.height );
-      props.x += atomW;
+                              props.height = Math.max( props.y + atomH, props.height );
+                              props.x += atomW;
     });
 
     BorderGroups.end();
@@ -163,7 +163,7 @@ var IsoWrapper = (function($) {
 
   my.addItem = function(item)
   {
-    
+
   }
 
   my.relayout = function () {
@@ -203,10 +203,10 @@ var IsoWrapper = (function($) {
   my.sendGroupInfo = function(method, group_id, uuids) {
 
     var json = JSON.stringify(
-        {
-          "group_id" : group_id,
-          "uuids"    : uuids,
-        }
+      {
+      "group_id" : group_id,
+      "uuids"    : uuids,
+    }
     );
 
     //console.log(method + ":" + json);
@@ -295,7 +295,7 @@ $(function(){
       selected_pics.removeClass('selected');
       $isocontainer.isotope('updateSortData', selected_pics);
       $isocontainer.isotope( { sortBy : 'category' } );
-      
+
       /* If this group has fully downloaded pics, the server needs
        * to be informed */
       IsoWrapper.checkForCompleteGroup(nextGroupId);
@@ -335,93 +335,108 @@ $(function(){
   // When someone clicks a pic, highlight it. I like mousedown
   // better than click, because it was too easy to highlight
   // a picture (browser select, not my select)
-  $('.pic_container').on('click', function(evt) {
-    if( (evt.which == 1 ) && ( $(this).find('.error').size() == 0 ) ){ // left click
-      var groupId = $(this).attr("group_id");
-      if( groupId < ungroupedId ) {
-        // unselect all other groups...
-        for(var i=1; i < nextGroupId; i++) {
-          if(i != groupId) {
-            $("#border" + i).removeClass('selected');
+  if( $('#fileupload').length == 0){
+    return;
+  }
+
+  window.UploadHelper = {
+    clickPic: function(evt) {
+      if( (evt.which == 1 ) && ( $(this).find('.error').size() == 0 ) ){ // left click
+        var groupId = $(this).attr("group_id");
+        if( groupId < ungroupedId ) {
+          // unselect all other groups...
+          for(var i=1; i < nextGroupId; i++) {
+            if(i != groupId) {
+              $("#border" + i).removeClass('selected');
+            }
+          }
+          // and all individual selected pictures
+          $('.pic_container').each( function() {
+            $(this).removeClass("selected");
+          });
+
+          // select/unselect this group
+          $("#border" + groupId).toggleClass('selected');
+
+          // if we have just selected a group, we change the 'group'
+          // button to an 'ungroup' button
+          if( $("#border" + groupId).hasClass('selected') ) {
+            $("#group").text("Ungroup");
+          }
+          else {
+            $("#group").text("Group");
           }
         }
-        // and all individual selected pictures
-        $('.pic_container').each( function() {
-          $(this).removeClass("selected");
-        });
-
-        // select/unselect this group
-        $("#border" + groupId).toggleClass('selected');
-
-        // if we have just selected a group, we change the 'group'
-        // button to an 'ungroup' button
-        if( $("#border" + groupId).hasClass('selected') ) {
-          $("#group").text("Ungroup");
-        }
         else {
+          // ungrouped picture
+          $(this).toggleClass('selected');
+
+          // unselect all groups
+          for(var i=1; i < nextGroupId; i++) {
+            $("#border" + i).removeClass('selected');
+          }
+
+          // Any time we are dealing with an individual pic,
+          // it's time for grouping
           $("#group").text("Group");
         }
       }
-      else {
-        // ungrouped picture
-        $(this).toggleClass('selected');
-
-        // unselect all groups
-        for(var i=1; i < nextGroupId; i++) {
-          $("#border" + i).removeClass('selected');
-        }
-
-        // Any time we are dealing with an individual pic,
-        // it's time for grouping
-        $("#group").text("Group");
+    },
+    mouseEnterPic: function(evt) {
+      if($(this).attr("group_id") == ungroupedId) {
+        $(this).find('.del_pic').show();
       }
-    }
-  });
+    },
+    mouseLeavePic: function(evt) {
+      if($(this).attr("group_id") == ungroupedId) {
+        $(this).find('.del_pic').hide();
+      }
+    },
+    delPicClick: function(evt) {
+      var pic_container = $(this).parent().parent();
+      var uuid = pic_container.attr("uuid");
 
-  $('.pic_container').on('mouseenter', function(evt) {
-    if($(this).attr("group_id") == ungroupedId) {
-      $(this).find('.del_pic').show();
-    }
-  });
+      if(uuid) {
+        var json = JSON.stringify( { "uuid" : uuid, } );
 
-  $('.pic_container').on('mouseleave', function(evt) {
-    if($(this).attr("group_id") == ungroupedId) {
-      $(this).find('.del_pic').hide();
-    }
-  });
-
-  $('.del_pic').on('click', function(evt) {
-    var pic_container = $(this).parent().parent();
-    var uuid = pic_container.attr("uuid");
-
-    if(uuid) {
-      var json = JSON.stringify( { "uuid" : uuid, } );
-
-      $.ajax({
-        headers: {
-          "X-CSRFToken":CSRF_TOKEN
-        },
-        type: 'DELETE',
-        url: '/delete_pic_handler/',
-        data: json,
-        success : function(data, textStatus) {
-          //console.log("I got data back from /delete_pic_handler/ -- have a look:");
-          //console.log(data);
-          //console.log(textStatus);
+        $.ajax({
+          headers: {
+            "X-CSRFToken":CSRF_TOKEN
+          },
+          type: 'DELETE',
+          url: '/delete_pic_handler/',
+          data: json,
+          success : function(data, textStatus) {
+            //console.log("I got data back from /delete_pic_handler/ -- have a look:");
+            //console.log(data);
+            //console.log(textStatus);
+          }
+        });
+      }
+      else
+        {
+          Pd.Logger.timestamp("Can't delete without uuid! This be baaad.");
         }
-      });
-    }
-    else
-    {
-      Pd.Logger.timestamp("Can't delete without uuid! This be baaad.");
-    }
 
-    // Client side removal
-    $isocontainer.isotope('remove', pic_container);
-    pic_container.remove();
-    IsoWrapper.relayout();
-    updateCartCount();
-  });
+        // Client side removal
+        $isocontainer.isotope('remove', pic_container);
+        pic_container.remove();
+        IsoWrapper.relayout();
+        updateCartCount();
+    },
+    hookupListeners: function(){
+      $('.pic_container').off('click', this.clickPic );
+      $('.pic_container').off('mouseenter', this.mouseEnterPic);
+      $('.pic_container').off('mouseleave', this.mouseLeavePic);
+      $('.del_pic').off('click', this.delPicClick);
+
+      $('.pic_container').on('click', this.clickPic );
+      $('.pic_container').on('mouseenter', this.mouseEnterPic);
+      $('.pic_container').on('mouseleave', this.mouseLeavePic);
+      $('.del_pic').on('click', this.delPicClick);
+    }
+  };
+  UploadHelper.hookupListeners();
 });
 
 /*
