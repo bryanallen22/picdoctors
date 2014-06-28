@@ -384,12 +384,16 @@ $(function(){
     },
     mouseEnterPic: function(evt) {
       if($(this).attr("group_id") == ungroupedId) {
-        $(this).find('.del_pic').show();
+        var el =  $(this).find('.del_pic');
+        el.show();
+        el.on('click', UploadHelper.delPicClick);
       }
     },
     mouseLeavePic: function(evt) {
       if($(this).attr("group_id") == ungroupedId) {
-        $(this).find('.del_pic').hide();
+        var el =  $(this).find('.del_pic');
+        el.hide();
+        el.off('click', UploadHelper.delPicClick);
       }
     },
     delPicClick: function(evt) {
@@ -428,12 +432,11 @@ $(function(){
       $('.pic_container').off('click', this.clickPic );
       $('.pic_container').off('mouseenter', this.mouseEnterPic);
       $('.pic_container').off('mouseleave', this.mouseLeavePic);
-      $('.del_pic').off('click', this.delPicClick);
 
       $('.pic_container').on('click', this.clickPic );
       $('.pic_container').on('mouseenter', this.mouseEnterPic);
       $('.pic_container').on('mouseleave', this.mouseLeavePic);
-      $('.del_pic').on('click', this.delPicClick);
+      
     }
   };
   UploadHelper.hookupListeners();
