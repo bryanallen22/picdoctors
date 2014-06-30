@@ -128,7 +128,7 @@ def create_user(request, email, nickname, password, confirm_password, usertype):
             # We signed them in just fine
             return ( user, { } )
     else:
-        user = Profile.objects.create_user(email=email, password=password)
+        user = Profile.objects.create_user(email=email, password=password, accepted_eula=True)
         #Now authenticate the user (it puts the backend into the User object)
         user, tmp = auth(email, password)
         # The Profile for this person has already been automatically created
@@ -204,7 +204,7 @@ def signin(request, usertype='user'):
 
             if 'remember' in request.POST.keys():
                 # "Remember Me" is good for 30 days
-                one_month = datetime.timedelta(days=30)
+                one_month = 60 * 60 * 24 * 30 # seconds
                 request.session.set_expiry( one_month )
             else:
                 # Session only good until browser closes

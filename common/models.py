@@ -27,7 +27,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
 class ProfileUserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+    def create_user(self, email, password=None, accepted_eula=False):
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -39,6 +39,7 @@ class ProfileUserManager(BaseUserManager):
 
         user = self.model(
             email=email,
+            accepted_eula=accepted_eula,
         )
 
         user.set_password(password)
