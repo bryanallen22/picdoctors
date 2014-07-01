@@ -152,15 +152,7 @@ def increase_price(request, job_id):
     if not job or not profile or job.skaa != profile:
         return redirect('/')
 
-    if profile.bp_account:
-        # Get the balanced account info. This is slow.
-        acct = profile.bp_account.fetch()
-
-        user_credit_cards = [c for c in acct.cards if c.is_valid]
-    else:
-        user_credit_cards = []
-
-
+    user_credit_cards = []
 
     # Use float here -- /100 truncates, but /100. is cool
     original_price = (job.bp_hold.cents / 100.)
@@ -230,12 +222,12 @@ def set_price(request, album_id=None):
 
     ret = get_progressbar_vars(request, 'set_price')
     ret.update({
-        'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
-        'min_price'         : str_min_price,
-        'min_price_per_pic' : str_min_price_per_pic,
-        'num_pics'          : album.num_groups,
-        'credit_cards'      : user_credit_cards,
-        'album_id'          : album.id,
+        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
+        'min_price':              str_min_price,
+        'min_price_per_pic':      str_min_price_per_pic,
+        'num_pics':               album.num_groups,
+        'credit_cards':           user_credit_cards,
+        'album_id':               album.id,
     })
     return ret
 

@@ -41,7 +41,7 @@
 
             <div class="span5"> {# Left side -- credit card info #}
 
-              <form id="payment">
+              <form id="payment-form" action="" method="POST">
                 {% csrf_token %}
 
                 <div class="row">
@@ -101,6 +101,7 @@
                     <input id="new_card_radio" class="radio collapsed_radio" type="radio" name="card_radio_group" value="new_card">
                   {% endif %}
                   <p><strong>Enter new credit card information</strong></p>
+                  <span class="payment-errors label label-important"></span>
                   <div class="row
                     {% if credit_cards|length > 0 %}
                     newcc_collapsible
@@ -108,8 +109,7 @@
                     ">
                     <div id="card_div" class="span2">
                       <label for="card_number">Card Number:</label>
-                      <input id="card_number" type="text" name="card_number"><br/>
-                      <p id="error_card" class="label label-important balanced_error" style="display:none;">Invalid card number</p>
+                      <input id="cc_num" type="text" size="20" data-stripe="number"/> <br/>
                     </div>
                   </div>
 
@@ -120,22 +120,19 @@
                     ">
                     <div class="span2">
                       <label for="expiration_month">Expiration:</label>
-                      <input id="expiration_month" type="text" name="expiration_month" class="span1" > /
-                      <input type="text" name="expiration_year"  class="span1" >
+
+                      <input id="cc_month" type="text" size="2" data-stripe="exp-month" class="span1" /> /
+                      <input id="cc_year" type="text" size="4" data-stripe="exp-year" class="span1" />
+
                     </div>
                     <div class="span1">
-                      <label for="security_code">CCV2:</label>
-                      <input id="security_code" type="text" name="security_code" class="span1" >
-                    </div>
-                    <div class="span3">
-                      <p id="error_exp" class="label label-important balanced_error" style="display:none;">Invalid expiration date</p>
-                      <p id="error_seccode" class="label label-important balanced_error" style="display:none;">Invalid security code</p>
-                      <p id="error_400" class="label label-important balanced_error" style="display:none;">Your card information is wrong.</p>
-                      <p id="error_402" class="label label-important balanced_error" style="display:none;">Your card could not be authorized.</p>
-                      <p id="error_404" class="label label-important balanced_error" style="display:none;">The marketplace could not be reached.</p>
+                      <label for="security_code">CVC:</label>
+                      <input id="cvc" type="text" size="4" data-stripe="cvc" class="span1"/>
                     </div>
                   </div>
                 </div> {# credit card .card_choice #}
+
+                <input type="hidden" name="album_id" value="{{ album_id }}"/>
 
                 {# Submit button #}
                 <div class="row">
@@ -228,12 +225,15 @@
 {% endblock %}
 
 {% block scripts %}
-    {# Isotope stuff: #}
-    <script type="text/javascript" src="https://js.balancedpayments.com/v1/balanced.js"></script>
+    {# Payments stuff: #}
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript">
+      // This identifies your website in the createToken call below
+      Stripe.setPublishableKey("{{ STRIPE_PUBLISHABLE_KEY }}");
+      // ...
+    </script>
     <script type="text/javascript">
       var minimum_price = {{ min_price }};
-      var marketplace_uri = '{{ marketplace_uri }}';
-      var album_id = {{ album_id }};
     </script>
     {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
       <script type="text/javascript" src="{{ STATIC_URL }}js/debug/set_price_debugcards.js"></script>

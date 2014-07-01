@@ -8,6 +8,9 @@ IS_PRODUCTION = False # used to toggle things that don't go on the non-live site
 BALANCED_API_KEY_SECRET = 'ak-test-1MjuXmDfjhvI5VevnXBL9jsmSbaQwDXCu'
 BALANCED_MARKETPLACE_URI = '/v1/marketplaces/TEST-MP4dltaHHyJdwcMGTDAHbed4'
 
+STRIPE_SECRET_KEY = 'sk_test_7HJG3YGxn6SPk35EQo7xcbjT' # test secret key
+STRIPE_PUBLISHABLE_KEY = 'pk_test_VKkHcQO0jkKkG391mj4ydWmi' # test publishable key
+
 AWS_ACCESS_KEY_ID = 'AKIAJYVA2NHBM5YJ3WWQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'picdoctors_nonproduction'

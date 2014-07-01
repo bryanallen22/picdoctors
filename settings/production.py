@@ -14,6 +14,9 @@ PRODUCTION_TESTING = False# used to add debug code to production when it isn't r
 BALANCED_API_KEY_SECRET = 'ak-prod-2bxA3ZCpkt5JeTMnIMm9jDPAuSrZHbRT6'
 BALANCED_MARKETPLACE_URI = '/v1/marketplaces/MP2Y5DANQ7F1xePOvEzdy88i'
 
+STRIPE_SECRET_KEY = 'sk_live_aThVwRYmqKqGRgysuNfHtOgT' # live secret key
+STRIPE_PUBLISHABLE_KEY = 'pk_live_OVjQsB9ae8BOsv7FVRLSHiow' # live publishable key
+
 AWS_ACCESS_KEY_ID = 'AKIAJ5JN3Q5MTH5LX6QQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'picdoctors_media'
