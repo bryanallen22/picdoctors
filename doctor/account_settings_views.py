@@ -128,7 +128,11 @@ def get_settings_doc(request):
     profile = get_profile_or_None(request)
     if profile.bp_account:
         account = profile.bp_account.fetch()
-        bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
+        if hasattr(account, 'bank_accounts'):
+            # if they were redirected to balanced's site, this attribute doesn't seem to exist
+            bank_accounts = [ba for ba in account.bank_accounts if ba.is_valid]
+        else:
+            bank_accounts = []
         merchant = is_merchant(account)
     else:
         bank_accounts = None
