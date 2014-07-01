@@ -155,7 +155,7 @@ $(function(){
                       $("#merchant_info_error").html( msg.error ).show();
                       if( msg.redirect ) {
                         window.location = msg.redirect;
-                        window.location.reload();
+                        //window.location.reload();
                       }
                     }
                   }
