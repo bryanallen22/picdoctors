@@ -24,7 +24,6 @@ from common.decorators import passes_test
 from common.emberurls import get_ember_url
 from skaa.progressbarviews import get_progressbar_vars
 
-from common.ember_endpoints import get_pic_view_models
 
 from PIL import Image
 from StringIO import StringIO
@@ -32,6 +31,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from django.core.urlresolvers import reverse
 from tasks.tasks import saveWatermark
+from common.ember_album_endpoints import get_pic_view_models
 
 def pic_json(pic):
     return {"name"             : pic.title,
