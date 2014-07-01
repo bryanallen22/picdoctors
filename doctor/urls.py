@@ -34,5 +34,9 @@ urlpatterns = patterns('',
     url(r'^quit_job/(?P<job_id>\d+)/$',                 quit_job,            name='quit_job'),
     url(r'^quit_job_endpoint/$',                        quit_job_endpoint,   name='quit_job_endpoint'),
     url(r'^doctor_profile/(?P<nickname>.+)/',           doctor_profile,      name='doctor_profile'),
+    #email_address=daniel%2Bd4%40picdoctors.com&merchant_uri=%2Fv1%2Fmerchants%2FMR16oahM8RfPpm9oC5ZVaQ0X#bank_tab
+    url(r'^redirect_create_merchant',
+           redirect_create_merchant,
+           name='redirect_create_merchant'),
 )
 

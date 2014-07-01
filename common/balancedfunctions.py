@@ -13,10 +13,32 @@ import settings
 import datetime
 
 from skaa.jobsviews import create_job, update_job_hold
+from django.core.urlresolvers import reverse
 
 ################################################################################
 # Accounts stuff
 ################################################################################
+@require_login_as(['doctor'])
+def redirect_create_merchant(request):
+    """
+    used for when balanced thinks that they want more info on this person
+    """
+    arg_email = request.GET['email_address']
+    arg_merchant_uri = request.GET['merchant_uri']
+
+    if arg_email != request.user.email:
+        return reverse('permission_denied')
+
+    # remove this once we trust what's going on. for now, force an email
+    log.error("setting merchant uri <" + arg_merchant_uri + "> for " + request.user.email)
+
+    wrapper = BPAccount(uri=arg_merchant_uri)
+    wrapper.save()
+    request.user.bp_account = wrapper
+    request.user.save()
+
+    return redirect ( reverse('account_settings') + "#bank_tab" )
+
 def get_buyer_account(profile, email_address, card_uri):
     """
     Create (or retrieve) a balanced account. Create card for the user if they
