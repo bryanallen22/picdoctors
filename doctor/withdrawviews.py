@@ -19,7 +19,7 @@ import settings
 
 #register = template.Library()
 
-minimum_withdraw = 10.00
+minimum_withdraw = 1.00
 
 WithdrawRow = namedtuple('WithdrawRow', 'album_url, album_img_url, date, doc_earnings')
 
