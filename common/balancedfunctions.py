@@ -14,6 +14,7 @@ import datetime
 
 from skaa.jobsviews import create_job, update_job_hold
 from django.core.urlresolvers import reverse
+from common.decorators import require_login_as
 
 ################################################################################
 # Accounts stuff

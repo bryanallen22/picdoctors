@@ -8,6 +8,7 @@ from doctor.jobpricetoolowviews import job_price_too_low
 from doctor.withdrawviews import withdraw
 from doctor.doctorprofileviews import doctor_profile
 from doctor.faqviews import doc_faq
+from common.balancedfunctions import redirect_create_merchant
 
 from skaa.uploadviews import doc_upload_handler
 
