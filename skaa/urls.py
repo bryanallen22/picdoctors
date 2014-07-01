@@ -4,7 +4,7 @@ from skaa.markupviews import markup_page, markup_page_album, markups_handler, pi
 from skaa.uploadviews import upload_handler, delete_pic_handler, group_pic_handler, upload_page, need_cookies
 from skaa.jobsviews import job_page#, request_modification
 from skaa.jobsviews import make_album_shareable, make_album_unshareable
-from skaa.setpriceviews import set_price, increase_price, create_hold_handler
+from skaa.setpriceviews import set_price, increase_price
 from skaa.mergealbumsviews import merge_albums
 from skaa.accept_workviews import accept_work
 from skaa.rejectviews import *
@@ -36,7 +36,6 @@ urlpatterns = patterns('',
     url(r'^set_price/(?P<album_id>\d+)$',                  set_price,                name='set_price'),
     url(r'^set_price/$',                                   set_price,                name='set_price'),
     url(r'^increase_price/(?P<job_id>\d+)$',               increase_price,           name='increase_price'),
-    url(r'^create_hold_handler/$',                         create_hold_handler,      name='create_hold_handler'),
     url(r'^merge_albums/$',                                merge_albums,             name='merge_albums'),
     url(r'^accept_work/(?P<job_id>\d+)$',                  accept_work,              name='accept_work'),
     #url(r'^request_modification/$',                        request_modification,     name='request_modification'),

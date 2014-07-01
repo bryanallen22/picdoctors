@@ -12,7 +12,7 @@ import balanced
 import settings
 import datetime
 
-from skaa.jobsviews import create_job, update_job_hold
+from skaa.jobsviews import create_job
 from django.core.urlresolvers import reverse
 from common.decorators import require_login_as
 from django.shortcuts import redirect

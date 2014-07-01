@@ -13,6 +13,8 @@ from common.jobs import send_job_status_change
 from notifications.functions import notify
 from notifications.models import Notification
 
+from common.stripefunctions import stripe_remove_charge
+
 import logging; log = logging.getLogger('pd')
 
 @require_login_as(['skaa'])
@@ -31,7 +33,7 @@ def refund(request, job_id):
         suggest = suggest / 100 # to dollars
         suggest = suggest / job.price_too_low_count # average
         suggest = '{:0,.2f}'.format(suggest)
-        
+
     first_group = min([pic.group_id for pic in Pic.objects.filter(album=job.album)])
 
     return  {
@@ -128,9 +130,8 @@ def refund_user_endpoint(request):
     job = get_object_or_None(Job, id=data['job_id'])
 
     if job and profile and job.skaa == profile:
-        # Don't actually have to refund them, because they
-        job.bp_hold.delete()
-        job.bp_hold.save()
+        # Remove the hold
+        stripe_remove_charge(job)
 
         job.status = Job.REFUND
         job.save()

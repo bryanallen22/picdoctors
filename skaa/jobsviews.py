@@ -75,10 +75,11 @@ def update_old_jobs(list_of_jobs):
     seven_days_ago = now - timedelta(days=7)
 
     for job in list_of_jobs:
-        if job.bp_hold.created < seven_days_ago and job.status == Job.IN_MARKET:
+        if job.stripe_charge_id and job.stripe_charge_date and job.stripe_cents > 0 and \
+                job.stripe_charge_date < seven_days_ago and job.status == Job.IN_MARKET:
             job.status=Job.OUT_OF_MARKET
             job.save()
-            # TODO we may need to do other things in the future
+            # TODO send user an email
 
 
 # get and fill up possible actions based on the status of this job
@@ -144,34 +145,16 @@ def generate_skaa_actions(job):
 
 
 # when the user sets a price, we create a job
-def create_job(profile, album, hold):
+def create_job(profile, album, charge_id):
     job = None
-    bp_hold= BPHold(uri=hold.uri, cents=hold.amount)
-    bp_hold.save()
     if album is not None:
         job = Job(skaa=profile,
                 album=album,
-                bp_hold=bp_hold,
+                stripe_charge_id=charge_id,
                 status=Job.IN_MARKET)
-
         job.save()
 
         set_groups_locks(album, True)
-
-    return job
-
-
-# When a user increases the price of a job
-# we call this method to update the hold
-def update_job_hold(job, hold):
-    bp_hold = BPHold(uri=hold.uri, cents=hold.amount)
-    bp_hold.save()
-
-    if job.bp_hold:
-        job.bp_hold.delete()
-
-    job.bp_hold = bp_hold
-    job.save()
 
     return job
 

@@ -89,6 +89,8 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     # Description that the doctor puts on their profile
     doc_profile_desc            = models.TextField()
 
+    stripe_customer_id          = models.CharField(max_length=255, blank=True, unique=True)
+
 
     def get_full_name(self):
         # The user is identified by their email address
@@ -709,7 +711,7 @@ class Job(DeleteMixin):
                                                   default=0)
 
     # the hold for the charge (good for up to 7 days after creation)
-    bp_hold                 = models.ForeignKey(BPHold)
+    bp_hold                 = models.ForeignKey(BPHold, blank=True, null=True)
 
     # the actual debit associated with that hold
     bp_debit                = models.ForeignKey(BPDebit, blank=True, null=True)
@@ -734,6 +736,10 @@ class Job(DeleteMixin):
                                                 blank=True, null=True)
 
     accepted_date           = models.DateTimeField(blank=True, null=True)
+
+    stripe_charge_id        = models.CharField(max_length=255, blank=True, unique=True)
+    stripe_charge_date      = models.DateTimeField(blank=True, null=True)
+    stripe_cents            = models.IntegerField(default=-1)
 
     def is_part_of(self, profile):
         if not profile:
@@ -766,7 +772,7 @@ class Job(DeleteMixin):
         else:
             out += self.doctor.email
 
-        out += " Price (cents): " + str(self.bp_hold.cents)
+        out += " Price (cents): " + str(self.stripe_cents)
         out += " Status: " + self.status
         return out
 
