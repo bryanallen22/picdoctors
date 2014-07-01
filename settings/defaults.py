@@ -328,6 +328,7 @@ PIPELINE_CSS = {
     },
 }
 
+PIPELINE_YUGLIFY_BINARY = os.path.join(PROJECT_ROOT, 'node_modules/yuglify/bin/yuglify')
 PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.slimit.SlimItCompressor'
 
 PIPELINE_JS = {

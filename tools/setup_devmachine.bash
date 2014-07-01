@@ -3,6 +3,13 @@
 VENV_DIR=/srv/venvs
 VENV_PROJ=django-picdoc
 
+echo "Is $(pwd) -- where you are now -- the top of the project? [y/n]"
+read istop
+if [ $istop != "y" ]; then
+    echo "please cd there and run this script from there"
+    exit 1
+fi
+
 echo "====="
 echo "Getting required system packages..."
 echo "====="
@@ -71,6 +78,7 @@ echo "====="
 sudo apt-get install npm -y
 sudo npm install -g less jshint recess uglify-js yuglify
 sudo npm install -g django-ember-precompile
+npm install yuglify # hopefully you are already sitting at the top level of the project, else this will be in the wrong place
 
 echo "====="
 echo "Installing a crazy Rabbit Message Q"

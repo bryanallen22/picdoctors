@@ -547,7 +547,7 @@ def setup_packages():
         #sudo('npm install -g recess -y -q')
         #sudo('npm install -g uglify-js -y -q') # Used by bootstrap
         #sudo('npm install -g jshint -y -q')
-        sudo('npm install -g yuglify -y -q')
+        venv_run_user('npm install yuglify -y -q', cfg) # install in project root, run as www-data
 
     # Create django log
     sudo('mkdir -p /var/log/django')
