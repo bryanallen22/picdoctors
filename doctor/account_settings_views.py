@@ -105,10 +105,11 @@ def merchant_info(request):
         account.add_merchant(merchant_data)
     except balanced.exc.MoreInformationRequiredError as ex:
         # could not identify this account.
+        uri = ex.redirect_uri + "?redirect_uri=" + request.SITE_URL + reverse('account_settings') + "#bank_tab"
         log.error('Failed to create account for ' + request.user.email + '. redirect merchant to: ' + ex.redirect_uri)
         return {
                 'success'  : False,
-                'redirect' : ex.redirect_uri,
+                'redirect' : uri,
                 'error'    : '',
         }
     except balanced.exc.HTTPError as error:
