@@ -9,6 +9,7 @@ from annoying.decorators import render_to
 from common.functions import get_profile_or_None
 from common.balancedfunctions import get_merchant_account, is_merchant
 from common.decorators import require_login_as
+from annoying.decorators import ajax_request
 
 import balanced
 import settings
@@ -56,6 +57,7 @@ def delete_bank_account(request):
     return HttpResponse(response_data, mimetype='application/json')
 
 @require_login_as(['doctor'])
+@ajax_request
 def merchant_info(request):
     """
     POST should contain info to underwrite a doctor
@@ -103,14 +105,22 @@ def merchant_info(request):
         account.add_merchant(merchant_data)
     except balanced.exc.MoreInformationRequiredError as ex:
         # could not identify this account.
-        log.info('redirect merchant to:', ex.redirect_uri)
-        return redirect( ex.redirect_uri )
+        log.error('Failed to create account for ' + request.user.email + '. redirect merchant to: ' + ex.redirect_uri)
+        return {
+                'success'  : False,
+                'redirect' : ex.redirect_uri,
+                'error'    : '',
+        }
     except balanced.exc.HTTPError as error:
-        # TODO: handle 400 and 409 exceptions as required
-        raise
+        return {
+                'success' : False,
+                'redirect': None,
+                'error'   : error.description,
+        }
 
     # Bring them back to this page
-    return redirect( reverse('account_settings') + '#merchant_tab' )
+    #return redirect( reverse('account_settings') + '#merchant_tab' )
+    return { 'success' : True }
 
 @require_login_as(['doctor'])
 def get_settings_doc(request):

@@ -451,11 +451,13 @@
           </div>
 
         {% else %}
-          <div class="alert alert-error">
+          <div class="alert alert-info">
             <button class="close" data-dismiss="alert">×</button>
             We're legally required to collect some information to satisfy 'Know Your Customer' and Anti-Money Laundering laws.
           </div>
-          <form action="{% url 'merchant_info' %}" method="POST" id="bank-account-form" class="form-horizontal">
+          <div id="merchant_info_error" class="alert alert-error" style='display:none;'>
+          </div>
+          <form id="merchant_info" action="{% url 'merchant_info' %}" method="POST" id="bank-account-form" class="form-horizontal">
             {% csrf_token %}
 
             <div class="control-group">

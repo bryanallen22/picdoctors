@@ -138,6 +138,29 @@ $(function(){
     /*
      * Merchant Info stuff
      */
+    $("#merchant_info").submit( function(event) {
+      event.preventDefault();
+      var post_url = $(this).attr('action');
+      $.ajax({
+                  type: 'POST',
+                  cache: false,
+                  url: post_url,
+                  data: $(this).serialize(),
+                  success: function(msg) {
+                    if(msg.success) {
+                      window.location = window.location.pathname + "#bank_tab";
+                      window.location.reload();
+                    }
+                    else {
+                      $("#merchant_info_error").html( msg.error ).show();
+                      if( msg.redirect ) {
+                        window.location = msg.redirect;
+                        window.location.reload();
+                      }
+                    }
+                  }
+              })
+          });
 
     $('input:radio[name=merchant_type]').click( function() {
       var checked = $(this).val();
