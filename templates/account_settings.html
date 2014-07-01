@@ -410,10 +410,11 @@
                 </div>
               </div>
 
+            Merchant information is currently disabled, please come back tomorrow to finish signing up!
               <div class="control-group">
                 <label class="control-label"></label>
                 <div class="controls">
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" class="btn btn-primary" disabled>
                     Create Account
                   </button>
                 </div>
@@ -624,10 +625,11 @@
               </div>
             </div>
 
+            Merchant information is currently disabled, please come back tomorrow to finish signing up!
             <div class="control-group">
               <label class="control-label"></label>
               <div class="controls">
-                <input type="submit" name="submit" class='btn btn-primary' value="Submit" >
+                <input type="submit" name="submit" class='btn btn-primary' value="Submit" disabled >
               </div>
             </div>
 
@@ -657,6 +659,9 @@
 {% block scripts %}
   <script type="text/javascript">
     var marketplace_uri = '{{ marketplace_uri }}';
+    function unlock(){
+      $('button').prop('disabled', false);
+    }
   </script>
   <script type="text/javascript" src="https://js.balancedpayments.com/v1/balanced.js"></script>
   {% if not request.IS_PRODUCTION or request.PRODUCTION_TESTING %}
