@@ -1,7 +1,7 @@
 <div class='form-450'>
   <ul>
     <li>
-    <label>{{input type="checkbox" checked=job_status_changed}}Job status has changed</label>
+    <label>{{input type="checkbox" checked=job_status_change}}Job status has changed</label>
     </li>
     {{#if user.isDoctor}}
     <li>
@@ -42,6 +42,6 @@
   <div class="alert alert-success">Changes successfully saved.</div>
   {{/if}}
   {{#if failedSave}}
-  <div class="alert alert-failure">An error occurred saving.</div>
+  <div class="alert alert-failure">{{failedError}}</div>
   {{/if}}
 </div>

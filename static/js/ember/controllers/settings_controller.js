@@ -59,10 +59,12 @@ Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
     save:function(){
       var self = this;
 
+      self.set('failed', false);
       this.get('model').save().then(function(record){
         self.set('saved', true);
       }).catch(function(){
-        self.set('errorReason', 'An error occurred saving');
+        self.set('failedError', 'An error occurred saving');
+        self.set('failed', true);
       });
     }
   }
