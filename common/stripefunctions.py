@@ -74,3 +74,14 @@ def stripe_capture_hold(job):
         job.save()
     else:
         ch.capture()
+
+def stripe_get_credit_cards(profile):
+    """
+    Retrieve a list of credit cards associated with a user
+    """
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    if profile.stripe_customer_id:
+        struct = stripe.Customer.retrieve(profile.stripe_customer_id).cards.all(limit=20)
+        return [card for card in struct['data']]
+    else:
+        return []

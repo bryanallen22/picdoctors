@@ -36,4 +36,11 @@ def currency_cents(value):
 def ember_url(name, **kwargs):
     return get_ember_url(name, **kwargs)
 
+@register.filter
+def get_item(dictionary, key):
+    """
+    use: {{ mydict|get_item:item.NAME }}
+    """
+    return dictionary.get(key)
+
 # If you are trying to figure out someone's permissions in a tag in the tempalte just use if perms.PERMISSION (see base.html)

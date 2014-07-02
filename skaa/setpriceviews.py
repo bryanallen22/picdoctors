@@ -7,7 +7,6 @@ from django.utils import simplejson
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 
-from common.stripefunctions import stripe_place_hold
 from common.decorators import require_login_as
 from common.functions import get_referer_view_and_id
 from common.functions import get_unfinished_album
@@ -17,6 +16,7 @@ from skaa.rejectviews import remove_previous_doctor
 from emailer.emailfunctions import send_email
 from skaa.jobsviews import create_job
 from common.functions import get_profile_or_None, get_datetime
+from common.stripefunctions import stripe_place_hold, stripe_get_credit_cards
 
 
 import logging; log = logging.getLogger('pd')
@@ -56,13 +56,11 @@ def currency_to_cents(currency):
 
 @require_login_as(['skaa'])
 def send_newjob_email(request, job):
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    ch = stripe.Charge.retrieve(job.stripe_charge_id)
     send_email(request,
                email_address=request.user.email,
                template_name='newjob_email.html',
                template_args={'jobs_url' : reverse( 'job_page' ),
-                              'amount'   : ch.amount, },
+                              'amount'   : job.stripe_cents, },
               )
 
 @render_to('set_price.html')
@@ -73,18 +71,7 @@ def render_setprice(request, album, params=None):
 
     profile = get_profile_or_None(request)
 
-    if profile.bp_account:
-        # Get the balanced account info. This is slow.
-        acct = profile.bp_account.fetch()
-
-        user_credit_cards = [c for c in acct.cards if c.is_valid]
-    else:
-        user_credit_cards = []
-
-    # card.brand = 'Visa'
-    # card.last_four = '1234'
-    # card.expiration_month
-    # card.expiration_year
+    user_credit_cards = stripe_get_credit_cards(profile)
 
     min_price = min_price_per_pic * album.num_groups
     if request.method == 'GET':
@@ -161,7 +148,6 @@ def create_hold(request, album):
             ret['serverside_error'] = 'You must pay at least $' + "{0:.2f}".format(min_price) + '.'
             return render_setprice(request, album, ret)
     except Exception as e:
-        import ipdb; ipdb.set_trace()
         log.error("Failed to place hold on album.id=%s! stripeToken=%s, price=%s" %
                     (album.id, request.POST['stripeToken'], request.POST['price']))
         ret['serverside_error'] = 'Uh oh, we failed to process your card. If this keeps happening, let us know.'
@@ -179,7 +165,7 @@ def increase_price(request, job_id):
     if not job or not profile or job.skaa != profile:
         return redirect('/')
 
-    user_credit_cards = []
+    user_credit_cards = stripe_get_credit_cards(profile)
 
     # Use float here -- /100 truncates, but /100. is cool
     original_price = (job.stripe_cents / 100.)

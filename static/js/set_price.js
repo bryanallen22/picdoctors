@@ -41,6 +41,13 @@ $(function(){
     /*******************************************/
     /*******************************************/
 
+    $("#new_card_radio").click( function() {
+      if ($(this).is(':checked'))
+      {
+        $(".newcc_collapsible").show();
+      }
+    });
+
     $("#price").focusout( function() {
       /* minimum_price is set directly in the html page above this script */
       if( parseFloat($("#price").val()) < minimum_price ) {
