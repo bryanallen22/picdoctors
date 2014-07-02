@@ -80,26 +80,62 @@ def get_roles(profile):
         ret.append(p)
     return ret
 
+
+
 @require_login_as(['skaa', 'doctor'])
 def email_config_endpoint(request, user_id):
-    types=NotificationToIgnore.objects.filter(profile=request.user).filter(ignore=True)
+    profile = request.user
+    types=list(NotificationToIgnore.objects.filter(profile=request.user))
+
+    if request.method == 'PUT':
+        data = simplejson.load(request)['emailConfig']
+        set_emails(types, data, profile)
 
     result = {
-        'emailConfig' : {
-            'id':                 request.user.id,
-            'job_status_change':  wants_email(types, 'jb_status_chg'),
-            'jobs_available':     wants_email(types, 'jb_ava'),
-            'jobs_need_approval': wants_email(types, 'jb_need_app'),
-            'job_reminder':       wants_email(types, 'jb_remind'),
-            'job_message':        wants_email(types, 'jb_msg'),
-            'job_rejection':      wants_email(types, 'jb_rejection'),
-            'job_switched':       wants_email(types, 'jb_switched'),
-        }
+      'emailConfig' : {
+      'id':                 request.user.id,
+      'job_status_change':  wants_email(types, 'jb_status_chg'),
+      'jobs_available':     wants_email(types, 'jb_ava'),
+      'jobs_need_approval': wants_email(types, 'jb_need_app'),
+      'job_reminder':       wants_email(types, 'jb_remind'),
+      'job_message':        wants_email(types, 'jb_msg'),
+      'job_rejection':      wants_email(types, 'jb_rejection'),
+      'job_switched':       wants_email(types, 'jb_switched'),
+       }
     }
+
     return json_result(result)
 
 def wants_email(types, type):
-    return len([t for t in types if t.notification_type == type]) == 0
+    return len([t for t in types if t.notification_type == type and t.ignore == True]) == 0
+
+def set_emails(types, json, profile):
+    set_email(types, 'jb_status_chg', json['job_status_change'], profile)
+    set_email(types, 'jb_ava', json['jobs_available'], profile)
+    set_email(types, 'jb_need_app',json['jobs_need_approval'], profile)
+    set_email(types, 'jb_remind', json['job_reminder'], profile)
+    set_email(types, 'jb_msg', json['job_message'], profile)
+    set_email(types, 'jb_rejection', json['job_rejection'], profile)
+    set_email(types, 'jb_switched', json['job_switched'], profile)
+
+def set_email(types, type, value, profile):
+    records = [t for t in types if t.notification_type == type]
+
+    wants_email = len(records) == 0 or records[0].ignore == False
+    still_wants_email = value
+
+    if wants_email != still_wants_email:
+        if len(records) > 0:
+            record = records[0]
+            record.ignore = not record.ignore
+            record.save()
+        else:
+            nti = NotificationToIgnore()
+            nti.notification_type = type
+            nti.profile = profile
+            nti.ignore = not still_wants_email
+            nti.save()
+            types.append(nti)
 
 def remove_role(request, role_id):
     user = request.user

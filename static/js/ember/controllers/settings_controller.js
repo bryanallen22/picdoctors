@@ -55,16 +55,26 @@ Pd.SettingsPasswordController = Ember.Controller.extend({
 Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
   needs:'settings',
   user: Em.computed.alias('controllers.settings'),
+
+  saveDisabled: function(){
+    this.setProperties({saved:false, failedSave:false});
+    return !this.get('isDirty');
+  }.property('isDirty'),
+  
   actions:{
     save:function(){
       var self = this;
 
       self.set('failed', false);
       this.get('model').save().then(function(record){
-        self.set('saved', true);
+        Em.run.next(function(){
+          self.set('saved', true);
+        });
       }).catch(function(){
-        self.set('failedError', 'An error occurred saving');
-        self.set('failed', true);
+        Em.run.next(function(){
+          self.set('failedError', 'An error occurred saving');
+          self.set('failed', true);
+        });
       });
     }
   }

@@ -34,7 +34,7 @@
     {{/if}}
   </ul>
   <div class='form-row'>
-    <button class='btn btn-info' {{ action 'save'}} >
+    <button class='btn btn-info' {{ action 'save'}} {{bind-attr disabled=saveDisabled}} >
       Save 
     </button>
   </div>
