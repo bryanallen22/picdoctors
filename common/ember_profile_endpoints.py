@@ -8,6 +8,7 @@ from skaa.markupviews import can_modify_markup
 from annoying.functions import get_object_or_None
 
 from common.decorators import require_login_as
+from notifications.models import NotificationToIgnore
 
 import ipdb
 
@@ -81,19 +82,24 @@ def get_roles(profile):
 
 @require_login_as(['skaa', 'doctor'])
 def email_config_endpoint(request, user_id):
+    types=NotificationToIgnore.objects.filter(profile=request.user).filter(ignore=True)
+
     result = {
         'emailConfig' : {
             'id':                 request.user.id,
-            'job_status_change':  True,
-            'jobs_available':     True,
-            'jobs_need_approval': False,
-            'job_reminder':       True,
-            'job_message':        True,
-            'job_rejection':      True,
-            'job_switched':       True,
+            'job_status_change':  wants_email(types, 'jb_status_chg'),
+            'jobs_available':     wants_email(types, 'jb_ava'),
+            'jobs_need_approval': wants_email(types, 'jb_need_app'),
+            'job_reminder':       wants_email(types, 'jb_remind'),
+            'job_message':        wants_email(types, 'jb_msg'),
+            'job_rejection':      wants_email(types, 'jb_rejection'),
+            'job_switched':       wants_email(types, 'jb_switched'),
         }
     }
     return json_result(result)
+
+def wants_email(types, type):
+    return len([t for t in types if t.notification_type == type]) == 0
 
 def remove_role(request, role_id):
     user = request.user

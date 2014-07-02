@@ -1,3 +1,7 @@
+Pd.SettingsController = Em.ObjectController.extend({
+
+});
+
 Pd.SettingsPasswordController = Ember.Controller.extend({
   old_password : null,
   new_password : null,
@@ -48,9 +52,24 @@ Pd.SettingsPasswordController = Ember.Controller.extend({
   }
 });
 
+Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
+  needs:'settings',
+  user: Em.computed.alias('controllers.settings'),
+  actions:{
+    save:function(){
+      var self = this;
+
+      this.get('model').save().then(function(record){
+        self.set('saved', true);
+      }).catch(function(){
+        self.set('errorReason', 'An error occurred saving');
+      });
+    }
+  }
+});
+
 Pd.SettingsRolesController = Ember.ObjectController.extend({
   availableRoles: ['doctor', 'user'],
-
 });
 
 Pd.RoleController = Ember.ObjectController.extend({

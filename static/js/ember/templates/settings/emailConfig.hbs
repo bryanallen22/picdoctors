@@ -1,20 +1,47 @@
-<ul>
-  <li>
-{{input type="checkbox" checked=foo}}Job status has changed
-  </li>
-  <li>
-{{input type="checkbox" checked=foo}}Jobs are available
-  </li>
-  <li>
-{{input type="checkbox" checked=foo}}Job waiting on you
-  </li>
-  <li>
-{{input type="checkbox" checked=foo}}You have received a message about your job
-  </li>
-  <li>
-{{input type="checkbox" checked=foo}}Please fix a few more things on your job
-  </li>
-  <li>
-{{input type="checkbox" checked=foo}}A user has chosen to switch doctors
-  </li>
-</ul>
+<div class='form-450'>
+  <ul>
+    <li>
+    <label>{{input type="checkbox" checked=job_status_changed}}Job status has changed</label>
+    </li>
+    {{#if user.isDoctor}}
+    <li>
+    <label>
+      {{input type="checkbox" checked=jobs_available}}Jobs are available
+    </label>
+    </li>
+    {{/if}}
+    <li>
+    <label>
+      {{input type="checkbox" checked=job_reminder}}Job waiting on you
+    </label>
+    </li>
+    <li>
+    <label>
+      {{input type="checkbox" checked=job_message}}You have received a message about your job
+    </label>
+    </li>
+    {{#if user.isDoctor}}
+    <li>
+    <label>
+      {{input type="checkbox" checked=job_rejection}}Please fix a few more things on your job
+    </label>
+    </li>
+    <li>
+    <label>
+      {{input type="checkbox" checked=job_switched}}A user has chosen to switch doctors
+    </label>
+    </li>
+    {{/if}}
+  </ul>
+  <div class='form-row'>
+    <button class='btn btn-info' {{ action 'save'}} >
+      Save 
+    </button>
+  </div>
+  {{#if saved}}
+  <div class="alert alert-success">Changes successfully saved.</div>
+  {{/if}}
+  {{#if failedSave}}
+  <div class="alert alert-failure">An error occurred saving.</div>
+  {{/if}}
+</div>

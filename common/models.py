@@ -7,6 +7,7 @@ import logging; log = logging.getLogger('pd')
 import os
 import ipdb
 import uuid
+import hashlib
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib import admin
@@ -33,9 +34,15 @@ class ProfileUserManager(BaseUserManager):
         """
         if not email:
             raise ValueError('Users must have an email address')
+        
+        email = ProfileUserManager.normalize_email(email)
+        m = hashlib.md5()
+        m.update(email)
+        hash = m.hexdigest()
 
         user = self.model(
-            email=ProfileUserManager.normalize_email(email),
+            email=email,
+            stripe_customer_id=hash
         )
 
         user.set_password(password)

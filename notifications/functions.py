@@ -135,7 +135,7 @@ def i_want_this_email(profile, notification_type):
     if not profile or not notification_type:
         return False
 
-    ignore_cnt = NotificationToIgnore.objects.filter(profile=profile).filter(notification_type=notification_type).filter(ignore=False).count()
+    ignore_cnt = NotificationToIgnore.objects.filter(profile=profile).filter(notification_type=notification_type).filter(ignore=True).count()
 
     return ignore_cnt == 0
 

@@ -27,14 +27,14 @@ $(function(){
     });
 
     function haveChecked(){
-        // They already have an account
-        checkNickName = false;
-        $("#confirm_password").hide();
-        $("#nickname").hide();
-        $("#nickname-info").hide();
-        $('#nickErrorParent').hide();
-        $("#tos").hide();
-        $("#btnsubmit").removeAttr('disabled');
+      // They already have an account
+      checkNickName = false;
+      $("#confirm_password").hide();
+      $("#nickname").hide();
+      $("#nickname-info").hide();
+      $('#nickErrorParent').hide();
+      $("#tos").hide();
+      $("#btnsubmit").removeAttr('disabled');
     }
 
     var disableAutoNickName = false;
@@ -47,14 +47,6 @@ $(function(){
       }
     });
 
-    $('#email').change(function(){
-      if(!checkNickName) return;
-
-      Pd.Logger.timestamp('email change', 5); 
-      trimNick();
-      checkValidNickName(true);
-    });
-
     $('#nickname').keyup(function(){
       if(!checkNickName) return;
 
@@ -64,20 +56,22 @@ $(function(){
       checkValidNickName(false);
     });
 
-    $('#nickname').change(function(){
+    var onChange = function(){
       if(!checkNickName) return;
 
-      Pd.Logger.timestamp('nickname change', 5); 
+      Pd.Logger.timestamp('email/nickname change', 5); 
       trimNick();
       checkValidNickName(true);
-    });
+    };
+
+    $('#email, #nickname').change(onChange);
 
     function getValidNickName(dirty){
       var atIdx = dirty.indexOf('@');
       if(atIdx>=0){
         dirty = dirty.substring(0, atIdx);
       }
-      
+
       var valid_chars = '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
       var clean_str = '';
       for (var i = 0, len = dirty.length; i < len; i++) {
@@ -97,20 +91,17 @@ $(function(){
     function checkValidNickName(postBack){
       Pd.Logger.timestamp('check valid nickname', 5); 
       // We don't validate when we're signing in again
-      var checked = $('input:radio[name=create_acct_radio]').val();
+      var el = $('#nickname'),
+          errorParent = $('#nickErrorParent'),
+          errorDiv = $('#nickError'),
+          btn = $("#btnsubmit"),
+          nick = el.val(),
+          cleanNick = getValidNickName(nick),
+          checked = $('input:radio[name=create_acct_radio]').val();
+
       if( checked == "have" ) {
         return;
       }
-
-      var el = $('#nickname');
-      var errorParent = $('#nickErrorParent');
-      var errorDiv = $('#nickError');
-      var btn = $("#btnsubmit");
-      var nick = el.val();
-      var cleanNick = getValidNickName(nick);
-
-      nick = nick.trim();
-
 
       if(cleanNick!=nick || nick.length == 0){
         Pd.Logger.timestamp('nick already failed test', 5); 
@@ -119,33 +110,32 @@ $(function(){
         btn.attr('disabled', 'disabled');
         return;
       }
-        if($.inArray(nick, used)>=0){
-          errorDiv.html("That nickname appears to already be taken, please try another.");
-          errorParent.show();
-          btn.attr('disabled', 'disabled');
-          return;
-        }
+
+      if($.inArray(nick, used) >= 0){
+        errorDiv.html("That nickname appears to already be taken, please try another.");
+        errorParent.show();
+        btn.attr('disabled', 'disabled');
+        return;
+      }
 
       if(postBack){
         Pd.Logger.timestamp('post nick name', 5); 
-          var obj = {
-            'nickname'    : nick,
-          };
+        var obj = {
+          'nickname'    : nick,
+        };
 
-          btn.attr('disabled', 'disabled');
+        btn.attr('disabled', 'disabled');
 
-          postTo('/check_unique_nickname/', obj, function(data) {
-            uniqueNameResponse(data, obj);
-          });
-      }
-      else
-      {
-          errorParent.hide();
-          btn.removeAttr('disabled');
+        postTo('/check_unique_nickname/', obj, function(data) {
+          uniqueNameResponse(data, obj);
+        });
+      } else {
+        errorParent.hide();
+        btn.removeAttr('disabled');
       }
     };
     var used = [];
-    
+
     function uniqueNameResponse(data, obj){
       var errorParent = $('#nickErrorParent');
       var errorDiv = $('#nickError');
@@ -156,7 +146,7 @@ $(function(){
       if(data.success){
         Pd.Logger.timestamp('nick name is good', 5); 
         btn.removeAttr('disabled');
-        
+
       } else {
         used.push(obj.nickname);
         btn.attr('disabled', 'disabled');

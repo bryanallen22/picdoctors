@@ -10,6 +10,12 @@ Pd.SettingsRoute = Em.Route.extend({
   }
 });
 
+Pd.SettingsIndexRoute = Em.Route.extend({
+  redirect: function(){
+    this.transitionTo('settings.profile');
+  }
+});
+
 Pd.SettingsProfileRoute = Em.Route.extend({
   model: function(){
     return this.modelFor('settings');
