@@ -75,7 +75,7 @@ def new_job_page(request, page=1):
         now =  get_datetime()
         seven_days_ago = now - timedelta(days=6, hours=23)
 
-        jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).filter(bp_hold__created__gte=seven_days_ago)
+        jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).exclude(status=Job.REFUND).filter(bp_hold__created__gte=seven_days_ago)
     else:
         return redirect( reverse('permission_denied') )
 
