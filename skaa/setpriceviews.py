@@ -16,7 +16,7 @@ from skaa.rejectviews import remove_previous_doctor
 from emailer.emailfunctions import send_email
 from skaa.jobsviews import create_job
 from common.functions import get_profile_or_None, get_datetime
-from common.stripefunctions import stripe_place_hold, stripe_get_credit_cards
+from common.stripefunctions import stripe_place_hold_newcard, stripe_place_hold_existingcard, stripe_get_credit_cards
 
 
 import logging; log = logging.getLogger('pd')
@@ -110,8 +110,16 @@ def create_hold(request, album):
     try:
         cents = currency_to_cents( request.POST['price'] )
         if cents >= min_price * 100:
-            # Job can be None, we'll set it in place_hold if we need to
-            charge_id = stripe_place_hold(request.user, cents, request.POST['stripeToken'])
+            # job can be None, we'll set it in place_hold if we need to
+            if request.POST['card_radio_group'] == 'new_card':
+                charge_id = stripe_place_hold_newcard(request.user, cents, request.POST['stripeToken'])
+            else:
+                charge_id = stripe_place_hold_existingcard(request.user, cents, request.POST['card_radio_group'])
+
+            if charge_id is None:
+                log.error("Failed to place hold on album.id=%s! price=%s" % (album.id, request.POST['price']))
+                ret['serverside_error'] = 'Uh oh, we failed to process your card. If this keeps happening, let us know.'
+                return render_setprice(request, album, ret)
 
             if job is None:
                 job = create_job(profile, album, charge_id)
@@ -148,8 +156,7 @@ def create_hold(request, album):
             ret['serverside_error'] = 'You must pay at least $' + "{0:.2f}".format(min_price) + '.'
             return render_setprice(request, album, ret)
     except Exception as e:
-        log.error("Failed to place hold on album.id=%s! stripeToken=%s, price=%s" %
-                    (album.id, request.POST['stripeToken'], request.POST['price']))
+        log.error("Failed to place hold on album.id=%s! price=%s" % (album.id, request.POST['price']))
         ret['serverside_error'] = 'Uh oh, we failed to process your card. If this keeps happening, let us know.'
         return render_setprice(request, album, ret)
 

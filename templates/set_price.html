@@ -87,7 +87,7 @@
 
                 {% for card in credit_cards %}
                 <div class="card_choice span4">
-                  <input class="expanded_radio existing radio" type="radio" name="card_radio_group" value="some_existing"
+                  <input class="expanded_radio existing radio" type="radio" name="card_radio_group" value="{{ card.id }}"
                   {% if forloop.first %}
                     checked
                   {% endif %}

@@ -5,11 +5,9 @@ from common.functions import get_datetime
 
 import logging; log = logging.getLogger('pd')
 
-def stripe_place_hold(profile, cents, stripeToken):
+def stripe_place_hold_newcard(profile, cents, stripeToken):
     """
     Place a charge, but don't capture it yet. (Good for up to 7 days.)
-
-    This may raise an error. You gotta deal with it
     """
     ret = None
     stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -38,9 +36,59 @@ def stripe_place_hold(profile, cents, stripeToken):
       # The card has been declined
       log.error("%s has had their card declined for %d cents" % \
                  (profile.email, cents))
-      raise
+      ret = None
 
     return ret
+
+def stripe_place_hold_existingcard(profile, cents, card_id):
+    """
+    Update customer's default card and place a charge,
+    but don't capture it yet. (Good for up to 7 days.)
+
+    I wish I knew how to charge a card without updating
+    the default, but I don't. The normal API to create
+    a charge takes a 'card' param, but it wants a token
+    from stripe.js
+
+    This may raise an error. You gotta deal with it
+    """
+    ret = None
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    # Make sure they have a customer id
+    if not profile.stripe_customer_id:
+        return None
+
+    # Make sure this card belongs to them
+    cards_struct = stripe.Customer.retrieve(profile.stripe_customer_id).cards.all(limit=100)
+    cards = [card.id for card in cards_struct['data']]
+    if card_id not in cards:
+        return None
+
+    # Set the default card
+    cu = stripe.Customer.retrieve(profile.stripe_customer_id)
+    cu.default_card = card_id
+    cu.save()
+
+    # Create the charge on Stripe's servers - this will charge the user's card
+    try:
+        # Charge the Customer instead of the card
+        charge = stripe.Charge.create(
+            amount=cents,
+            currency="usd",
+            customer=profile.stripe_customer_id,
+            description='%s' % profile.email,
+            capture=False, # don't charge them yet!
+        )
+        ret = charge.id
+    except stripe.CardError, e:
+      # The card has been declined
+      log.error("%s has had their card declined for %d cents" % \
+                 (profile.email, cents))
+      ret = None
+
+    return ret
+
 
 def stripe_remove_charge(job):
     ch = stripe.Charge.retrieve(job.stripe_charge_id)

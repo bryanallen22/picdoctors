@@ -31,7 +31,14 @@ $(function(){
       // Disable the submit button to prevent repeated clicks
       $form.find('button').prop('disabled', true);
 
-      Stripe.card.createToken($form, stripeResponseHandler);
+      var checked = $(".radio:checked")
+      if( checked.val() == "new_card" ) {
+        Stripe.card.createToken($form, stripeResponseHandler);
+      }
+      else {
+        var card_id = checked.parent().find('.id').html();
+        $form.get(0).submit();
+      }
 
       // Prevent the form from submitting with the default action
       return false;
