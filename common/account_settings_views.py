@@ -216,6 +216,7 @@ def update_roles(request):
 
     if profile and role:
         if state:
+            ipdb.set_trace()
             profile.add_permission(role)
             ret['success'] = True
         else:

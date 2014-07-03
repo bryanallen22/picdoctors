@@ -164,8 +164,13 @@ def add_role(request):
     if request.method == 'POST':
         data = simplejson.load(request)['role']
         name = data['name']
+        p_name = name
+
+        if name == 'user':
+            p_name = 'skaa'
+
         if name == 'doctor' or name == 'user':
-            perm = user.add_permission(name)
+            perm = user.add_permission(p_name)
             result = {
               'role':{
                  'id':perm.id,

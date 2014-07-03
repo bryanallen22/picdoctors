@@ -109,6 +109,7 @@ Pd.RoleController = Ember.ObjectController.extend({
       pc = this.parentController;
       pc.resetAlerts();
       role.deleteRecord();
+      roles.removeObject(role);
       role.save().then(function(){
         pc.set('vSaved', true);
        // alert('saved');
@@ -125,7 +126,6 @@ Pd.RoleController = Ember.ObjectController.extend({
           roles = this.get('roles'),
           pc = this.parentController;
       pc.resetAlerts();
-
 
       record.save().then(function(result){
         pc.set('vSaved', true);
