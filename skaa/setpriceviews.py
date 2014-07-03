@@ -110,8 +110,7 @@ def create_hold(request, album):
     try:
         cents = currency_to_cents( request.POST['price'] )
         if cents >= min_price * 100:
-            # job can be None, we'll set it in place_hold if we need to
-            if request.POST['card_radio_group'] == 'new_card':
+            if 'stripeToken' in request.POST:
                 charge_id = stripe_place_hold_newcard(request.user, cents, request.POST['stripeToken'])
             else:
                 charge_id = stripe_place_hold_existingcard(request.user, cents, request.POST['card_radio_group'])
@@ -156,7 +155,7 @@ def create_hold(request, album):
             ret['serverside_error'] = 'You must pay at least $' + "{0:.2f}".format(min_price) + '.'
             return render_setprice(request, album, ret)
     except Exception as e:
-        log.error("Failed to place hold on album.id=%s! price=%s" % (album.id, request.POST['price']))
+        log.error("Error placing hold on album.id=%s! price=%s -- message=%s" % (album.id, request.POST['price'], e.message))
         ret['serverside_error'] = 'Uh oh, we failed to process your card. If this keeps happening, let us know.'
         return render_setprice(request, album, ret)
 

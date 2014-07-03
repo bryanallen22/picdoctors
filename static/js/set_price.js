@@ -32,7 +32,7 @@ $(function(){
       $form.find('button').prop('disabled', true);
 
       var checked = $(".radio:checked")
-      if( checked.val() == "new_card" ) {
+      if( checked.length == 0 || checked.val() == "new_card" ) {
         Stripe.card.createToken($form, stripeResponseHandler);
       }
       else {
