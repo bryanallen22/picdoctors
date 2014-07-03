@@ -51,6 +51,7 @@ urlpatterns = patterns('',
     url(r'^api/messages$',                              messages_endpoint,            name='messages_endpoint'),
     url(r'^api/emailConfigs/(?P<user_id>\d+)$',         email_config_endpoint,        name='email_config_endpoint'),
     url(r'^api/roles/(?P<role_id>\d+)$',                remove_role,                  name='remove_role'),
+    url(r'^api/roles$',                                add_role,                     name='add_role'),
     url(r'^api/SkaaLiveOn$',                            skaa_live_on,                 name='skaa_live_on')
 )
 

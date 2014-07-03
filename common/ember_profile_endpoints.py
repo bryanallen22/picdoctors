@@ -138,19 +138,45 @@ def set_email(types, type, value, profile):
             types.append(nti)
 
 def remove_role(request, role_id):
-    user = request.user
+    profile = request.user
     role_id = int(role_id)
 
-    if not user.is_authenticated():
+    if not profile.is_authenticated():
         raise
 
-    permissions = user.user_permissions.all()
+    permissions = profile.user_permissions.all()
     role = next((r for r in permissions if r.id == role_id), None)
 
     if role:
-        user.user_permissions.remove(role)
+        profile.user_permissions.remove(role)
         return HttpResponse(status=204)
 
     ret = simplejson.dumps({'error':'failure'})
     return HttpResponse(ret, status=500, mimetype='application/json')
 
+def add_role(request):
+    user = request.user
+    result = {}
+
+    if not user.is_authenticated():
+        raise
+    
+    if request.method == 'POST':
+        data = simplejson.load(request)['role']
+        name = data['name']
+        if name == 'doctor' or name == 'user':
+            perm = user.add_permission(name)
+            result = {
+              'role':{
+                 'id':perm.id,
+                 'name':name,
+                 'doctor':user.id
+              }
+            }
+        else:
+            raise
+    else:
+        raise
+
+
+    return json_result(result)

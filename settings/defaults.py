@@ -377,6 +377,7 @@ PIPELINE_JS = {
             ###################
             'js/ember/application.js',
             'js/ember/router.js',
+            'js/ember/helpers/*.js',
             'js/ember/mixins/*.js',
             'js/ember/models/*.js',
             'js/ember/routes/*.js',

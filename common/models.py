@@ -119,6 +119,7 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         #content_type = ContentType.objects.get_for_model(Profile)
         p = Permission.objects.get(codename=permission)
         self.user_permissions.add(p)
+        return p
 
     def remove_permission(self, permission):
         p = Permission.objects.get(codename=permission)

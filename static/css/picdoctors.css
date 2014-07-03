@@ -1101,6 +1101,8 @@ a.ember-view.active {
   position: relative;
   width: 100%;
   padding: 20px;
+  border-radius: 0px 5px 5px 5px;
+  margin-bottom: 10px;
 }
 .form-450 {
   width: 450px;
@@ -1111,6 +1113,7 @@ a.ember-view.active {
   height: 60px;
 }
 .form-450 .form-row .form-field {
+  height: 60px;
   padding: 10px;
   width: 200px;
   float: left;
@@ -1119,6 +1122,7 @@ a.ember-view.active {
   line-height: 30px;
 }
 .form-450 .form-row .form-value {
+  height: 60px;
   padding: 10px;
   width: 250px;
   float: left;

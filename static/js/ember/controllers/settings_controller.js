@@ -82,6 +82,14 @@ Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
 
 Pd.SettingsRolesController = Ember.ObjectController.extend({
   availableRoles: ['doctor', 'user'],
+  vError:'',
+  vSaved:false,
+
+  resetAlerts: function(){
+    this.set('vError', "");
+    this.set('vSaved', false);
+  },
+
 });
 
 Pd.RoleController = Ember.ObjectController.extend({
@@ -97,12 +105,16 @@ Pd.RoleController = Ember.ObjectController.extend({
 
   actions:{
     remove: function(role){
-      var roles = this.get('roles');
+      var roles = this.get('roles'),
+      pc = this.parentController;
+      pc.resetAlerts();
       role.deleteRecord();
       role.save().then(function(){
+        pc.set('vSaved', true);
        // alert('saved');
       }, function(){
         //failed to save, do we alert them?
+        pc.set('vError', 'Error communicating with server');
         role.rollback();
         roles.pushObject(role);
       });
@@ -110,13 +122,15 @@ Pd.RoleController = Ember.ObjectController.extend({
     add: function(roleName){
       var user = this.get('controllers.settingsRoles.model'),
           record = this.store.createRecord('role', {name:roleName, user:user}),
-          roles = this.get('roles');
+          roles = this.get('roles'),
+          pc = this.parentController;
+      pc.resetAlerts();
 
-      alert('I didn\'t implement this endpoint!!!');
 
       record.save().then(function(result){
-
-        //roles.addRecord('roles');
+        pc.set('vSaved', true);
+      }, function(){
+        pc.set('vError', 'Error communicating with server');
       });
     }
   }
