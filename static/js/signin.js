@@ -4,6 +4,17 @@ $(function(){
   if( $("#signin").length > 0 ) {
     var checkNickName = true;
 
+    function haveChecked(){
+        // They already have an account
+        checkNickName = false;
+        $("#confirm_password").hide();
+        $("#nickname").hide();
+        $("#nickname-info").hide();
+        $('#nickErrorParent').hide();
+        $("#tos").hide();
+        $("#btnsubmit").removeAttr('disabled');
+    }
+
     /* If the radio button says they've got an account, hide the confirm password
      * button. This shouldn't normally be necessary, but if they hit the back button
      * or something it can be checked. */
@@ -26,17 +37,6 @@ $(function(){
       }
     });
 
-    function haveChecked(){
-        // They already have an account
-        checkNickName = false;
-        $("#confirm_password").hide();
-        $("#nickname").hide();
-        $("#nickname-info").hide();
-        $('#nickErrorParent').hide();
-        $("#tos").hide();
-        $("#btnsubmit").removeAttr('disabled');
-    }
-
     var disableAutoNickName = false;
 
     $('#email').keyup(function(){
@@ -50,7 +50,7 @@ $(function(){
     $('#email').change(function(){
       if(!checkNickName) return;
 
-      Pd.Logger.timestamp('email change', 5); 
+      Pd.Logger.timestamp('email change', 5);
       trimNick();
       checkValidNickName(true);
     });
@@ -58,7 +58,7 @@ $(function(){
     $('#nickname').keyup(function(){
       if(!checkNickName) return;
 
-      Pd.Logger.timestamp('nickname keyup', 5); 
+      Pd.Logger.timestamp('nickname keyup', 5);
       // disable auto nickname when they've entered the field and the length > 0
       disableAutoNickName = $(this).val().length > 0;
       checkValidNickName(false);
@@ -67,7 +67,7 @@ $(function(){
     $('#nickname').change(function(){
       if(!checkNickName) return;
 
-      Pd.Logger.timestamp('nickname change', 5); 
+      Pd.Logger.timestamp('nickname change', 5);
       trimNick();
       checkValidNickName(true);
     });
@@ -77,12 +77,12 @@ $(function(){
       if(atIdx>=0){
         dirty = dirty.substring(0, atIdx);
       }
-      
+
       var valid_chars = '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
       var clean_str = '';
       for (var i = 0, len = dirty.length; i < len; i++) {
         if(valid_chars.indexOf(dirty[i])>=0){
-          clean_str += dirty[i];   
+          clean_str += dirty[i];
         }
       }
       return clean_str.substring(0,32);
@@ -95,7 +95,7 @@ $(function(){
     }
 
     function checkValidNickName(postBack){
-      Pd.Logger.timestamp('check valid nickname', 5); 
+      Pd.Logger.timestamp('check valid nickname', 5);
       // We don't validate when we're signing in again
       var checked = $('input:radio[name=create_acct_radio]').val();
       if( checked == "have" ) {
@@ -113,7 +113,7 @@ $(function(){
 
 
       if(cleanNick!=nick || nick.length == 0){
-        Pd.Logger.timestamp('nick already failed test', 5); 
+        Pd.Logger.timestamp('nick already failed test', 5);
         errorDiv.html("Your nickname is invalid<br/>" + validHtml);
         errorParent.show();
         btn.attr('disabled', 'disabled');
@@ -127,7 +127,7 @@ $(function(){
         }
 
       if(postBack){
-        Pd.Logger.timestamp('post nick name', 5); 
+        Pd.Logger.timestamp('post nick name', 5);
           var obj = {
             'nickname'    : nick,
           };
@@ -145,7 +145,7 @@ $(function(){
       }
     };
     var used = [];
-    
+
     function uniqueNameResponse(data, obj){
       var errorParent = $('#nickErrorParent');
       var errorDiv = $('#nickError');
@@ -154,9 +154,9 @@ $(function(){
       errorParent.hide();
 
       if(data.success){
-        Pd.Logger.timestamp('nick name is good', 5); 
+        Pd.Logger.timestamp('nick name is good', 5);
         btn.removeAttr('disabled');
-        
+
       } else {
         used.push(obj.nickname);
         btn.attr('disabled', 'disabled');
