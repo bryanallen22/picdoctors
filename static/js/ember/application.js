@@ -1,8 +1,9 @@
 window.Pd = Pd = Ember.Application.create({
   rootElement: '#ember-container',
   LOG_TRANSITIONS: !picDocProduction,
-  rootUrl: picDocRootUrl,
-  token: $('input[name="csrfmiddlewaretoken"]').val()
+  staticUrl: picDocStaticUrl,
+  token: $('input[name="csrfmiddlewaretoken"]').val(),
+  stripe_oauth:'https://connect.stripe.com/oauth/authorize'
 });
 
 // AKA don't start the app cause aint nothing to hook up to

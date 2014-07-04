@@ -30,11 +30,12 @@
 
     <script>
       // intentionall global
-      var picDocRootUrl = "{{ STATIC_URL }}";
+      var picDocStaticUrl = "{{ STATIC_URL }}";
+      var stripeClientId = "{{ request.STRIPE_CLIENT_ID }}";
       {% if request.IS_PRODUCTION%}
-        var picDocProduction = true;  
+      var picDocProduction = true;  
       {% else %}
-        var picDocProduction = false;  
+      var picDocProduction = false;  
       {% endif %}
     </script>
 

@@ -32,8 +32,7 @@ Pd.Router.map(function(){
     this.route('password');
     this.route('emailConfig');
     this.route('roles');
-    this.route('bank_account');
-    this.route('merchant_info');
+    this.route('financials');
   });
 });
 

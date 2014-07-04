@@ -1,0 +1,21 @@
+<div class='form-450'>
+  <div class="alert alert-info">In order to recieve payments for your work performed you will need to sign up for a Stripe account.  Stripe is a </div>
+
+    <div class='form-row'>
+      <a {{bind-attr href=stripeUrl}}>{{static_img 'blue.png'}}</a>
+    </div>
+
+    <div class='form-row'>
+      {{#if show_passwordmatch_error }}
+      <div class="alert alert-error">Your new passwords must match.</div>
+      {{/if}}
+
+      {{#if password_changed }}
+      <div class="alert alert-success">Pasword changed successfully.</div>
+      {{/if}}
+
+      {{#if bad_oldpassword }}
+      <div class="alert alert-error">Your old password was incorrect.</div>
+      {{/if}}
+    </div>
+  </div>

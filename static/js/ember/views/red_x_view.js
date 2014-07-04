@@ -3,7 +3,7 @@ Pd.RedXView = Ember.View.extend({
   classNames: ['markup-redx'],
   attributeBindings: ['src'],
   src: function(){
-    return Pd.rootUrl + "images/redx.png";
+    return Pd.staticUrl + "images/redx.png";
   }.property(),
 
 

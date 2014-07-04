@@ -38,6 +38,6 @@ class BaseMiddleware(object):
         request.DEPLOY_TYPE = settings.DEPLOY_TYPE
         request.PRODUCTION_TESTING = settings.PRODUCTION_TESTING if hasattr(settings, 'PRODUCTION_TESTING') else False
         request.SITE_URL = settings.SITE_URL
-
+        request.STRIPE_CLIENT_ID = settings.STRIPE_CLIENT_ID
         return None
 

@@ -407,3 +407,5 @@ STATIC_URL = '/static/'
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static_out')
+
+STRIPE_CLIENT_ID='ca_4L1GIZaGM721YBOx5HdrcRkofcNc3vwZ'

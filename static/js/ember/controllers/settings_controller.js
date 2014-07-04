@@ -30,19 +30,17 @@ Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
   }
 });
 
-Pd.SettingsMerchantInfoController = Em.Controller.extend({
+Pd.SettingsFinancialsController = Em.Controller.extend({
   needs:'settings',
   user: Em.computed.alias('controllers.settings'),
   email: Em.computed.oneWay('user.email'),
-  individual: 'true',
-  showIndividual: Em.computed.equal('individual', 'true'),
 
-  actions: {
-    save: function(){
-      var properties = this.getProperties(['name', 'ein', 'email']);
-      postTo('/api/create_merchant', properties);
+  stripeUrl: function(){
+    var qp = {
+      client_id: stripeClientId,
+      response_type: 'code'
+    };
+    return Pd.stripe_oauth + "?" + $.param(qp);
+  }.property()
 
-
-    }
-  }
 });
