@@ -60,7 +60,7 @@ Pd.MarkupInstructionTextBoxController = Ember.ObjectController.extend({
     if(model.get('isDirty')){
       Pd.Logger.timestamp('Saving markup: ' + model.get('id'), 5); 
       model.save().then(function(){
-        Pd.Logger.timestamp('Saved new markup instruction: ' + newMarkup.get('instruction'), 5); 
+        Pd.Logger.timestamp('Saved new markup instruction: ' + model.get('description'), 5); 
       },
       function(){
         Pd.Logger.timestamp('Failed to save markup instruction, should revert here!!!!!', 4); 
