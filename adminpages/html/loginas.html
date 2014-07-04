@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div>
+  <h4>Dude. This is scary. Be careful.</h4>
+  <h4>To get here, you must be an admin. So you've got that going for you.</h4>
+  <h4>But you're about to do something potentially wreckless.</h4>
+  <h4>Let's hope you stay wreckless. Cause if you wreck this, we'll all be rekt.</h4>
+  <br/>
+  <h4 style="font-weight:bold; color: red;">YOU ARE ABOUT TO BE LOGGED OUT AND LOG IN AS SOMEONE ELSE.</h4>
+  <h4>Don't make me ragret makin' dis page.</h4>
+  <h4>YOU GET 2 MINUTES. I don't want anyone getting hurt.</h4>
+  <br/> <br/>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="row">
+      <span class="span3"></span>
+      <span style="color: red;">{{ error }}</span>
+    </div>
+    <div class="row">
+      <span class="span3"></span>
+      <input name="login_email" type="text" >
+    </div>
+    <div class="row">
+      <span class="span3"></span>
+      <button type="submit" name="submit" class="btn btn-danger">Magically sign in as user</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

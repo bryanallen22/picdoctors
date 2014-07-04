@@ -130,6 +130,7 @@ TEMPLATE_DIRS = (
     '%s/templates/emails/skaa/'   % PROJECT_ROOT,
     '%s/templates/emails/doctor/' % PROJECT_ROOT,
     '%s/landings/html/'           % PROJECT_ROOT,
+    '%s/adminpages/html/'         % PROJECT_ROOT,
 )
 
 djcelery.setup_loader()
