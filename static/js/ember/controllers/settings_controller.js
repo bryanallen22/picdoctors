@@ -38,7 +38,8 @@ Pd.SettingsFinancialsController = Em.Controller.extend({
   stripeUrl: function(){
     var qp = {
       client_id: stripeClientId,
-      response_type: 'code'
+      response_type: 'code',
+      scope: 'read_write'
     };
     return Pd.stripe_oauth + "?" + $.param(qp);
   }.property()
