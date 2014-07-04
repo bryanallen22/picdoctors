@@ -3,7 +3,28 @@ window.Pd = Pd = Ember.Application.create({
   LOG_TRANSITIONS: !picDocProduction,
   staticUrl: picDocStaticUrl,
   token: $('input[name="csrfmiddlewaretoken"]').val(),
-  stripe_oauth:'https://connect.stripe.com/oauth/authorize'
+  stripe_oauth:'https://connect.stripe.com/oauth/authorize',
+  href: window.location.href,
+  getQueryParams: function()
+  {
+    if(this.queryParams){
+      return this.queryParams;
+    }
+    var vars = [], hash;
+    var hashes = this.href.slice(this.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    this.queryParams = vars;
+    return vars;
+  },
+  getQueryParam: function(key){
+     var params = this.getQueryParams();
+     return params[key];
+  }
 });
 
 // AKA don't start the app cause aint nothing to hook up to

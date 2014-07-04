@@ -33,6 +33,7 @@ Pd.Router.map(function(){
     this.route('emailConfig');
     this.route('roles');
     this.route('financials');
+    this.route('stripeCallback');
   });
 });
 

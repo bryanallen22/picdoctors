@@ -38,3 +38,12 @@ Pd.SettingsRolesRoute = Em.Route.extend({
     return this.modelFor('settings');
   }
 });
+
+Pd.SettingsStripeCallbackRoute = Em.Route.extend({
+  model : function() {
+    return { 
+        scope: Pd.getQueryParam('scope'),
+        code: Pd.getQueryParam('code')
+    };
+  }
+});
