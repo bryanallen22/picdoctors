@@ -1,6 +1,6 @@
 import stripe
 import settings
-
+import requests
 from common.functions import get_datetime
 
 import logging; log = logging.getLogger('pd')
@@ -133,3 +133,16 @@ def stripe_get_credit_cards(profile):
         return [card for card in struct['data']]
     else:
         return []
+
+def get_stripe_access_token_response(code):
+    url = settings.STRIPE_CONNECT_SITE + settings.STRIPE_CONNECT_TOKEN
+    data = {
+       'grant_type': 'authorization_code',
+       'client_id': settings.STRIPE_CLIENT_ID,
+       'client_secret': settings.STRIPE_SECRET_KEY,
+       'code': code
+       }
+    resp = requests.post(url, params=data)
+ 
+    # Grab access_token (use this as your user's API key)
+    return resp

@@ -9,6 +9,7 @@ from annoying.functions import get_object_or_None
 
 from common.decorators import require_login_as
 from notifications.models import NotificationToIgnore
+from common.stripefunctions import *
 
 import ipdb
 
@@ -196,6 +197,8 @@ def hookup_stripe(request):
     if request.method == 'POST':
         code = request.POST['code']
         scope = request.POST['scope']
-
+        if code:
+            resp= get_stripe_access_token_response(code)
+            token = resp.json().get('access_token')
 
     return json_result(result)

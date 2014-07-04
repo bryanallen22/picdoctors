@@ -409,3 +409,5 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static_out')
 
 STRIPE_CLIENT_ID='ca_4L1GIZaGM721YBOx5HdrcRkofcNc3vwZ'
+STRIPE_CONNECT_SITE='https://connect.stripe.com'
+STRIPE_CONNECT_TOKEN='/oauth/token'
