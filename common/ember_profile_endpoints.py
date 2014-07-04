@@ -185,3 +185,17 @@ def add_role(request):
 
 
     return json_result(result)
+
+def hookup_stripe(request):
+    user = request.user
+    result = {}
+
+    if not user.is_authenticated():
+        raise
+    
+    if request.method == 'POST':
+        code = request.POST['code']
+        scope = request.POST['scope']
+
+
+    return json_result(result)

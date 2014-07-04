@@ -45,3 +45,25 @@ Pd.SettingsFinancialsController = Em.Controller.extend({
   }.property()
 
 });
+
+Pd.SettingsStripeCallbackController = Em.ObjectController.extend({
+  step1: 'Doing',
+  step2: 'Pending',
+
+  hookupStripe: function(){
+    var self = this;
+    postTo('/api/hookup_stripe', this.get('model'), 
+          function(){
+            self.set('step1', 'Done');
+            self.doStepTwo();
+          },
+          function(){
+            self.set('step1', 'Failed');
+          });
+  },
+
+  doStepTwo: function(){
+    alert('hello world!');
+  }
+
+});

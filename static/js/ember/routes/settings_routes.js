@@ -45,5 +45,9 @@ Pd.SettingsStripeCallbackRoute = Em.Route.extend({
         scope: Pd.getQueryParam('scope'),
         code: Pd.getQueryParam('code')
     };
+  },
+  setupController: function(controller, model){
+    this._super(controller, model);
+    Em.run.next(controller, controller.hookupStripe);
   }
 });

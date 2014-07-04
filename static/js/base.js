@@ -3,7 +3,7 @@
  * Everybody wants this postTo thing, so I'm adding it globally. Don't sue me, I
  * think it actually is appropriate.
  */
-function postTo(url, obj, callback) {
+function postTo(url, obj, callback, errorCallback) {
   var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
   $.ajax({
     headers: {
@@ -13,6 +13,7 @@ function postTo(url, obj, callback) {
     url: url,
     data: obj,
     success : callback,
+    error : errorCallback
   });
 
 }
