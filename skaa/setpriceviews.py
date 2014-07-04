@@ -22,8 +22,8 @@ import logging; log = logging.getLogger('pd')
 import settings
 
 
-# Require at least $2.00 for each output picture
-min_price_per_pic = 2.0
+# Require at least $5.00 for each output picture
+min_price_per_pic = 5.0
 
 def currency_to_cents(currency):
     """
