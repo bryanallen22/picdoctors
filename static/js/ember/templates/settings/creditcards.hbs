@@ -1,0 +1,30 @@
+<div class='form-450'>
+
+  <div class='form-row'>
+    Your saved credit cards:
+  </div>
+
+  {{#each card in controller}}
+  <div class='form-row credit-card'>
+    <div>{{ card.brand }}</div>
+    <div>XXXX-XXXX-XXXX-{{ card.last4 }}</div>
+    <div>Exp: {{card.exp_month}}/{{card.exp_year}}</div>
+  </div>
+  {{/each}}
+
+  <div class='form-row'>
+    <p>
+      You add new cards when completing a <a href="/upload/">new job</a>.
+    </p>
+
+    {{#if vError }}
+    <div class="alert alert-error">{{vError}}</div>
+    {{/if}}
+
+    {{#if vSaved }}
+    <div class="alert alert-success">Credit card remove sucessfully.</div>
+    {{/if}}
+
+  </div>
+  <div {{action 'refresh'}} class="alert alert-info clickable">You might need to refresh the page if you've added or removed some roles (or just click here)</div>
+</div>

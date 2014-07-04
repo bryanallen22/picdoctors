@@ -32,6 +32,7 @@ Pd.Router.map(function(){
     this.route('password');
     this.route('emailConfig');
     this.route('roles');
+    this.route('creditcards');
     this.route('financials');
     this.route('stripeCallback');
   });

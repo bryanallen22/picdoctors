@@ -161,7 +161,7 @@ def add_role(request):
 
     if not user.is_authenticated():
         raise
-    
+
     if request.method == 'POST':
         data = simplejson.load(request)['role']
         name = data['name']
@@ -187,13 +187,35 @@ def add_role(request):
 
     return json_result(result)
 
+def creditcards(request):
+    result = {
+        'creditcards' : [
+            {
+              'brand':     'Visa',
+              'last4':     1234,
+              'exp_month': 10,
+              'exp_year':  2016,
+              'id':        'abcdef'
+            },
+            {
+              'brand':     'Mastercard',
+              'last4':     4321,
+              'exp_month': 03,
+              'exp_year':  2017,
+              'id':        'jklmn'
+            },
+        ]
+    }
+
+    return json_result(result)
+
 def hookup_stripe(request):
     user = request.user
     result = {}
 
     if not user.is_authenticated():
         raise
-    
+
     if request.method == 'POST':
         code = request.POST['code']
         scope = request.POST['scope']

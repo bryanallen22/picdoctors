@@ -39,9 +39,17 @@ Pd.SettingsRolesRoute = Em.Route.extend({
   }
 });
 
+Pd.SettingsCreditcardsRoute = Em.Route.extend({
+  model: function(){
+   var result = this.get('creditcard') || this.store.find('creditcard');
+   this.set('creditcard', result);
+   return result;
+  }
+});
+
 Pd.SettingsStripeCallbackRoute = Em.Route.extend({
   model : function() {
-    return { 
+    return {
         scope: Pd.getQueryParam('scope'),
         code: Pd.getQueryParam('code')
     };
