@@ -1,22 +1,19 @@
-<div class='form-450'>
+<div class="settings-form">
 
-  <div class='form-row'>
-    Your saved credit cards:
+  <div class='row'>
+    <div class="span4">Your saved credit cards:</div>
   </div>
 
   {{#each card in controller}}
-  <div class='form-row credit-card'>
-    <div>{{ card.brand }}</div>
-    <div>XXXX-XXXX-XXXX-{{ card.last4 }}</div>
-    <div>Exp: {{card.exp_month}}/{{card.exp_year}}</div>
+  <div class='row creditcard'>
+    <span class='span1'></span><div>{{ card.brand }}</div>
+    <span class='span1'></span><div>XXXX-XXXX-XXXX-{{ card.last4 }}</div>
+    <span class='span1'></span><div>Exp: {{card.exp_month}}/{{card.exp_year}}</div>
+    <span class='span1'></span><button class='btn btn-danger' {{action 'delete' card.id}}>Delete</button>
   </div>
   {{/each}}
 
   <div class='form-row'>
-    <p>
-      You add new cards when completing a <a href="/upload/">new job</a>.
-    </p>
-
     {{#if vError }}
     <div class="alert alert-error">{{vError}}</div>
     {{/if}}
@@ -25,6 +22,8 @@
     <div class="alert alert-success">Credit card remove sucessfully.</div>
     {{/if}}
 
+    <p>
+      You add new cards when completing a <a href="/upload/">new job</a>.
+    </p>
   </div>
-  <div {{action 'refresh'}} class="alert alert-info clickable">You might need to refresh the page if you've added or removed some roles (or just click here)</div>
 </div>
