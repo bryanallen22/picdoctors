@@ -142,7 +142,10 @@ def is_merchant(account):
     Checks to see if this person is a merchant. 'account' is a fetched balanced
     payment account
     """
-    if 'merchant' in account.roles:
+    # the hasattr part below is a result of some accounts not having
+    # the 'roles' attribute. Namely, those that came back from balanced after
+    # requiring a redirect
+    if hasattr(account, 'roles') and 'merchant' in account.roles:
         return True
     return False
 
@@ -286,4 +289,7 @@ def credit_doctor(doc_profile):
         job.bp_debit.save()
 
     return total
+
+def get_full_doctors():
+    return [profile.email for profile in Profile.objects.all().order_by('created') if profile.is_merchant() and profile.has_bank_account()]
 
