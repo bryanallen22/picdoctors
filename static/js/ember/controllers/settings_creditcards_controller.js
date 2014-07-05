@@ -1,14 +1,29 @@
 Pd.SettingsCreditcardsController = Ember.ArrayController.extend({
-  actions:{
-    delete: function(id){
-      console.log("Deleting card " + id);
-      var card = this.store.find('creditcard', id);
+  vError:'',
+  vSaved:false,
+  vDeleting:false,
 
-      // http://emberjs.com/guides/models/creating-and-deleting-records/
-      //card.deleteRecord(); -- does not exist
-      //card.destroyRecord(); -- does not exist
-      card.destroy(); // doesn't seem to do anything
-    }
+  resetAlerts: function(){
+    this.set('vError', "");
+    this.set('vSaved', false);
+    this.set('vDeleting', false);
+  },
+
+  actions:{
+    delete: function(card){
+      var self = this;
+      self.resetAlerts();
+      self.set('vDeleting', true);
+      card.destroyRecord().then( function(record) {
+        // success
+        self.set('vDeleting', false);
+        self.set('vSaved', true);
+      }, function(record) {
+        // failure
+        self.set('vDeleting', false);
+        self.set('vError', 'Uh oh! There was a problem deleting your card!');
+      });
+    },
   },
 });
 

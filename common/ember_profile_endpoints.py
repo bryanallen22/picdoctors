@@ -10,7 +10,6 @@ from annoying.functions import get_object_or_None
 from common.decorators import require_login_as
 from notifications.models import NotificationToIgnore
 from common.stripefunctions import *
-from common.stripefunctions import stripe_get_credit_cards
 
 import ipdb
 
@@ -188,21 +187,29 @@ def add_role(request):
 
     return json_result(result)
 
-def creditcards(request):
-    desired_attributes = ['id', 'brand', 'last4', 'exp_month', 'exp_year']
-    stripe_cards = stripe_get_credit_cards(request.user)
-    output_cards = []
+@require_login_as(['skaa'])
+def creditcards(request, card_id=None):
+    if request.method == 'GET':
+        desired_attributes = ['id', 'brand', 'last4', 'exp_month', 'exp_year']
+        stripe_cards = stripe_get_credit_cards(request.user)
+        output_cards = []
 
-    for stripe_card in stripe_cards:
-        card = { }
-        for attr in desired_attributes:
-            card[attr] = stripe_card[attr]
-        output_cards.append(card)
+        for stripe_card in stripe_cards:
+            card = { }
+            for attr in desired_attributes:
+                card[attr] = stripe_card[attr]
+            output_cards.append(card)
 
-    result = {
-        'creditcards' : output_cards
-    }
-    return json_result(result)
+        result = {
+            'creditcards' : output_cards
+        }
+        return json_result(result)
+    elif request.method == 'DELETE':
+        success = stripe_delete_credit_card(request.user, card_id)
+        if success:
+            return json_result( { } )
+        else:
+            return HttpResponse('Gone', status=403)
 
 def hookup_stripe(request):
     user = request.user

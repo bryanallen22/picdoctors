@@ -55,5 +55,6 @@ urlpatterns = patterns('',
     url(r'^api/hookup_stripe$',                         hookup_stripe,                name='hookup_stripe'),
     url(r'^api/SkaaLiveOn$',                            skaa_live_on,                 name='skaa_live_on'),
     url(r'^api/creditcards$',                           creditcards,                  name='creditcards'),
+    url(r'^api/creditcards/(?P<card_id>.+)$',           creditcards,                  name='creditcards'),
 )
 

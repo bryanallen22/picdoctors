@@ -9,17 +9,24 @@
     <span class='span1'></span><div>{{ card.brand }}</div>
     <span class='span1'></span><div>XXXX-XXXX-XXXX-{{ card.last4 }}</div>
     <span class='span1'></span><div>Exp: {{card.exp_month}}/{{card.exp_year}}</div>
-    <span class='span1'></span><button class='btn btn-danger' {{action 'delete' card.id}}>Delete</button>
+    <span class='span1'></span><button class='btn btn-danger' {{action 'delete' card}}>Delete</button>
+  </div>
+  {{else}}
+  <div class='row'>
+    <span class='span1'></span><strong>None</strong>
   </div>
   {{/each}}
 
   <div class='form-row'>
+    {{#if vDeleting }}
+      <div class="alert alert-info">Deleting card...</div>
+    {{/if}}
     {{#if vError }}
-    <div class="alert alert-error">{{vError}}</div>
+      <div class="alert alert-error">{{vError}}</div>
     {{/if}}
 
     {{#if vSaved }}
-    <div class="alert alert-success">Credit card remove sucessfully.</div>
+      <div class="alert alert-success">Credit card remove sucessfully.</div>
     {{/if}}
 
     <p>

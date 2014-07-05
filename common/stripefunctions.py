@@ -12,17 +12,20 @@ def stripe_place_hold_newcard(profile, cents, stripeToken):
     ret = None
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
-    if not profile.stripe_customer_id:
-        # Create a Customer
-        customer = stripe.Customer.create(
-            card=stripeToken,
-            description=profile.email,
-        )
-        profile.stripe_customer_id = customer.id
-        profile.save()
-
-    # Create the charge on Stripe's servers - this will charge the user's card
     try:
+        if not profile.stripe_customer_id:
+            # Create a Customer
+            customer = stripe.Customer.create(
+                card=stripeToken,
+                description=profile.email,
+            )
+            profile.stripe_customer_id = customer.id
+            profile.save()
+        else:
+            # Already had a profile, this is a new card
+            customer = stripe.Customer.retrieve( profile.stripe_customer_id )
+            customer.cards.create(card=stripeToken)
+
         # Charge the Customer instead of the card
         charge = stripe.Charge.create(
             amount=cents,
@@ -34,8 +37,8 @@ def stripe_place_hold_newcard(profile, cents, stripeToken):
         ret = charge.id
     except stripe.CardError, e:
       # The card has been declined
-      log.error("%s has had their card declined for %d cents" % \
-                 (profile.email, cents))
+      log.error("%s has had their card declined for %d cents: %s" % \
+                 (profile.email, cents, e.message))
       ret = None
 
     return ret
@@ -134,6 +137,27 @@ def stripe_get_credit_cards(profile):
     else:
         return []
 
+def stripe_delete_credit_card(profile, card_id):
+    """
+    Delete a given card from a user's stripe profile
+
+    Return True for success, False for failure
+    """
+    ret = False
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    try:
+        if profile.stripe_customer_id:
+            customer = stripe.Customer.retrieve( profile.stripe_customer_id )
+            response = customer.cards.retrieve(card_id).delete()
+            ret = response['deleted']
+    except Exception, e:
+        log.error("Could not delete card %s for %s: %s" % \
+                   (card_id, profile.email, e.message))
+    return ret
+
+
+
+
 def get_stripe_access_token_response(code):
     url = settings.STRIPE_CONNECT_SITE + settings.STRIPE_CONNECT_TOKEN
     data = {
@@ -143,6 +167,6 @@ def get_stripe_access_token_response(code):
        'code': code
        }
     resp = requests.post(url, params=data)
- 
+
     # Grab access_token (use this as your user's API key)
     return resp
