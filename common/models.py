@@ -89,6 +89,9 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     # Description that the doctor puts on their profile
     doc_profile_desc            = models.TextField()
 
+    # Fixed doctor payout
+    # I promised a few people (Jared/others) that they could have a fixed payout amount
+    fixed_payout_pct            = models.FloatField(default=0.0)
 
     def get_full_name(self):
         # The user is identified by their email address

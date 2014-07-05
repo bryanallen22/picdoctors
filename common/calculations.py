@@ -21,6 +21,11 @@ def calculate_job_payout(job, profile):
     elif cnt > 69:
         doctors_cut = .65 + rating
 
+    # If they have been special cased to have a hard coded payout
+    # give it to them
+    if profile.fixed_payout_pct > doctors_cut:
+        doctors_cut = profile.fixed_payout_pct
+
     return int(math.floor(job.bp_hold.cents * doctors_cut))
 
 
