@@ -213,8 +213,8 @@
         <%= output_pic_count %> output picture<%="".pluralize(output_pic_count)%>
       </div>
       <div class="span2 text-success">
-        <em>Job Value: $<%= (job_worth/100).toFixed(2) %> <br /></em>
-        <strong>Payout: $<%= (doctor_payout/100).toFixed(2) %> </strong>
+        {#<em>Job Value: $<%= (job_worth/100).toFixed(2) %> <br /></em>#}
+        <strong><%= tier %> Pay: $<%= (doctor_payout/100).toFixed(2) %> </strong>
       </div>
       <div class="span3">
         <%= status %>

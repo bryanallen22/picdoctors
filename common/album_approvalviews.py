@@ -10,12 +10,10 @@ from common.models import Album
 from common.models import Group
 from common.models import Pic
 from common.functions import get_profile_or_None
-from common.calculations import calculate_job_payout
 from decimal import *
 
 from common.jobs import get_job_infos_json, get_pagination_info, JobInfo
 from common.jobs import Actions, Action, RedirectData, DynamicAction
-from common.jobs import fill_job_info
 from common.decorators import require_login_as
 
 import math

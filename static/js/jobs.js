@@ -17,7 +17,7 @@ $(function(){
         job_id               : -1,
         output_pic_count     : '',
         status               : 'Unknown',
-        unread_message_count : 0,  
+        unread_message_count : 0,
         album                : -1,
         albumurl             : '',
         pic_thumbs           : [],
@@ -25,9 +25,10 @@ $(function(){
         doctor_payout        : '',
         job_worth            : '',
         show_links           : false,
+        tier                 : '',
       };
     },
-    
+
     initialize : function() {
     },
 
@@ -44,7 +45,7 @@ $(function(){
     model: JobInfo,
 
     initialize: function() {
-      this.container = null; 
+      this.container = null;
       this.bind('add', this.newJobRow, this);
       this.bind('reset', this.setup, this);
     },
@@ -66,7 +67,7 @@ $(function(){
   });
 
   var JobRowView = Backbone.View.extend({
-    
+
     className: 'row job_row fix_line_height',
 
     template:  '',
@@ -88,7 +89,7 @@ $(function(){
 
     render: function(){
       // Compile the template using underscore
-      
+
       this.$el.html(this.template(
         {
           job_id              : this.model.get('job_id'),
@@ -102,6 +103,7 @@ $(function(){
           doctor_payout       : this.model.get('doctor_payout'),
           job_worth           : this.model.get('job_worth'),
           show_links          : this.model.get('show_links'),
+          tier                : this.model.get('tier'),
         }
       ));
     },
@@ -110,7 +112,7 @@ $(function(){
       var postback_url = $(event.target).attr('postback_url');
       var redir_val = $(event.target).attr('redir').toLowerCase();
 
-      Pd.Logger.timestamp('execute dynamic action ' + postback_url); 
+      Pd.Logger.timestamp('execute dynamic action ' + postback_url);
 
       if(redir_val == 'true') {
         location.href = postback_url;
@@ -121,7 +123,7 @@ $(function(){
           "job_id" : this.model.get('job_id'),
         };
       var this_model = this.model;
-      
+
       $.ajax({
         headers: {
           "X-CSRFToken":CSRF_TOKEN
@@ -146,7 +148,7 @@ $(function(){
   function dynamicReaction(data, model) {
     var actions = data.actions;
     if(data.job_info!=null) {
-      replace_job_row(data.job_info, model); 
+      replace_job_row(data.job_info, model);
     }
     for (var i = 0; i < actions.length; i++) {
       var action = actions[i];
@@ -167,7 +169,7 @@ $(function(){
         case 'redirect':
           location.href = action.data;
           break;
-        case 'action_button': 
+        case 'action_button':
           setup_action_buttons(action.data);
           break;
         case 'remove_job_row':
@@ -179,7 +181,7 @@ $(function(){
       }
     }
   }
-  
+
   function replace_job_row(job_info, model) {
     var ji = job_info;
 
@@ -196,7 +198,7 @@ $(function(){
       $('.carousel').carousel('next');
       $('.carousel').carousel();
   }
-  
+
   function remove_row_by_job_id(job_id) {
     var jr = $('.job_row');
     $('.job_row').each(function(){
@@ -210,7 +212,7 @@ $(function(){
 
   function setup_action_buttons(data){
         //Build the button template only once, that way you can click the buttons
-        
+
         template = _.template( $('#redirect_buttons_template').html() );
         $(".redirect_row_buttons").html( this.template(
                 {
@@ -220,11 +222,11 @@ $(function(){
               ));
 
   }
-  
+
 
   var job_list = new JobList();
   job_list.container = $("#jobs_rows");
-  
+
   if(!$('.job_infos').length) return;
 
   var job_infos =  jQuery.parseJSON( $('.job_infos').html());

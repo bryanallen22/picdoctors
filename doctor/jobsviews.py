@@ -89,7 +89,7 @@ def new_job_page(request, page=1):
             'cur_page'         : page,
             'reverser'         : 'new_job_page_with_page',
             'doc_page'         : True,
-            'title'            : 'Available Jobs'
+            'title'            : 'Available Jobs',
     }
 
 #get and fill up possible actions based on the status of this job
@@ -175,7 +175,7 @@ def apply_for_job(request):
                     # Update Job Info
                     job.doctor = profile
                     job.approved = profile.auto_approve
-                    job.payout_price_cents = calculate_job_payout(job, profile)
+                    job.payout_price_cents, _ = calculate_job_payout(job, profile)
                     job.status = Job.DOCTOR_ACCEPTED
                     job.save()
 
