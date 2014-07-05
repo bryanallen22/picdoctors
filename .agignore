@@ -2,3 +2,5 @@ third_party/twitter-bootstrap/
 tags
 *.min.js
 migrations
+handlebars_compiler
+third_party

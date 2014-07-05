@@ -6,3 +6,4 @@
 *.swp
 
 static_out
+node_modules
