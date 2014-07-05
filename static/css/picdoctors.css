@@ -45,6 +45,11 @@
 .hidden {
   display: none;
 }
+.mirror {
+  -moz-transform: matrix(-1, 0, 0, 1, 0, 0);
+  -webkit-transform: matrix(-1, 0, 0, 1, 0, 0);
+  -o-transform: matrix(-1, 0, 0, 1, 0, 0);
+}
 /*****************************
   Index page
 ******************************/
@@ -1059,6 +1064,9 @@
 }
 .new_message input {
   margin: 0;
+}
+.advance_arrow {
+  font-size: 30px;
 }
 .center {
   text-align: center;
