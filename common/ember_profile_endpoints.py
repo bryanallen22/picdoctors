@@ -213,7 +213,7 @@ def creditcards(request, card_id=None):
 
 def hookup_stripe(request):
     user = request.user
-    result = {}
+    result = { 'success' : False}
 
     if not user.is_authenticated():
         raise
@@ -223,6 +223,9 @@ def hookup_stripe(request):
         scope = request.POST['scope']
         if code:
             resp= get_stripe_access_token_response(code)
-            token = resp.json().get('access_token')
+            json = resp.json()
+            if json.get('access_token'):
+                connect_stripe_connect_account(user, json)
+                result = { 'success' : True}
 
     return json_result(result)

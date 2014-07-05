@@ -19,6 +19,7 @@ from django.utils import simplejson
 
 from common.basemodels import *
 from common.balancedmodels import *
+from common.stripemodels import *
 
 from annoying.functions import get_object_or_None
 
@@ -92,6 +93,8 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     doc_profile_desc            = models.TextField()
 
     stripe_customer_id          = models.CharField(max_length=255, blank=True)
+
+    stripe_connect              = models.ForeignKey(StripeConnect, blank=True, null=True)
 
 
     def get_full_name(self):

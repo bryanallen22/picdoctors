@@ -2,6 +2,7 @@ import stripe
 import settings
 import requests
 from common.functions import get_datetime
+from common.stripemodels import *
 
 import logging; log = logging.getLogger('pd')
 
@@ -170,3 +171,17 @@ def get_stripe_access_token_response(code):
 
     # Grab access_token (use this as your user's API key)
     return resp
+
+def connect_stripe_connect_account(profile, json):
+    if json.get('token_type') and json.get('access_token'):
+        s = StripeConnect()
+        s.token_type = json.get('token_type')
+        s.stripe_publishable_key = json.get('stripe_publishable_key')
+        s.scope = json.get('scope')
+        s.livemode = json.get('livemode')
+        s.stripe_user_id = json.get('stripe_user_id')
+        s.refresh_token = json.get('refresh_token')
+        s.access_token = json.get('access_token')
+        s.save()
+        profile.stripe_connect = s
+        profile.save()
