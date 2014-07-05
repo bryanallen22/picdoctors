@@ -366,7 +366,7 @@ class Pic(DeleteMixin):
 
     @staticmethod
     def get_group_pics(group):
-        return Pic.objects.filter(group=group)
+        return Pic.objects.filter(group=group).order_by('created')
 
 
 ################################################################################
