@@ -10,6 +10,7 @@ from annoying.functions import get_object_or_None
 from common.decorators import require_login_as
 from notifications.models import NotificationToIgnore
 from common.stripefunctions import *
+from common.stripefunctions import stripe_get_credit_cards
 
 import ipdb
 
@@ -188,25 +189,19 @@ def add_role(request):
     return json_result(result)
 
 def creditcards(request):
-    result = {
-        'creditcards' : [
-            {
-              'brand':     'Visa',
-              'last4':     1234,
-              'exp_month': 10,
-              'exp_year':  2016,
-              'id':        'abcdef'
-            },
-            {
-              'brand':     'Mastercard',
-              'last4':     4321,
-              'exp_month': 03,
-              'exp_year':  2017,
-              'id':        'jklmn'
-            },
-        ]
-    }
+    desired_attributes = ['id', 'brand', 'last4', 'exp_month', 'exp_year']
+    stripe_cards = stripe_get_credit_cards(request.user)
+    output_cards = []
 
+    for stripe_card in stripe_cards:
+        card = { }
+        for attr in desired_attributes:
+            card[attr] = stripe_card[attr]
+        output_cards.append(card)
+
+    result = {
+        'creditcards' : output_cards
+    }
     return json_result(result)
 
 def hookup_stripe(request):
