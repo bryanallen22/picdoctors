@@ -48,6 +48,12 @@ Pd.SettingsCreditcardsRoute = Em.Route.extend({
   }
 });
 
+Pd.SettingsFinancialsRoute = Em.Route.extend({
+  model: function(){
+    return this.modelFor('settings');
+  }
+});
+
 Pd.SettingsStripeCallbackRoute = Em.Route.extend({
   model : function() {
     return {
@@ -62,3 +68,4 @@ Pd.SettingsStripeCallbackRoute = Em.Route.extend({
     Em.run.next(controller, controller.hookupStripe);
   }
 });
+
