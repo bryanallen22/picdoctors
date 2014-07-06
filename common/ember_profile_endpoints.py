@@ -199,11 +199,14 @@ def add_role(request):
         data = simplejson.load(request)['role']
         name = data['name']
         p_name = name
+        legal_roles = ['user', 'doctor']
+        if not settings.IS_PRODUCTION:
+            legal_roles.extend(('admin', 'album_approver'))
 
         if name == 'user':
             p_name = 'skaa'
 
-        if name == 'doctor' or name == 'user':
+        if name in legal_roles:
             perm = user.add_permission(p_name)
             result = {
               'role':{

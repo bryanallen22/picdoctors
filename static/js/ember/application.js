@@ -1,6 +1,7 @@
 window.Pd = Pd = Ember.Application.create({
   rootElement: '#ember-container',
   LOG_TRANSITIONS: !picDocProduction,
+  production: picDocProduction,
   staticUrl: picDocStaticUrl,
   token: $('input[name="csrfmiddlewaretoken"]').val(),
   stripe_oauth:'https://connect.stripe.com/oauth/authorize',

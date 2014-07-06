@@ -1,5 +1,14 @@
 Pd.SettingsRolesController = Ember.ObjectController.extend({
-  availableRoles: ['doctor', 'user'],
+  normalRoles: ['doctor','user'],
+  specialRoles: ['album_approver', 'admin'],
+  availableRoles: function(){
+    var roles = this.get('normalRoles').slice(),
+        specialRoles = this.get('specialRoles').slice();
+   if(!Pd.production){
+     roles.pushObjects(specialRoles);
+   }
+   return roles;
+  }.property(),
   vError:'',
   vSaved:false,
 
