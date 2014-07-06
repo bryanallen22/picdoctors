@@ -13,11 +13,11 @@ def stripe_create_card(profile, stripeToken):
     Return the card id
     """
     if not profile.stripe_customer_id:
-        # Create a Customer
+        # Create a Customer on the pd account
         customer = stripe.Customer.create(
             card        = stripeToken,
             description = profile.email,
-            api_key     = settings.STRIPE_SECRET_KEY,
+            api_key     = settings.STRIPE_SECRET_KEY, # out account!
             metadata    = {
                             'email':      profile.email,
                             'profile_id': profile.id
@@ -30,7 +30,7 @@ def stripe_create_card(profile, stripeToken):
         # Already had a profile, this is a new card
         customer = stripe.Customer.retrieve(
                 profile.stripe_customer_id,
-                api_key = settings.STRIPE_SECRET_KEY)
+                api_key = settings.STRIPE_SECRET_KEY) # out account!
         card = customer.cards.create( card = stripeToken )
 
     return card.id
@@ -45,7 +45,7 @@ def stripe_set_default_card(profile, card_id):
         # Retrieve the Customer
         cu = stripe.Customer.retrieve(
                 profile.stripe_customer_id,
-                api_key = settings.STRIPE_SECRET_KEY)
+                api_key = settings.STRIPE_SECRET_KEY) # out account!
 
         # Set the default card
         cu.default_card = card_id
@@ -58,7 +58,7 @@ def stripe_remove_charge(job):
     if job.stripe_job.stripe_charge_id:
         ch = stripe.Charge.retrieve(
                 job.stripe_job.stripe_charge_id,
-                api_key=settings.STRIPE_SECRET_KEY)
+                api_key=settings.STRIPE_SECRET_KEY) # TODO -- correct key?
         ch.refunds.create()
     else:
         log.error("Could not remove charge from job %s -- stripe_charge_id isn't set!" % job.id)
@@ -73,22 +73,29 @@ def stripe_create_hold(job, doctor):
     """
     pd_cut = job.stripe_job.cents - job.payout_price_cents
 
+    # First, we have to retrieve the customer from the pd account and
+    # create a token with which we'll charge them on the doctor's account
+    charge_token = stripe.Token.create(
+        customer = job.skaa.stripe_customer_id,
+        card     = job.stripe_job.stripe_card_id, # card they chose in set_price
+        api_key  = doctor.stripe_connect.access_token,
+    )
+
     charge = stripe.Charge.create(
-      amount      = job.stripe_job.cents, # amount they chose in set_price
-      currency    = "usd",
-      customer    = job.skaa.stripe_customer_id,
-      card        = job.stripe_job.stripe_card_id, # card they chose in set_price
-      description = "Charge for %s on job %d" % (job.skaa.email, job.id),
-      metadata    = {
-                      'user_email':      job.skaa.email,
-                      'user_profile_id': job.skaa.id,
-                      'doc_email':       doctor.email,
-                      'doc_profile_id':  doctor.id,
-                    },
-      captured    = False, # Not captured yet!
-      api_key     = doctor.stripe_connect.access_token,
-      statement_description = "PicDoctors",
-      application_fee       = pd_cut,
+        amount      = job.stripe_job.cents, # amount they chose in set_price
+        currency    = "usd",
+        card        = charge_token, # card they chose in set_price
+        description = "Charge for %s on job %d" % (job.skaa.email, job.id),
+        metadata    = {
+                        'user_email':      job.skaa.email,
+                        'user_profile_id': job.skaa.id,
+                        'doc_email':       doctor.email,
+                        'doc_profile_id':  doctor.id,
+                      },
+        capture     = False, # Not captured yet!
+        api_key     = doctor.stripe_connect.access_token,
+        statement_description = "PicDoctors",
+        application_fee       = pd_cut,
     )
     job.stripe_job.stripe_charge_id = charge.id
     job.stripe_job.hold_date = get_datetime()
@@ -100,7 +107,10 @@ def stripe_capture_hold(job):
 
     This can throw an error.
     """
-    ch = stripe.Charge.retrieve(job.stripe_job.stripe_charge_id)
+    ch = stripe.Charge.retrieve(
+            job.stripe_job.stripe_charge_id,
+            api_key = job.doctor.stripe_connect.access_token,
+            )
     ch.capture()
     job.stripe_job.captured_date = get_datetime()
     job.save()

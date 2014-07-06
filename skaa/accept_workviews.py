@@ -40,7 +40,7 @@ def accept_work(request, job_id):
                 stripe_capture_hold(job)
             except Exception as e:
                 log.error("Could not capture hold on job %s! message: %s" % (job.id, e.message))
-                return {'job_id': job_id, 'charge_error_occurred': True, 'charge_error': failure}
+                return {'job_id': job_id, 'charge_error_occurred': True, 'charge_error': e.message}
 
             if request.POST['allow_publicly'] == 'allow':
                 job.album.allow_publicly = True
