@@ -22,7 +22,7 @@ def job_price_too_low(request, job_id=None):
 
         return {
                 'pic_count'      : job.album.num_groups,
-                'job_price'      : float(job.stripe_cents)/100,
+                'job_price'      : float(job.stripe_job.cents)/100,
                 }
 
     elif request.method == "POST":
@@ -43,7 +43,7 @@ def job_price_too_low_action(request, job):
                 for job in job_qs:
                     job.price_too_low_count += 1
                     job.save()
-                    price = max(job.stripe_cents, int(float(request.POST['price'])*100))
+                    price = max(job.stripe_job.cents, int(float(request.POST['price'])*100))
                     contrib=PriceTooLowContributor(job=job, doctor=doc, price=price)
                     contrib.save()
 

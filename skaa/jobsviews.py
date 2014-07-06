@@ -75,8 +75,8 @@ def update_old_jobs(list_of_jobs):
     seven_days_ago = now - timedelta(days=7)
 
     for job in list_of_jobs:
-        if job.stripe_charge_id and job.stripe_charge_date and job.stripe_cents > 0 and \
-                job.stripe_charge_date < seven_days_ago and job.status == Job.IN_MARKET:
+        if job.stripe_job.stripe_charge_id and job.stripe_job.charge_date and job.stripe_job.cents > 0 and \
+                job.stripe_job.charge_date < seven_days_ago and job.status == Job.IN_MARKET:
             job.status=Job.OUT_OF_MARKET
             job.save()
             # TODO send user an email
@@ -145,13 +145,13 @@ def generate_skaa_actions(job):
 
 
 # when the user sets a price, we create a job
-def create_job(profile, album, charge_id):
+def create_job(profile, album, stripe_job):
     job = None
     if album is not None:
         job = Job(skaa=profile,
                 album=album,
-                stripe_charge_id=charge_id,
-                status=Job.IN_MARKET)
+                status=Job.IN_MARKET,
+                stripe_job=stripe_job)
         job.save()
 
         set_groups_locks(album, True)

@@ -6,100 +6,62 @@ from common.stripemodels import *
 
 import logging; log = logging.getLogger('pd')
 
-def stripe_place_hold_newcard(profile, cents, stripeToken):
+def stripe_create_card(profile, stripeToken):
     """
-    Place a charge, but don't capture it yet. (Good for up to 7 days.)
+    Store the stripe.js token off into existing/new customer
+
+    Return the card id
     """
-    ret = None
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-
-    try:
-        if not profile.stripe_customer_id:
-            # Create a Customer
-            customer = stripe.Customer.create(
-                card=stripeToken,
-                description=profile.email,
-            )
-            profile.stripe_customer_id = customer.id
-            profile.save()
-        else:
-            # Already had a profile, this is a new card
-            customer = stripe.Customer.retrieve( profile.stripe_customer_id )
-            customer.cards.create(card=stripeToken)
-
-        # Charge the Customer instead of the card
-        charge = stripe.Charge.create(
-            amount=cents,
-            currency="usd",
-            customer=profile.stripe_customer_id,
-            description='%s' % profile.email,
-            capture=False, # don't charge them yet!
+    if not profile.stripe_customer_id:
+        # Create a Customer
+        customer = stripe.Customer.create(
+            card        = stripeToken,
+            description = profile.email,
+            api_key     = settings.STRIPE_SECRET_KEY
         )
-        ret = charge.id
-    except stripe.CardError, e:
-      # The card has been declined
-      log.error("%s has had their card declined for %d cents: %s" % \
-                 (profile.email, cents, e.message))
-      ret = None
+        profile.stripe_customer_id = customer.id
+        profile.save()
+        card = customer.cards['data'][0]
+    else:
+        # Already had a profile, this is a new card
+        customer = stripe.Customer.retrieve(
+                profile.stripe_customer_id,
+                api_key = settings.STRIPE_SECRET_KEY)
+        card = customer.cards.create( card = stripeToken )
 
-    return ret
+    return card.id
 
-def stripe_place_hold_existingcard(profile, cents, card_id):
-    """
-    Update customer's default card and place a charge,
-    but don't capture it yet. (Good for up to 7 days.)
-
-    I wish I knew how to charge a card without updating
-    the default, but I don't. The normal API to create
-    a charge takes a 'card' param, but it wants a token
-    from stripe.js
-
-    This may raise an error. You gotta deal with it
-    """
-    ret = None
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-
+def stripe_set_default_card(profile, card_id):
     # Make sure they have a customer id
     if not profile.stripe_customer_id:
-        return None
+        log.error("%s does not have a stripe_customer_id! Can't save card %s!" % \
+                    (profile.email, card_id))
+        raise Exception(profile.email, card_id)
+    else:
+        # Retrieve the Customer
+        cu = stripe.Customer.retrieve(
+                profile.stripe_customer_id,
+                api_key = settings.STRIPE_SECRET_KEY)
 
-    # Make sure this card belongs to them
-    cards_struct = stripe.Customer.retrieve(profile.stripe_customer_id).cards.all(limit=100)
-    cards = [card.id for card in cards_struct['data']]
-    if card_id not in cards:
-        return None
-
-    # Set the default card
-    cu = stripe.Customer.retrieve(profile.stripe_customer_id)
-    cu.default_card = card_id
-    cu.save()
-
-    # Create the charge on Stripe's servers - this will charge the user's card
-    try:
-        # Charge the Customer instead of the card
-        charge = stripe.Charge.create(
-            amount=cents,
-            currency="usd",
-            customer=profile.stripe_customer_id,
-            description='%s' % profile.email,
-            capture=False, # don't charge them yet!
-        )
-        ret = charge.id
-    except stripe.CardError, e:
-      # The card has been declined
-      log.error("%s has had their card declined for %d cents" % \
-                 (profile.email, cents))
-      ret = None
-
-    return ret
-
+        # Set the default card
+        cu.default_card = card_id
+        cu.save()
 
 def stripe_remove_charge(job):
-    ch = stripe.Charge.retrieve(job.stripe_charge_id)
-    ch.refunds.create()
-    job.stripe_charge_id = ''
-    job.stripe_charge_date = None
-    job.stripe_cents = -1
+    """
+    Refund the (uncaptured) charge
+    """
+    if job.stripe_job.stripe_charge_id:
+        ch = stripe.Charge.retrieve(
+                job.stripe_job.stripe_charge_id,
+                api_key=settings.STRIPE_SECRET_KEY)
+        ch.refunds.create()
+    else:
+        log.error("Could not remove charge from job %s -- stripe_charge_id isn't set!" % job.id)
+
+    # leave cents and the card id so it can be charged later
+    job.stripe_job.stripe_charge_id = ''
+    job.stripe_job.save()
 
 def stripe_capture_hold(job):
     """
@@ -107,33 +69,19 @@ def stripe_capture_hold(job):
 
     This can throw an error.
     """
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-
-    ch = stripe.Charge.retrieve(job.stripe_charge_id)
-    if ch.refunded:
-        log.info("job %d has already refunded charge %d, trying to create a new one") % (job.id, job.stripe_charge_id)
-        # Charge the Customer instead of the card
-        charge = stripe.Charge.create(
-            amount=ch.amount,
-            currency="usd",
-            customer=job.skaa.stripe_customer_id,
-            description='%s charge for job %d' % (profile.email, job.id),
-            capture=True,
-        )
-        job.stripe_charge_id = charge.id
-        job.stripe_charge_date = get_datetime()
-        job.stripe_cents = ch.amount
-        job.save()
-    else:
-        ch.capture()
+    ch = stripe.Charge.retrieve(job.stripe_job.stripe_charge_id)
+    ch.capture()
+    job.stripe_job.charge_date = get_datetime()
+    job.save()
 
 def stripe_get_credit_cards(profile):
     """
     Retrieve a list of credit cards associated with a user
     """
-    stripe.api_key = settings.STRIPE_SECRET_KEY
     if profile.stripe_customer_id:
-        struct = stripe.Customer.retrieve(profile.stripe_customer_id).cards.all(limit=20)
+        struct = stripe.Customer.retrieve(
+                profile.stripe_customer_id,
+                api_key=settings.STRIPE_SECRET_KEY).cards.all(limit=40)
         return [card for card in struct['data']]
     else:
         return []
@@ -145,10 +93,10 @@ def stripe_delete_credit_card(profile, card_id):
     Return True for success, False for failure
     """
     ret = False
-    stripe.api_key = settings.STRIPE_SECRET_KEY
     try:
         if profile.stripe_customer_id:
-            customer = stripe.Customer.retrieve( profile.stripe_customer_id )
+            customer = stripe.Customer.retrieve( profile.stripe_customer_id,
+                                                 api_key = settings.STRIPE_SECRET_KEY )
             response = customer.cards.retrieve(card_id).delete()
             ret = response['deleted']
     except Exception, e:
@@ -162,10 +110,10 @@ def stripe_delete_credit_card(profile, card_id):
 def get_stripe_access_token_response(code):
     url = settings.STRIPE_CONNECT_SITE + settings.STRIPE_CONNECT_TOKEN
     data = {
-       'grant_type': 'authorization_code',
-       'client_id': settings.STRIPE_CLIENT_ID,
+       'grant_type':    'authorization_code',
+       'client_id':     settings.STRIPE_CLIENT_ID,
        'client_secret': settings.STRIPE_SECRET_KEY,
-       'code': code
+       'code':          code
        }
     resp = requests.post(url, params=data)
 
@@ -175,13 +123,13 @@ def get_stripe_access_token_response(code):
 def connect_stripe_connect_account(profile, json):
     if json.get('token_type') and json.get('access_token'):
         s = StripeConnect()
-        s.token_type = json.get('token_type')
+        s.token_type             = json.get('token_type')
         s.stripe_publishable_key = json.get('stripe_publishable_key')
-        s.scope = json.get('scope')
-        s.livemode = json.get('livemode')
-        s.stripe_user_id = json.get('stripe_user_id')
-        s.refresh_token = json.get('refresh_token')
-        s.access_token = json.get('access_token')
+        s.scope                  = json.get('scope')
+        s.livemode               = json.get('livemode')
+        s.stripe_user_id         = json.get('stripe_user_id')
+        s.refresh_token          = json.get('refresh_token')
+        s.access_token           = json.get('access_token')
         s.save()
         profile.stripe_connect = s
         profile.save()

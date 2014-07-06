@@ -21,6 +21,6 @@ def calculate_job_payout(job, profile):
     elif cnt > 69:
         doctors_cut = .65 + rating
 
-    return int(math.floor(job.stripe_cents * doctors_cut))
+    return int(math.floor(job.stripe_job.cents * doctors_cut))
 
 

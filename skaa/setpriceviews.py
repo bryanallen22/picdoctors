@@ -10,13 +10,13 @@ from annoying.functions import get_object_or_None
 from common.decorators import require_login_as
 from common.functions import get_referer_view_and_id
 from common.functions import get_unfinished_album
-from common.models import Job
+from common.models import Job, Album
 from skaa.progressbarviews import get_progressbar_vars
 from skaa.rejectviews import remove_previous_doctor
 from emailer.emailfunctions import send_email
 from skaa.jobsviews import create_job
 from common.functions import get_profile_or_None, get_datetime
-from common.stripefunctions import stripe_place_hold_newcard, stripe_place_hold_existingcard, stripe_get_credit_cards
+from common.stripefunctions import *
 
 
 import logging; log = logging.getLogger('pd')
@@ -60,7 +60,7 @@ def send_newjob_email(request, job):
                email_address=request.user.email,
                template_name='newjob_email.html',
                template_args={'jobs_url' : reverse( 'job_page' ),
-                              'amount'   : job.stripe_cents, },
+                              'amount'   : job.stripe_job.cents, },
               )
 
 @render_to('set_price.html')
@@ -110,22 +110,27 @@ def create_hold(request, album):
     try:
         cents = currency_to_cents( request.POST['price'] )
         if cents >= min_price * 100:
+
             if 'stripeToken' in request.POST:
-                charge_id = stripe_place_hold_newcard(request.user, cents, request.POST['stripeToken'])
+                # This is a new card
+                card_id = stripe_create_card(request.user, request.POST['stripeToken'])
             else:
-                charge_id = stripe_place_hold_existingcard(request.user, cents, request.POST['card_radio_group'])
+                # Existing card. Let's set it to the default (though that's not necessary)
+                card_id = request.POST['card_radio_group']
+                stripe_set_default_card(request.user, card_id)
 
-            if charge_id is None:
-                log.error("Failed to place hold on album.id=%s! price=%s" % (album.id, request.POST['price']))
-                ret['serverside_error'] = 'Uh oh, we failed to process your card. If this keeps happening, let us know.'
-                return render_setprice(request, album, ret)
+            sj = StripeJob(
+                    stripe_card_id=card_id,
+                    cents=cents)
+            sj.save()
 
+            # Don't make the Job until we (think) we're good on payments
+            # (the card could still be declined later)
             if job is None:
-                job = create_job(profile, album, charge_id)
-            job.stripe_charge_id=charge_id
-            job.stripe_charge_date = get_datetime()
-            job.stripe_cents = cents
-            job.save()
+                job = create_job(profile, album, sj)
+            else:
+                job.stripe_job = sj
+                job.save()
             album.finished = True
             album.save()
 
@@ -174,7 +179,7 @@ def increase_price(request, job_id):
     user_credit_cards = stripe_get_credit_cards(profile)
 
     # Use float here -- /100 truncates, but /100. is cool
-    original_price = (job.stripe_cents / 100.)
+    original_price = (job.stripe_job.cents / 100.)
     min_price = original_price + 1
     str_min_price = "{0:.2f}".format(min_price)
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)

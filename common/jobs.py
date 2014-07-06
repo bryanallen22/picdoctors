@@ -122,7 +122,7 @@ def fill_job_info(job, action_generator, profile):
     album = job.album
     job_inf.dynamic_actions = action_generator(job)
 
-    job_inf.job_worth = job.stripe_cents
+    job_inf.job_worth = job.stripe_job.cents
 
     if job.doctor:
         #pull price from what we promised them

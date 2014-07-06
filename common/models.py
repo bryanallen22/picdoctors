@@ -743,9 +743,7 @@ class Job(DeleteMixin):
 
     accepted_date           = models.DateTimeField(blank=True, null=True)
 
-    stripe_charge_id        = models.CharField(max_length=255, blank=True, unique=True)
-    stripe_charge_date      = models.DateTimeField(blank=True, null=True)
-    stripe_cents            = models.IntegerField(default=-1)
+    stripe_job              = models.ForeignKey(StripeJob, blank=False)
 
     def is_part_of(self, profile):
         if not profile:
@@ -778,7 +776,7 @@ class Job(DeleteMixin):
         else:
             out += self.doctor.email
 
-        out += " Price (cents): " + str(self.stripe_cents)
+        out += " Price (cents): " + str(self.stripe_job.cents)
         out += " Status: " + self.status
         return out
 
