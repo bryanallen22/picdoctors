@@ -72,7 +72,7 @@ def save_user(profile, data):
     # as sending back something, in fact it's easier
 
 def unauthenticated_user():
-    useru  = {
+    user  = {
             'id': -1,
             'nickname': 'visitor',
             'email': 'email',
