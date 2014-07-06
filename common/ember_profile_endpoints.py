@@ -27,6 +27,7 @@ def users_endpoint(request, user_id):
     user['id'] = profile.id
     user['nickname'] = profile.nickname
     user['email'] = profile.email
+    user['stripe_user'] = profile.stripe_connect.stripe_user_id if profile.stripe_connect else None
     user['isLoggedIn'] = True
     user['emailConfig'] = profile.id # He uses the profile id as a key to get the notifications to ignore
 

@@ -2,12 +2,38 @@
   <div class='form-row'>
     <div class='form-field'>
       <div class='alert alert-info'> Hooking up your Stripe account...</div>
-   </div>
+    </div>
     <div class='form-value'>
       {{step1}}
     </div>
   </div>
+  {{#if vError}}
+  <div class='form-row'>
+    <div class='alert alert-error'>{{vError}}</div>
+  </div>
+  {{/if}}
+  {{#if showStep2}}
+  <div class='form-row'>
+    <div class='form-field'>
+      <div class='alert alert-info'> Fill out your profile </div>
+    </div>
+    <div class='form-value'>
+    {{#link-to 'settings.profile' class='btn btn-info'}}Go now{{/link-to}}
+    </div>
+  </div>
+  <div class='form-row'>
+    <div class='form-field'>
+      <div class='alert alert-info'> Start working jobs </div>
+    </div>
+    <div class='form-value'>
+    <button class='btn btn-info' {{ action 'goNewJobs'}} >
+      Go now 
+    </button>
+    </div>
+  </div>
+  {{/if}}
 </div>
+{{#if showLoader}}
 <div class='top_loader'>
   <div class="windows8">
     <div class="wBall" id="wBall_1">
@@ -32,3 +58,4 @@
     </div>
   </div> 
 </div>
+{{/if}}

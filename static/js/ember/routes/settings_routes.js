@@ -5,7 +5,8 @@ Pd.SettingsRoute = Em.Route.extend({
   afterModel: function(model, transition){
     // this is where you'd redirect if they aren't logged in
     if(!model.get('isLoggedIn')){
-      alert('redirect to login');
+      transition.abort();
+      window.location.href = '/';
     }
   }
 });
@@ -51,7 +52,9 @@ Pd.SettingsStripeCallbackRoute = Em.Route.extend({
   model : function() {
     return {
         scope: Pd.getQueryParam('scope'),
-        code: Pd.getQueryParam('code')
+        code: Pd.getQueryParam('code'),
+        error: Pd.getQueryParam('error'),
+        error_description: Pd.getQueryParam('error_description')
     };
   },
   setupController: function(controller, model){
