@@ -48,7 +48,7 @@ Pd.SettingsCreditcardsRoute = Em.Route.extend({
   }
 });
 
-Pd.SettingsFinancialsRoute = Em.Route.extend({
+Pd.SettingsPaymentsRoute = Em.Route.extend({
   model: function(){
     return this.modelFor('settings');
   }
