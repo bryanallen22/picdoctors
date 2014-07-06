@@ -80,8 +80,6 @@ def render_setprice(request, album, params=None):
     str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
 
     ret = get_progressbar_vars(request, 'set_price')
-    if params is not None:
-        ret.update(params)
     ret.update({
         'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
         'min_price':              str_min_price,
@@ -90,19 +88,18 @@ def render_setprice(request, album, params=None):
         'credit_cards':           user_credit_cards,
         'album_id':               album.id,
     })
+    if params is not None:
+        ret.update(params)
     return ret
 
 
 @render_to('set_price.html')
-def create_hold(request, album):
+def establish_job(request, album, job=None):
     """
     Save credit card info, create hold on card for the price they offer
     """
     ret = {}
-    job = None
-
     profile = get_profile_or_None(request)
-
     min_price = min_price_per_pic * album.num_groups
 
     # price is formatted as currency -- e.g. '$-1,234.56' or '$34.12'
@@ -129,6 +126,8 @@ def create_hold(request, album):
             if job is None:
                 job = create_job(profile, album, sj)
             else:
+                # We're increasing the price on an existing job. This will
+                # leave the old StripeJob orphaned off
                 job.stripe_job = sj
                 job.save()
             album.finished = True
@@ -167,43 +166,34 @@ def create_hold(request, album):
     return redirect (reverse('job_page'))
 
 @require_login_as(['skaa'])
-@render_to('set_price.html')
 def increase_price(request, job_id):
+    if request.method == 'GET':
+        job = get_object_or_None(Job, id=job_id)
+        if not job or job.skaa != request.user:
+            return redirect('/')
 
-    job = get_object_or_None(Job, id=job_id)
-    profile = get_profile_or_None(request)
+        # Use float here -- /100 truncates, but /100. is cool
+        original_price = (job.stripe_job.cents / 100.)
+        min_price = original_price + 1
+        str_min_price = "{0:.2f}".format(min_price)
+        str_original_price =  "{0:.2f}".format(original_price)
 
-    if not job or not profile or job.skaa != profile:
-        return redirect('/')
-
-    user_credit_cards = stripe_get_credit_cards(profile)
-
-    # Use float here -- /100 truncates, but /100. is cool
-    original_price = (job.stripe_job.cents / 100.)
-    min_price = original_price + 1
-    str_min_price = "{0:.2f}".format(min_price)
-    str_min_price_per_pic = "{0:.2f}".format(min_price_per_pic)
-    str_num_pics = "%s" % job.album.num_groups
-    str_original_price =  "{0:.2f}".format(original_price)
-
-    ret = get_progressbar_vars(request, 'set_price')
-    ret.update({
-        'marketplace_uri'   : settings.BALANCED_MARKETPLACE_URI,
-        'min_price'         : str_min_price,
-        'min_price_per_pic' : str_min_price_per_pic,
-        'num_pics'          : str_num_pics,
-        'credit_cards'      : user_credit_cards,
-        'increase_price'    : True,
-        'original_price'    : str_original_price,
-        'album_id'          : job.album.id,
-    })
-    return ret
-
-
+        params = {
+            'min_price'         : str_min_price,
+            'increase_price'    : True,
+            'original_price'    : str_original_price,
+        }
+        return render_setprice(request, job.album, params)
+    elif request.method == 'POST':
+        job = get_object_or_None(Job, id=job_id)
+        if not job or job.skaa != request.user or not job.album:
+            return redirect('/')
+        if job.album.userprofile != request.user:
+            return redirect(reverse('permission_denied'))
+        return establish_job(request, job.album, job)
 
 @require_login_as(['skaa'])
-@render_to('set_price.html')
-def set_price(request, album_id=None):
+def set_price(request, album_id=None, params=None):
     # On normal uploads, album should be None, but we retrieve it with get_unfinished_album
     # However, if comes from a job that was refunded and returned to the market, the album
     # can be passed in directly
@@ -222,7 +212,7 @@ def set_price(request, album_id=None):
         return redirect(reverse('upload'))
 
     if request.method == 'POST':
-        return create_hold(request, album)
+        return establish_job(request, album)
     elif request.method == 'GET':
-        return render_setprice(request, album)
+        return render_setprice(request, album, params)
 
