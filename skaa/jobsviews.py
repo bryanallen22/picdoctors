@@ -61,8 +61,7 @@ def job_page(request, page=1, job_id=None):
     }
 
 # if a job ends up being older 7 days, we change the state to
-# you suck, and need to up the price or something
-# What a bummer for them, but not my problem
+# and need to up the price or something
 def update_old_jobs(list_of_jobs):
 
     if not list_of_jobs or len(list_of_jobs)==0:
@@ -75,8 +74,7 @@ def update_old_jobs(list_of_jobs):
     seven_days_ago = now - timedelta(days=7)
 
     for job in list_of_jobs:
-        if job.stripe_job.stripe_charge_id and job.stripe_job.charge_date and job.stripe_job.cents > 0 and \
-                job.stripe_job.charge_date < seven_days_ago and job.status == Job.IN_MARKET:
+        if job.stripe_job.created < seven_days_ago and job.status == Job.IN_MARKET:
             job.status=Job.OUT_OF_MARKET
             job.save()
             # TODO send user an email

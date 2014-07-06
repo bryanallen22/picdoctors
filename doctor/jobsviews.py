@@ -23,9 +23,11 @@ from datetime import timedelta
 import datetime
 from django.utils.timezone import utc
 from emailer.emailfunctions import send_email
+from common.stripefunctions import stripe_create_hold
 
 import settings
 import ipdb
+import logging; log = logging.getLogger('pd')
 
 @require_login_as(['doctor'])
 @render_to('jobs.html')
@@ -75,7 +77,7 @@ def new_job_page(request, page=1):
         now =  get_datetime()
         seven_days_ago = now - timedelta(days=6, hours=23)
 
-        jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).filter(bp_hold__created__gte=seven_days_ago)
+        jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).filter(stripe_job__created__gte=seven_days_ago)
     else:
         return redirect( reverse('permission_denied') )
 
@@ -172,25 +174,40 @@ def apply_for_job(request):
                     r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
                     actions.add('action_button', r)
                 else:
-                    # Update Job Info
-                    job.doctor = profile
-                    job.approved = profile.auto_approve
-                    job.payout_price_cents = calculate_job_payout(job, profile)
-                    job.status = Job.DOCTOR_ACCEPTED
-                    job.save()
+                    # Try to place an uncaptured charge on the user's card
 
-                    # Email
-                    send_job_status_change(request, job, profile)
+                    hold_successful = False
+                    try:
+                        stripe_create_hold(job, profile)
+                        hold_successful = True
+                    except Exception as e:
+                        log.error("Error placing hold on job %s! price=%s. message:%s" % (job.id, job.stripe_job.cents, e.message))
+                        actions = Actions()
+                        actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
+                        actions.add('remove_job_row', job_id)
+                        r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
+                        actions.add('action_button', r)
 
-                    # Response
-                    actions = Actions()
-                    actions.add('alert', AlertData('Congratulations, the job is yours!', 'success'))
+                    if hold_successful:
+                        # Update Job Info
+                        job.doctor = profile
+                        job.approved = profile.auto_approve
+                        job.payout_price_cents = calculate_job_payout(job, profile)
+                        job.status = Job.DOCTOR_ACCEPTED
+                        job.save()
 
-                    job_inf = fill_job_info(job, generate_doctor_actions, profile)
-                    actions.addJobInfo(job_inf)
+                        # Email
+                        send_job_status_change(request, job, profile)
 
-                    db = DocBlock(job=job, doctor=profile)
-                    db.save()
+                        # Response
+                        actions = Actions()
+                        actions.add('alert', AlertData('Congratulations, the job is yours!', 'success'))
+
+                        job_inf = fill_job_info(job, generate_doctor_actions, profile)
+                        actions.addJobInfo(job_inf)
+
+                        db = DocBlock(job=job, doctor=profile)
+                        db.save()
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
 

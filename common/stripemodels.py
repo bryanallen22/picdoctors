@@ -21,9 +21,10 @@ class StripeJob(DeleteMixin):
     stripe_card_id         = models.CharField(max_length=128, blank=False)
     cents                  = models.IntegerField(default=-1, blank=False)
 
-    ###### Set once a doctor accepts the job:
+    ###### Set once a doctor applies for the job:
     stripe_charge_id       = models.CharField(max_length=128, blank=True)
+    hold_date              = models.DateTimeField(blank=True, null=True)
 
     ###### Set once user accepts job and charge is captured:
-    charge_date     = models.DateTimeField(blank=True, null=True)
+    captured_date     = models.DateTimeField(blank=True, null=True)
 

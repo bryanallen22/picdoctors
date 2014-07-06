@@ -13,6 +13,7 @@ from common.models import Album, Group, Job, DocRating
 from common.jobs import send_job_status_change
 from common.balancedfunctions import *
 from common.decorators import require_login_as
+from common.stripefunctions import stripe_capture_hold
 
 import ipdb
 import logging; log = logging.getLogger('pd')
@@ -35,16 +36,10 @@ def accept_work(request, job_id):
             if not 'allow_publicly' in request.POST:
                 return { 'job_id':job_id, 'allowpublic_error':True }
 
-            debited, failure = do_debit(request, profile, job)
-
-            if not debited:
-                # TODO send an email to admins informing us there was an error charging
-                # This is important enough of a stage we don't want there to be an issue here
-                log_msg = "job #" + str(job.id) + " failed to charge: '" + failure.description + "'  - allow_publicly: "
-                log_msg += request.POST['allow_publicly'] + ' star: ' + request.POST['rating_val'] + ' comment: '
-                log_msg += request.POST['comment']
-                log.critical(log_msg)
-
+            try:
+                stripe_capture_hold(job)
+            except Exception as e:
+                log.error("Could not capture hold on job %s! message: %s" % (job.id, e.message))
                 return {'job_id': job_id, 'charge_error_occurred': True, 'charge_error': failure}
 
             if request.POST['allow_publicly'] == 'allow':

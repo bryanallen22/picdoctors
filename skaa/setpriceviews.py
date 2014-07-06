@@ -96,7 +96,7 @@ def render_setprice(request, album, params=None):
 @render_to('set_price.html')
 def establish_job(request, album, job=None):
     """
-    Save credit card info, create hold on card for the price they offer
+    Save credit card info to be charged later. Create job (if necessary)
     """
     ret = {}
     profile = get_profile_or_None(request)
@@ -159,7 +159,7 @@ def establish_job(request, album, job=None):
             ret['serverside_error'] = 'You must pay at least $' + "{0:.2f}".format(min_price) + '.'
             return render_setprice(request, album, ret)
     except Exception as e:
-        log.error("Error placing hold on album.id=%s! price=%s -- message=%s" % (album.id, request.POST['price'], e.message))
+        log.error("Error establishing job on album.id=%s! price=%s -- message=%s" % (album.id, request.POST['price'], e.message))
         ret['serverside_error'] = 'Uh oh, we failed to process your card. If this keeps happening, let us know.'
         return render_setprice(request, album, ret)
 

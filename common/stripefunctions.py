@@ -17,7 +17,11 @@ def stripe_create_card(profile, stripeToken):
         customer = stripe.Customer.create(
             card        = stripeToken,
             description = profile.email,
-            api_key     = settings.STRIPE_SECRET_KEY
+            api_key     = settings.STRIPE_SECRET_KEY,
+            metadata    = {
+                            'email':      profile.email,
+                            'profile_id': profile.id
+                          }
         )
         profile.stripe_customer_id = customer.id
         profile.save()
@@ -63,6 +67,33 @@ def stripe_remove_charge(job):
     job.stripe_job.stripe_charge_id = ''
     job.stripe_job.save()
 
+def stripe_create_hold(job, doctor):
+    """
+    Create an uncaptured hold on a card.
+    """
+    pd_cut = job.stripe_job.cents - job.payout_price_cents
+
+    charge = stripe.Charge.create(
+      amount      = job.stripe_job.cents, # amount they chose in set_price
+      currency    = "usd",
+      customer    = job.skaa.stripe_customer_id,
+      card        = job.stripe_job.stripe_card_id, # card they chose in set_price
+      description = "Charge for %s on job %d" % (job.skaa.email, job.id),
+      metadata    = {
+                      'user_email':      job.skaa.email,
+                      'user_profile_id': job.skaa.id,
+                      'doc_email':       doctor.email,
+                      'doc_profile_id':  doctor.id,
+                    },
+      captured    = False, # Not captured yet!
+      api_key     = doctor.stripe_connect.access_token,
+      statement_description = "PicDoctors",
+      application_fee       = pd_cut,
+    )
+    job.stripe_job.stripe_charge_id = charge.id
+    job.stripe_job.hold_date = get_datetime()
+    job.stripe_job.save()
+
 def stripe_capture_hold(job):
     """
     Actually charge the person who we had previously placed the hold on
@@ -71,7 +102,7 @@ def stripe_capture_hold(job):
     """
     ch = stripe.Charge.retrieve(job.stripe_job.stripe_charge_id)
     ch.capture()
-    job.stripe_job.charge_date = get_datetime()
+    job.stripe_job.captured_date = get_datetime()
     job.save()
 
 def stripe_get_credit_cards(profile):
@@ -99,7 +130,7 @@ def stripe_delete_credit_card(profile, card_id):
                                                  api_key = settings.STRIPE_SECRET_KEY )
             response = customer.cards.retrieve(card_id).delete()
             ret = response['deleted']
-    except Exception, e:
+    except Exception as e:
         log.error("Could not delete card %s for %s: %s" % \
                    (card_id, profile.email, e.message))
     return ret
