@@ -1124,9 +1124,6 @@ a.ember-view.active {
   box-sizing: border-box;
   line-height: 40px;
 }
-.settings-form .form-row .form-field .alert {
-  line-height: 20px;
-}
 .settings-form .form-row .form-value {
   height: 60px;
   padding: 10px;
@@ -1150,6 +1147,9 @@ a.ember-view.active {
   margin-top: 5px;
   margin-bottom: 20px;
 }
+.settings-form .alert {
+  line-height: 20px;
+}
 .form-650 {
   width: 650px;
 }
@@ -1162,4 +1162,7 @@ a.ember-view.active {
 .form-value-stripe {
   margin-top: -2px;
   display: block;
+}
+.width15 {
+  width: 15px;
 }

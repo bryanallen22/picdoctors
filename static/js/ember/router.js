@@ -34,6 +34,7 @@ Pd.Router.map(function(){
     this.route('roles');
     this.route('creditcards');
     this.route('payments');
+    this.route('beadoctor');
     this.route('stripeCallback');
   });
 });

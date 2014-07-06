@@ -70,3 +70,7 @@ Pd.SettingsProfileController = Em.ObjectController.extend({
       }
     }
 });
+
+Pd.SettingsBeadoctorController = Em.ObjectController.extend({
+
+});
