@@ -10,6 +10,8 @@ from annoying.functions import get_object_or_None
 from common.decorators import require_login_as
 from notifications.models import NotificationToIgnore
 from common.stripefunctions import *
+from common.models import Profile
+import re
 
 import ipdb
 
@@ -19,10 +21,20 @@ def home(request):
 
 def users_endpoint(request, user_id):
     profile = request.user
-
+    response = {}
     if not profile.is_authenticated():
         return unauthenticated_user()
 
+    if request.method == 'GET':
+        response = fetch_user(profile)
+    elif request.method == 'PUT':
+        data = simplejson.load(request)['user']
+        response = save_user(profile, data)
+
+
+    return json_result(response)
+
+def fetch_user(profile):
     user = {}
     user['id'] = profile.id
     user['nickname'] = profile.nickname
@@ -34,13 +46,33 @@ def users_endpoint(request, user_id):
     roles = get_roles(profile)
     user['roles'] =  [r['id'] for r in roles]
 
-    return json_result({
+    return {
         "user":user,
         "roles": roles
-        })
+        }
+
+def save_user(profile, data):
+    email = data['email'].lower()
+    email_reg = re.compile('.+\@.+\..+')
+    match = email_reg.match(email)
+
+    # you couldn't have hit this endpoint with an invalid email
+    # unless you are manually posting to it... uh oh
+    if not match:
+        raise
+    
+    # I should do this nicer, but I'm not going to now
+    if Profile.objects.filter(email=email).exclude(id=profile.id).count() > 0:
+        raise
+
+    profile.email = email
+    # TODO Email the user when they change their password!
+    profile.save()
+    # I'm intentionally not returning anything, sending back nothing is just as cool
+    # as sending back something, in fact it's easier
 
 def unauthenticated_user():
-    user = {
+    useru  = {
             'id': -1,
             'nickname': 'visitor',
             'email': 'email',
