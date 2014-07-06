@@ -1,4 +1,6 @@
 Pd.SettingsStripeCallbackController = Em.ObjectController.extend({
+  needs:'settings',
+  user: Em.computed.alias('controllers.settings.model'),
   step1: 'Pending',
   step2: 'Pending',
   showLoader:true,
@@ -11,7 +13,8 @@ Pd.SettingsStripeCallbackController = Em.ObjectController.extend({
     this.set('step1', 'Doing');
 
     postTo('/api/hookup_stripe', this.get('model'), 
-      function(){
+      function(response){
+        self.set('user.stripe_user', response.stripe_user);
         self.set('step1', 'Done');
         self.complete();
       },

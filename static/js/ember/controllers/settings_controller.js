@@ -32,10 +32,19 @@ Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
 
 Pd.SettingsPaymentsController = Em.ObjectController.extend({
   stripeUrl: function(){
-    var qp = {
+    var nick = this.get('nickname'),
+        base = location.protocol + '//' + location.host,
+        url = base + '/doctor_profile/' + nick,
+        qp = {
       client_id: stripeClientId,
       response_type: 'code',
-      scope: 'read_write'
+      scope: 'read_write',
+      stripe_user:{
+        email: this.get('email'),
+        url: url,
+        product_category:'art_and_graphic_design',
+        product_description:'Image editing'
+      }
     };
     return Pd.stripe_oauth + "?" + $.param(qp);
   }.property()

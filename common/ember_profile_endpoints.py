@@ -259,6 +259,13 @@ def hookup_stripe(request):
             json = resp.json()
             if json.get('access_token'):
                 connect_stripe_connect_account(user, json)
-                result = { 'success' : True}
+                result = { 
+                        'success' : True,
+                        'stripe_user' : user.stripe_connect.stripe_user_id
+                        }
+
+    # create a kinder response
+    if not result['success']:
+        raise
 
     return json_result(result)
