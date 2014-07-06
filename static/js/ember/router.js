@@ -33,7 +33,7 @@ Pd.Router.map(function(){
     this.route('emailConfig');
     this.route('roles');
     this.route('creditcards');
-    this.route('financials');
+    this.route('payments');
     this.route('stripeCallback');
   });
 });

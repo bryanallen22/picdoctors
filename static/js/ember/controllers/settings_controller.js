@@ -30,7 +30,7 @@ Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
   }
 });
 
-Pd.SettingsFinancialsController = Em.Controller.extend({
+Pd.SettingsPaymentsController = Em.ObjectController.extend({
   stripeUrl: function(){
     var qp = {
       client_id: stripeClientId,
