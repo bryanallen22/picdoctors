@@ -86,12 +86,15 @@ def album(request, album_id):
             'is_owner'          : (profile == job.skaa),
             'can_view_comments' : can_view_comments,
             'groupings'         : groupings,
+            'job_status'        : job.get_status_display(),
+            'needs_moderation'  : job.status == Job.MODERATOR_APPROVAL_NEEDED,
             'is_public'         : album.allow_publicly,
             'shareable'         : job.status == Job.USER_ACCEPTED and job.skaa == profile,
     }
 
 #This is for a moderator to approve an album
 @require_login_as(['album_approver'])
+
 def approve_album(request):
     profile = get_profile_or_None(request)
     data = simplejson.loads(request.body)
