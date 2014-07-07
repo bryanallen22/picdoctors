@@ -43,6 +43,9 @@ def belongs_on_this_markup_page(request, album_id, sequence):
     #the user is logged in by this point
     profile = request.user
 
+    if profile.isa('admin'):
+        return True
+
     #is album owner
     if profile == album.userprofile:
         return True

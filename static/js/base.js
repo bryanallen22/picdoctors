@@ -30,6 +30,8 @@ $(function(){
 
   var users_entered_data = true;
 
+  var feedClickFunc;
+
   $("#feedback_link").click( function(e) {
     // stop it from navigating
     e.preventDefault();
@@ -50,7 +52,9 @@ $(function(){
       //console.log('setting feedback');
     }else{
       if(user_feedback!= ''){
-        setTimeout('fill_previous_feedback()', 20);
+        setTimeout(function(){
+          fill_previous_feedback();
+        }, 20);
       }
     }
 
@@ -62,9 +66,12 @@ $(function(){
       el.attr('data-original-title','We appreciate your feedback!');
     }
     el.popover('toggle');
+    $(".feedback_submit").off('click', feedClickFunc);
+    $(".feedback_submit").on('click', feedClickFunc);
   });
 
-  $(".feedback_submit").on('click', function() {
+
+  feedClickFunc = function(){
     //console.log('submit_feedback');
     var cur_input = $('#feedback_textarea');
     var cur_from = $('#feedback_from_textarea');
@@ -78,11 +85,11 @@ $(function(){
 
       var json_data = JSON.stringify(
         {
-          "from_whom" : from_feedback,
-          "user_feedback" : user_feedback,
-        }
+        "from_whom" : from_feedback,
+        "user_feedback" : user_feedback,
+      }
       );
-        
+
       current_popup_state += 1;
       var popup_state_when_posted = current_popup_state;
       $.ajax({
@@ -102,11 +109,19 @@ $(function(){
           }
         },
       });
-      
+
       user_feedback = '';
       //I'm fine with not clearing the from field
     }
-  });
+  };
+
+  function validPopupState(popup_state_when_posted){
+    // If they've started to send another message or something, we don't interrupt
+    var goodState = popup_state_when_posted == current_popup_state;
+    if(!goodState) Pd.Logger.timestamp('Popup state no longer valid, current: ' + current_popup_state + ' posted state: ' + popup_state_when_posted );
+    return goodState;
+
+  }
 
   function fill_previous_feedback(){
     //console.log('fill_previous_feedback');
@@ -149,16 +164,8 @@ $(function(){
     setTimeout(delayed_show, 150, popup_state_when_posted);
     setTimeout(delayed_hide, 6000, popup_state_when_posted);
   }
-
-  function validPopupState(popup_state_when_posted){
-    // If they've started to send another message or something, we don't interrupt
-    var goodState = popup_state_when_posted == current_popup_state;
-    if(!goodState) Logger.timestamp('Popup state no longer valid, current: ' + current_popup_state + ' posted state: ' + popup_state_when_posted );
-    return goodState;
-
-  }
-
 });
+
 
 
 /*
@@ -179,20 +186,20 @@ $(function(){
   }
 
   $("#cart_link").click( function(e) {
-      var el = $(this);
-      var template = $('#cart_form').html().trim();
-      //el.attr('data-set', users_entered_data);
-      el.attr('data-content', template);
-      el.attr('data-original-title','Pictures in your cart');
-      el.popover('toggle');
+    var el = $(this);
+    var template = $('#cart_form').html().trim();
+    //el.attr('data-set', users_entered_data);
+    el.attr('data-content', template);
+    el.attr('data-original-title','Pictures in your cart');
+    el.popover('toggle');
 
-      // Now we've got the popover created. We just need to call the provided URL and asynchronously load some masonry
-      var url = $("#cart_link").attr('album-pics-url')
-      $.getJSON( url, function( json ) {
-        create_cart(json.url, json.pics);
-      });
-      // stop it from navigating to the href
-      e.preventDefault();
+    // Now we've got the popover created. We just need to call the provided URL and asynchronously load some masonry
+    var url = $("#cart_link").attr('album-pics-url')
+    $.getJSON( url, function( json ) {
+      create_cart(json.url, json.pics);
+    });
+    // stop it from navigating to the href
+    e.preventDefault();
   });
 
 
@@ -204,8 +211,8 @@ $(function(){
 $(function(){
   $('#clearAllNotifications').on('click', function(){
     var notifications = $('.notification-class'),
-        top = $(notifications[0]).data('notification_id'),
-        call;
+    top = $(notifications[0]).data('notification_id'),
+    call;
 
     call = $.ajax('/clear_notifications/' + top);
     call.done(function(results){
@@ -219,7 +226,7 @@ $(function(){
     });
 
     call.fail(function(){
-        alert('an error has occurred');
+      alert('an error has occurred');
     });
   });
 });

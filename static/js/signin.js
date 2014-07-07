@@ -4,6 +4,17 @@ $(function(){
   if( $("#signin").length > 0 ) {
     var checkNickName = true;
 
+    function haveChecked(){
+      // They already have an account
+      checkNickName = false;
+      $("#confirm_password").hide();
+      $("#nickname").hide();
+      $("#nickname-info").hide();
+      $('#nickErrorParent').hide();
+      $("#tos").hide();
+      $("#btnsubmit").removeAttr('disabled');
+    }
+
     /* If the radio button says they've got an account, hide the confirm password
      * button. This shouldn't normally be necessary, but if they hit the back button
      * or something it can be checked. */
@@ -26,17 +37,6 @@ $(function(){
       }
     });
 
-    function haveChecked(){
-      // They already have an account
-      checkNickName = false;
-      $("#confirm_password").hide();
-      $("#nickname").hide();
-      $("#nickname-info").hide();
-      $('#nickErrorParent').hide();
-      $("#tos").hide();
-      $("#btnsubmit").removeAttr('disabled');
-    }
-
     var disableAutoNickName = false;
 
     $('#email').keyup(function(){
@@ -45,15 +45,6 @@ $(function(){
       if(!disableAutoNickName){
         $('#nickname').val(getValidNickName($(this).val()));
       }
-    });
-
-    $('#nickname').keyup(function(){
-      if(!checkNickName) return;
-
-      Logger.timestamp('nickname keyup', 5); 
-      // disable auto nickname when they've entered the field and the length > 0
-      disableAutoNickName = $(this).val().length > 0;
-      checkValidNickName(false);
     });
 
     var onChange = function(){
@@ -76,7 +67,7 @@ $(function(){
       var clean_str = '';
       for (var i = 0, len = dirty.length; i < len; i++) {
         if(valid_chars.indexOf(dirty[i])>=0){
-          clean_str += dirty[i];   
+          clean_str += dirty[i];
         }
       }
       return clean_str.substring(0,32);

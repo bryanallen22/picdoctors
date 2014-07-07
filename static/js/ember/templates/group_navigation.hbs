@@ -5,13 +5,18 @@
   <!-- on narrow monitors -->
   <div id="buttons" style='position:static; width:130px; margin-left: 20px;'>
 
-    <a class='btn btn-primary btn-large workflow-buttons top-navigation-button' {{action 'previous'}}>{{previousLabel}}</a>
+    <a class='btn btn-primary btn-large workflow-buttons top-navigation-button' {{action 'previous'}}>
+        <div class="advance_arrow mirror">&#x279e;</div>
+        {{previousLabel}}
+    </a>
     {{#unless sameButtons}}
-    <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>{{nextLabel}}</a>
+    <a class='btn btn-primary btn-large workflow-buttons bottom-navigation-button' {{action 'next'}}>
+        {{nextLabel}}
+        <div class="advance_arrow">&#x279e;</div>
+    </a>
     {{/unless}}
     {{#if showHelp}}
       <a class='btn btn-info btn-large workflow-buttons bottom-navigation-button' {{action 'helpMe'}}>Help Me</a>
-      
     {{/if}}
     {{#if albumDoctor}}
     <form id="fake_form_for_reset">

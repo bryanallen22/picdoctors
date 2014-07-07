@@ -97,6 +97,9 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
     # For the doctor
     stripe_connect              = models.ForeignKey(StripeConnect, blank=True, null=True, default=None)
 
+    # Fixed doctor payout
+    # I promised a few people (Jared/others) that they could have a fixed payout amount
+    fixed_payout_pct            = models.FloatField(default=0.0)
 
     def get_full_name(self):
         # The user is identified by their email address
@@ -357,7 +360,7 @@ class Pic(DeleteMixin):
 
     @staticmethod
     def get_group_pics(group):
-        return Pic.objects.filter(group=group)
+        return Pic.objects.filter(group=group).order_by('created')
 
 
 ################################################################################

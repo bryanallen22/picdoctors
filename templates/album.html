@@ -11,8 +11,12 @@
   </div>
   <div class='span5'>
     {% if perms.common.album_approver %}
+      {% if needs_moderation %}
     <button class="btn btn_approve_all btn-large btn-primary" type="button">Approve Album</button>
     <a href="{% url 'mod_reject_work' job_id %}" class="btn btn_reject_all btn-large btn-primary" type="button">Reject Album</a>
+      {% else %}
+        <div class='alert alert-info'> Moderator - Job Status: {{job_status}}</div>
+      {% endif %}
     {% endif %}
   </div>
   <div class='span2'>

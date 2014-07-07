@@ -91,6 +91,7 @@ def can_modify_pic(request, pic):
 
 def pics_endpoint(request, pic_id=None):
     # POST /pics_endpoint/ -- add pic description
+    result = {}
     if request.method == 'PUT':
         data = simplejson.loads(request.body)
         data = data['pic']

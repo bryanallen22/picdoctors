@@ -71,7 +71,6 @@ Pd.EditablePicView = Ember.View.extend({
 
   move: function(e){
 
-    console.log('move');
     var img = this.get('picSpan'),
     img_offset = img.offset(),
     newMarkup = this.get('newMarkup');

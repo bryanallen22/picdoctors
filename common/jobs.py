@@ -28,6 +28,7 @@ class JobInfo:
         self.doctor_payout = ''
         self.job_worth = ''
         self.show_links = False
+        self.tier = ''
 
 # dictify everything for jsoning
     def to_dict(self):
@@ -127,8 +128,10 @@ def fill_job_info(job, action_generator, profile):
     if job.doctor:
         #pull price from what we promised them
         job_inf.doctor_payout = job.payout_price_cents
+        # get the tier
+        _, job_inf.tier = calculate_job_payout(job, profile)
     else:
-        job_inf.doctor_payout = calculate_job_payout(job, profile)
+        job_inf.doctor_payout, job_inf.tier = calculate_job_payout(job, profile)
 
     job_complete = job.status == Job.USER_ACCEPTED
 

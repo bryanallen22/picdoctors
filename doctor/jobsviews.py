@@ -70,7 +70,7 @@ def new_job_page(request, page=1):
         now =  get_datetime()
         seven_days_ago = now - timedelta(days=6, hours=23)
 
-        jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).filter(stripe_job__created__gte=seven_days_ago)
+        jobs = Job.objects.filter(doctor__isnull=True).exclude(ignore_last_doctor=profile).exclude(status=Job.REFUND).filter(stripe_job__created__gte=seven_days_ago)
     else:
         return redirect( reverse('permission_denied') )
 
@@ -84,7 +84,7 @@ def new_job_page(request, page=1):
             'cur_page'         : page,
             'reverser'         : 'new_job_page_with_page',
             'doc_page'         : True,
-            'title'            : 'Available Jobs'
+            'title'            : 'Available Jobs',
     }
 
 #get and fill up possible actions based on the status of this job
@@ -170,7 +170,7 @@ def apply_for_job(request):
                     # Try to place an uncaptured charge on the user's card
 
                     hold_successful = False
-                    doc_payout_price = calculate_job_payout(job, profile)
+                    doc_payout_price, _ = calculate_job_payout(job, profile)
                     try:
                         stripe_create_hold(job, profile, doc_payout_price)
                         hold_successful = True

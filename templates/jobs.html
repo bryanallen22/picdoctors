@@ -42,7 +42,7 @@
     <div class="row job_header_row lead">
     {% if doc_page %}
       <div class="span1">
-        Job 
+        Job
       </div>
       <div class="span2">
         Pictures
@@ -61,7 +61,7 @@
       </div>
     {% else %}
       <div class="span1">
-        Job 
+        Job
       </div>
       <div class="span2">
         Pictures
@@ -73,7 +73,7 @@
         Status
       </div>
       <div class="span2">
-        &nbsp; 
+        &nbsp;
       </div>
       <div  class="span2">
         Actions
@@ -86,7 +86,7 @@
     <div id='jobs_rows'>
 
     </div>
-        
+
     <div class="pagination pagination-centered">
       <ul>
         {% for i in num_pages %}
@@ -98,6 +98,12 @@
         {% endfor %}
       </ul>
     </div>
+    {% if doc_page %}
+    <div class='alert alert-info'>
+      We've currently disabled advertising while we switch payment providers, so you aren't likely to find many jobs in here.
+      We hope to be back online by the 6th of July.
+    </div>
+    {% endif %}
   </div>
 {% endblock %}
 
@@ -117,7 +123,7 @@
     });
   </script>
   <script type="text/template" id="redirect_template">
-    You will be automatically redirected to <%=view%> in <%=time_left%> second(s).  
+    You will be automatically redirected to <%=view%> in <%=time_left%> second(s).
   </script>
   <script type="text/template" id="redirect_buttons_template">
         <a class="btn action_button" id="action_button" href="<%= href %>"><%= text %></a>
@@ -132,7 +138,7 @@
           <!-- Carousel items -->
           <div class="carousel-inner pic_carousel">
             <% _.each( pic_thumbs, function( pic ){  %>
-            <div class="item"> 
+            <div class="item">
               <a href="<%= pic[1]%>">
                 <img src="<%= pic[0] %>" class="pic_carousel" alt="">
               </a>
@@ -190,7 +196,7 @@
           <!-- Carousel items -->
           <div class="carousel-inner pic_carousel">
             <% _.each( pic_thumbs, function( pic ){  %>
-            <div class="item"> 
+            <div class="item">
           <% if (show_links) { %>
               <a href="<%= pic[1]%>">
           <% } %>
@@ -207,8 +213,8 @@
         <%= output_pic_count %> output picture<%="".pluralize(output_pic_count)%>
       </div>
       <div class="span2 text-success">
-        <em>Job Value: $<%= (job_worth/100).toFixed(2) %> <br /></em>
-        <strong>Payout: $<%= (doctor_payout/100).toFixed(2) %> </strong>        
+        {#<em>Job Value: $<%= (job_worth/100).toFixed(2) %> <br /></em>#}
+        <strong><%= tier %> Pay: $<%= (doctor_payout/100).toFixed(2) %> </strong>
       </div>
       <div class="span3">
         <%= status %>
@@ -234,6 +240,6 @@
         </div>
         <% } %>
     </div>
-  </script>  
+  </script>
 {% endblock %}
 
