@@ -548,7 +548,9 @@ def setup_packages():
         #sudo('npm install -g uglify-js -y -q') # Used by bootstrap
         #sudo('npm install -g jshint -y -q')
 
-    venv_run_user('npm install yuglify -y -q', cfg) # install in project root, run as www-data
+    with cd(cfg.code_dir):
+        sudo('npm install yuglify -y -q')
+        sudo('chown -R %s:%s %s/node_modules' % (cfg.deploy_user, cfg.deploy_user, cfg.code_dir))
 
     # Create django log
     sudo('mkdir -p /var/log/django')
@@ -557,6 +559,7 @@ def setup_packages():
     sudo('chown %s:%s /var/log/django/picdoctors.log' % (cfg.deploy_user, cfg.deploy_user))
     sudo('chmod 664 /var/log/django/picdoctors.log')
 
+@task
 def collect_static():
     deploy_type = get_deploy_type(env.host_string)
     cfg = get_config(deploy_type)
