@@ -521,11 +521,10 @@
   display: block;
   margin-left: 40px;
 }
-#markup_app #instructions {
-  /* Picture is 800 px wide. The margins on the well are 19px.
-       762 + 19*2 = 800 */
-  width: 762px;
+#markup_app .header_instructions {
+  width: 800px;
   text-align: center;
+  padding: 0px;
 }
 .workflow-buttons {
   display: block;
@@ -1135,4 +1134,12 @@ a.ember-view.active {
 }
 .width15 {
   width: 15px;
+}
+.no-select {
+  /* Don't allow accidental selection */
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
