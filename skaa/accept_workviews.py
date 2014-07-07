@@ -7,11 +7,9 @@ from django.contrib.auth.models import User
 from annoying.decorators import render_to
 from annoying.functions import get_object_or_None
 from common.functions import get_profile_or_None, get_datetime
-from common.balancedfunctions import get_merchant_account
 
 from common.models import Album, Group, Job, DocRating
 from common.jobs import send_job_status_change
-from common.balancedfunctions import *
 from common.decorators import require_login_as
 from common.stripefunctions import stripe_capture_hold
 

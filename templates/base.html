@@ -33,9 +33,9 @@
       var picDocStaticUrl = "{{ STATIC_URL }}";
       var stripeClientId = "{{ request.STRIPE_CLIENT_ID }}";
       {% if request.IS_PRODUCTION%}
-      var picDocProduction = true;  
+      var picDocProduction = true;
       {% else %}
-      var picDocProduction = false;  
+      var picDocProduction = false;
       {% endif %}
     </script>
 
@@ -60,7 +60,7 @@
               <li><a href="{% url 'doc_faq' %}"><i class="icon-info-sign"></i> Doctor FAQ</a></li>
               {% endif %}
               <li><a id='feedback_link'
-                     class="feedback" 
+                     class="feedback"
                      data-original-title="Enter your feedback:"
                      rel="popover"
                      data-placement="bottom"
@@ -71,7 +71,7 @@
               {% if request.has_cart %}
               <li id="cart_li">
                 <a id='cart_link'
-                   class="cart" 
+                   class="cart"
                    data-original-title="Pictures in your cart:"
                    rel="popover"
                    data-placement="bottom"
@@ -113,10 +113,10 @@
                       {% if perms.common.doctor %}
                         <li><a href="{% url 'new_job_page' %}"><i class="icon-star"></i> Available (Market)</a></li>
                         <li><a href="{% url 'doc_job_page' %}"><i class="icon-tasks"></i> To Do (Doctor)</a></li>
-                      {% endif %} 
+                      {% endif %}
                       {% if perms.common.skaa %}
                         <li><a href="{% url 'job_page' %}"><i class="icon-tasks"></i> Mine (End User)</a></li>
-                      {% endif %} 
+                      {% endif %}
                       {% if perms.common.album_approver %}
                         <li><a href="{% url 'album_approval_page' %}"><i class="icon-lock"></i> Needing Approval</a></li>
                       {% endif %}
@@ -136,7 +136,7 @@
                     {% if request.new_notification_cnt > 0 %}
                       <li class='clearAllNotifications'><a href="#" id='clearAllNotifications'>Mark all as read</a></li>
                     {% endif %}
-                      
+
                   {% for n in request.notifications %}
                     {% if n.viewed %}
                     <li><a class='notification-class' data-notification_id='{{n.id}}' href="{% url 'notification_redirecter' n.id %}">{{n.description}}</a></li>
@@ -151,17 +151,13 @@
                 <li class="dropdown">
                   <a class="dropdown-toggle"
                      data-toggle="dropdown"
-                     href="#" 
+                     href="#"
                      title='{{user.nickname}}'>
                       <i class="icon-user"></i> {{user.nickname|truncatechars:10}}
                       <b class="caret"></b>
                     </a>
                   <ul class="dropdown-menu">
-                    {% if perms.common.doctor %}
-                    <li><a href="{% url 'withdraw' %}"><i class="icon-shopping-cart"></i> Withdraw Earnings</a></li>
-                    {% endif %}
-                    <li><a href="{% url 'account_settings' %}"><i class="icon-cog"></i> Account Settings</a></li>
-                    <li><a href="{% ember_url 'account_settings' %}"><i class="icon-cog"></i> Account Settings (New)</a></li>
+                    <li><a href="{% ember_url 'account_settings' %}"><i class="icon-cog"></i> Account Settings</a></li>
                     <li><a href="{% url 'signout' %}"><i class="icon-user"></i> Log Out</a></li>
                   </ul>
                 </li>
@@ -199,7 +195,7 @@
 
     {% block scripts %}
     {% endblock %}
-    
+
     {% load staticfiles %}
     {% load compress %}
 

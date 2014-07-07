@@ -12,7 +12,6 @@ from common.functions import json_result
 from common.functions import get_profile_or_None
 
 from common.models import Album, Profile
-from common.account_settings_views import legit_password
 from doctor.jobsviews import doc_job_page
 from skaa.progressbarviews import get_progressbar_vars, show_progressbar_on_login_page
 from views import index
@@ -24,6 +23,15 @@ import ipdb
 import logging; log = logging.getLogger('pd')
 import datetime
 import settings
+
+def legit_password(password):
+    if settings.IS_PRODUCTION:
+        if len(password) > 7:
+            return True
+    else: # for non production we need at least 1 character
+        if len(password) > 0:
+            return True
+    return False
 
 def create_skaa(request, user):
     user.add_permission('skaa')

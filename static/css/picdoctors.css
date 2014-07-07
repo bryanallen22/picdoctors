@@ -944,36 +944,6 @@
   margin: 9px 5px 0px 5px;
 }
 /****************************************************************
- * Account settings
- ***************************************************************/
-#account_settings #pic-form .doc_profile_pic {
-  border: 4px #999999;
-  border-style: solid;
-  border-radius: 6px;
-  display: block;
-}
-#account_settings #pic-form #doc_profile_desc {
-  width: 360px;
-  max-width: 360px;
-  display: block;
-}
-#account_settings #pic-form #doc_profile_submit {
-  margin-top: 20px;
-}
-#account_settings #pic-form #doc_pic_control {
-  margin-bottom: 0px;
-}
-#account_settings #pic-form #prof_link {
-  padding-top: 5px;
-}
-#account_settings #profile-form .nickname {
-  text-align: left;
-  cursor: auto;
-}
-#account_settings #profile-form .email-group {
-  margin-bottom: 10px;
-}
-/****************************************************************
  * Doctor Profile Page
  ***************************************************************/
 #doctor_profile .album_link {

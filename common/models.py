@@ -138,9 +138,6 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
         self.approval_count = Job.objects.filter(doctor=profile).filter(status=Job.USER_ACCEPTED).count()
         self.save()
 
-    def can_view_jobs(self, request, profile):
-        return self.is_merchant() and self.has_bank_account()
-
     def get_approval_count(self, invalidate=False):
         """
         Return the number of approved pictures in the last <x> days (currently 30)
@@ -167,18 +164,6 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
             self.save()
 
         return self.approval_pic_count
-
-    # is this person a merchant?  I'm contemplating ripping this out and adding as a permission
-    def is_merchant(self):
-        from common.balancedfunctions import is_merchant, get_merchant_account
-        merchant_account = get_merchant_account(None, self)
-        return is_merchant(merchant_account)
-
-    def has_bank_account(self):
-        from common.balancedfunctions import has_bank_account, get_merchant_account
-        merchant_account = get_merchant_account(None, self)
-        return has_bank_account(merchant_account)
-
 
 
 ################################################################################

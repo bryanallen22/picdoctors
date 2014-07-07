@@ -1,14 +1,11 @@
 from django.conf.urls import patterns, include, url
 
-from doctor.account_settings_views import create_bank_account, delete_bank_account, merchant_info
 from doctor.homeviews import doc_home
 from doctor.jobsviews import doc_job_page, new_job_page, apply_for_job
 from doctor.jobsviews import mark_job_completed, quit_job, quit_job_endpoint
 from doctor.jobpricetoolowviews import job_price_too_low
-from doctor.withdrawviews import withdraw
 from doctor.doctorprofileviews import doctor_profile
 from doctor.faqviews import doc_faq
-from common.balancedfunctions import redirect_create_merchant
 
 from skaa.uploadviews import doc_upload_handler
 
@@ -28,16 +25,9 @@ urlpatterns = patterns('',
     url(r'^doc_upload_handler/$',                       doc_upload_handler,  name='doc_upload_handler'),
     url(r'^mark_job_completed/$',                       mark_job_completed,  name='mark_job_completed'),
     url(r'^doc_home/$',                                 doc_home,            name='doc_home'),
-    url(r'^create_bank_account/$',                      create_bank_account, name='create_bank_account'),
-    url(r'^delete_bank_account/$',                      delete_bank_account, name='delete_bank_account'),
-    url(r'^merchant_info/$',                            merchant_info,       name='merchant_info'),
-    url(r'^withdraw/$',                                 withdraw,            name='withdraw'),
     url(r'^quit_job/(?P<job_id>\d+)/$',                 quit_job,            name='quit_job'),
     url(r'^quit_job_endpoint/$',                        quit_job_endpoint,   name='quit_job_endpoint'),
     url(r'^doctor_profile/(?P<nickname>.+)/',           doctor_profile,      name='doctor_profile'),
     #email_address=daniel%2Bd4%40picdoctors.com&merchant_uri=%2Fv1%2Fmerchants%2FMR16oahM8RfPpm9oC5ZVaQ0X#bank_tab
-    url(r'^redirect_create_merchant',
-           redirect_create_merchant,
-           name='redirect_create_merchant'),
 )
 
