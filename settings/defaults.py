@@ -332,7 +332,7 @@ PIPELINE_YUGLIFY_BINARY = os.path.join(PROJECT_ROOT, 'node_modules/yuglify/bin/y
 PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.slimit.SlimItCompressor'
 
 PIPELINE_JS = {
-    'all_js': {
+    'pd_jslibs' : {
         'source_filenames': [
             # Paths are relative to settings.STATICFILES_DIRS!
 
@@ -357,15 +357,30 @@ PIPELINE_JS = {
             'third_party/bootstrap-tour/bootstrap-tour.min.js',
             'third_party/rating/jquery.rating.js',
             'third_party/moment/moment.min.js',
+        ],
+        'output_filename': 'compressed/pd_jslibs.js',
+    },
+
+    'ember_libs' : {
+        'source_filenames': [
+            # Paths are relative to settings.STATICFILES_DIRS!
 
             ###############
             # Ember Stuff #
             ###############
             'third_party/js/handlebars-v1.3.0.js',
             'third_party/js/handlebars-fix.js',
-            # this is the debug build, I want a way to say in debug use this
-            'third_party/js/ember.js',
+            'third_party/js/ember.js',  # BIG FAT WARNING: sometimes gets replaced with ember.prod.js -- grep for ReplaceJsFile
             'third_party/js/ember-data.js',
+        ],
+        'output_filename': 'compressed/ember_libs.js',
+    },
+
+    'pd_js': {
+        'source_filenames': [
+            # Paths are relative to settings.STATICFILES_DIRS!
+            # Further note: order_pipeline_ball below assumes that the files
+            # are relative to STATICFILES_DIRS[0]
 
             ###########
             # Our stuff
@@ -390,9 +405,34 @@ PIPELINE_JS = {
             'js/logger/*.js'
 
         ],
-        'output_filename': 'compressed/all.js',
+        'output_filename': 'compressed/pd_js.js',
     }
 }
+
+def order_pipeline_ball(ball_name, path):
+    """
+    Pipeline lets you include source files with *.js, for example.
+    It's very convenient, but the ordering of files behind the * is
+    not predictable, leading to wild deployment issues.
+
+    This manually turns turns implicit globs into an explicit order
+    
+    ball_name is the key in PIPELINE_JS above
+    path is the filesystem path which we can expand -- comes from STATICFILES_DIRS
+    """
+    import os, glob
+    explicit_list = []
+    for item in PIPELINE_JS[ball_name]['source_filenames']:
+        # glob won't expand to anything if there's no * in it
+        files = glob.glob(os.path.join(path, item))
+        # remove 'path' prefix with following '/' so paths become relative to STATICFILES_DIRS again
+        files = [ f[ len(path)+1: ] for f in files ]
+        files.sort()
+        explicit_list.extend(files)
+
+    PIPELINE_JS[ball_name]['source_filenames'] = explicit_list
+
+order_pipeline_ball('pd_js', STATICFILES_DIRS[0])
 
 HANDLEBARS_FOLDER = os.path.join(PROJECT_ROOT, 'static/js/ember/templates/')
 

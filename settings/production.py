@@ -46,6 +46,5 @@ path = os.path.join(PROJECT_ROOT, "settings/production.cfg")
 SHA = get_cfg_setting(path, "sha") # useful in stack traces
 
 #swap out debug versions of code for production releases
-ReplaceJsFile(PIPELINE_JS['all_js']['source_filenames'], 'third_party/js/ember.js','third_party/js/ember.prod.js')
-# ReplaceJsFile(PIPELINE_JS['all_js']['source_filenames'], 'third_party/js/jquery-1.11.1.js','third_party/js/jquery-1.11.1.min.js')
+ReplaceJsFile(PIPELINE_JS['ember_libs']['source_filenames'], 'third_party/js/ember.js','third_party/js/ember.prod.js')
 
