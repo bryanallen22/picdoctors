@@ -58,7 +58,7 @@ def stripe_remove_charge(job):
     if job.stripe_job.stripe_charge_id:
         ch = stripe.Charge.retrieve(
                 job.stripe_job.stripe_charge_id,
-                api_key=settings.STRIPE_SECRET_KEY) # TODO -- correct key?
+                api_key=job.doctor.stripe_connect.access_token)
         ch.refunds.create()
 
         # leave cents and the card id so it can be charged later
