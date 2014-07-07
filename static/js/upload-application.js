@@ -60,7 +60,7 @@ $(function () {
       downloadTemplate: $('#template-download'),
       dataType: 'json',
       add: function(e, data){
-        Pd.Logger.timestamp('Adding image: ' + data.files[0].name, 5);
+        Logger.timestamp('Adding image: ' + data.files[0].name, 5);
         var that = UploadHelper.getFileUpload(this);
         data.isValid = UploadHelper.validate(data.files);
 
@@ -86,7 +86,7 @@ $(function () {
         if (!data.isValid) {
           return false;
         }
-        Pd.Logger.timestamp('Sending image: ' + data.files[0].name, 5);
+        Logger.timestamp('Sending image: ' + data.files[0].name, 5);
         if (data.context && data.dataType &&
             data.dataType.substr(0, 6) === 'iframe') {
         // Iframe Transport does not support progress events.
@@ -114,7 +114,7 @@ $(function () {
               $(this).detach();
             }
             else {
-              Pd.Logger.timestamp('Sent image: ' + file.name, 5);
+              Logger.timestamp('Sent image: ' + file.name, 5);
               /******************************/
               /* ballen -- isotope gets upset when I swap the entire
                * element out, so I just swap out the stuff below the parent element */

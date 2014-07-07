@@ -357,6 +357,7 @@ PIPELINE_JS = {
             'third_party/bootstrap-tour/bootstrap-tour.min.js',
             'third_party/rating/jquery.rating.js',
             'third_party/moment/moment.min.js',
+            'js/logger/logger.js',
         ],
         'output_filename': 'compressed/pd_jslibs.js',
     },
@@ -387,6 +388,15 @@ PIPELINE_JS = {
             ###########
             'js/*.js',
 
+        ],
+        'output_filename': 'compressed/pd_js.js',
+    },
+    'pd_ember_js': {
+        'source_filenames': [
+            # Paths are relative to settings.STATICFILES_DIRS!
+            # Further note: order_pipeline_ball below assumes that the files
+            # are relative to STATICFILES_DIRS[0]
+
             ###################
             # Our Ember Stuff #
             ###################
@@ -399,13 +409,8 @@ PIPELINE_JS = {
             'js/ember/controllers/*.js',
             'js/ember/views/*.js',
 
-            ##########
-            # Logger #
-            ##########
-            'js/logger/*.js'
-
         ],
-        'output_filename': 'compressed/pd_js.js',
+        'output_filename': 'compressed/pd_ember_js.js',
     }
 }
 

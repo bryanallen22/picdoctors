@@ -5,7 +5,7 @@ $(function(){
     if(url) {
       var im = new Image();
       im.src = url;
-      Pd.Logger.timestamp('Prefetching image: ' + url);
+      Logger.timestamp('Prefetching image: ' + url);
     }
   }
 

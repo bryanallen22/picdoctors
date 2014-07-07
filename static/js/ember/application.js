@@ -6,6 +6,7 @@ window.Pd = Pd = Ember.Application.create({
   token: $('input[name="csrfmiddlewaretoken"]').val(),
   stripe_oauth:'https://connect.stripe.com/oauth/authorize',
   href: window.location.href,
+  Logger: Logger,
   getQueryParams: function()
   {
     if(this.queryParams){

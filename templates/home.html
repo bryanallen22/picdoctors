@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 
+{% load compressed %}
+
+
 {% block main %}
+
 
 <div id="ember-container"></div>
 
 {% endblock %}
 
+
 {% block scripts %}
-
+  {% compressed_js 'ember_libs' %}
+  {% compressed_js 'pd_ember_js' %}
 {% endblock %}
-

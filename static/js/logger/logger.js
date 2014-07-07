@@ -1,12 +1,12 @@
 ﻿  /**
-  @Object Pd.Logger
+  @Object Logger
   
   Dependencies: 
     JQuery and console existing (Open the dev tools in ie8)
     Meta Element <meta name="pdlog" id="pdlog" content="true">
 
   **/
-Pd.Logger = {
+Logger = {
 
   _on: null,
 

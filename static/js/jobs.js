@@ -110,7 +110,7 @@ $(function(){
       var postback_url = $(event.target).attr('postback_url');
       var redir_val = $(event.target).attr('redir').toLowerCase();
 
-      Pd.Logger.timestamp('execute dynamic action ' + postback_url); 
+      Logger.timestamp('execute dynamic action ' + postback_url); 
 
       if(redir_val == 'true') {
         location.href = postback_url;

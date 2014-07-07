@@ -153,7 +153,7 @@ $(function(){
   function validPopupState(popup_state_when_posted){
     // If they've started to send another message or something, we don't interrupt
     var goodState = popup_state_when_posted == current_popup_state;
-    if(!goodState) Pd.Logger.timestamp('Popup state no longer valid, current: ' + current_popup_state + ' posted state: ' + popup_state_when_posted );
+    if(!goodState) Logger.timestamp('Popup state no longer valid, current: ' + current_popup_state + ' posted state: ' + popup_state_when_posted );
     return goodState;
 
   }

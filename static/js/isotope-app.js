@@ -14,9 +14,9 @@ var BorderGroups = (function ($) {
 
   function _dumpBorders( borders ) {
     for( var groupId in borders) {
-      Pd.Logger.timestamp("borders[" + groupId.toString() + "]:");
+      Logger.timestamp("borders[" + groupId.toString() + "]:");
       for( var key in borders[groupId]) {
-        Pd.Logger.timestamp("  " + key + " : " + borders[groupId][key]);
+        Logger.timestamp("  " + key + " : " + borders[groupId][key]);
       }
     }
   }
@@ -419,7 +419,7 @@ $(function(){
       }
       else
         {
-          Pd.Logger.timestamp("Can't delete without uuid! This be baaad.");
+          Logger.timestamp("Can't delete without uuid! This be baaad.");
         }
 
         // Client side removal

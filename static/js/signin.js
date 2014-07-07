@@ -50,7 +50,7 @@ $(function(){
     $('#nickname').keyup(function(){
       if(!checkNickName) return;
 
-      Pd.Logger.timestamp('nickname keyup', 5); 
+      Logger.timestamp('nickname keyup', 5); 
       // disable auto nickname when they've entered the field and the length > 0
       disableAutoNickName = $(this).val().length > 0;
       checkValidNickName(false);
@@ -59,7 +59,7 @@ $(function(){
     var onChange = function(){
       if(!checkNickName) return;
 
-      Pd.Logger.timestamp('email/nickname change', 5); 
+      Logger.timestamp('email/nickname change', 5); 
       trimNick();
       checkValidNickName(true);
     };
@@ -89,7 +89,7 @@ $(function(){
     }
 
     function checkValidNickName(postBack){
-      Pd.Logger.timestamp('check valid nickname', 5); 
+      Logger.timestamp('check valid nickname', 5); 
       // We don't validate when we're signing in again
       var el = $('#nickname'),
           errorParent = $('#nickErrorParent'),
@@ -104,7 +104,7 @@ $(function(){
       }
 
       if(cleanNick!=nick || nick.length == 0){
-        Pd.Logger.timestamp('nick already failed test', 5); 
+        Logger.timestamp('nick already failed test', 5); 
         errorDiv.html("Your nickname is invalid<br/>" + validHtml);
         errorParent.show();
         btn.attr('disabled', 'disabled');
@@ -119,7 +119,7 @@ $(function(){
       }
 
       if(postBack){
-        Pd.Logger.timestamp('post nick name', 5); 
+        Logger.timestamp('post nick name', 5); 
         var obj = {
           'nickname'    : nick,
         };
@@ -144,7 +144,7 @@ $(function(){
       errorParent.hide();
 
       if(data.success){
-        Pd.Logger.timestamp('nick name is good', 5); 
+        Logger.timestamp('nick name is good', 5); 
         btn.removeAttr('disabled');
 
       } else {
