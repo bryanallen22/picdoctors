@@ -170,8 +170,9 @@ def apply_for_job(request):
                     # Try to place an uncaptured charge on the user's card
 
                     hold_successful = False
+                    doc_payout_price = calculate_job_payout(job, profile)
                     try:
-                        stripe_create_hold(job, profile)
+                        stripe_create_hold(job, profile, doc_payout_price)
                         hold_successful = True
                     except Exception as e:
                         log.error("Error placing hold on job %s! price=%s. message:%s" % (job.id, job.stripe_job.cents, e.message))
@@ -185,7 +186,7 @@ def apply_for_job(request):
                         # Update Job Info
                         job.doctor = profile
                         job.approved = profile.auto_approve
-                        job.payout_price_cents = calculate_job_payout(job, profile)
+                        job.payout_price_cents = doc_payout_price
                         job.status = Job.DOCTOR_ACCEPTED
                         job.save()
 

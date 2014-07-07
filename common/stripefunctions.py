@@ -76,12 +76,12 @@ def calc_transfer_fees(cents):
     """
     return int(cents * 0.029) + 30
 
-def stripe_create_hold(job, doctor):
+def stripe_create_hold(job, doctor, doc_payout_price):
     """
     Create an uncaptured hold on a card.
     """
     pd_cut = job.stripe_job.cents                         \
-             - job.payout_price_cents                     \
+             - doc_payout_price                           \
              - calc_transfer_fees(job.stripe_job.cents)
 
     # First, we have to retrieve the customer from the pd account and
