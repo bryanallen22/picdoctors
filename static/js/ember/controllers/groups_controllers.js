@@ -115,6 +115,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
   }.property('album.groups.@each.hasDocPic'),
 
   canFinishJob: Ember.computed.and('albumDoctor', 'allPicsUploaded', 'album.job.isDoctorAccepted'),
+  completeJobText:'Mark Job as Complete',
 
   setupTour: function(){
     var tour = this.get('tour');
@@ -159,13 +160,16 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
 
   actions:{
     completeJob: function(){
-      var job = this.get('album.job');
+      var job = this.get('album.job'),
+      self = this;
+      this.set('completeJobText', 'Completing...');
       $.ajax({
         type:'POST',
         url:"/mark_job_completed/",
         data:{job_id:job.get('id')}
       }).then(function(results){
         var status = Em.get(results, 'job_info.status');
+        self.set('finishedJob', true);
         if(status == 'Work Submitted, Pending Approval'){
           job.set('status', 'mod_need');
         } else if(status == 'Doctor Submitted, Pending Approval'){

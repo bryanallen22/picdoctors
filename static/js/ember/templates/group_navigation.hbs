@@ -24,8 +24,12 @@
     </form>
     {{#if canFinishJob}}
       <div class='btn btn-success btn-large workflow-buttons fileupload-addbutton bottom-navigation-button'>
-        <span {{action 'completeJob'}} id="doc_upload_text">Mark Job as Complete</span>
+        <span {{action 'completeJob'}} id="doc_upload_text">{{completeJobText}}</span>
       </div>
+    {{/if}}
+    {{#if finishedJob}}
+    <div class='alert alert-info'>Marked Complete</div>
+
     {{/if}}
 
     {{/if}}
