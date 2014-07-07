@@ -9,7 +9,7 @@
     <span class='span1'></span><div>{{ card.brand }}</div>
     <span class='span1'></span><div>XXXX-XXXX-XXXX-{{ card.last4 }}</div>
     <span class='span1'></span><div>Exp: {{card.exp_month}}/{{card.exp_year}}</div>
-    <span class='span1'></span><button class='btn btn-danger' {{action 'delete' card}}>Delete</button>
+    <span class='span1'></span><button class='btn btn-danger' {{action 'deleteCard' card}}>Delete</button>
   </div>
   {{else}}
   <div class='row'>

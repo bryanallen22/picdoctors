@@ -10,7 +10,7 @@ Pd.SettingsCreditcardsController = Ember.ArrayController.extend({
   },
 
   actions:{
-    delete: function(card){
+    deleteCard: function(card){
       var self = this;
       self.resetAlerts();
       self.set('vDeleting', true);
