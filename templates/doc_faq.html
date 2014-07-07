@@ -10,10 +10,25 @@
   <div class='row'>
     <div class='span8'>
       <a class='question'>Who can become a Pic Doctor?</a>
-      <p class='answer'>
-      Due to restrictions from our payments provider, you must be a US resident with a bank account to become
-      a Pic Doctor. We hope that this changes in the coming months!
-      </p>
+      <div class='answer'>
+        <p>Anyone in a <a href="https://stripe.com/global" target="_blank">country where you can create a Stripe account</a>. At the time of this
+        writing, that list is:</p>
+        <ul>
+          <li>United States</li>
+          <li>Australia</li>
+          <li>Belgium</li>
+          <li>Canada</li>
+          <li>Finland</li>
+          <li>France</li>
+          <li>Germany</li>
+          <li>Ireland</li>
+          <li>Luxembourg</li>
+          <li>Netherlands</li>
+          <li>Spain</li>
+          <li>United Kingdom</li>
+        </ul>
+        <p>Stripe is constantly adding more countries, so check back if your country is not listed.</p>
+      </div>
     </div>
   </div>
   <div class='row'>
@@ -28,7 +43,7 @@
     <div class='span8'>
       <a class='question'>How much am I paid?</a>
       <p class='answer'>
-      Between 50% and 70% of the total.  Your possible payout is calculated when you take a job. Two factors impact your cut:
+      Between 50% and 70% of the amount offered by the user.  Your possible payout is calculated when you take a job. Two factors impact your cut:
       </p>
       <ul class='answer'>
         <li>Number of pictures accepted by users in the last 30 days</li>
@@ -60,7 +75,7 @@
       <ul class='answer'>
         <li>Credit card processing fees (up to 18% of a total transaction)</li>
         <li>Bank transfer fees for the money that you earn</li>
-        <li>Advertising costs to supply easy work</li>
+        <li>Advertising costs to supply work</li>
         <li>Hosting costs</li>
         <li>Employee costs</li>
       </ul>
@@ -79,13 +94,15 @@
   </div>
   <div class='row'>
     <div class='span8'>
-      <a class='question'>What is a merchant account, and why do I need it?</a>
+      <a class='question'>What is a Stripe account, and why do I need it?</a>
       <p class='answer'>
-       For an in depth look at merchant accounts
-       <u><a href='http://en.wikipedia.org/wiki/Merchant_account'>view the wikipedia page here.</a></u>
-       Essentially a merchant account allows you to accept payment from a user.  This is how you as a
-       doctor will receive your payments.  It's fully integrated into our site so you don't have to
-       navigate between our site and our payment processing partner.
+      Stripe is the company that provides our payments infrastructure. Since PicDoctors is a connecting
+      users and doctors, we're subject to quite a few legal restrictions with the way we handle money.
+      Stripe makes it possible for us to handle these payments.
+
+      When you <a href="/doc_signin/?next=/home/#/settings/payments">create your Doctor account</a>
+      you'll be prompted to create a stripe account. Your PicDoctors account and your Stripe account
+      will be automatically linked together so we can send you money as soon as you are ready.
       </p>
     </div>
   </div>

@@ -8,7 +8,7 @@ PicDoctors job confirmation
 {% block plain %}
 Your job has been placed on the market!
 
-We've placed a hold on your credit card in the amount of {{ amount|currency_cents }}, but we won't charge it until you've accepted a Pic Doctor's work.
+You've declared your job to be worth {{ amount|currency_cents }}, but we won't charge your card until you've accepted a Pic Doctor's work.
 
 You can check the status of your jobs at any time at the following url:
 
@@ -20,7 +20,7 @@ Thanks for using PicDoctors!
 {% block html %}
 Your job has been placed on the market!<br/><br/>
 
-We've placed a hold on your credit card in the amount of {{ amount|currency_cents }}, but we won't charge it until you've accepted a Pic Doctor's work.<br/><br/>
+You've declared your job to be worth {{ amount|currency_cents }}, but we won't charge your card until you've accepted a Pic Doctor's work.<br/><br/>
 
 You can check the status of your jobs at any time <a href="{{ request.SITE_URL }}{{ jobs_url }}">here</a>.<br/><br/>
 

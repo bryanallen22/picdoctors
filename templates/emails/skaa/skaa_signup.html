@@ -7,7 +7,7 @@ Welcome to PicDoctors!
 {% block plain %}
 Welcome to PicDoctors, {{ profile.nickname }}!
 
-You can find out more about how the PicDoctors works here:
+We try to make PicDoctors the easiest place to get your pictures photoshopped our retouched. You can find out more about how the PicDoctors works here:
 
 {{ request.SITE_URL }}{% url 'faq' %}
 
@@ -19,7 +19,7 @@ Thanks for using PicDoctors!
 {% block html %}
 Welcome to PicDoctors, {{ profile.nickname }}!<br/><br/>
 
-You can find out more about how the PicDoctors works <a href="{{ request.SITE_URL }}{% url 'faq' %}">here</a>.<br/><br/>
+We try to make PicDoctors the easiest place to get your pictures photoshopped our retouched. You can find out more about how the PicDoctors works <a href="{{ request.SITE_URL }}{% url 'faq' %}">here</a>.<br/><br/>
 
 If you have any questions, don't hesitate to contact us. Just send it to <a href="mailto:{{ contact_email }}">{{ contact_email }}</a> or reply to this message.<br/><br/>
 
