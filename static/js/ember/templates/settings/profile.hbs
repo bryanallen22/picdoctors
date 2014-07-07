@@ -31,5 +31,18 @@
   {{#if failedSave}}
   <div class="alert alert-failure">{{failedError}}</div>
   {{/if}}
+  {{#if isDoctor}}
+    <hr>
+    <div class='form-row'>
+       <div class='form-field'>
+         Profile
+       </div>
+       <div class='form-value'>
+         You're profile can be viewed <a {{bind-attr href=doc_profile_page}}>Here</a>
+       </div>
+    </div>
+
+
+  {{/if}}
 
 </div>

@@ -32,9 +32,7 @@ Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
 
 Pd.SettingsPaymentsController = Em.ObjectController.extend({
   stripeUrl: function(){
-    var nick = this.get('nickname'),
-        base = location.protocol + '//' + location.host,
-        url = base + '/doctor_profile/' + nick,
+    var url = this.get('doc_profile_page'),
         qp = {
       client_id: stripeClientId,
       response_type: 'code',

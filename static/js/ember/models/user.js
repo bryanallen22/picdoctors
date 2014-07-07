@@ -11,4 +11,10 @@ Pd.User = DS.Model.extend({
   stripe_user:   attr(),
   isDoctor:    Ember.computed.filterBy('roles', 'name', 'doctor'),
   isUser:      Ember.computed.filterBy('roles', 'name', 'user'),
+  doc_profile_page: function(){
+    var nick = this.get('nickname'),
+        base = location.protocol + '//' + location.host,
+        url = base + '/doctor_profile/' + nick;
+    return url;
+  }.property()
 });

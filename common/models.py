@@ -94,7 +94,8 @@ class Profile(DeleteMixin, AbstractBaseUser, PermissionsMixin):
 
     stripe_customer_id          = models.CharField(max_length=255, blank=True)
 
-    stripe_connect              = models.ForeignKey(StripeConnect, blank=True, null=True)
+    # For the doctor
+    stripe_connect              = models.ForeignKey(StripeConnect, blank=True, null=True, default=None)
 
 
     def get_full_name(self):

@@ -5,7 +5,9 @@
     {{link-to 'Password' 'settings.password'}}
     {{link-to 'Email Config' 'settings.emailConfig'}}
     {{link-to 'Roles' 'settings.roles'}}
+    {{#if isUser}}
     {{link-to 'Credit Cards' 'settings.creditcards'}}
+    {{/if}}
     {{#if isDoctor}}
     {{link-to 'Payments' 'settings.payments'}}
     {{/if}}

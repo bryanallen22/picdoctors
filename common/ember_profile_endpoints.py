@@ -1,4 +1,5 @@
 from annoying.decorators import render_to
+from django.contrib.auth import authenticate
 from django.http import HttpResponse
 
 from django.utils import simplejson
@@ -272,3 +273,38 @@ def hookup_stripe(request):
         raise
 
     return json_result(result)
+
+def change_password(request):
+    profile = request.user
+    # Send them back to their current page
+    if not profile.is_authenticated():
+        raise
+
+    user = authenticate(username=request.user.email,
+                        password=request.POST['old_password'])
+
+    if user and user.is_active and user == request.user:
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+        if not legit_password(new_password):
+            result = { 'invalid_pass': True }
+        elif new_password == confirm_password:
+            user.set_password( request.POST['new_password'] )
+            user.save()
+            result = { 'success' : True }
+        else:
+            result = { 'nomatch' : True }
+    else:
+        result = { 'bad_oldpassword' : True }
+
+    response_data = simplejson.dumps(result)
+    return HttpResponse(response_data, mimetype='application/json')
+
+def legit_password(password):
+    if settings.IS_PRODUCTION:
+        if len(password) > 7:
+            return True
+    else: # for non production we need at least 1 character
+        if len(password) > 0:
+            return True
+    return False

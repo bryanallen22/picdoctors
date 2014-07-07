@@ -7,7 +7,7 @@ from common.feedbackviews import feedback
 from common.album_approvalviews import album_approval_page
 from common.howitworksviews import howitworks
 from common.account_settings_views import account_settings, account_settings_delete_card
-from common.account_settings_views import change_password, change_profile_settings
+from common.account_settings_views import change_profile_settings
 from common.account_settings_views import update_roles
 from common.permissionfunctions import permission_denied
 from common.navbarviews import async_album_info
