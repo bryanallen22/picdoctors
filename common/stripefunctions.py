@@ -69,12 +69,20 @@ def stripe_remove_charge(job):
         # has ever taken the job
         log.info("Could not remove charge from job %s. No charge to remove." % job.id)
 
+def calc_transfer_fees(cents):
+    """
+    The amount that stripe takes from a transaction. We decrease our cut
+    to compensate for this, allowing doctors to receive what we said they'd receive.
+    """
+    return int(cents * 0.029) + 30
 
 def stripe_create_hold(job, doctor):
     """
     Create an uncaptured hold on a card.
     """
-    pd_cut = job.stripe_job.cents - job.payout_price_cents
+    pd_cut = job.stripe_job.cents                         \
+             - job.payout_price_cents                     \
+             - calc_transfer_fees(job.stripe_job.cents)
 
     # First, we have to retrieve the customer from the pd account and
     # create a token with which we'll charge them on the doctor's account
