@@ -14,6 +14,7 @@ ember_urls = {
         "album_markupview": "/home/#/albums/${album_id}/markupView",
         "album_view":       "/home/#/albums/${album_id}/groups/${group_id}/pics/view",
         "account_settings": "/home/#/settings",
+        "payments_settings": "/home/#/settings/payments",
 }
 
 def get_ember_url(name, **kwargs):

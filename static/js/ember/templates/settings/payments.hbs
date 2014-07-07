@@ -23,7 +23,8 @@
 {{else}}
 
 <div class="alert alert-info">
-  In order to recieve payments for your work performed you will need to sign up for a Stripe account.  Stripe allows us to send money to you without needing to store any of your sensative information on our servers.  This protects you and your personal information. 
+  Before you can take a job we require you to have a Stripe Connect account.  Stripe allows us to connect doctors and users.  Currently Stripe Connect supports the following countries (<a href='https://support.stripe.com/questions/what-countries-does-stripe-support'>Click Here</a>). 
+   Stripe allows you to be paid without needing to store any of your sensative information on our servers.  This protects you and your personal information. 
 </div>
 <div class='form-row'>
   <a {{bind-attr href=stripeUrl}}> {{static_img 'blue_stripe.png'}}</a>

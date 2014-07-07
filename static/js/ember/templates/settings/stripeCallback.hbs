@@ -1,10 +1,16 @@
 <div class='settings-form form-650'>
   <div class='form-row'>
+    <h3>Get Excited, you're almost there...</h3>
+  </div>
+  
+  <div class='form-row'>
     <div class='form-field'>
-      <div class='alert alert-info'> Hooking up your Stripe account...</div>
+      Hooking up your Stripe account...
     </div>
     <div class='form-value'>
-      {{step1}}
+      <div class='alert alert-info width15'>
+        {{step1}}
+      </div>
     </div>
   </div>
   {{#if vError}}
@@ -15,20 +21,12 @@
   {{#if showStep2}}
   <div class='form-row'>
     <div class='form-field'>
-      <div class='alert alert-info'> Fill out your profile </div>
+      Start working jobs 
     </div>
     <div class='form-value'>
-    {{#link-to 'settings.profile' class='btn btn-info'}}Go now{{/link-to}}
-    </div>
-  </div>
-  <div class='form-row'>
-    <div class='form-field'>
-      <div class='alert alert-info'> Start working jobs </div>
-    </div>
-    <div class='form-value'>
-    <button class='btn btn-info' {{ action 'goNewJobs'}} >
-      Go now 
-    </button>
+      <button class='btn btn-info' {{ action 'goNewJobs'}} >
+        Go now 
+      </button>
     </div>
   </div>
   {{/if}}
