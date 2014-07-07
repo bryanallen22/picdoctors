@@ -679,7 +679,7 @@ class Job(DeleteMixin):
         (OUT_OF_MARKET,             'Job not taken, consider upping price' ),
         (DOCTOR_ACCEPTED,           'Doctor Accepted Job' ),
         (DOCTOR_SUBMITTED,          'Doctor Submitted Work' ),
-        (MODERATOR_APPROVAL_NEEDED, 'Work Submitted, Pending Approval' ),
+        (MODERATOR_APPROVAL_NEEDED, 'Work Submitted, Pending Moderator Approval' ),
         (USER_ACCEPTED,             'User Accepted Work' ),
         (REFUND,                    'Job Refunded' ),
     )
