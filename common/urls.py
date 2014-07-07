@@ -49,5 +49,6 @@ urlpatterns = patterns('',
     url(r'^api/SkaaLiveOn$',                            skaa_live_on,                 name='skaa_live_on'),
     url(r'^api/creditcards$',                           creditcards,                  name='creditcards'),
     url(r'^api/creditcards/(?P<card_id>.+)$',           creditcards,                  name='creditcards'),
+    url(r'^change_password/$',                          change_password,              name='change_password'),
 )
 
