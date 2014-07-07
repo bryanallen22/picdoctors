@@ -7,8 +7,7 @@
 {% endblock %}
 
 {% block plain %}
-{{ job.skaa.nickname }} has accepted job #{{ job.id }}. That means the job is now complete. {{ job.payout_price_cents|currency_cents }} is now available for you to withdraw to your bank account. If you'd like to make a withdrawl, visit:
-{% url 'withdraw' %}
+{{ job.skaa.nickname }} has accepted job #{{ job.id }}. That means the job is now complete. {{ job.payout_price_cents|currency_cents }} has been transferred to your Stripe account.
 
 {% if job.album.allow_publicly %}
 {{ job.skaa.nickname }} has also allowed this job to be publicly viewable. You can see it on your public profile page, here:
@@ -22,7 +21,7 @@ If you'd like to look for another job, look here:
 {% endblock %}
 
 {% block html %}
-{{ job.skaa.nickname }} has accepted job #{{ job.id }}. That means the job is now complete. <strong>{{ job.payout_price_cents|currency_cents }}</strong> is now available for you to <a href="{{ request.SITE_URL}}{% url 'withdraw' %}">withdraw</a> to your bank account.<br/><br/>
+{{ job.skaa.nickname }} has accepted job #{{ job.id }}. That means the job is now complete. {{ job.payout_price_cents|currency_cents }} has been transferred to your Stripe account.<br/><br/>
 
 {% if job.album.allow_publicly %}
 {{ job.skaa.nickname }} has also allowed this job to be publicly viewable. You can see it on your <a href="{{ request.SITE_URL }}{% url 'album' job.album.id %}">public profile page</a>.<br/><br/>
