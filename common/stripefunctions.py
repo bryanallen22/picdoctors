@@ -60,12 +60,15 @@ def stripe_remove_charge(job):
                 job.stripe_job.stripe_charge_id,
                 api_key=settings.STRIPE_SECRET_KEY) # TODO -- correct key?
         ch.refunds.create()
-    else:
-        log.error("Could not remove charge from job %s -- stripe_charge_id isn't set!" % job.id)
 
-    # leave cents and the card id so it can be charged later
-    job.stripe_job.stripe_charge_id = ''
-    job.stripe_job.save()
+        # leave cents and the card id so it can be charged later
+        job.stripe_job.stripe_charge_id = ''
+        job.stripe_job.save()
+    else:
+        # There's no charge to remove when the job is being refunded before a doctor
+        # has ever taken the job
+        log.info("Could not remove charge from job %s. No charge to remove." % job.id)
+
 
 def stripe_create_hold(job, doctor):
     """
@@ -94,7 +97,7 @@ def stripe_create_hold(job, doctor):
                       },
         capture     = False, # Not captured yet!
         api_key     = doctor.stripe_connect.access_token,
-        statement_description = "PicDoctors",
+        statement_description = "(PicDoctors)",
         application_fee       = pd_cut,
     )
     job.stripe_job.stripe_charge_id = charge.id

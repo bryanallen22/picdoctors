@@ -121,10 +121,32 @@ def establish_job(request, album, job=None):
                     cents=cents)
             sj.save()
 
+            # Scenario 1: job is already set. We're here from the 'increase_price' page
+            # who found our job for us.
+            #   --> Just stick the new stripe_job stuff in there.
+            if job:
+                job.stripe_job = sj # Orphan off old stripe_job object
+                job.save()
+            # Scenario 2: job isn't set, but album.job is. This means
+            # we are returning an old job to market. (It's a little strange that
+            # we don't have job set already, but the set_price page can't
+            # depend on a job for all the new jobs)
+            elif album.get_job_or_None():
+                job = album.get_job_or_None()
+                job.stripe_job = sj # Orphan off old stripe_job object
+                job.save()
+            # Scenario 3: Just creating the job for the first time now.
+            else:
+                job = create_job(profile, album, sj)
+                job.stripe_job = sj
+                job.save()
+
             # Don't make the Job until we (think) we're good on payments
             # (the card could still be declined later)
             if job is None:
-                job = create_job(profile, album, sj)
+                # If they're returning a job to the market, we don't need
+                # to create a new one. (We'll find it through the album)
+                job = album.get_job_or_None() or create_job(profile, album, sj)
             else:
                 # We're increasing the price on an existing job. This will
                 # leave the old StripeJob orphaned off
@@ -190,6 +212,12 @@ def increase_price(request, job_id):
             return redirect('/')
         if job.album.userprofile != request.user:
             return redirect(reverse('permission_denied'))
+
+        # Note: establish_job only does server side checking up to the standard minimum price.
+        # So, the increase price page only does client side validation to see that they are
+        # increasing by at least $1. They can get around that dollar restriction if they
+        # are web programmers or something, but I'm really not that concerned. A problem
+        # for another day.
         return establish_job(request, job.album, job)
 
 @require_login_as(['skaa'])
