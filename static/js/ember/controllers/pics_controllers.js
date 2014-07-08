@@ -44,7 +44,7 @@ Pd.PicController = Ember.ObjectController.extend({
     // only save if dirty
     if(model.get('isDirty')){
       model.save().then(function(){
-        Pd.Logger.timestamp('Saved pic instruction: ' + newMarkup.get('instruction'), 5); 
+        Pd.Logger.timestamp('Saved pic instruction: ' + model.get('description'), 5); 
       },
       function(){
         Pd.Logger.timestamp('Failed to save pic instruction, should revert here!!!!!', 4); 
