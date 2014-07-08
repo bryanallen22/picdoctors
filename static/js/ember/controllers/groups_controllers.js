@@ -170,7 +170,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
       }).then(function(results){
         var status = Em.get(results, 'job_info.status');
         self.set('finishedJob', true);
-        if(status == 'Work Submitted, Pending Approval'){
+        if(status == 'Work Submitted, Pending Moderator Approval'){
           job.set('status', 'mod_need');
         } else if(status == 'Doctor Submitted, Pending Approval'){
           job.set('status', 'doctor_sub');
