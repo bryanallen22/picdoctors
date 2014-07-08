@@ -63,21 +63,22 @@ def job_page(request, page=1, job_id=None):
 # and need to up the price or something
 def update_old_jobs(list_of_jobs):
 
-    if not list_of_jobs or len(list_of_jobs)==0:
-        return
+    return # Bailing out until we figure this out
+    #if not list_of_jobs or len(list_of_jobs)==0:
+    #    return
 
-    now = get_datetime()
-    # just to let future you know, there is an hour period where the job
-    # has been removed, but won't get updated to out of market if
-    # they hit this page, but I don't feel bad about that
-    seven_days_ago = now - timedelta(days=7)
+    #now = get_datetime()
+    ## just to let future you know, there is an hour period where the job
+    ## has been removed, but won't get updated to out of market if
+    ## they hit this page, but I don't feel bad about that
+    #seven_days_ago = now - timedelta(days=7)
 
-    for job in list_of_jobs:
-        if (not job.stripe_job and job.status == Job.IN_MARKET) \
-                or (job.stripe_job.created < seven_days_ago and job.status == Job.IN_MARKET):
-            job.status=Job.OUT_OF_MARKET
-            job.save()
-            # TODO send user an email
+    #for job in list_of_jobs:
+    #    if (not job.stripe_job and job.status == Job.IN_MARKET) \
+    #            or (job.stripe_job.created < seven_days_ago and job.status == Job.IN_MARKET):
+    #        job.status=Job.OUT_OF_MARKET
+    #        job.save()
+    #        # TODO send user an email
 
 
 # get and fill up possible actions based on the status of this job
