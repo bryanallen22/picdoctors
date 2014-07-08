@@ -360,6 +360,8 @@ PIPELINE_JS = {
             'third_party/moment/moment.min.js',
             'js/logger/logger.js',
             'js/shared/textresize.js',
+            'js/shared/postTo.js',
+
         ],
         'output_filename': 'compressed/pd_jslibs.js',
     },
