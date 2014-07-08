@@ -5,7 +5,7 @@ import ipdb
 def calculate_job_payout(job, profile):
     """
     Calculate how much this person gets paid for a given job.
-    
+
     Return (payout_cents, tier)
     """
     ###  Calculate the payout in cents ###
@@ -35,5 +35,5 @@ def calculate_job_payout(job, profile):
     if profile.fixed_payout_pct > doctors_cut:
         doctors_cut = profile.fixed_payout_pct
 
-    payout = int(math.floor(job.stripe_job.cents * doctors_cut))
+    payout = int(math.floor(job.cents() * doctors_cut))
     return (payout, tier)

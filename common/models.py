@@ -732,7 +732,16 @@ class Job(DeleteMixin):
 
     accepted_date           = models.DateTimeField(blank=True, null=True)
 
-    stripe_job              = models.ForeignKey(StripeJob, blank=False)
+    stripe_job              = models.ForeignKey(StripeJob, blank=True, null=True)
+
+    def cents(self):
+        """
+        People who got in with balanced jobs still need to be able to view their old jobs
+        """
+        if self.bp_hold:
+            return self.bp_hold.cents
+        else:
+            return self.stripe_job.cents
 
     def is_part_of(self, profile):
         if not profile:
@@ -765,7 +774,7 @@ class Job(DeleteMixin):
         else:
             out += self.doctor.email
 
-        out += " Price (cents): " + str(self.stripe_job.cents)
+        out += " Price (cents): " + str(self.cents())
         out += " Status: " + self.status
         return out
 

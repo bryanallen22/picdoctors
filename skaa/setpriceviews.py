@@ -60,7 +60,7 @@ def send_newjob_email(request, job):
                email_address=request.user.email,
                template_name='newjob_email.html',
                template_args={'jobs_url' : reverse( 'job_page' ),
-                              'amount'   : job.stripe_job.cents, },
+                              'amount'   : job.cents(), },
               )
 
 @render_to('set_price.html')
@@ -195,7 +195,7 @@ def increase_price(request, job_id):
             return redirect('/')
 
         # Use float here -- /100 truncates, but /100. is cool
-        original_price = (job.stripe_job.cents / 100.)
+        original_price = (job.cents() / 100.)
         min_price = original_price + 1
         str_min_price = "{0:.2f}".format(min_price)
         str_original_price =  "{0:.2f}".format(original_price)

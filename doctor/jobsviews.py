@@ -175,7 +175,7 @@ def apply_for_job(request):
                         stripe_create_hold(job, profile, doc_payout_price)
                         hold_successful = True
                     except Exception as e:
-                        log.error("Error placing hold on job %s! price=%s. message:%s" % (job.id, job.stripe_job.cents, e.message))
+                        log.error("Error placing hold on job %s! price=%s. message:%s" % (job.id, job.cents()))
                         actions = Actions()
                         actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
                         actions.add('remove_job_row', job_id)
