@@ -12,6 +12,7 @@ from string import Template
 # Retrieve your url with a call to get_ember_url
 ember_urls = {
         "album_markupview": "/home/#/albums/${album_id}/markupView",
+        "album_markupedit": "/home/#/albums/${album_id}/markupEdit",
         "album_view":       "/home/#/albums/${album_id}/groups/${group_id}/pics/view",
         "account_settings": "/home/#/settings",
         "payments_settings": "/home/#/settings/payments",

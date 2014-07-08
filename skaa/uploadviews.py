@@ -59,7 +59,7 @@ def upload_page(request):
     ret = get_progressbar_vars(request, 'upload')
     ret.update( { "pics" : pics, "ungroupedId" :  ungroupedId } )
     # we do weird stuff, we don't know groups until later
-    ret.update( { "markup_url" : get_ember_url('album_markupview', album_id=str(album.id)) })
+    ret.update( { "markup_url" : get_ember_url('album_markupedit', album_id=str(album.id)) })
     return ret
 
 @render_to('need_cookies.html')
