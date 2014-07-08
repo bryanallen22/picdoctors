@@ -7,6 +7,7 @@ window.Pd = Pd = Ember.Application.create({
   stripe_oauth:'https://connect.stripe.com/oauth/authorize',
   href: window.location.href,
   Logger: Logger,
+  Resize: TextAreaResize,
   getQueryParams: function()
   {
     if(this.queryParams){

@@ -359,6 +359,7 @@ PIPELINE_JS = {
             'third_party/rating/jquery.rating.js',
             'third_party/moment/moment.min.js',
             'js/logger/logger.js',
+            'js/shared/textresize.js',
         ],
         'output_filename': 'compressed/pd_jslibs.js',
     },
