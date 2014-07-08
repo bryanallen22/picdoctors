@@ -4,6 +4,7 @@ import requests
 from common.functions import get_datetime
 from common.stripemodels import *
 
+import math
 import logging; log = logging.getLogger('pd')
 
 def stripe_create_card(profile, stripeToken):
@@ -74,7 +75,7 @@ def calc_transfer_fees(cents):
     The amount that stripe takes from a transaction. We decrease our cut
     to compensate for this, allowing doctors to receive what we said they'd receive.
     """
-    return int(cents * 0.029) + 30
+    return int(math.ceil(cents * 0.029)) + 30
 
 def stripe_create_hold(job, doctor, doc_payout_price):
     """

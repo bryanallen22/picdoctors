@@ -35,5 +35,5 @@ def calculate_job_payout(job, profile):
     if profile.fixed_payout_pct > doctors_cut:
         doctors_cut = profile.fixed_payout_pct
 
-    payout = int(math.floor(job.cents() * doctors_cut))
+    payout = int(math.ceil(job.cents() * doctors_cut))
     return (payout, tier)
