@@ -457,7 +457,7 @@ var setNextGroupId = function() {
   });
   nextGroupId = max + 1;
   //console.log("nextGroupId set to " + nextGroupId);
-}
+};
 
 // Have to wait for images to load or this doesn't work nicely
 $(window).load(function() {
@@ -465,8 +465,8 @@ $(window).load(function() {
   setNextGroupId();
 });
 
-function updateCartCount() {
+window.updateCartCount= function() {
   var count = $(".pic_container[uuid]").length;
   $("#cart_count").html( "(" + count + " Pics)" );
-}
+};
 

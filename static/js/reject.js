@@ -1,29 +1,4 @@
 // Load the application once the DOM is ready, using `jQuery.ready`:
-
-
-function CallHome(url, csrf, job_id){
-      var json_data = JSON.stringify(
-        {
-          "job_id" : job_id,
-        }
-      );
-      
-      $.ajax({
-        headers: {
-          "X-CSRFToken":csrf
-        },
-        type: 'POST',
-        url:  url,
-        data: json_data,
-        success : function(data, textStatus) {
-          location.href = data.relocate;
-        },
-
-      });
-
-}
-
-
 $(function(){
 
   var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');

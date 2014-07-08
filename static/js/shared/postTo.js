@@ -17,4 +17,27 @@ window.postTo = function(url, obj, callback, errorCallback) {
     error : errorCallback
   });
 
-}
+};
+
+window.CallHome= function(url, csrf, job_id){
+      var json_data = JSON.stringify(
+        {
+          "job_id" : job_id,
+        }
+      );
+      
+      $.ajax({
+        headers: {
+          "X-CSRFToken":csrf
+        },
+        type: 'POST',
+        url:  url,
+        data: json_data,
+        success : function(data, textStatus) {
+          location.href = data.relocate;
+        },
+
+      });
+
+};
+

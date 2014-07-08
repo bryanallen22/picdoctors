@@ -33,10 +33,13 @@ Pd.SettingsEmailConfigController = Ember.ObjectController.extend({
 Pd.SettingsPaymentsController = Em.ObjectController.extend({
   stripeUrl: function(){
     var url = this.get('doc_profile_page'),
+        base = location.protocol + '//' + location.host,
+        redir = base + '/home/#/settings/stripeCallback',
         qp = {
       client_id: stripeClientId,
       response_type: 'code',
       scope: 'read_write',
+      redirect_uri: redir,
       stripe_user:{
         email: this.get('email'),
         url: url,

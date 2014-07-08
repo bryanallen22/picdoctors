@@ -70,7 +70,7 @@ $(function(){
 });
 
 /* These are global because they are in the 'onclick' events. Probably fine, but annoying anyway.*/
-function replace_fancy_user_pic(el, id){
+window.replace_fancy_user_pic = function(el, id){
   el = $(el);
   var par = $('#' + id);
   var child = par.find('.ba-mask');
@@ -79,14 +79,14 @@ function replace_fancy_user_pic(el, id){
 
 }
 
-function replace_normal_user_pic(el, id){
+window.replace_normal_user_pic = function(el, id){
   el = $(el);
   var rep = $('#' + id);
   rep.css('background-image', 'url(' + el.attr('data-pic') + ')');
 
 }
 
-function make_album_shareable(el, id){
+window.make_album_shareable = function(el, id){
   var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
 
   var json_data = JSON.stringify( { } );
