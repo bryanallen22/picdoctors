@@ -14,7 +14,7 @@ def entry_point():
     force = False
     migrate = False
     alphadb = False
-    gen = False
+    genprod = False
     listem = False
     deploy = False
 
@@ -26,7 +26,7 @@ def entry_point():
         elif arg == '-alpha':
             alphadb = True
         elif arg == '-gen':
-            gen = True
+            genprod = True
         elif arg == '-migrate':
             migrate = True
         elif arg == '-list':
@@ -34,17 +34,17 @@ def entry_point():
         elif arg == '-deploy':
             deploy = True
 
-    if migrate and alphadb:
-        print Fore.RED + "It makes no sense to do an Alpha DB and a migration, Keep it Simple Stupid"
+    if genprod and ( migrate or alphadb or deploy or listem ):
+        print Fore.RED + "Stop mixing stuff, Keep it Simple Stupid"
         print_help()
         return
 
-    if alphadb and gen:
-        print Fore.RED + "It makes no sense to do an Alpha DB and gen a migration, Keep it Simple Stupid"
+    if alphadb and migrate:
+        print Fore.RED + "It makes no sense to do an Alpha DB and a gen/migration, Keep it Simple Stupid"
         print_help()
         return
 
-    if not migrate and not alphadb and not gen and not listem and not deploy:
+    if not ( migrate or alphadb or listem or deploy or genprod):
         print Fore.RED + "Make a choice, what do you want from me?"
         print_help()
         return
@@ -53,8 +53,8 @@ def entry_point():
         do_migrate(force)
     elif alphadb:
         do_alphadb(force)
-    elif gen:
-        do_gen(force)
+    elif genprod:
+        do_genprod(force)
     elif listem:
         do_list(force)
     elif deploy:
@@ -90,10 +90,25 @@ def do_gen(force):
     print "To apply migrations type 'python manage.py migrate' or './db.py -migrate'"
 
 
+def do_genprod(force):
+    """
+    Generate the migration files for all of the apps located in PD_APPS
+    This is a diff based on the last migration in the south history and the current model
+    If there is a diff, the migration will be made, if not, it will skip it
+    1. Blank the DB and set up the apps that have no migrations (python manage.py syncdb)
+    2. Apply the migrations that exist (python manage.py migrate)
+    3. Create the migrations for the differences (python manage.py schemamigration skaa --auto)
+    """
+    gen_new_db()
+    do_migrate(force)
+    do_gen(force)
+
+
 def do_migrate(force):
     """
     Run any available migration files that haven't been run as of yet
     """
+    print Fore.GREEN + "Applying all of the migrations." + Fore.WHITE
     do_cmd("python manage.py migrate")
 
 
@@ -208,7 +223,7 @@ def print_help():
     print "\nTry one of these:"
     print base + " -alpha        -- delete old db and migrations and create and init anew"
     print base + " -alpha -f     -- delete old db and migrations and create and init anew (ignoring nagging)"
-    print base + " -gen          -- generate migration files (use this in the future, post go live, adding real migrations to code!)"
+    print base + " -gen -f       -- generate migration files (use this if you don't know wtf your db looks like, but want to gen for prod)"
     print base + " -migrate      -- migrate all of the apps from PD_APPS (settings file)"
     print base + " -migrate -f   -- migrate all of the apps from PD_APPS (settings file) without question (if possible)!"
 
