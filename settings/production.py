@@ -11,7 +11,7 @@ PRODUCTION_TESTING = False# used to add debug code to production when it isn't r
 # TODO: Use debug keys with live keys:
 #BALANCED_API_KEY_SECRET = 'ak-test-1MjuXmDfjhvI5VevnXBL9jsmSbaQwDXCu'
 #BALANCED_MARKETPLACE_URI = '/v1/marketplaces/TEST-MP4dltaHHyJdwcMGTDAHbed4'
-BALANCED_API_KEY_SECRET = 'ak-prod-2bxA3ZCpkt5JeTMnIMm9jDPAuSrZHbRT6'
+BALANCED_API_KEY_SECRET = 'ak-prod-2yf2rgaVWcYuDtDZlZgx8XkK2DQxN3cur'
 BALANCED_MARKETPLACE_URI = '/v1/marketplaces/MP2Y5DANQ7F1xePOvEzdy88i'
 
 STRIPE_SECRET_KEY = 'sk_live_4MyBlP6Pc09zR6VXHwMOpsYS' # live secret key
