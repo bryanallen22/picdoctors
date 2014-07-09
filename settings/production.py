@@ -30,7 +30,7 @@ DATABASES = {
         'PORT'     : '5432',
         'NAME'     : 'picdoctors', # db name
         'USER'     : 'picdoctors',
-        'PASSWORD' : 'b8vHqpgLcegYA5cV',
+        'PASSWORD' : '39HOzWv2w6dCfpqp7RexTQb47VpndzHG',
     }
 }
 
