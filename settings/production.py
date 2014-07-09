@@ -14,8 +14,8 @@ PRODUCTION_TESTING = False# used to add debug code to production when it isn't r
 BALANCED_API_KEY_SECRET = 'ak-prod-2bxA3ZCpkt5JeTMnIMm9jDPAuSrZHbRT6'
 BALANCED_MARKETPLACE_URI = '/v1/marketplaces/MP2Y5DANQ7F1xePOvEzdy88i'
 
-STRIPE_SECRET_KEY = 'sk_live_aThVwRYmqKqGRgysuNfHtOgT' # live secret key
-STRIPE_PUBLISHABLE_KEY = 'pk_live_OVjQsB9ae8BOsv7FVRLSHiow' # live publishable key
+STRIPE_SECRET_KEY = 'sk_live_4MyBlP6Pc09zR6VXHwMOpsYS' # live secret key
+STRIPE_PUBLISHABLE_KEY = 'pk_live_4MyBok4dMfFRuek4mzQGXTEG' # live publishable key
 
 # application id for stripe connect
 STRIPE_CLIENT_ID='ca_4L1G0aOXIcIECm9MUTYXjonfhLEOqQ88'
