@@ -10,10 +10,10 @@ import getpass
 #############################################################
 class LocalConfig():
     do_key_path = os.path.join(pd_settings.PROJECT_ROOT,
-                        'deploy/keys/pd_digitalocean.id_rsa')
+                        'deploy/keys/pd_digitalpond.id_rsa')
 
     do_key_path_pub = os.path.join(pd_settings.PROJECT_ROOT,
-                        'deploy/keys/pd_digitalocean.id_rsa.pub')
+                        'deploy/keys/pd_digitalpond.id_rsa.pub')
 
     # bitbucket private key
     deploybot_id_path = os.path.join(pd_settings.PROJECT_ROOT,
