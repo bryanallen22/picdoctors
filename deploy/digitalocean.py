@@ -3,7 +3,7 @@ import simplejson
 
 # DigitalOcean client id and key
 DO_SECRET_CLIENT_ID = 'rvAIA5RPF4O2xY2H3WbmQ'
-DO_SECRET_API_KEY = 'IeCnpBf5f1VprFGwvWqHfwcjN5ofu5sBuzb1znDOq'
+DO_SECRET_API_KEY = 'bd42a0843a0d5dfe93bdd8967cfb9c07'
 
 def get_client_n_key():
     return {
