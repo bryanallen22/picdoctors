@@ -7,11 +7,11 @@
 {% include 'skaa_progressbar.html' %}
 
 <div id="setprice_app" class='row'>
-  <div class='offset2 span8'>
+  <div class='offset1 span8'>
 
     <div class="container">
       <div class="row">
-        <div class="span8">
+        <div class="span9">
 
           <legend>
             {% if increase_price %}
@@ -40,14 +40,22 @@
           </legend>
           <div class="row">
 
-            <div class="span5"> {# Left side -- credit card info #}
+            <div class="span6"> {# Left side -- credit card info #}
+
+              <div class="row alert alert-error">
+                <strong>You will NOT be charged until you have reviewed your Pic Doctor's work and accepted it.</strong><br/>
+              </div>
+
+              <div class="row alert alert-info">
+                <p>If you aren't satisfied, you can ask for futher modifications, get a differend Pic Doctor, or get a full refund. No questions asked.</p>
+              </div>
 
               <form id="payment-form" action="" method="POST">
                 {% csrf_token %}
 
                 <div class="row">
                   <div class="span4">
-                    <label id="offer_label" for="price">How much will you offer?</label>
+                    <label id="offer_label" for="price"><strong>How much will you offer?</strong></label>
                     <a id="suggestions" href="#" data-toggle="collapse" data-target="#pricing-table-container">
                       Want suggestions?
                     </a>
