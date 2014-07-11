@@ -99,7 +99,7 @@ def has_doc_upload_access(request):
     if job is None:
         return False
 
-    if job.doctor == profile:
+    if job.doctor and job.doctor == profile and job.status != Job.USER_ACCEPTED:
         return True
 
     return False
@@ -115,7 +115,7 @@ def doc_upload_handler(request):
         #don't worry, we validate the group_id at the decorator
         group_id = int(request.POST['group_id'])
         group = get_object_or_None(Group, id=group_id )
-        
+
         # Save this off into the database
         file = request.FILES[u'doc_file']
         if file is not None:
@@ -124,7 +124,7 @@ def doc_upload_handler(request):
             # I'm gonna make this non-asyncable
             # saveWatermark.apply_async(args=[profile.id, group_id, pickleable_pic])
             dp = saveWatermark(profile.id, group_id, pickleable_pic)
-            
+
             job = get_object_or_None(Job, album=group.album.id)
 
             pic = dp.get_pic(request.user, job)
@@ -233,4 +233,4 @@ def delete_groupings(request):
         Group.objects.filter(album=album.id).delete()
         album.kick_groups_modified()
 
-    
+

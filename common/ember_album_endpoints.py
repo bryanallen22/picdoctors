@@ -14,6 +14,8 @@ from messaging.models import GroupMessage
 from messaging.messageviews import build_messages, generate_message
 from common.decorators import require_login_as
 
+import logging; log = logging.getLogger('pd')
+
 import ipdb
 
 def can_modify_markup(request, markup_id=None):

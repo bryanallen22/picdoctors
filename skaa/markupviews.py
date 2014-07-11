@@ -294,7 +294,7 @@ def pic_instruction_handler(request):
     return HttpResponse(simplejson.dumps({}), mimetype='application/json')
 
 def albums(request, album_id):
-    
+
     return json_result({'a':'b'})
 
 
