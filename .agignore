@@ -4,3 +4,5 @@ tags
 migrations
 handlebars_compiler
 third_party
+node_modules
+
