@@ -35,7 +35,7 @@
     <div class='row remote_control'>
       <div class='float-left'>
         <div class='download_links center'>
-          <a class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}' download='PicDoctorsOriginal-{{ group.doc_pic.uuid|slice:":7" }}.jpg'>Download Doctored Image</a>
+          <a id="download_original" class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}'>Download Doctored Image</a>
         </div>
       </div>
       <div class='float-right' >

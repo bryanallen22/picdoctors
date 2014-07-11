@@ -2,7 +2,7 @@ $(function(){
 
   if( $('#album_app').length > 0 ) {
     var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
-    
+
     var RemoteControl = Backbone.View.extend({
       events: {
    //     'click       .before_button': 'before_click',
@@ -46,7 +46,7 @@ $(function(){
             "job_id" : this.$el.attr('job_id'),
           }
         );
-        
+
         $.ajax({
           headers: {
             "X-CSRFToken":CSRF_TOKEN
@@ -66,6 +66,24 @@ $(function(){
     var av_el = $(".album_control");
     var av = new ApprovalView({el:av_el});
 
+    var downloadURL = function downloadURL(url) {
+      var hiddenIFrameID = 'hiddenDownloader',
+          iframe = document.getElementById(hiddenIFrameID);
+      if (iframe === null) {
+          iframe = document.createElement('iframe');
+          iframe.id = hiddenIFrameID;
+          iframe.style.display = 'none';
+          document.body.appendChild(iframe);
+      }
+      iframe.src = url;
+    };
+
+    $("#download_original").click( function(e) {
+      e.preventDefault();
+      var url = $(this).attr('href');
+      console.log("downloading " + url);
+      downloadURL(url);
+    });
   }
 });
 
@@ -90,7 +108,7 @@ window.make_album_shareable = function(el, id){
   var CSRF_TOKEN = $('input[name=csrfmiddlewaretoken]').attr('value');
 
   var json_data = JSON.stringify( { } );
-      
+
   $.ajax({
      headers: {
        "X-CSRFToken":CSRF_TOKEN
