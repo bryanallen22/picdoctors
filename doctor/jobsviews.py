@@ -137,6 +137,7 @@ def generate_doctor_actions(job):
 
     return ret
 
+
 @require_login_as(['doctor'])
 def apply_for_job(request):
     job_id = request.POST['job_id']

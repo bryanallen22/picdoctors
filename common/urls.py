@@ -12,6 +12,7 @@ from common.ember_album_endpoints import *
 from common.ember_profile_endpoints import *
 from common.alive_endpoints import *
 from common.ember_home import *
+from common.adminjobsviews import admin_job_page
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -50,5 +51,6 @@ urlpatterns = patterns('',
     url(r'^api/creditcards$',                           creditcards,                  name='creditcards'),
     url(r'^api/creditcards/(?P<card_id>.+)$',           creditcards,                  name='creditcards'),
     url(r'^change_password/$',                          change_password,              name='change_password'),
+    url(r'^admin_jobs/(?P<page>\d+)$',                  admin_job_page,               name='admin_job_page'),
 )
 
