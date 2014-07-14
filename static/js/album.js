@@ -81,7 +81,7 @@ $(function(){
     $("#download_original").click( function(e) {
       e.preventDefault();
       var url = $(this).attr('href');
-      console.log("downloading " + url);
+      //console.log("downloading " + url);
       downloadURL(url);
     });
   }
