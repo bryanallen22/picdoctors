@@ -245,6 +245,8 @@ class Pic(DeleteMixin):
         # the browser doesn't want to handle.  Don't worry, we're just changing the
         # original which means when you try and navigate to it's url it will download it
         myfile.content_type = 'application/octet-stream'
+        myfile.content_disposition = 'attachment; filename="PicDoctorImage' + file_ext.lower() + '"'
+
         # Save original picture, its width and height
         self.original.save(file_name, myfile)
         # TODO -- this fetches the image all over again. Me no likey.
