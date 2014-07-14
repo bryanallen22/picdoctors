@@ -10,7 +10,7 @@ One of our Pic Doctors, {{ job.doctor.nickname }}, has accepted your job! They'l
 
 We'll let you know when they are done, so you can review their work. You can see this job here:
 
-{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}
 
 Thanks for using PicDoctors!
 {% endblock %}
@@ -20,7 +20,7 @@ Thanks for using PicDoctors!
 {% block html %}
 One of our Pic Doctors, {{ job.doctor.nickname }}, has accepted your job! They'll get started on it right away.<br/><br/>
 
-We'll let you know when they are done, so you can review their work. You can see this job <a href="{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
+We'll let you know when they are done, so you can review their work. You can see this job <a href="{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
 
 Thanks for using PicDoctors!<br/><br/>
 {% endblock %}
