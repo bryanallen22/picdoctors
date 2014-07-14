@@ -37,7 +37,7 @@ def admin_job_page(request, page=1):
             'job_infos_json'   : job_infos_json,
             'num_pages'        : range(1,pager.num_pages+1),
             'cur_page'         : page,
-            'reverser'         : 'doc_job_page_with_page',
+            'reverser'         : 'admin_job_page',
             'doc_page'         : True,
             'title'            : 'Admin Stuff'
     }
