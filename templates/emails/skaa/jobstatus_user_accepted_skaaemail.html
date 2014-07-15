@@ -6,14 +6,14 @@ Your completed job
 
 {% block plain %}
 Your job is now complete. You can download it at any time from this page:
-{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}
 
 Thanks for using PicDoctors!
 {% endblock %}
 
 {% block html %}
-Your job is now complete. You can download it at any time from <a href="{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}">this page</a>.<br/><br/>
+Your job is now complete. You can download it at any time from <a href="{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}">this page</a>.<br/><br/>
 
 Thanks for using PicDoctors!<br/><br/>
-{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}
 {% endblock %}

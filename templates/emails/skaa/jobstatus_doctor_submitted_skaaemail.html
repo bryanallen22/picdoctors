@@ -7,13 +7,13 @@
 {% block plain %}
 {{ job.doctor.nickname }} has finished work on your job. Please come review it here:
 
-{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}
 
 Thanks for using PicDoctors!
 {% endblock %}
 
 {% block html %}
-{{ job.doctor.nickname }} has finished work on your job. Please come review it <a href="{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
+{{ job.doctor.nickname }} has finished work on your job. Please come review it <a href="{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
 
 Thanks for using PicDoctors!<br/><br/>
 {% endblock %}

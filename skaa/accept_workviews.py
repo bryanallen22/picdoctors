@@ -58,7 +58,7 @@ def accept_work(request, job_id):
             dr.comments = request.POST['comment']
             dr.save()
 
-            send_job_status_change(request, job, profile)
+            send_job_status_change(request, job, None)
 
             return redirect(reverse('album', args=[job.album.id]))
         else:
