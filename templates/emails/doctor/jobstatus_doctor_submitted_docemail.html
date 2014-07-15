@@ -9,7 +9,7 @@ You've submitted {{ job.skaa.nickname }}'s job
 {% block plain %}
 Thank you for finishing {{ job.skaa.nickname}}'s job, number {{ job.id }}.
 
-He will now have a chance to look over it. If he accepts your work without further modifications, you will receive {{ job.payout_price_cents|currency_cents }}.
+The user will now have a chance to look over it. If the user accepts your work without further modifications, you will receive {{ job.payout_price_cents|currency_cents }}.
 
 You can check the status of this job here:
 {{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}

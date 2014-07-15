@@ -10,7 +10,7 @@ Unfortunately, job #{{ job_id|stringformat:"08d" }} hasn't generated any interes
 
 {{ number_of_doctors }} doctors have suggested that a more appropriate price would be approximately ${{ avg_price}}. If you are interested in offering more money for the job, you can do that here:
 
-{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}
+{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}
 
 Thanks for using PicDoctors!
 {% endblock %}
@@ -20,7 +20,7 @@ Thanks for using PicDoctors!
 {% block html %}
 Unfortunately, job #{{ job_id|stringformat:"08d" }} hasn't generated any interest. We've pulled the job from the market for now.<br/><br/>
 
-{{ number_of_doctors }} doctors have suggested that a more appropriate price would be approximately ${{ avg_price}}. If you are interested in offering more money for the job, you can do that <a href="{{ request.SITE_URL }}{% url 'doc_job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
+{{ number_of_doctors }} doctors have suggested that a more appropriate price would be approximately ${{ avg_price}}. If you are interested in offering more money for the job, you can do that <a href="{{ request.SITE_URL }}{% url 'job_page_with_page_and_id' 1 job.id %}">here</a>.<br/><br/>
 
 Thanks for using PicDoctors!<br/><br/>
 {% endblock %}

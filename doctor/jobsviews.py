@@ -192,7 +192,7 @@ def apply_for_job(request):
                         job.save()
 
                         # Email
-                        send_job_status_change(request, job, profile)
+                        send_job_status_change(request, job, None)
 
                         # Response
                         actions = Actions()
@@ -264,7 +264,7 @@ def mark_job_completed(request):
 
 
             job.save()
-            send_job_status_change(request, job, profile)
+            send_job_status_change(request, job, None)
             job_info = fill_job_info(job, generate_doctor_actions, profile)
             actions.addJobInfo(job_info)
         else:
