@@ -286,21 +286,26 @@ $(function(){
   /* Group button */
   $('#group').click( function(evt) {
 
-    if( $(this).text() == "Group" ) {
+    if( $(this).text() == "Group (Best Of)" ) {
       var selected_pics = $('.pic_container.selected');
-      selected_pics.each( function() {
-        $(this).attr("group_id", nextGroupId.toString() );
-      } );
+      if(selected_pics.length > 1){
+        selected_pics.each( function() {
+          $(this).attr("group_id", nextGroupId.toString() );
+        } );
 
-      selected_pics.removeClass('selected');
-      $isocontainer.isotope('updateSortData', selected_pics);
-      $isocontainer.isotope( { sortBy : 'category' } );
+        selected_pics.removeClass('selected');
+        $isocontainer.isotope('updateSortData', selected_pics);
+        $isocontainer.isotope( { sortBy : 'category' } );
 
-      /* If this group has fully downloaded pics, the server needs
-       * to be informed */
-      IsoWrapper.checkForCompleteGroup(nextGroupId);
+        /* If this group has fully downloaded pics, the server needs
+         * to be informed */
+        IsoWrapper.checkForCompleteGroup(nextGroupId);
 
-      nextGroupId++;
+        nextGroupId++;
+      } else {
+        uploadtour.setCurrentStep(1);
+        uploadtour.start(true);
+      }
     }
     else { // "Ungroup"
       // .first() used, though we only ever expect 1 group to be selected
@@ -361,10 +366,10 @@ $(function(){
           // if we have just selected a group, we change the 'group'
           // button to an 'ungroup' button
           if( $("#border" + groupId).hasClass('selected') ) {
-            $("#group").text("Ungroup");
+            $("#group").text("Ungroup (Best Of)");
           }
           else {
-            $("#group").text("Group");
+            $("#group").text("Group (Best Of)");
           }
         }
         else {
@@ -378,7 +383,7 @@ $(function(){
 
           // Any time we are dealing with an individual pic,
           // it's time for grouping
-          $("#group").text("Group");
+          $("#group").text("Group (Best Of)");
         }
       }
     },
