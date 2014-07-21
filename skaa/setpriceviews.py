@@ -182,7 +182,7 @@ def establish_job(request, album, job=None):
             return render_setprice(request, album, ret)
     except Exception as e:
         log.error("Error establishing job on album.id=%s! price=%s -- message=%s" % (album.id, request.POST['price'], e.message))
-        ret['serverside_error'] = 'Uh oh, we failed to process your card. If this keeps happening, let us know.'
+        ret['serverside_error'] = "Uh oh, we couldn't process your card: %s" % (e.message)
         return render_setprice(request, album, ret)
 
     return redirect (reverse('job_page'))
