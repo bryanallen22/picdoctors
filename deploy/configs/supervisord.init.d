@@ -16,7 +16,7 @@
 
 # Do NOT "set -e"
 
-# PATH should only include /usr/* if it runs after the mountnfs.sh script
+# PATH should only include /usr/ * if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Description of the service"
 NAME=supervisord
