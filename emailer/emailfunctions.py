@@ -48,7 +48,9 @@ def send_email(request,
         msg.attach_alternative(html_content, "text/html")
 
         log.info("Sending <%s> email to <%s>" % (subject, str(email_addresses)))
-        if settings.IS_PRODUCTION:
+        #TODO Fix when we're millionaires
+#        if settings.IS_PRODUCTION:
+        if False:
             sendAsyncEmail.apply_async(args=[msg])
         else:
             sendAsyncEmail(msg)

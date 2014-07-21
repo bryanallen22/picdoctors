@@ -505,7 +505,9 @@ def setup_packages():
     #
     with settings(warn_only=True):
         sudo('rabbitmq-server stop')
-        sudo('rabbitmq-server start')
+    # TODO re-enable rabbitmq when we're millionaires and need it
+    #    sudo('rabbitmq-server start')
+
     rabbit_users = sudo('rabbitmqctl list_users')
     if 'weliketoeat' not in rabbit_users:
         sudo('rabbitmqctl add_user weliketoeat rabbitsfordinner')
