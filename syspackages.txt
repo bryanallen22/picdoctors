@@ -10,8 +10,6 @@ python-pip
 
 nodejs
 
-rabbitmq-server
-
 nginx
 uwsgi
 uwsgi-plugin-http

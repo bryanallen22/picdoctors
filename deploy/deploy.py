@@ -500,21 +500,21 @@ def setup_packages():
     packages = " ".join(lines)
     sudo("apt-get install %s -y -q" % packages)
 
-    #
-    # rabbitmq stuff.
-    #
-    with settings(warn_only=True):
-        sudo('rabbitmq-server stop')
-    # TODO re-enable rabbitmq when we're millionaires and need it
-    #    sudo('rabbitmq-server start')
+    ##
+    ## rabbitmq stuff.
+    ##
+    #with settings(warn_only=True):
+    #    sudo('rabbitmq-server stop')
+    ## TODO re-enable rabbitmq when we're millionaires and need it
+    ##    sudo('rabbitmq-server start')
 
-    rabbit_users = sudo('rabbitmqctl list_users')
-    if 'weliketoeat' not in rabbit_users:
-        sudo('rabbitmqctl add_user weliketoeat rabbitsfordinner')
-    rabbit_vhosts = sudo('rabbitmqctl list_vhosts')
-    if 'carrot' not in rabbit_vhosts:
-        sudo('rabbitmqctl add_vhost carrot')
-    sudo('rabbitmqctl set_permissions -p carrot weliketoeat ".*" ".*" ".*"')
+    #rabbit_users = sudo('rabbitmqctl list_users')
+    #if 'weliketoeat' not in rabbit_users:
+    #    sudo('rabbitmqctl add_user weliketoeat rabbitsfordinner')
+    #rabbit_vhosts = sudo('rabbitmqctl list_vhosts')
+    #if 'carrot' not in rabbit_vhosts:
+    #    sudo('rabbitmqctl add_vhost carrot')
+    #sudo('rabbitmqctl set_permissions -p carrot weliketoeat ".*" ".*" ".*"')
 
 
     #
