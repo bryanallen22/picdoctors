@@ -135,7 +135,19 @@ def stripe_get_credit_cards(profile):
         struct = stripe.Customer.retrieve(
                 profile.stripe_customer_id,
                 api_key=settings.STRIPE_SECRET_KEY).cards.all(limit=40)
-        return [card for card in struct['data']]
+        all_cards = [card for card in struct['data']]
+        ret = []
+
+        # CRAZY HACK FOR GEORGE KENNEDY, 7-21-2014
+        # Using company cc to pay for his job without leaving it 'listed'
+        # TODO -- REMOVE THIS
+        for card in all_cards:
+            if card.last4 == '2921' and card.exp_month == 3 and card.exp_year == 2016:
+                pass
+            else:
+                ret.append(card)
+
+        return ret
     else:
         return []
 
