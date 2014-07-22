@@ -48,7 +48,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
     needsSignIn = this.get('needsSignIn');
 
     if(nextGroup) return "Next";
-    if(needsPay) return "Pay";
+    if(needsPay) return "Submit Offer";
     if(needsSignIn) return "Sign In";
     if(finished) return "Jobs";
   }.property('nextGroup','finished', 'needsPay', 'needsSignIn'),

@@ -42,13 +42,7 @@
 
             <div class="span6"> {# Left side -- credit card info #}
 
-              <div class="row alert alert-error">
-                <strong>You will NOT be charged until you have reviewed your Pic Doctor's work and accepted it.</strong><br/>
-              </div>
 
-              <div class="row alert alert-info">
-                <p>If you aren't satisfied, you can ask for futher modifications, get a differend Pic Doctor, or get a full refund. No questions asked.</p>
-              </div>
 
               <form id="payment-form" action="" method="POST">
                 {% csrf_token %}
@@ -138,12 +132,12 @@
                       <input id="cc_year" type="text" size="4" data-stripe="exp-year" class="span1" />
 
                     </div>
-                    {% comment %}
+                     {% comment %}
                     <div class="span1">
                       <label for="security_code">CVC:</label>
                       <input id="cvc" type="text" size="4" data-stripe="cvc" class="span1"/>
                     </div>
-                    {% endcomment %}
+                     {% endcomment %}
                   </div>
                 </div> {# credit card .card_choice #}
 
@@ -152,10 +146,16 @@
                 {# Submit button #}
                 <div class="row">
                   <div class="span3"> {# we need nested divs for css to not go riley on us #}
-                    <button id="submit_payment" type="submit" class="submit-button btn btn-primary">Submit Payment</button>
+                    <button id="submit_payment" type="submit" class="submit-button btn btn-primary">Submit Offer</button>
                     <div id="setprice_tour" class="btn btn-info">Help Me</div>
                   </div>
                 </div>
+                <div class='row'>&nbsp;</div>
+              
+              <div class="row alert alert-success">
+                <strong>You will NOT be charged until you are satisfied with the Pic Doctor's work.  If you aren't satisfied, you can ask for
+                further modifications, get a different Pic Doctor, or get a full refund.  No questions asked.</strong><br/>
+              </div>
 
               </form>
 

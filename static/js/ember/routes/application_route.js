@@ -16,10 +16,8 @@ Pd.ApplicationRoute = Ember.Route.extend({
 });
 
 Pd.SigninToPayRoute = Ember.Route.extend({
-
-  setupController: function(controller, model){
-    Ember.run.scheduleOnce('afterRender', function(){
-      window.location.href = '/signin/?next=/set_price/';
-    });
+  afterModel: function(model, transition){
+    transition.abort();
+    window.location.href = '/signin/?next=/set_price/';
   }
 });

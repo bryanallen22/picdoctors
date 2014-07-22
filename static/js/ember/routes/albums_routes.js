@@ -18,14 +18,16 @@ Pd.AlbumRoute = Ember.Route.extend({
 });
 
 Pd.AlbumUploadRoute = Ember.Route.extend({
-  afterModel: function(){
-    window.location.replace("/upload");
+  afterModel: function(model, transition){
+    transition.abort();
+    window.location.href = "/upload";
   }
 });
 
 Pd.AlbumPayRoute = Ember.Route.extend({
-  afterModel: function(){
-    window.location.replace("/set_price");
+  afterModel: function(model, transition){
+    transition.abort();
+    window.location.href = "/set_price";
   }
 });
 
