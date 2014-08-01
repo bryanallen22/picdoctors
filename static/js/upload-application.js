@@ -29,12 +29,11 @@ $(function () {
           next_button.data('old_html', next_button.html());
           console.log(next_button.old_html);
           next_button.html('Busy Uploading...');
-          next_button.attr('onclick','return false');
+
         } else {
           next_button.removeClass('disabled');
           console.log(next_button.data('old_html'));
           next_button.html(next_button.data('old_html'));
-          next_button.attr('onclick','return true');
         }
       },
 
@@ -49,6 +48,13 @@ $(function () {
     };
 
     $.extend(window.UploadHelper, tmpHelper);
+
+    var next = $('#next');
+    next.on('click', function(e){
+      if(next.hasClass('disabled')){
+        e.preventDefault();     
+      }
+    });
 
     $('#fileupload').fileupload({
       autoUpload : true,

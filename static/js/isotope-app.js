@@ -419,6 +419,10 @@ $(function(){
             //console.log("I got data back from /delete_pic_handler/ -- have a look:");
             //console.log(data);
             //console.log(textStatus);
+            var pics = $isocontainer.find(".pic_container")
+            if(pics.length == 0) {
+              $("#next").addClass('disabled');
+            }
           }
         });
       }
