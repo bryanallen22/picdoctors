@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
+from django.db import transaction
 from common.models import Job
 from common.models import Album
 from common.models import Group
@@ -154,55 +155,57 @@ def apply_for_job(request):
     if job is None or job.doctor is not None or profile is None:
         pass
     else:
-        # Get exclusive access to the job
-        job_qs = Job.objects.select_for_update().filter(pk=job.id)
-        for job in job_qs:
-            # if the job has no doctor
-            if job.doctor is None:
-                # find out if this job has had this doctor before
-                db_cnt = DocBlock.objects.filter(job=job).filter(doctor=profile).count()
-                if db_cnt > 0:
-                    actions = Actions()
-                    actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
-                    actions.add('remove_job_row', job_id)
-                    r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
-                    actions.add('action_button', r)
-                else:
-                    # Try to place an uncaptured charge on the user's card
+       with transaction.atomic():
+          # Get exclusive access to the job
+          # no point in blocking, if someone already has it locked, you missed out buddy
+          job_qs = Job.objects.select_for_update(nowait=True).filter(pk=job.id)
+          for job in job_qs:
+              # if the job has no doctor
+              if job.doctor is None:
+                  # find out if this job has had this doctor before
+                  db_cnt = DocBlock.objects.filter(job=job).filter(doctor=profile).count()
+                  if db_cnt > 0:
+                      actions = Actions()
+                      actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
+                      actions.add('remove_job_row', job_id)
+                      r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
+                      actions.add('action_button', r)
+                  else:
+                      # Try to place an uncaptured charge on the user's card
 
-                    hold_successful = False
-                    doc_payout_price, _ = calculate_job_payout(job, profile)
-                    try:
-                        stripe_create_hold(job, profile, doc_payout_price)
-                        hold_successful = True
-                    except Exception as e:
-                        log.error("Error placing hold on job %s! price=%s. message:%s" % (job.id, job.cents(), e.message))
-                        actions = Actions()
-                        actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
-                        actions.add('remove_job_row', job_id)
-                        r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
-                        actions.add('action_button', r)
+                      hold_successful = False
+                      doc_payout_price, _ = calculate_job_payout(job, profile)
+                      try:
+                          stripe_create_hold(job, profile, doc_payout_price)
+                          hold_successful = True
+                      except Exception as e:
+                          log.error("Error placing hold on job %s! price=%s. message:%s" % (job.id, job.cents(), e.message))
+                          actions = Actions()
+                          actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
+                          actions.add('remove_job_row', job_id)
+                          r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
+                          actions.add('action_button', r)
 
-                    if hold_successful:
-                        # Update Job Info
-                        job.doctor = profile
-                        job.approved = profile.auto_approve
-                        job.payout_price_cents = doc_payout_price
-                        job.status = Job.DOCTOR_ACCEPTED
-                        job.save()
+                      if hold_successful:
+                          # Update Job Info
+                          job.doctor = profile
+                          job.approved = profile.auto_approve
+                          job.payout_price_cents = doc_payout_price
+                          job.status = Job.DOCTOR_ACCEPTED
+                          job.save()
 
-                        # Email
-                        send_job_status_change(request, job, None)
+                          # Email
+                          send_job_status_change(request, job, None)
 
-                        # Response
-                        actions = Actions()
-                        actions.add('alert', AlertData('Congratulations, the job is yours!', 'success'))
+                          # Response
+                          actions = Actions()
+                          actions.add('alert', AlertData('Congratulations, the job is yours!', 'success'))
 
-                        job_inf = fill_job_info(job, generate_doctor_actions, profile)
-                        actions.addJobInfo(job_inf)
+                          job_inf = fill_job_info(job, generate_doctor_actions, profile)
+                          actions.addJobInfo(job_inf)
 
-                        db = DocBlock(job=job, doctor=profile)
-                        db.save()
+                          db = DocBlock(job=job, doctor=profile)
+                          db.save()
 
     return HttpResponse(actions.to_json(), mimetype='application/json')
 
