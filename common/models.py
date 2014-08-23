@@ -231,7 +231,9 @@ class Pic(DeleteMixin):
         log.info('set_file %s' % my_uuid)
 
         file_root, file_ext = os.path.splitext(myfile.name)
-        file_name = my_uuid + file_ext.lower() # append '.jpg', etc
+        file_name    = my_uuid + file_ext.lower() # append '.jpg', etc
+        preview_name = my_uuid + '.jpg' # always jpg
+        thumb_name   = my_uuid + '.jpg' # always jpg
         myfile.name = file_name
 
         self.uuid      = my_uuid
@@ -258,16 +260,16 @@ class Pic(DeleteMixin):
         # Save preview picture, its width and height
         preview, self.preview_width, self.preview_height = \
                 self.create_thumbnail(myfile, preview_width, preview_height)
-        self.preview.save(file_name, preview)
-        #self.preview_width  = self.preview.width
-        #self.preview_height = self.preview.height
+        self.preview.save(preview_name, preview)
+        #self.preview_width  = self.preview.width  #### SOOOOO SLOOOOW. Has to fetch image all over again.
+        #self.preview_height = self.preview.height #### SOOOOO SLOOOOW. Has to fetch image all over again.
 
         # Save thumb picture, its width and height
         thumb, self.thumb_width, self.thumb_height = \
                 self.create_thumbnail(preview, thumb_width, thumb_height)
-        self.thumbnail.save(file_name, thumb)
-        #self.thumb_width  = self.thumbnail.width
-        #self.thumb_height = self.thumbnail.height
+        self.thumbnail.save(thumb_name, thumb)
+        #self.thumb_width  = self.thumbnail.width  #### SOOOOO SLOOOOW. Has to fetch image all over again.
+        #self.thumb_height = self.thumbnail.height #### SOOOOO SLOOOOW. Has to fetch image all over again.
 
     def get_view_model(self, include_markups):
         markupIds = None
@@ -327,7 +329,7 @@ class Pic(DeleteMixin):
             tmp_file = StringIO() # We'll return this as an image
             file.seek(0) # rewind to beginning of the file
             im = Image.open(StringIO(file.read()))
-            format = im.format # since new im won't have format
+            format = 'JPEG' # all thumbnails have to be JPEGs. Original can remain TIF or whatever.
             if format == "gif" or format == "GIF":
                 im = im.convert("RGB")
             im.thumbnail(size, Image.ANTIALIAS)
