@@ -116,6 +116,8 @@ def establish_job(request, album, job=None):
                 card_id = request.POST['card_radio_group']
                 stripe_set_default_card(request.user, card_id)
 
+            stripe_validate_card_works(card_id, album, request.user)
+
             sj = StripeJob(
                     stripe_card_id=card_id,
                     cents=cents)

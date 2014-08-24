@@ -169,7 +169,35 @@ def stripe_delete_credit_card(profile, card_id):
                    (card_id, profile.email, e.message))
     return ret
 
+def stripe_validate_card_works(card_id, album, profile):
+    """
+    Create an *uncaptured* charge of $1 and immediately release that
+    charge. This makes sure that the card actually works.
 
+    We've had a number of people leave bad cards attached to a job, which
+    we don't catch until a doctor tries to start on the job. We'd rather
+    do basic sanity on the card while they are creating the job.
+    """
+
+    # See if we can place a hold for $1
+    charge = stripe.Charge.create(
+        amount      = 100, # a $1.00 charge
+        currency    = "usd",
+        card        = card_id,
+        description = "Sanity check on album %s -- %s" % \
+                      (album.id, album.userprofile.email),
+        metadata    = {
+                        'user_email':      album.userprofile.email,
+                        'user_profile_id': album.userprofile.id,
+                      },
+        capture     = False, # Not captured yet!
+        api_key     = settings.STRIPE_SECRET_KEY, # out account!
+        statement_description = "(PicDoctors)",
+        customer    = profile.stripe_customer_id,
+    )
+
+    # Immediately release it
+    charge.refunds.create()
 
 
 def get_stripe_access_token_response(code):
