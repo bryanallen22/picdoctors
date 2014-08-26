@@ -90,6 +90,7 @@ def album(request, album_id):
             'needs_moderation'  : job.status == Job.MODERATOR_APPROVAL_NEEDED,
             'is_public'         : album.allow_publicly,
             'shareable'         : job.status == Job.USER_ACCEPTED and job.skaa == profile,
+            'album'             : album,
     }
 
 #This is for a moderator to approve an album
