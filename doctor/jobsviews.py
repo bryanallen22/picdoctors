@@ -181,7 +181,7 @@ def apply_for_job(request):
                         except Exception as e:
                             log.error("Error placing hold on job %s! price=%s. message:%s" % (job.id, job.cents(), e.message))
                             actions = Actions()
-                            actions.add('alert', AlertData('Unfortunately you are unable to take this job, we apologize.', 'error'))
+                            actions.add('alert', AlertData("There seems to be a problem with the user's credit card. Sorry.", 'error'))
                             actions.add('remove_job_row', job_id)
                             r = RedirectData(reverse("doc_job_page"), 'Go to your jobs')
                             actions.add('action_button', r)
