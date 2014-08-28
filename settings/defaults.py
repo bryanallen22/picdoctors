@@ -235,6 +235,20 @@ LOGGING = {
         }
     },
     'loggers': {
+        
+        # We ought to prevent unauthorized hosts at the nginx level,
+        # but that would prevent sandboxes/test machines unless we
+        # separate their nginx configurations, which seem unnecessarily
+        # messy. Instead, we'll continue to let django catch the attempts
+        # and we'll just use the following logger to prevent annoying
+        # emails. See http://stackoverflow.com/questions/15238506 to fix
+        # in nginx.
+        'django.security.DisallowedHost': {
+            'handlers': ['mail_admins'],
+            'level': 'CRITICAL',
+            'propagate': False,
+        },
+
         'django': {
             'handlers':['console', 'logfile', 'mail_admins'],
             'propagate': True,
