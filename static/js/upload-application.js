@@ -26,7 +26,12 @@ $(function () {
 
         if(disabled){
           next_button.addClass('disabled');
-          next_button.data('old_html', next_button.html());
+          if( !next_button.data('old_html') ) {
+            /* if there's already html there, don't replace it. If we are 
+             * uploading multiple pictures, we don't want the "Busy uploading..."
+             * html to stomp the original stuff. */
+            next_button.data('old_html', next_button.html());
+          }
           console.log(next_button.old_html);
           next_button.html('Busy Uploading...');
 
