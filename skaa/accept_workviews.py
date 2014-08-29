@@ -64,7 +64,9 @@ def accept_work(request, job_id):
         else:
             return redirect( reverse('permission_denied') )
 
-    return {'job_id':job_id}
+    return {
+        'job'  : job,
+    }
 
 def get_rating(request):
     rating = 1

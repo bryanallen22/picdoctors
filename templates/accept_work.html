@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load picdoctags %}
 
 {% block styles %}
 <link href="{{ STATIC_URL }}rating/jquery.rating.css" type="text/css" rel="stylesheet"/>
@@ -8,11 +9,19 @@
 <div id="acceptwork_app" class='row'>
   <form method='post' id='accept_job' >
     {% csrf_token %}
-    <div class="span8 accept_view offset2 well" job_id={{job_id}}>
+    <div class="span8 accept_view offset2 well" job_id={{job.id}}>
 
       <legend>
         Accept the Doctor's Work
       </legend>
+
+      <div>
+        <p>
+          If you haven't already, you can now review a
+          <a href="{% ember_url 'album_markupview' album_id=job.album.id %}" target="_blank">watermarked version of the Doctor's work</a>.
+          The full resolution, unwatermarked versions of the pictures will be available once you accept the Doctor's work (below).
+        </p>
+      </div>
 
       <div>
         By clicking accept you are agreeing to the following things:
@@ -54,7 +63,7 @@
       <br />
       <h5>Additional Feedback:</h5>
       <input class="span8" name="comment" value="{{ comment }}"/>
-      <input type="hidden" name="job_id" value="{{ job_id }}"/>
+      <input type="hidden" name="job_id" value="{{ job.id }}"/>
       <input type="hidden" name="rating_val" id="rating_val"  value=""/>
       <br />
       <br />
