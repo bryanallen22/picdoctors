@@ -948,6 +948,9 @@
 #album_parent .pin-share-crap {
   margin: 9px 5px 0px 5px;
 }
+#album_parent .hero-unit {
+  padding-top: 30px;
+}
 /****************************************************************
  * Doctor Profile Page
  ***************************************************************/

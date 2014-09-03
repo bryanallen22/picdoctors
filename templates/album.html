@@ -37,7 +37,7 @@
     <div class='row remote_control'>
       <div class='float-left'>
         <div class='download_links center'>
-          <a id="download_original" class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}'>Download Doctored Image</a>
+          <a id="download_original" download class='btn btn-large btn-primary' href='{{ group.doc_pic.get_original_url }}'>Download Doctored Image</a>
         </div>
       </div>
       <div class='float-right' >
@@ -45,7 +45,7 @@
       {% if shareable %}
         <div >
           {% if not is_public %}
-            <a class='gallery_not_public' style="cursor:pointer" onclick="make_album_shareable(this, {{ job_id }})">Click here to make album public (for sharing)</a>
+            <a class='gallery_not_public' style="cursor:pointer;line-height:40px;" onclick="make_album_shareable(this, {{ job_id }})">Click here to make this album public</a>
             <span id="gallery_now_public"></span>
           {% endif %}
           <div class='tw-share-crap float-right'>

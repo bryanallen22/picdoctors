@@ -89,6 +89,7 @@ def generate_skaa_actions(job):
 
     #boring always created actions for populating below
     view_album           = DynamicAction('View Album',          get_ember_url('album_markupview', album_id=str(job.album.id)), url_redirect)
+    download_images      = DynamicAction('Download Images',     reverse('album',                  args=[job.album.id]),        url_redirect)
     view_doctors_work    = DynamicAction('View Doctor\'s Work', get_ember_url('album_markupview', album_id=str(job.album.id)), url_redirect)
     accept_album         = DynamicAction('Accept Work',         reverse('accept_work',            args=[job.id]),              url_redirect)
     refund               = DynamicAction('Request Refund',      reverse('refund',                 args=[job.id]),              url_redirect)
@@ -125,7 +126,7 @@ def generate_skaa_actions(job):
         ret.append(refund)
 
     elif job.status == Job.USER_ACCEPTED:
-        ret.append(view_album)
+        ret.append(download_images)
         if job.album.allow_publicly:
             ret.append(unshare_album)
         else:
