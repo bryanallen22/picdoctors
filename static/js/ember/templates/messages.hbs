@@ -11,12 +11,16 @@
     <section class='message'>
       <div class='top'>
         <span {{bind-attr class=':commentor message.is_owner:my_comment'}}>{{message.commentor}}:</span>
-        <span class='comment'>{{message.message}}</span>
+      <span class='comment'>{{message.message}}</span>
+
       </div>
       <div class='bottom'>
         <span class='time'>
           {{message.created}}
         </span>
+        {{#if message.attachment}}
+          <a href='{{unbound message.attachment}}'>Click here to download <b>{{message.prettyAttachmentName}}</b><a>
+        {{/if}}
       </div>
     </section>
     </li>
@@ -24,21 +28,25 @@
   </ul>
   {{/if}}
   <div class='new_message'>
-    {{view 'submitTextField' value=newMessage enter='sendThatMessage'}}
-    
-    <button class='btn btn-primary feedback_submit' {{action 'sendThatMessage'}}>Send Message</button>
-    {{#if filename}}
-    <i>{{prettyFilename}}</i> will be attached to this message.
-
+    {{#if sending}}
+      Message is being sent...
     {{else}}
-    <div class='btn btn-primary attachment_button'>
-      <span>
-         <i class='icon-upload'></i>
-            Attach File
-      </span>
-      {{simple-upload fileChange='fileChange'}}
-    </div>
+      {{view 'submitTextField' value=newMessage enter='sendThatMessage'}}
+      
+      <button class='btn btn-primary feedback_submit' {{action 'sendThatMessage'}}>Send Message</button>
+      {{#if filename}}
+        <i>{{prettyFilename}}</i> will be attached to this message.
 
+      {{else}}
+        <div class='btn btn-primary attachment_button'>
+          <span>
+             <i class='icon-upload'></i>
+              Attach File
+          </span>
+        {{simple-upload fileChange='fileChange'}}
+        </div>
+
+      {{/if}}
     {{/if}}
   </div>
 </div>

@@ -12,7 +12,7 @@ from annoying.functions import get_object_or_None
 
 
 from messaging.models import GroupMessage
-from messaging.messageviews import build_messages, generate_message
+from messaging.messageviews import build_messages, generate_message, build_message
 from common.decorators import require_login_as
 
 import logging; log = logging.getLogger('pd')
@@ -276,16 +276,21 @@ def prepMarkups(pics):
 def messages_endpoint(request):
     result = {}
     if request.method == 'POST':
-        original_json = simplejson.loads(request.body)
-        data = original_json['message']
-        message = data['message'].strip()
-        job_val = data['job']
-        if job_val != None:
-            job_val = job_val.strip()
-        group_val = data['group'].strip()
-        msg = generate_message(request, message, job_val, group_val)
-        data['id'] = msg.id
-        result = original_json
+        group_id = int(request.POST['group_id'])
+
+        job_id = int(request.POST['job_id'])
+
+        message = request.POST['msg'].strip()
+
+        # Save this off into the database
+        file = None
+        if request.FILES != None and len(request.FILES) > 0:
+            file = request.FILES[u'file']
+
+        msg = generate_message(request, message, job_id, group_id, file)
+        result = {
+            'message': build_message(msg, request.user)
+        }
 
     return json_result(result)
 

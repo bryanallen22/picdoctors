@@ -27,21 +27,27 @@ Pd.MessagesController = Em.ObjectController.extend({
       var msg = this.get('newMessage'),
       me = this.get('controllers.application'),
       job = this.get('controllers.album.job'),
-      self = this;
+      self = this,
+      success, failure;
+
+      success = function(data){
+        var record=self.store.push('message', data.message);
+        self.get('messages').pushObject(record);
+
+        self.set('newMessage', '');
+        self.set('filename', undefined);
+        self.set('file', undefined);
+        self.set('sending', false);
+      };
+
+      failure = function(){
+        alert('failed');
+      };
 
       if(Ember.isEmpty(msg)){
         return;
       }
 
-      var newRecord = this.get('messages').createRecord({
-        message:msg,
-        commentor: me.get('nickname'),
-        is_owner: true,
-        created: 'Just Now',
-        group: this.get('model'),
-        job: job,
-        file:'processing'
-      });
       var formData = new FormData();
 
       formData.append('msg', msg);
@@ -49,17 +55,13 @@ Pd.MessagesController = Em.ObjectController.extend({
       formData.append('group_id', this.get('model.id'));
       formData.append('job_id', job.get('id'));
 
+      this.set('sending', true);
+
       $.ajax({
-        url: '/message_multipart_upload_handler/', 
+        url: '/api/messages', 
         type: 'POST',
         //Ajax events
-        success: function(data){
-          self.set('newMessage', '');
-          self.set('filename', undefined);
-          self.set('file', undefined);
-        },
-
-
+        success:success,
         error: function(){ alert('Failure');},
         // Form data
         data: formData,

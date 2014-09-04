@@ -24,6 +24,7 @@ class Message():
         self.commentor = None
         self.message = ''
         self.created = ''
+        self.attachment = ''
         self.is_owner = False
 
 
@@ -39,15 +40,21 @@ def build_messages(base_messages, user):
 
     messages = []
     for msg in base_messages:
-        message = Message()
-        message.commentor = msg.commentor.nickname
-        message.message = msg.message
-        message.created = get_time_string(msg.created)
-        message.is_owner = msg.commentor == user
-        message.id = msg.id
-        messages.append(message.__dict__)
+        message = build_message(msg, user)
+        messages.append(message)
 
     return messages
+
+def build_message(msg, user):
+    message = Message()
+    message.commentor = msg.commentor.nickname
+    message.message = msg.message
+    message.created = get_time_string(msg.created)
+    message.is_owner = msg.commentor == user
+    message.attachment = msg.get_attachment_url()
+    message.id = msg.id
+    return message.__dict__
+
 
 def prep_messages(base_messages, user):
     """ get the information from either the job or the group message  """
@@ -80,7 +87,7 @@ def can_add_message(profile, job, group):
 #    response_data = simplejson.dumps(result)
 #    return HttpResponse(response_data, mimetype='application/json')
 
-def generate_message(request, message, job_id, group_id):
+def generate_message(request, message, job_id, group_id, file):
     job = get_object_or_None(Job, id=int(job_id))
     group = get_object_or_None(Group, id=int(group_id))
     profile = request.user
@@ -92,6 +99,7 @@ def generate_message(request, message, job_id, group_id):
         msg.job = job
         msg.message = message
         msg.commentor = profile
+        msg.set_file(file)
         msg.save()
 
         job.last_communicator = profile
