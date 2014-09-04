@@ -20,7 +20,8 @@ Pd.MessagesController = Em.ObjectController.extend({
     sendThatMessage: function(){
       var msg = this.get('newMessage'),
           me = this.get('controllers.application'),
-          job = this.get('controllers.album.job');
+          job = this.get('controllers.album.job'),
+          self = this;
 
       if(Ember.isEmpty(msg)){
         return;
@@ -35,8 +36,13 @@ Pd.MessagesController = Em.ObjectController.extend({
         job: job
       });
 
-      newRecord.save();
-      this.set('newMessage', '');
+      newRecord.save().then(function(){
+        self.set('newMessage', '');
+        self.set('file', undefined);
+      });
+    },
+    fileChange: function(e){
+      this.set('file', $(e.target).val());
     }
   }
 });

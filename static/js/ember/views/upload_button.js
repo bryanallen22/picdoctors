@@ -1,7 +1,11 @@
-Pd.UploadButtonBase = Em.View.extend({
+Pd.SimpleUploadComponent = Em.Component.extend({
   tagName: 'input',
   attributeBindings: ['type'],
   type: 'file',
+  change: function(e){
+    // send the change to the owner
+    this.sendAction('fileChange', e);
+  }
 });
 
 Pd.UploadButtonView = Ember.View.extend({
