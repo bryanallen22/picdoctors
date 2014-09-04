@@ -24,7 +24,15 @@
   </ul>
   {{/if}}
   <div class='new_message'>
-    {{view Pd.SubmitTextField value=newMessage enter='sendThatMessage'}}
+    {{view 'submitTextField' value=newMessage enter='sendThatMessage'}}
+    
     <button class='btn btn-primary feedback_submit' {{action 'sendThatMessage'}}>Send Message</button>
+    <div class='btn btn-primary attachment_button'>
+      <span>
+         <i class='icon-upload'></i>
+            Attach File
+      </span>
+    <input type='file' > </input>
+  </div>
   </div>
 </div>

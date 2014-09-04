@@ -11,7 +11,7 @@ Pd.MessagesController = Em.ObjectController.extend({
 
     return 'There ' + isAre + ' ' + length + ' ' + comments;
   }.property('messages.length'),
-  showingComments: false,
+  showingComments: true,
 
   actions: {
     openClose: function(){
