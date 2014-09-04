@@ -1,4 +1,4 @@
-Pd.SubmitTextField = Ember.TextField.extend({
+Pd.SubmitTextFieldView = Ember.TextField.extend({
   insertNewline: function() {
     this.sendAction('enter');
   }

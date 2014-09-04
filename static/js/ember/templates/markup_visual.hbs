@@ -1,11 +1,10 @@
 <!-- This template is just the *style* attribute for the markup div      
  Note: if you change the border width here from 4px, you'll probably 
  want to fix the math in the *createMarkup* method in markup.js      -->
-
-  <div class="markup" {{bind-attr style="markupStyleCss"}}>
-  {{#if id}}
-    {{#unless finished}}
-     {{ view Pd.RedXView }}
+  <div class="markup" {{bind-attr style="view.markup.markupStyleCss"}}>
+  {{#if view.markup.id}}
+    {{#unless view.markup.finished}}
+     {{ view 'redX' }}
     {{/unless}}
   {{/if}}
   </div> 

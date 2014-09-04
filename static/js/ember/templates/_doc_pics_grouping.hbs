@@ -1,6 +1,7 @@
-{{#each item in this }}
+{{#each controller }}
 <div class='markup_outer' style="position:relative">
   {{ partial 'picVisual' }}
+  
   {{#if isAlbumDoctor}}
     {{ partial 'downloadLink' }}
   {{/if}}

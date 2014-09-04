@@ -1,4 +1,4 @@
-Pd.AutoGrowTextArea = Ember.TextArea.extend({
+Pd.AutoGrowTextAreaView = Ember.TextArea.extend({
   didInsertElement: function() {
     Pd.Resize.joinAutoSize(this.$()[0]);
     this._super();

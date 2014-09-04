@@ -11,13 +11,9 @@ Pd.PicsViewController = Ember.ArrayController.extend({
 Pd.PicController = Ember.ObjectController.extend({
   needs:['album'],
 
-  isAlbumOwner: function(){
-    return this.get('controllers.album.isAlbumOwner');
-  }.property('controllers.album.isAlbumOwner'),
+  isAlbumOwner: Em.computed.alias('controllers.album.isAlbumOwner'),
 
-  isAlbumDoctor: function(){
-    return this.get('controllers.album.isAlbumDoctor');
-  }.property('controllers.album.isAlbumDoctor'),
+  isAlbumDoctor: Em.computed.alias('controllers.album.isAlbumDoctor'),
 
   createMarkup: function(){
     var store = this.get('store'),

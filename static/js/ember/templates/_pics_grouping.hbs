@@ -1,13 +1,12 @@
-
   {{#each pic in controller }}
     <div class='markup_outer'>
-      {{#if finished}}
+      {{#if pic.finished}}
         {{ partial 'picVisual' }}
-        {{#if isAlbumDoctor}}
+        {{#if pic.isAlbumDoctor}}
           {{ partial 'downloadLink' }}
         {{/if}}
       {{else}}
-        {{ view Pd.EditablePicView contentBinding="pic.model"}}
+        {{ view 'editablePic' pic=pic.model}}
       {{/if}}
       {{ partial "picInstruction"}}
       {{ render 'markupInstructions' pic.markups}}
