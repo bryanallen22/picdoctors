@@ -14,7 +14,7 @@ def sendAsyncEmail(msg):
     msg.send()
 
 @task()
-def saveWatermark(profile_id, group_id, str_io_pic):
+def saveWatermark(profile_id, group_id, str_io_pic, name):
     profile = get_object_or_None(Profile, id=profile_id)
     if not profile:
         return
@@ -27,8 +27,8 @@ def saveWatermark(profile_id, group_id, str_io_pic):
 
     opened_image = Image.open(str_io_pic)
 
-    #this may be a problem, what if they don't send a jpg
-    file = InMemoryUploadedFile(str_io_pic, None, 'original.jpg', 'image/jpeg',
+    #  I don't care about the content time I don't think
+    file = InMemoryUploadedFile(str_io_pic, None, name, 'image',
                                           str_io_pic.len, None)
     file.seek(0)
     pic = Pic(path_owner="doc")

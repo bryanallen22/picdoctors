@@ -32,6 +32,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.urlresolvers import reverse
 from tasks.tasks import saveWatermark
 from common.ember_album_endpoints import get_pic_view_models
+import ipdb
 
 def pic_json(pic):
     return {"name"             : pic.title,
@@ -122,8 +123,8 @@ def doc_upload_handler(request):
             pickleable_pic = StringIO(file.read())
             # if you want to use the workers use the line below, watch out
             # I'm gonna make this non-asyncable
-            # saveWatermark.apply_async(args=[profile.id, group_id, pickleable_pic])
-            dp = saveWatermark(profile.id, group_id, pickleable_pic)
+            # saveWatermark.apply_async(args=[profile.id, group_id, pickleable_pic, file.name])
+            dp = saveWatermark(profile.id, group_id, pickleable_pic, file.name)
 
             job = get_object_or_None(Job, album=group.album.id)
 
