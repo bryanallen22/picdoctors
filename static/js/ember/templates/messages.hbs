@@ -27,8 +27,8 @@
     {{view 'submitTextField' value=newMessage enter='sendThatMessage'}}
     
     <button class='btn btn-primary feedback_submit' {{action 'sendThatMessage'}}>Send Message</button>
-    {{#if file}}
-    <i>{{file}}</i> will be attached to this message.
+    {{#if filename}}
+    <i>{{prettyFilename}}</i> will be attached to this message.
 
     {{else}}
     <div class='btn btn-primary attachment_button'>

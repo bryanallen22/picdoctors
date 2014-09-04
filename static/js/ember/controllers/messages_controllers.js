@@ -5,13 +5,19 @@ Pd.MessagesController = Em.ObjectController.extend({
   }.property('showingComments'),
   commentsText: function(){
     var length = this.get('messages.length'),
-        singular = length === 1,
-        isAre = singular ? 'is' : 'are',
-        comments = singular ? 'comment' : 'comments';
+    singular = length === 1,
+    isAre = singular ? 'is' : 'are',
+    comments = singular ? 'comment' : 'comments';
 
     return 'There ' + isAre + ' ' + length + ' ' + comments;
   }.property('messages.length'),
   showingComments: true,
+  prettyFilename: function(){
+    var filename = this.get('filename') || '',
+        split = filename.split('\\'),
+        len = split.length;
+    return split[len-1];
+  }.property('filename'),
 
   actions: {
     openClose: function(){
@@ -19,9 +25,9 @@ Pd.MessagesController = Em.ObjectController.extend({
     },
     sendThatMessage: function(){
       var msg = this.get('newMessage'),
-          me = this.get('controllers.application'),
-          job = this.get('controllers.album.job'),
-          self = this;
+      me = this.get('controllers.application'),
+      job = this.get('controllers.album.job'),
+      self = this;
 
       if(Ember.isEmpty(msg)){
         return;
@@ -33,16 +39,42 @@ Pd.MessagesController = Em.ObjectController.extend({
         is_owner: true,
         created: 'Just Now',
         group: this.get('model'),
-        job: job
+        job: job,
+        file:'processing'
+      });
+      var formData = new FormData();
+
+      formData.append('msg', msg);
+      formData.append('file', this.get('file'));
+      formData.append('group_id', this.get('model.id'));
+      formData.append('job_id', job.get('id'));
+
+      $.ajax({
+        url: '/message_multipart_upload_handler/', 
+        type: 'POST',
+        //Ajax events
+        success: function(data){
+          self.set('newMessage', '');
+          self.set('filename', undefined);
+          self.set('file', undefined);
+        },
+
+
+        error: function(){ alert('Failure');},
+        // Form data
+        data: formData,
+        //Options to tell jQuery not to process data or worry about content-type.
+        cache: false,
+        contentType: false,
+        processData: false
       });
 
-      newRecord.save().then(function(){
-        self.set('newMessage', '');
-        self.set('file', undefined);
-      });
     },
     fileChange: function(e){
-      this.set('file', $(e.target).val());
+      var el = $(e.target);
+
+      this.set('file', el[0].files[0]);
+      this.set('filename', el.val());
     }
   }
 });
