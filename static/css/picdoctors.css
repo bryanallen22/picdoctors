@@ -1045,6 +1045,10 @@
 .new_message .upload_attachment {
   margin-left: 23px;
 }
+.new_message .upload_attachment .warn {
+  color: red;
+  font-weight: bold;
+}
 .advance_arrow {
   font-size: 30px;
 }

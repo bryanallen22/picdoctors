@@ -1,5 +1,6 @@
 Pd.MessagesController = Em.ObjectController.extend({
   needs:['application', 'album'],
+  isAlbumDoctor: Em.computed.alias('controllers.album.isAlbumDoctor'),
   openCloseText: function(){
     return this.get('showingComments') ? 'Hide Comments' : 'Show Comments';
   }.property('showingComments'),

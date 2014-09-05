@@ -37,6 +37,11 @@
       {{#if filename}}
       <div class='upload_attachment'>
         <i>{{prettyFilename}}</i> will be attached to this message. 
+        {{#if isAlbumDoctor}}
+        <span class='warn'>
+          Images are not watermarked!
+        </span>
+        {{/if}}
         (<a href='' {{action 'removeAttachment'}}>Remove Attachment</a>)
       </div>
       {{else}}
