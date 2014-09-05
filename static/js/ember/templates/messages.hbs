@@ -19,7 +19,7 @@
           {{message.created}}
         </span>
         {{#if message.attachment}}
-          <a href='{{unbound message.attachment}}'>Click here to download <b>{{message.prettyAttachmentName}}</b><a>
+          <a href='{{unbound message.attachment}}'>Click here to download: <b>{{message.prettyAttachmentName}}</b><a>
         {{/if}}
       </div>
     </section>
@@ -35,8 +35,10 @@
       
       <button class='btn btn-primary feedback_submit' {{action 'sendThatMessage'}}>Send Message</button>
       {{#if filename}}
-        <i>{{prettyFilename}}</i> will be attached to this message.
-
+      <div class='upload_attachment'>
+        <i>{{prettyFilename}}</i> will be attached to this message. 
+        (<a href='' {{action 'removeAttachment'}}>Remove Attachment</a>)
+      </div>
       {{else}}
         <div class='btn btn-primary attachment_button'>
           <span>

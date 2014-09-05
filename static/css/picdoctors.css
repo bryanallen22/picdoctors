@@ -621,8 +621,18 @@
 .message div.top .my_comment {
   color: darkred;
 }
+.message div.bottom {
+  position: relative;
+}
 .message div.bottom .time {
   color: #777;
+}
+.message div.bottom a {
+  position: absolute;
+  left: 200px;
+}
+.messages li:nth-child(odd) {
+  background: #F0F0F0;
 }
 /*****************************
   Set price page
@@ -1014,8 +1024,11 @@
 .new_message {
   /* Make sure it lines up with the button to send the message */
 }
-.new_message input {
+.new_message > input {
   margin: 0;
+  width: 59%;
+  margin-left: 23px;
+  margin-right: 23px;
 }
 .new_message .attachment_button {
   width: 100px;
@@ -1028,6 +1041,9 @@
   top: 0;
   left: 0;
   opacity: 0;
+}
+.new_message .upload_attachment {
+  margin-left: 23px;
 }
 .advance_arrow {
   font-size: 30px;

@@ -19,6 +19,11 @@ Pd.MessagesController = Em.ObjectController.extend({
     return split[len-1];
   }.property('filename'),
 
+  clearAttachment: function(){
+    this.set('filename', undefined);
+    this.set('file', undefined);
+  },
+
   actions: {
     openClose: function(){
       this.toggleProperty('showingComments');
@@ -35,9 +40,8 @@ Pd.MessagesController = Em.ObjectController.extend({
         self.get('messages').pushObject(record);
 
         self.set('newMessage', '');
-        self.set('filename', undefined);
-        self.set('file', undefined);
         self.set('sending', false);
+        self.clearAttachment();
       };
 
       failure = function(){
@@ -71,6 +75,9 @@ Pd.MessagesController = Em.ObjectController.extend({
         processData: false
       });
 
+    },
+    removeAttachment: function(){
+      this.clearAttachment();
     },
     fileChange: function(e){
       var el = $(e.target);
