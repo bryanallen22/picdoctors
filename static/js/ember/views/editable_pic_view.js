@@ -4,17 +4,9 @@
 Pd.EditablePicView = Ember.View.extend({
   templateName: '_pic_visual',
 
-  didInsertElement: function() {
-    this._super();
-  },
-
-  picsMarkups: function(){
-    return this.get('content.markups');
-  }.property('content.markups'),
-
   picSpan: function(){
     return this.$().find('.markup_pic_container');
-  }.property('content'),
+  }.property('pic'),
 
   newMarkup: null,
   newMarkupStartX: null,
@@ -44,7 +36,6 @@ Pd.EditablePicView = Ember.View.extend({
      *  corner of our initial div size */
     var displayLeft = e.pageX - offset.left - initialSize - 6;
     var displayTop = e.pageY - offset.top - initialSize - 6;
-
 
     var newMarkup = controller.createMarkup();
     

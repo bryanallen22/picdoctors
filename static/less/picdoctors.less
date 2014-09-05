@@ -709,13 +709,19 @@
     }
   }
   div.bottom{
+    position:relative;
     .time{
       color:#777;
     }
-
+    a{
+      position:absolute;
+      left:200px;
+    }
   }
+}
 
-
+.messages li:nth-child(odd){
+    background:#F0F0F0;
 }
 
 
@@ -1096,8 +1102,27 @@
 /* Messages under albums */
 .new_message {
   /* Make sure it lines up with the button to send the message */
-  input {
+  > input {
     margin:0;
+    width: 59%;
+    margin-left: 23px;
+    margin-right: 23px;
+  }
+  .attachment_button{
+     width:100px;
+     position:relative;
+     input{
+       position:absolute;
+       width:100%;
+       height:100%;
+       top:0;
+       left:0;
+       opacity:0;
+     }
+  }
+  .upload_attachment{
+    margin-left:23px;
+
   }
 }
 

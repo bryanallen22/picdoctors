@@ -9,7 +9,8 @@ Pd.Pic = DS.Model.extend({
   height: attr(),
   group: belongsTo('group'),
   markups: hasMany('markup'),
-  description: attr()
+  description: attr(),
+  created: attr()
 });
 
 Pd.Pic.reopen({
@@ -21,6 +22,8 @@ Pd.Pic.reopen({
   }.property('group.finished'),
 
   formattedCreated: function(){
+    // TODO created doesn't exist in the definition
+    // so fix that at some point
     var created = moment(this.get('created'));
     return created.calendar();
   }.property('created'),

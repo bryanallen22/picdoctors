@@ -11,12 +11,16 @@
     <section class='message'>
       <div class='top'>
         <span {{bind-attr class=':commentor message.is_owner:my_comment'}}>{{message.commentor}}:</span>
-        <span class='comment'>{{message.message}}</span>
+      <span class='comment'>{{message.message}}</span>
+
       </div>
       <div class='bottom'>
         <span class='time'>
           {{message.created}}
         </span>
+        {{#if message.attachment}}
+          <a href='{{unbound message.attachment}}'>Click here to download: <b>{{message.prettyAttachmentName}}</b><a>
+        {{/if}}
       </div>
     </section>
     </li>
@@ -24,7 +28,27 @@
   </ul>
   {{/if}}
   <div class='new_message'>
-    {{view Pd.SubmitTextField value=newMessage enter='sendThatMessage'}}
-    <button class='btn btn-primary feedback_submit' {{action 'sendThatMessage'}}>Send Message</button>
+    {{#if sending}}
+      Message is being sent...
+    {{else}}
+      {{view 'submitTextField' value=newMessage enter='sendThatMessage'}}
+      
+      <button class='btn btn-primary feedback_submit' {{action 'sendThatMessage'}}>Send Message</button>
+      {{#if filename}}
+      <div class='upload_attachment'>
+        <i>{{prettyFilename}}</i> will be attached to this message. 
+        (<a href='' {{action 'removeAttachment'}}>Remove Attachment</a>)
+      </div>
+      {{else}}
+        <div class='btn btn-primary attachment_button'>
+          <span>
+             <i class='icon-upload'></i>
+              Attach File
+          </span>
+        {{simple-upload fileChange='fileChange'}}
+        </div>
+
+      {{/if}}
+    {{/if}}
   </div>
 </div>

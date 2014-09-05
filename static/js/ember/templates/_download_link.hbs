@@ -2,9 +2,9 @@
   <span>
     <a {{bind-attr href="pic.original_url" download="pic.downloadName"}} class="btn btn-primary">Download Original</a>
   </span>
-  {{#if formattedCreated}}
+  {{#if pic.formattedCreated}}
   <span style="float:right">
-    Uploaded {{formattedCreated}}
+    Uploaded {{pic.formattedCreated}}
   </span>
   {{/if}}
 </div>
