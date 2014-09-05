@@ -166,7 +166,8 @@ def generate_pic_thumbs(filter_album, job_complete):
         if job_complete:
             markup_url = reverse('album', args=[filter_album.id])
         else:
-            markup_url = get_ember_url('album_view', album_id=str(filter_album.id), group_id=str(pic.group.id))
+            #markup_url = get_ember_url('album_view', album_id=str(filter_album.id), group_id=str(pic.group.id))
+            markup_url = get_ember_url('album_markupview', album_id=str(filter_album.id))
 
         tup = (pic.get_thumb_url(), markup_url)
         ret.append(tup)
