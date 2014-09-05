@@ -13,7 +13,7 @@ class BaseMessage(DeleteMixin):
     #Actual Message
     message           = models.TextField(blank=True)
     job               = models.ForeignKey(Job, db_index=True)
-    attachment        = models.FileField(upload_to='attachments', blank=True)
+    attachment        = models.FileField(upload_to='attachments', blank=True, default='')
 
     def set_file(self, my_file):
         if my_file is None:
