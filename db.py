@@ -99,9 +99,12 @@ def do_genprod(force):
     2. Apply the migrations that exist (python manage.py migrate)
     3. Create the migrations for the differences (python manage.py schemamigration skaa --auto)
     """
-    gen_new_db()
-    do_migrate(force)
-    do_gen(force)
+    if confirm("You promise you aren't in prod, correct?", False): # I don't want to allow force here
+         print Fore.GREEN + "deleting sqlite.db" + Fore.WHITE
+         do_cmd("rm sqlite.db")
+         gen_new_db()
+         do_migrate(force)
+         do_gen(force)
 
 
 def do_migrate(force):
