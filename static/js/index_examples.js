@@ -22,7 +22,7 @@ $(function(){
   }
 
   $('#myCarousel').carousel({
-      interval: 8000,
+      interval: 3000,
       pause: null, /* Don't pause when they hover over it */
   }).on('slide', function (e) {
     /* We're already sliding to the image at e.relatedTarget. (Hopefully
