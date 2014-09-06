@@ -133,8 +133,7 @@ def refund_user_endpoint(request):
         # Remove the hold
         stripe_remove_charge(job)
 
-        job.status = Job.REFUND
-        job.save()
+        remove_previous_doctor(job, Job.REFUND)
 
         send_job_status_change(request, job, profile)
 
@@ -184,17 +183,17 @@ def switch_doctor_endpoint(request):
 
     if job and job.skaa == profile:
         notify_doc_of_switch(request, job)
-        remove_previous_doctor(job)
+        remove_previous_doctor(job, Job.IN_MARKET)
 
     result = { 'relocate' : reverse('job_page') }
     response_data = simplejson.dumps(result)
     return HttpResponse(response_data, mimetype='application/json')
 
-def remove_previous_doctor(job):
+def remove_previous_doctor(job, next_state):
     if not job:
         return
 
-    job.status = Job.IN_MARKET
+    job.status = next_state # Job.IN_MARKET
     if job.doctor:
         job.ignore_last_doctor = job.doctor
     job.doctor = None
