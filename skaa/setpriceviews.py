@@ -172,7 +172,7 @@ def establish_job(request, album, job=None):
 
             # Remove any previous doctor information, this essentially happens when they go from
             # refund to back in market
-            remove_previous_doctor(job)
+            remove_previous_doctor(job, Job.IN_MARKET)
 
             send_newjob_email(request, job)
 

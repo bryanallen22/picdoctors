@@ -301,7 +301,7 @@ def quit_job_endpoint(request):
     job = get_object_or_None(Job, id=int(data['job_id']))
 
     if job and job.doctor and job.doctor == profile:
-        remove_previous_doctor(job)
+        remove_previous_doctor(job, Job.IN_MARKET)
 
     send_job_status_change(request, job, profile)
 
