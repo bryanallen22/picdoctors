@@ -169,10 +169,10 @@ def stripe_delete_credit_card(profile, card_id):
                    (card_id, profile.email, e.message))
     return ret
 
-def stripe_validate_card_works(card_id, album, profile, cents):
+def stripe_validate_card_works(card_id, album, profile):
     """
-    Create an *uncaptured* charge of and immediately release that
-    charge to make sure that the card actually works.
+    Create an *uncaptured* charge of $1 and immediately release that
+    charge. This makes sure that the card actually works.
 
     We've had a number of people leave bad cards attached to a job, which
     we don't catch until a doctor tries to start on the job. We'd rather
@@ -181,7 +181,7 @@ def stripe_validate_card_works(card_id, album, profile, cents):
 
     # See if we can place a hold for $1
     charge = stripe.Charge.create(
-        amount      = cents,
+        amount      = 100, # a $1.00 charge
         currency    = "usd",
         card        = card_id,
         description = "Sanity check on album %s -- %s" % \
