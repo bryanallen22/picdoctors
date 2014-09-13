@@ -155,9 +155,6 @@
               <div class="row alert alert-success">
                 <h4>Important Credit Card Notes:</h4>
                   <ul>
-                    <li>Your credit card company may show a preauthorization when creating the job.  
-                    This is not a charge, but PicDoctors verifying your card is valid and can be charged.</li>  
-                    <li>Once a doctor takes your job a second preauthorization is created on behalf of the doctor.</li> 
                     <li>Your card will <u>NOT</u> be charged until you are satisfied with the Pic Doctor's work.  </li>
                     <li>If you aren't satisfied, you can ask for further modifications, get a different Pic Doctor, or get a full refund.  No questions asked.</li>
                   </ul>
@@ -181,48 +178,7 @@
             {# Right side -- suggested pricing #}
             <div class="span3">
               <div id="pricing-table-container" class="collapse">
-
-                <table class="table table-striped table-condensed">
-                  <h4 id="table_header">Suggested prices for a single picture</h4>
-                  <thead>
-                    <tr>
-                      <th>Description</th>
-                      <th>Price</th>
-                    </tr>
-                  </thead>
-                  <tr>
-                    <td>Simple lighting changes</td>
-                    <td>$5.00</td>
-                  </tr>
-                  <tr>
-                    <td>Complex lighting changes (recreating skin tones)</td>
-                    <td>$15.00</td>
-                  </tr>
-                  <tr>
-                    <td>Adding border</td>
-                    <td>$5.00</td>
-                  </tr>
-                  <tr>
-                    <td>Overlaying text</td>
-                    <td>$5.00</td>
-                  </tr>
-                  <tr>
-                    <td>Small object inserted into picture</td>
-                    <td>$8.00</td>
-                  </tr>
-                  <tr>
-                    <td>Large object inserted into picture</td>
-                    <td>$14.00</td>
-                  </tr>
-                  <tr>
-                    <td>Small object deletion</td>
-                    <td>$15.00</td>
-                  </tr>
-                  <tr>
-                    <td>Large object deletion</td>
-                    <td>$45.00</td>
-                  </tr>
-                </table>
+                {% include "suggested_prices.html" %}
               </div> {# pricing-table-container #}
             </div>   {# right side span3        #}
           </div>     {# row                     #}

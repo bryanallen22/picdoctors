@@ -54,53 +54,34 @@
       <p class='answer'>
          This service is a name your price service.  
          There is a minimum of $5 dollars per output picture, but beside that it's up to you on how much you're willing to pay.
-         If your job isn't receiving enough interest you can raise the price.  Remember, you aren't charged until you accept the doctor's work, so there is no risk involved.  Here are some possible price suggestions:
-      <table class="table table-striped table-condensed">
-                  
-                  <thead>
-                    <tr>
-                      <th>Description</th>
-                      <th>Price</th>
-                    </tr>
-                  </thead>
-                  <tbody><tr>
-                    <td>Simple lighting changes</td>
-                    <td>$5.00</td>
-                  </tr>
-                  <tr>
-                    <td>Complex lighting changes (recreating skin tones)</td>
-                    <td>$15.00</td>
-                  </tr>
-                  <tr>
-                    <td>Adding border</td>
-                    <td>$5.00</td>
-                  </tr>
-                  <tr>
-                    <td>Overlaying text</td>
-                    <td>$5.00</td>
-                  </tr>
-                  <tr>
-                    <td>Small object inserted into picture</td>
-                    <td>$8.00</td>
-                  </tr>
-                  <tr>
-                    <td>Large object inserted into picture</td>
-                    <td>$14.00</td>
-                  </tr>
-                  <tr>
-                    <td>Small object deletion</td>
-                    <td>$15.00</td>
-                  </tr>
-                  <tr>
-                    <td>Large object deletion</td>
-                    <td>$45.00</td>
-                  </tr>
-                </tbody></table>
-        
+         If your job isn't receiving enough interest you can raise the price.  Remember, you aren't charged until you accept the Doctor's work, so there is no risk involved.  Here are some possible price suggestions:
+         {% include "suggested_prices.html" %}
       </p>
     </div>
   </div>
 
+  <div class='row'>
+    <div class='span8'>
+      <a class='question' href='#authorization_hold' name='authorization_hold'>What's this 50 cent charge that I see on my credit card statement?</a>
+      <p class='answer'>
+        When you create a job, we temporarily create a $0.50 authorization hold, <em>which we immediately release</em>.
+        We do this to ensure that the card that you have entered is valid.
+      </p>
+      <p class='answer'>
+        Some credit card companies will show this for a few days as a pending charge. If you see this, rest assured
+        that it will disappear soon.
+      </p>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class='span8'>
+      <a class='question' href='#pending_charge' name='pending_charge'>Why do I see a charge on my credit card statement before I've accepted the Doctor's work?</a>
+      <p class='answer'>
+        This is just a standard <a href="http://en.wikipedia.org/wiki/Authorization_hold">authorization hold</a>. It helps us guarantee to the Doctor that their money will be available if you accept their work. It will only become an actual charge only if you accept the Doctor's work. If you aren't happy with the Doctor's work, we'll release this hold and you won't be charged.
+      </p>
+    </div>
+  </div>
 
   <div class='row'>
     <div class='span8'>
@@ -135,8 +116,8 @@
     <div class='span8'>
       <a class='question' href='#share' name='share'>Can I share my pictures with friends and family?</a>
       <div class='answer'>
-        <p>Yes!  We want you to be able to share and allow others to enjoy the work that's been done to your images.  Not only is it fun for you, but it shows off the skills of your doctor which is greatly appreciated.  By default we block your album from being viewed by anyone other than you and the Pic Doctor.  There are three places where you can make your album shareable.</p>
-        <li> When you accept the doctor's work you are given the opportunity to allow your album to be shared (checkbox).</li>
+        <p>Yes!  We want you to be able to share and allow others to enjoy the work that's been done to your images.  Not only is it fun for you, but it shows off the skills of your Doctor which is greatly appreciated.  By default we block your album from being viewed by anyone other than you and the Pic Doctor.  There are three places where you can make your album shareable.</p>
+        <li> When you accept the Doctor's work you are given the opportunity to allow your album to be shared (checkbox).</li>
         <li> From the job's page, you can choose share album. </li>
         <li> From the album page there is a link beside the social media links at the bottom of each image which will allow you to share the album</li>
         </p>
