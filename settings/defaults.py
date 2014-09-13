@@ -232,11 +232,11 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler',
-            'include_html': True, # send lots of (potentially sensitive) stuff via email
+            #'include_html': True, # send lots of (potentially sensitive) stuff via email
         }
     },
     'loggers': {
-        
+
         # We ought to prevent unauthorized hosts at the nginx level,
         # but that would prevent sandboxes/test machines unless we
         # separate their nginx configurations, which seem unnecessarily
@@ -441,7 +441,7 @@ def order_pipeline_ball(ball_name, path):
     not predictable, leading to wild deployment issues.
 
     This manually turns turns implicit globs into an explicit order
-    
+
     ball_name is the key in PIPELINE_JS above
     path is the filesystem path which we can expand -- comes from STATICFILES_DIRS
     """
@@ -476,3 +476,6 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static_out')
 STRIPE_CLIENT_ID='ca_4L1GIZaGM721YBOx5HdrcRkofcNc3vwZ'
 STRIPE_CONNECT_SITE='https://connect.stripe.com'
 STRIPE_CONNECT_TOKEN='/oauth/token'
+
+DEFAULT_EXCEPTION_REPORTER_FILTER = 'common.utilities.PicDoctorsExceptionReporterFilter'
+
