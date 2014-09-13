@@ -181,10 +181,10 @@ def stripe_validate_card_works(card_id, album, profile):
 
     # See if we can place a hold for $1
     charge = stripe.Charge.create(
-        amount      = 100, # a $1.00 charge
+        amount      = 50, # a $1.00 charge
         currency    = "usd",
         card        = card_id,
-        description = "Sanity check on album %s -- %s" % \
+        description = "Card validation. Uncaptured charge! Album %s -- %s" % \
                       (album.id, album.userprofile.email),
         metadata    = {
                         'user_email':      album.userprofile.email,
