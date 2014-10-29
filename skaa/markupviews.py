@@ -19,7 +19,6 @@ from common.functions import json_result
 from models import Markup
 from skaa.progressbarviews import get_progressbar_vars
 
-import ipdb
 import logging; log = logging.getLogger('pd')
 
 def belongs_on_this_markup_page(request, album_id, sequence):
@@ -59,8 +58,8 @@ def belongs_on_this_markup_page(request, album_id, sequence):
     if not j.doctor and profile.isa('doctor'):
         return True
 
-    # is doctor of job and the job isn't finished!
-    if j.doctor and j.doctor == profile and j.status != Job.USER_ACCEPTED:
+    # is doctor of job
+    if j.doctor and j.doctor == profile:
         return True
 
     #assume false

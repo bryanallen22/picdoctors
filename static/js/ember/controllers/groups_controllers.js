@@ -115,6 +115,7 @@ Pd.GroupNavigationController = Ember.ObjectController.extend({
   }.property('album.groups.@each.hasDocPic'),
 
   canFinishJob: Ember.computed.and('albumDoctor', 'allPicsUploaded', 'album.job.isDoctorAccepted'),
+  docCanUploadPics : Ember.computed.not('album.job.isUserAccepted'),
   completeJobText:'Mark Job as Complete',
 
   setupTour: function(){

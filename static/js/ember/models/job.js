@@ -5,6 +5,7 @@ hasMany = DS.hasMany;
 Pd.Job= DS.Model.extend({
   status: attr(),
 
-  isDoctorAccepted: Ember.computed.equal('status', 'doctor_acc')
+  isDoctorAccepted: Ember.computed.equal('status', 'doctor_acc'),
+  isUserAccepted: Ember.computed.equal('status', 'user_acc'),
 
 });

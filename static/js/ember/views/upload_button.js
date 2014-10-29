@@ -43,7 +43,7 @@ Pd.UploadButtonView = Ember.View.extend({
     var dp = store.push('docPicGroup', dpg);
 
     group.insertAt(0, dp);
-    
+
   },
 
   textSpan: function(){
@@ -83,7 +83,7 @@ Pd.UploadButtonView = Ember.View.extend({
     formData.append('group_id', this.get('group.id'));
     formData.append('doc_file', this.$().get(0).files[0]);
     $.ajax({
-      url: '/doc_upload_handler/', 
+      url: '/doc_upload_handler/',
       type: 'POST',
       //Ajax events
       success: function(data){ self.postUpload(); self.newPicHandler(data);},

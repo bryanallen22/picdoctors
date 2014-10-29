@@ -19,9 +19,11 @@
       <a class='btn btn-info btn-large workflow-buttons bottom-navigation-button' {{action 'helpMe'}}>Help Me</a>
     {{/if}}
     {{#if albumDoctor}}
-    <form id="fake_form_for_reset">
-      {{partial "docUploadButton"}}
-    </form>
+      {{#if docCanUploadPics}}
+        <form id="fake_form_for_reset">
+          {{partial "docUploadButton"}}
+        </form>
+      {{/if}}
     {{#if canFinishJob}}
       <div class='btn btn-success btn-large workflow-buttons fileupload-addbutton bottom-navigation-button'>
         <span {{action 'completeJob'}} id="doc_upload_text">{{completeJobText}}</span>

@@ -116,6 +116,9 @@ def doc_upload_handler(request):
         #don't worry, we validate the group_id at the decorator
         group_id = int(request.POST['group_id'])
         group = get_object_or_None(Group, id=group_id )
+        job = get_object_or_None(Job, album=group.album.id)
+        if not job or job.status == Job.USER_ACCEPTED:
+            return HttpResponseBadRequest('This job is already complete!')
 
         # Save this off into the database
         file = request.FILES[u'doc_file']
@@ -125,8 +128,6 @@ def doc_upload_handler(request):
             # I'm gonna make this non-asyncable
             # saveWatermark.apply_async(args=[profile.id, group_id, pickleable_pic, file.name])
             dp = saveWatermark(profile.id, group_id, pickleable_pic, file.name)
-
-            job = get_object_or_None(Job, album=group.album.id)
 
             pic = dp.get_pic(request.user, job)
             log.info('File saving done')
