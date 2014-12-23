@@ -119,6 +119,13 @@ def stripe_capture_hold(job):
 
     This can throw an error.
     """
+    then = job.stripe_job.hold_date 
+    now  = get_datetime()
+    if(now - then).days >= 6:
+        log.info("Job %d may have an expired hold, let's recreate it. (now = [%s], then=[%s]" \
+                % (job.id, now.__str__(), then.__str__()))
+        stripe_create_hold(job, job.doctor, job.payout_price_cents)
+
     ch = stripe.Charge.retrieve(
             job.stripe_job.stripe_charge_id,
             api_key = job.doctor.stripe_connect.access_token,
